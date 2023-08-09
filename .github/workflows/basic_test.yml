@@ -17,12 +17,14 @@ jobs:
         run: docker-compose -f test/docker-compose.yml up -d
 
       - name: Wait for service to start
-        run: sleep 5
+        run: sleep 10
 
       - name: Check status code
         run: |
+          curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/wis2box-webapp
           status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/wis2box-webapp)
           if [[ $status_code -ne 200 ]]; then
-            echo "Request failed with status code $status_code"
+            echo "Request failed with status code:"
+            echo ${status_code}
             exit 1
           fi
