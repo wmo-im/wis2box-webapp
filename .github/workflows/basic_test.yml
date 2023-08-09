@@ -1,0 +1,28 @@
+name: Basic test (build and run)
+
+on: [ push, pull_request ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: docker build -t wis2box-webapp ./webapp/
+
+      - name: Start Docker Compose services
+        run: docker-compose -f test/docker-compose.yml up -d
+
+      - name: Wait for service to start
+        run: sleep 5
+
+      - name: Check status code
+        run: |
+          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080)
+          if [[ $status_code -ne 200 ]]; then
+            echo "Request failed with status code $status_code"
+            exit 1
+          fi
