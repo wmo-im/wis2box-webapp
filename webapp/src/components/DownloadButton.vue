@@ -1,9 +1,9 @@
 <template>
-  <v-btn color="primary" @click="downloadFile">Download</v-btn>
+  <v-btn color="#00BD9D" append-icon="mdi-download" @click="downloadFile">Download</v-btn>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { VBtn } from 'vuetify/lib/components/index.mjs';
 
 export default defineComponent({
@@ -18,11 +18,11 @@ export default defineComponent({
         VBtn
     },
     setup(props) {
-        const fileName = ref("");
+        // Extract the file name from the URL
+        const fileName = props.fileUrl.split('/').pop();
+
         // function to download file
         const downloadFile = () => {
-            // Extract the file name from the URL
-            fileName.value = props.fileUrl.substring(props.fileUrl.lastIndexOf('/') + 1);
             // Create a temporary anchor element to initiate the download
             const link = document.createElement('a');
             link.href = props.fileUrl;
@@ -31,8 +31,8 @@ export default defineComponent({
             link.click();
         };
         return {
-            downloadFile,
-            fileName
+            fileName,
+            downloadFile
         };
     },
 });  
