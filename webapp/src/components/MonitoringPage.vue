@@ -2,7 +2,10 @@
   <v-card-title class="big-title">Monitoring Dashboard</v-card-title>
 
   <!-- Drop down selection for the dataset the user wants to monitor -->
-  <v-select label="Choose dataset to monitor" v-model="selectedTitle" :items="titles" v-if="titles.length"></v-select>
+  <v-select label="Choose a dataset to monitor" v-model="selectedTitle" :items="titles" v-if="titles.length"></v-select>
+
+  <!-- Search bar to search for a WSI and only monitor that station -->
+  <v-text-field label="Search a station to monitor (optional)" clearable/>
   
   <!-- Dashboard visualising the notifications of the dataset selected -->
   <NotificationDashboard :topicHierarchy="datasets[selectedTitle]" v-if="selectedTitle"/>

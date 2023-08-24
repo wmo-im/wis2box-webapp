@@ -37,8 +37,8 @@
                 </v-btn>
               </v-col>
 
-              <vue-apex-charts ref="chart" type="bar" height="400" 
-              :options="chartOptions" :series="chartSeries"></vue-apex-charts>
+              <vue-apex-charts ref="chart" type="bar" height="400" :options="chartOptions"
+                :series="chartSeries"></vue-apex-charts>
             </v-card>
           </v-fade-transition>
         </v-col>
@@ -81,26 +81,31 @@
                   <v-card-title class="text-left">
                     Published Data
                   </v-card-title>
-                  <v-list-item v-for="(file_url, index) in notificationData.fileUrls" :key="index">
-                    <div class="file-actions">
-                      <div>
-                        <!-- Display the timestamp -->
-                        <div class="secondary">
-                          {{ formatTime(notificationData.publishTimes[index]) }}
-                        </div>
-
-                        <!-- Display the file name -->
-                        <div>
-                          {{ getFileName(file_url) }}
-                        </div>
-                      </div>
+                  <!-- Limit the size of the list and add scroll feature -->
+                  <div class="scrollable-file-list">
+                    <v-text-field placeholder="Search for a file..." clearable/>
+                    <v-list-item v-for="(file_url, index) in notificationData.fileUrls.reverse()" :key="index">
                       <div class="file-actions">
-                        <DownloadButton :fileUrl="file_url" />
-                        <InspectBufrButton :fileUrl="file_url" />
+                        <div>
+                          <!-- Display the timestamp -->
+                          <div class="secondary">
+                            {{ formatTime(notificationData.publishTimes[notificationData.publishTimes.length - 1 - index])
+                            }}
+                          </div>
+
+                          <!-- Display the file name -->
+                          <div>
+                            {{ getFileName(file_url) }}
+                          </div>
+                        </div>
+                        <div class="file-actions">
+                          <DownloadButton :fileUrl="file_url" />
+                          <InspectBufrButton :fileUrl="file_url" />
+                        </div>
                       </div>
-                    </div>
-                    <v-divider v-if="index < notificationData.fileUrls.length - 1" class="divider-spacing"></v-divider>
-                  </v-list-item>
+                      <v-divider v-if="index < notificationData.fileUrls.length - 1" class="divider-spacing"></v-divider>
+                    </v-list-item>
+                  </div>
                 </v-card>
               </v-fade-transition>
             </v-col>
@@ -347,6 +352,22 @@ export default defineComponent({
         console.error("Error fetching notifications:", error)
       }
     },
+    // Method to get summary statistics of total published files in the
+    // past hour and past 24 hours
+    async getSummary() {
+      // Get the number of publish times from the last hour
+      const timesWithinHour = this.notificationData.publishTimes.filter(time => {
+        return time >= this.oneHourAgo;
+      }).length;
+
+      // Get the number of publish times from the last 24 hours
+      // (which is all of the publish times by the way we call the API)
+      const timesWithinDay = this.notificationData.publishTimes.length;
+
+      // Update the summary statistics object
+      this.summaryStats.totalFilesLastHour = timesWithinHour;
+      this.summaryStats.totalFilesLastDay = timesWithinDay;
+    },
     // Loads notification data of publish times and file urls
     async getNotifications() {
       // Check if TEST_MODE is set in .env file or if VITE_API_URL is not set
@@ -364,7 +385,6 @@ export default defineComponent({
       else {
         await this.apiCall();
       }
-      console.log("Data: ", this.messages);
 
       this.notificationData = {
         // Get the publish times of the notifications as an array
@@ -377,6 +397,9 @@ export default defineComponent({
           return canonicalLink ? canonicalLink.href : null;
         })
       }
+
+      // Get summary statistics of notification data
+      await this.getSummary();
 
       console.log("Publish times and URLs: ", this.notificationData);
     },
@@ -456,22 +479,6 @@ export default defineComponent({
 
       console.log("WSI counts: ", this.wsiCounts);
     },
-    // Method to get summary statistics of total published files in the
-    // past hour and past 24 hours
-    async getSummary() {
-      // Get the number of publish times from the last hour
-      const timesWithinHour = this.notificationData.publishTimes.filter(time => {
-        return time >= this.oneHourAgo;
-      }).length;
-
-      // Get the number of publish times from the last 24 hours
-      // (which is all of the publish times by the way we call the API)
-      const timesWithinDay = this.notificationData.publishTimes.length;
-
-      // Update the summary statistics object
-      this.summaryStats.totalFilesLastHour = timesWithinHour;
-      this.summaryStats.totalFilesLastDay = timesWithinDay;
-    },
     // Initialise the data for ApexCharts series bar graph based on 
     // allNotifications
     initChartData() {
@@ -539,6 +546,11 @@ export default defineComponent({
 
 .secondary {
   color: #767B91;
+}
+
+.scrollable-file-list {
+  max-height: 345px;
+  overflow-y: auto;
 }
 
 .file-actions {
