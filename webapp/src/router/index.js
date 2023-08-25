@@ -14,19 +14,29 @@ const routes = [
         path: 'synop_form',
         name: 'SynopForm',
         component: () => import('@/views/SynopForm.vue'),
+        meta: {title: 'wis2box - Synop Form'}
       },
       {
-        path: 'wis2_notifications', // New route for the notifications page
-        name: 'wis2_notifications',
-        component: () => import('@/views/WIS2Notifications.vue'),
+        path: 'monitoring', // New route for the notifications page
+        name: 'Monitoring',
+        component: () => import('@/views/MonitoringPage.vue'),
+        meta: {title: 'wis2box - Monitoring'}
       },
     ],
   },
 ]
 
+// Create the router
 const router = createRouter({
   history: createWebHistory('/wis2box-webapp/'),
   routes,
 })
+
+// Assign the title of the browser tab for each page
+router.beforeEach((to, from, next) => {
+  const nearestWithTitle = to.matched.slice().reverse().find(r => r.meta && r.meta.title);
+  if(nearestWithTitle) document.title = nearestWithTitle.meta.title;
+  next();
+});
 
 export default router

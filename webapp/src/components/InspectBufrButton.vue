@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" width="auto">
     <template v-slot:activator="{ props }">
-      <v-btn color="secondary" v-bind="props" @click="inspectFile">Inspect</v-btn>
+      <v-btn color="#49C6E5" append-icon="mdi-feature-search" v-bind="props" @click="inspectFile">Inspect</v-btn>
     </template>
       <v-card class="inspect-content">
         <v-card-title>{{ fileName }}</v-card-title>
@@ -13,7 +13,7 @@
           </div>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" block @click="dialog = false">Close Dialog</v-btn>
+          <v-btn color="#1994b3" block @click="dialog = false">Close Dialog</v-btn>
         </v-card-actions>
       </v-card>
   </v-dialog>
@@ -42,21 +42,12 @@ export default defineComponent({
         VSelect,
     },
     setup(props) {
-        const fileName = ref("");
+        // Extract the file name from the URL
+        const fileName = props.fileUrl.split('/').pop();
         const itemsInBufr = ref([]);
         const dialog = ref(false);
         // function to create new object and to add to store
         const inspectFile = async () => {
-            if(props.fileUrl == undefined) {
-                console.log("props.fileUrl is undefined");
-                return;
-            }
-            // check if fileUrl contains / 
-            if(props.fileUrl.indexOf("/") == -1) {
-                console.log("props.fileUrl does not contain /");
-                return;
-            }
-            fileName.value = props.fileUrl.substring(props.fileUrl.lastIndexOf('/') + 1);
             dialog.value = true;
             // check if TEST_MODE is set in .env file or if VITE_API_URL is not set
             if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
@@ -99,7 +90,6 @@ export default defineComponent({
         };
         const callInspect = async () => {
             // set items_from_bufr back to empty array
-            console.log("execute wis2box-bufr2geojson process on file: " + props.fileUrl);
             itemsInBufr.value = [];
             var payload = {
                 inputs: {
