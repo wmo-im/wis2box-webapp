@@ -3,7 +3,14 @@
     <v-col cols="12">
       <!-- Form entry --><v-fade-transition appear>
         <v-card>
-          <v-card-title class="big-title">Submit FM 12–XIV Ext. SYNOP Bulletin</v-card-title>
+          <!-- Font size of title for tablets and desktops -->
+          <div class="hidden-xs">
+            <v-card-title class="big-title">Submit FM 12–XIV Ext. SYNOP Bulletin</v-card-title>
+          </div>
+          <!-- Font size of title for phones -->
+          <div class="hidden-sm-and-up">
+            <v-card-title class="small-title">Submit FM 12–XIV Ext. SYNOP Bulletin</v-card-title>
+          </div>
           <v-card-text>
             <v-form>
               <v-card-item class="calendar-box">
@@ -16,26 +23,31 @@
                 <p v-else class="hint-text hint-default">Month and year of the data</p>
               </v-card-item>
               <!-- Date selection -->
-  
+
               <!-- FM 12 data entry -->
               <v-card-item>
                 <v-textarea label="FM 12" v-model.lazy="bulletin" @change="checkMessage"></v-textarea>
-                <p v-if="aaxxPresent == false" class="hint-text hint-invalid">AAXX must be present for a valid SYNOP message
+                <p v-if="aaxxPresent == false" class="hint-text hint-invalid">AAXX must be present for a valid SYNOP
+                  message
                 </p>
                 <p v-else-if="equalsPresent == false" class="hint-text hint-invalid">Delimiter (=) must be present for a
                   valid
                   SYNOP message</p>
                 <p v-else class="hint-text hint-default">Raw FM 12 bulletin</p>
               </v-card-item>
-  
+
               <!-- Topic hierarchy selection -->
               <v-card-item>
-                <v-select label="Channel" v-model="hierarchy" :items="hierarchyList" v-if="hierarchyList.length"
+                <v-select label="Topic" v-model="hierarchy" :items="hierarchyList" v-if="hierarchyList.length"
                   hint="Topic hierarchy for ingestion of data" persistent-hint></v-select>
               </v-card-item>
-  
+
             </v-form>
             <v-card-item>
+              <!-- Show switch above the submit button on mobile -->
+              <v-switch class="hidden-sm-and-up"
+                :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !hierarchy"
+                v-model="notificationsOnPending" label="Publish on WIS2" color="primary" hide-details></v-switch>
               <div class="button-align">
                 <v-btn :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !hierarchy"
                   append-icon="mdi-cloud-upload" :loading="loading" @click="submit">Submit
@@ -43,7 +55,9 @@
                     <v-progress-linear indeterminate></v-progress-linear>
                   </template>
                 </v-btn>
-                <v-switch :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !hierarchy"
+                <!-- Show switch on the right of submit button on tablet and desktop -->
+                <v-switch class="hidden-xs"
+                  :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !hierarchy"
                   v-model="notificationsOnPending" label="Publish on WIS2" color="primary" hide-details></v-switch>
               </div>
             </v-card-item>
@@ -129,13 +143,28 @@
 
             </template>
             <v-list-item v-for="(file_url, index) in result.files" :key="index">
-              <div class="file-actions">
-                <div>
-                  {{ getFileName(file_url) }}
-                </div>
+              <!-- Place download and inspect buttons on the right of the file names for tablet and desktop -->
+              <div class="hidden-xs">
                 <div class="file-actions">
-                  <DownloadButton :fileUrl="file_url" />
-                  <InspectBufrButton :fileUrl="file_url" />
+                  <div>
+                    {{ getFileName(file_url) }}
+                  </div>
+                  <div class="file-actions">
+                    <DownloadButton :fileUrl="file_url" />
+                    <InspectBufrButton :fileUrl="file_url" />
+                  </div>
+                </div>
+              </div>
+              <!-- Place download and inspect buttons below the file names for mobile -->
+              <div class="hidden-sm-and-up">
+                <div>
+                  <div>
+                    {{ getFileName(file_url) }}
+                  </div>
+                  <div class="file-actions">
+                    <DownloadButton :fileUrl="file_url" />
+                    <InspectBufrButton :fileUrl="file_url" />
+                  </div>
                 </div>
               </div>
               <v-divider v-if="index < result.files.length - 1" class="divider-spacing"></v-divider>
@@ -165,10 +194,6 @@ export default defineComponent({
   name: 'RoleForm',
   props: {
     broker: {
-      type: String,
-      default: ''
-    },
-    channel: {
       type: String,
       default: ''
     },
@@ -452,6 +477,11 @@ export default defineComponent({
   font-weight: 700;
 }
 
+.small-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
 .calendar-box {
   width: 250px;
 }
@@ -516,5 +546,4 @@ export default defineComponent({
 
 .divider-spacing {
   margin-top: 10px;
-}
-</style>
+}</style>

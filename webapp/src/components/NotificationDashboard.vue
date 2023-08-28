@@ -1,119 +1,233 @@
 <template>
   <!-- Dashboard -->
   <v-row>
-    <v-col cols="12">
-
-      <v-row>
-        <!-- ApexCharts bar graph for latest notifications received -->
-        <v-col cols="6">
-          <v-fade-transition appear>
-            <v-card>
-
-              <v-card-title class="text-center">
-                Latest Notifcations
-              </v-card-title>
-              <v-col class="text-center">
-
-                <v-btn variant="outlined" density="compact" class="mr-3" id="one_hour" @click="updateData('one_hour')"
-                  :class="selectedZoom === 'one_hour' ? 'selected-zoom' : 'secondary'">
-                  1H
-                </v-btn>
-
-                <v-btn variant="outlined" density="compact" class="mr-3" id="three_hours"
-                  @click="updateData('three_hours')"
-                  :class="selectedZoom === 'three_hours' ? 'selected-zoom' : 'secondary'">
-                  3H
-                </v-btn>
-
-                <v-btn variant="outlined" density="compact" class="mr-3" id="six_hours" @click="updateData('six_hours')"
-                  :class="selectedZoom === 'six_hours' ? 'selected-zoom' : 'secondary'">
-                  6H
-                </v-btn>
-
-                <v-btn variant="outlined" density="compact" class="mr-3" id="twenty_four_hours"
-                  @click="updateData('twenty_four_hours')"
-                  :class="selectedZoom === 'twenty_four_hours' ? 'selected-zoom' : 'secondary'">
-                  24H
-                </v-btn>
+      <v-col cols="12">
+  
+        <!-- For desktop and laptop users -->
+        <v-row class="hidden-md-and-down">
+          <!-- ApexCharts bar graph for latest notifications received -->
+          <v-col cols="6">
+            <v-fade-transition appear>
+              <v-card>
+  
+                <v-card-title class="text-center">
+                  Notifcations
+                </v-card-title>
+  
+                <vue-apex-charts ref="chart" type="bar" height="400" :options="chartOptions"
+                  :series="chartSeries"></vue-apex-charts>
+              </v-card>
+            </v-fade-transition>
+          </v-col>
+  
+          <v-col cols="6">
+            <!-- Top right -->
+            <v-row>
+              <!-- Total number of publications submitted in the last hour -->
+              <v-col cols="6">
+                <v-fade-transition appear>
+  
+                  <v-card>
+                    <v-card-title class="text-center text-wrap">
+                      Total publications in last hour:
+                    </v-card-title>
+                    <h1 class="text-center">{{ summaryStats.totalFilesLastHour }}</h1>
+                  </v-card>
+                </v-fade-transition>
               </v-col>
-
-              <vue-apex-charts ref="chart" type="bar" height="400" :options="chartOptions"
-                :series="chartSeries"></vue-apex-charts>
-            </v-card>
-          </v-fade-transition>
-        </v-col>
-
-        <v-col cols="6">
-          <!-- Top right -->
-          <v-row>
-            <!-- Total number of BUFR files submitted in the last hour -->
-            <v-col cols="6">
-              <v-fade-transition appear>
-
-                <v-card>
-                  <v-card-title class="text-center">
-                    Total BUFR files in last hour:
-                  </v-card-title>
-                  <h1 class="text-center">{{ summaryStats.totalFilesLastHour }}</h1>
-                </v-card>
-              </v-fade-transition>
-            </v-col>
-
-            <!-- Total number of BUFR files submitted in the last 24 hours -->
-            <v-col cols="6">
-              <v-fade-transition appear>
-                <v-card>
-                  <v-card-title class="text-center">
-                    Total BUFR files in last 24 hours:
-                  </v-card-title>
-                  <h1 class="text-center">{{ summaryStats.totalFilesLastDay }}</h1>
-                </v-card>
-              </v-fade-transition>
-            </v-col>
-          </v-row>
-
-          <!-- Bottom right -->
-          <!-- Latest BUFR files published, ready to download and inspect -->
-          <v-row>
-            <v-col cols="12">
-              <v-fade-transition appear>
-                <v-card>
-                  <v-card-title class="text-left">
-                    Published Data
-                  </v-card-title>
-                  <!-- Limit the size of the list and add scroll feature -->
-                  <div class="scrollable-file-list">
-                    <v-text-field placeholder="Search for a file..." clearable/>
-                    <v-list-item v-for="(file_url, index) in notificationData.fileUrls.reverse()" :key="index">
-                      <div class="file-actions">
-                        <div>
-                          <!-- Display the timestamp -->
-                          <div class="secondary">
-                            {{ formatTime(notificationData.publishTimes[notificationData.publishTimes.length - 1 - index])
-                            }}
-                          </div>
-
-                          <!-- Display the file name -->
-                          <div>
-                            {{ getFileName(file_url) }}
-                          </div>
-                        </div>
+  
+              <!-- Total number of publications submitted in the last 24 hours -->
+              <v-col cols="6">
+                <v-fade-transition appear>
+                  <v-card>
+                    <v-card-title class="text-center text-wrap">
+                      Total publications in last 24 hours:
+                    </v-card-title>
+                    <h1 class="text-center">{{ summaryStats.totalFilesLastDay }}</h1>
+                  </v-card>
+                </v-fade-transition>
+              </v-col>
+            </v-row>
+  
+            <!-- Bottom right -->
+            <!-- Latest files published, ready to download and inspect -->
+            <v-row>
+              <v-col cols="12">
+                <v-fade-transition appear>
+                  <v-card>
+                    <v-card-title class="text-left">
+                      Published Data
+                    </v-card-title>
+                    <!-- Limit the size of the list and add scroll feature -->
+                    <div class="scrollable-file-list">
+                      <v-text-field v-model="fileSearch" placeholder="Search for a file..." clearable />
+                      <v-list-item v-for="(file_url, index) in filteredFileUrls.reverse()" :key="index">
                         <div class="file-actions">
-                          <DownloadButton :fileUrl="file_url" />
-                          <InspectBufrButton :fileUrl="file_url" />
+                          <div>
+                            <!-- Display the timestamp -->
+                            <div class="secondary">
+                              {{ formatTime(filteredPublishTimes[filteredPublishTimes.length - 1 -index])
+                              }}
+                            </div>
+  
+                            <!-- Display the file name -->
+                            <div>
+                              {{ getFileName(file_url) }}
+                            </div>
+                          </div>
+                          <div class="file-actions">
+                            <DownloadButton :fileUrl="file_url" />
+                            <InspectBufrButton :fileUrl="file_url" />
+                          </div>
                         </div>
-                      </div>
-                      <v-divider v-if="index < notificationData.fileUrls.length - 1" class="divider-spacing"></v-divider>
-                    </v-list-item>
-                  </div>
-                </v-card>
-              </v-fade-transition>
-            </v-col>
-          </v-row>
+                        <v-divider v-if="index < notificationData.fileUrls.length - 1" class="divider-spacing"></v-divider>
+                      </v-list-item>
+                    </div>
+                  </v-card>
+                </v-fade-transition>
+              </v-col>
+            </v-row>
+  
+          </v-col>
+        </v-row>
 
-        </v-col>
-      </v-row>
-    </v-col>
+        <!-- For mobile and tablet users -->
+        <v-row class="hidden-lg-and-up">
+          <!-- ApexCharts bar graph for latest notifications received -->
+          <v-col cols="12">
+            <v-fade-transition appear>
+              <v-card>
+  
+                <v-card-title class="text-center">
+                  Notifcations
+                </v-card-title>
+  
+                <vue-apex-charts ref="chart" type="bar" height="400" :options="chartOptions"
+                  :series="chartSeries"></vue-apex-charts>
+              </v-card>
+            </v-fade-transition>
+          </v-col>
+  
+          <v-col cols="12">
+            <!-- Below ApexCharts, include more data -->
+
+            <!-- Mobile view (publication statistics aligned vertically) -->
+            <v-row class="hidden-sm-and-up">
+              <!-- Total number of publications submitted in the last hour -->
+              <v-col cols="12">
+                <v-fade-transition appear>
+                  <v-card>
+                    <v-card-title class="text-center text-wrap">
+                      Total publications in last hour:
+                    </v-card-title>
+                    <h1 class="text-center">{{ summaryStats.totalFilesLastHour }}</h1>
+                  </v-card>
+                </v-fade-transition>
+              </v-col>
+  
+              <!-- Total number of publications submitted in the last 24 hours -->
+              <v-col cols="12">
+                <v-fade-transition appear>
+                  <v-card>
+                    <v-card-title class="text-center text-wrap">
+                      Total publications in last 24 hours:
+                    </v-card-title>
+                    <h1 class="text-center">{{ summaryStats.totalFilesLastDay }}</h1>
+                  </v-card>
+                </v-fade-transition>
+              </v-col>
+            </v-row>
+
+            <!-- Tablet view (publication statistics aligned horizontally) -->
+            <v-row class="hidden-xs">
+              <!-- Total number of publications submitted in the last hour -->
+              <v-col cols="6">
+                <v-fade-transition appear>
+                  <v-card>
+                    <v-card-title class="text-center text-wrap">
+                      Total publications in last hour:
+                    </v-card-title>
+                    <h1 class="text-center">{{ summaryStats.totalFilesLastHour }}</h1>
+                  </v-card>
+                </v-fade-transition>
+              </v-col>
+  
+              <!-- Total number of publications submitted in the last 24 hours -->
+              <v-col cols="6">
+                <v-fade-transition appear>
+                  <v-card>
+                    <v-card-title class="text-center text-wrap">
+                      Total publications in last 24 hours:
+                    </v-card-title>
+                    <h1 class="text-center">{{ summaryStats.totalFilesLastDay }}</h1>
+                  </v-card>
+                </v-fade-transition>
+              </v-col>
+            </v-row>
+  
+            <!-- Latest files published, ready to download and inspect -->
+            <v-row>
+              <v-col cols="12">
+                <v-fade-transition appear>
+                  <v-card>
+                    <v-card-title class="text-left">
+                      Published Data
+                    </v-card-title>
+                    <!-- Limit the size of the list and add scroll feature -->
+                    <div class="scrollable-file-list">
+                      <v-text-field v-model="fileSearch" placeholder="Search for a file..." clearable />
+                      <v-list-item v-for="(file_url, index) in filteredFileUrls.reverse()" :key="index">
+                        <!-- Tablet view (download and inspect to the right of file name) -->
+                        <div class="hidden-sm-and-down">
+                          <div class="file-actions">
+                            <div>
+                              <!-- Display the timestamp -->
+                              <div class="secondary">
+                                {{ formatTime(filteredPublishTimes[filteredPublishTimes.length - 1 -index])
+                                }}
+                              </div>
+    
+                              <!-- Display the file name -->
+                              <div>
+                                {{ getFileName(file_url) }}
+                              </div>
+                            </div>
+                            <div class="file-actions">
+                              <DownloadButton :fileUrl="file_url" />
+                              <InspectBufrButton :fileUrl="file_url" />
+                            </div>
+                          </div>
+                        </div>
+                        <!-- Mobile view (download and inspect below file name)-->
+                        <div class="hidden-md-and-up">
+                          <div>
+                            <!-- Display the timestamp -->
+                            <div class="secondary">
+                              {{ formatTime(filteredPublishTimes[filteredPublishTimes.length - 1 -index])
+                              }}
+                            </div>
+  
+                            <!-- Display the file name -->
+                            <div>
+                              {{ getFileName(file_url) }}
+                            </div>
+                          </div>
+                          <div class="file-actions">
+                            <DownloadButton :fileUrl="file_url" />
+                            <InspectBufrButton :fileUrl="file_url" />
+                          </div>
+                        </div>
+                        <v-divider v-if="index < notificationData.fileUrls.length - 1" class="divider-spacing"></v-divider>
+                      </v-list-item>
+                    </div>
+                  </v-card>
+                </v-fade-transition>
+              </v-col>
+            </v-row>
+  
+          </v-col>
+        </v-row>
+      </v-col>
   </v-row>
 </template>
 
@@ -234,7 +348,9 @@ export default defineComponent({
           name: 'BUFR files published',
           data: []
         }
-      ]
+      ],
+      // Search parameter for published files
+      fileSearch: null
     }
   },
   computed: {
@@ -310,6 +426,35 @@ export default defineComponent({
           }
         }
       }
+    },
+    // Filter the file URLs in published data by the search parameter
+    filteredFileUrls() {
+      let fileUrls = this.notificationData.fileUrls;
+      if (this.fileSearch) {
+        fileUrls = fileUrls.filter(url => {
+          const fileName = this.getFileName(url);
+          return fileName.includes(this.fileSearch);
+        });
+      }
+      // Return the urls filtered by the search
+      return fileUrls;
+    },
+    // Filter the associated publish times by the search parameter
+    filteredPublishTimes() {
+      let publishTimes = this.notificationData.publishTimes;
+
+      if (this.fileSearch) {
+        return publishTimes.filter((_, index) => {
+          const fileUrl = this.notificationData.fileUrls[index];
+          const fileName = this.getFileName(fileUrl);
+          return fileName.includes(this.fileSearch);
+        });
+      }
+
+      else {
+        return publishTimes;
+      }
+
     }
   },
   methods: {
@@ -328,7 +473,7 @@ export default defineComponent({
           f: 'json', // Specify the response format as JSON
           data_id: `${this.topicHierarchy}%`, // Filter by data_id that starts with the provided topic hierarchy
           sortBy: '-datetime', // Sort by time in descending order
-          limit: 9999, // Limit the results to the last 9999 features
+          limit: 50, // Limit the results to the last 9999 features
           datetime: `${this.oneDayAgo.toISOString()}/${this.now.toISOString()}`, // Filter to last 24 hours
         });
         // Make the HTTP GET request
@@ -513,9 +658,12 @@ export default defineComponent({
     },
     // Shows the HH:mm timestamp for the newest notifications
     formatTime(timestamp) {
+      const year = timestamp.getFullYear();
+      const month = String(timestamp.getMonth() + 1).padStart(2, '0');
+      const day = String(timestamp.getDate()).padStart(2, '0');
       const hours = String(timestamp.getHours()).padStart(2, '0');
       const minutes = String(timestamp.getMinutes()).padStart(2, '0');
-      return `${hours}:${minutes}`;
+      return `${year}/${month}/${day} ${hours}:${minutes}`;
     },
     // Gets the filename from the canonical href
     getFileName(url) {
