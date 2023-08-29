@@ -38,7 +38,7 @@
 
               <!-- Topic hierarchy selection -->
               <v-card-item>
-                <v-select label="Topic" v-model="hierarchy" :items="hierarchyList" v-if="hierarchyList.length"
+                <v-select label="Topic" v-model="topic" :items="topicList" v-if="topicList.length"
                   hint="Topic hierarchy for ingestion of data" persistent-hint></v-select>
               </v-card-item>
 
@@ -46,10 +46,10 @@
             <v-card-item>
               <!-- Show switch above the submit button on mobile -->
               <v-switch class="hidden-sm-and-up"
-                :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !hierarchy"
+                :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !topic"
                 v-model="notificationsOnPending" label="Publish on WIS2" color="primary" hide-details></v-switch>
               <div class="button-align">
-                <v-btn :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !hierarchy"
+                <v-btn :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !topic"
                   append-icon="mdi-cloud-upload" :loading="loading" @click="submit">Submit
                   <template v-slot:loader>
                     <v-progress-linear indeterminate></v-progress-linear>
@@ -57,7 +57,7 @@
                 </v-btn>
                 <!-- Show switch on the right of submit button on tablet and desktop -->
                 <v-switch class="hidden-xs"
-                  :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !hierarchy"
+                  :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !topic"
                   v-model="notificationsOnPending" label="Publish on WIS2" color="primary" hide-details></v-switch>
               </div>
             </v-card-item>
@@ -218,9 +218,9 @@ export default defineComponent({
       bulletin: "", // FM 12 data
       aaxxPresent: true, // Boolean to check if AAXX is in bulletin
       equalsPresent: true, // Boolean to check if = delimiter is in bulletin
-      hierarchyList: ["test1", "test2", "test3"], // List of topic hierarchies 
+      topicList: ["test1", "test2", "test3"], // List of topic hierarchies 
       // before they are obtained from discovery metadata
-      hierarchy: "", // Topic hierarchy selected by user
+      topic: "", // Topic hierarchy selected by user
       notificationsOnPending: true, // Realtime variable for if user has 
       // selected notifications or not
       notificationsOn: true, // Variable that updates to the pending variable 
@@ -259,14 +259,14 @@ export default defineComponent({
       this.equalsPresent = this.bulletin.includes('=');
     },
     // Allows us to get the current topic hierarchies available
-    async fetchHierarchy() {
+    async fetchTopics() {
       const apiUrl = `${import.meta.env.VITE_API_URL}/collections/discovery-metadata/items?f=json`;
       // check if TEST=True is set in .env file
       console.log(import.meta.env);
       // check if TEST_MODE is set in .env file or if VITE_API_URL is not set
       if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
         console.log("TEST_MODE is enabled");
-        this.hierachyList = ["test1", "test2", "test3"];
+        this.topicList = ["test1", "test2", "test3"];
       }
       else {
         console.log("Fetching topic hierarchy from:", apiUrl);
@@ -277,14 +277,15 @@ export default defineComponent({
           }
           else {
             const data = await response.json();
+            // If the features object is in the data
             if (data.features) {
               // Use Array.map to create a new array of the topic hierarchies
-              this.hierarchyList = data.features.map(feature => {
+              this.topicList = data.features.map(feature => {
                 if (feature.properties && feature.properties['wmo:topicHierarchy']) {
                   return feature.properties['wmo:topicHierarchy']
                 }
               });
-              console.log(this.hierarchyList)
+              console.log(this.topicList)
             }
             else {
               console.error("API response is not an object");
@@ -363,7 +364,7 @@ export default defineComponent({
           year: this.date.year, // Year of data
           month: this.date.month + 1, // Month of data, +1 as JS starts 
           // from 0 for months
-          channel: this.hierarchy, // Topic hierarchy
+          channel: this.topic, // Topic hierarchy
           notify: this.notificationsOn // Boolean for WIS2 notifications
         }
       };
@@ -466,7 +467,7 @@ export default defineComponent({
     DownloadButton
   },
   mounted() {
-    this.fetchHierarchy();
+    this.fetchTopics();
   }
 });
 </script>

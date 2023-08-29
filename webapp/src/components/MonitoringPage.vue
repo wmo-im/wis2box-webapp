@@ -1,15 +1,17 @@
 <template>
   <v-card-title class="big-title">Monitoring Dashboard</v-card-title>
 
-  <!-- Drop down selection for the dataset the user wants to monitor -->
-  <v-select label="Choose a dataset to monitor" v-model="selectedTitle" :items="titles" v-if="titles.length"></v-select>
+  <v-card-item>
+    <!-- Drop down selection for the topic the user wants to monitor -->
+    <v-select label="Choose a topic to monitor" v-model="selectedTopic" :items="topics" v-if="topics.length"></v-select>
+    
+    <!-- Search bar to search for a WSI and only monitor that station -->
+    <v-text-field label="Search a station to monitor (optional)" clearable />
+  </v-card-item>
 
-  <!-- Search bar to search for a WSI and only monitor that station -->
-  <v-text-field label="Search a station to monitor (optional)" clearable/>
-  
-  <!-- Dashboard visualising the notifications of the dataset selected -->
-  <NotificationDashboard :topicHierarchy="datasets[selectedTitle]" v-if="selectedTitle"/>
 
+  <!-- Dashboard visualising the notifications of the topic selected -->
+  <NotificationDashboard :topicHierarchy="selectedTopic" v-if="selectedTopic" />
 </template>
 
 <script>
@@ -26,30 +28,20 @@ export default defineComponent({
   data() {
     return {
       // Options for user to filter the dashboard (surface, upper air, etc)
-      datasets: {},
+      topics: [],
       // Title selected by the user, used to get the topic hierarchy
-      // from the datasets dictionary
-      selectedTitle: null
-    }
-  },
-  computed: {
-    // Get titles (the keys) from datasets dictionary by using Object.keys,
-    // used for the selection at the top of the page
-    titles() {
-      return Object.keys(this.datasets);
+      // from the topics array
+      selectedTopic: null
     }
   },
   methods: {
     // Method to get topic hierarchies and corresponding titles from the 
-    // discovery metadata, in order to allow the user to select the dataset
+    // discovery metadata, in order to allow the user to select the topic
     // dsisplayed in the dashboard
-    async getDatasets() {
+    async getTopics() {
       if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
-        console.log("Use test datasets");
-        this.datasets = {
-          "Synoptic weather observations from Romania": "rou/rnimh/data/core/weather/surface-based-observations/synop",
-          "Surface weather observations from Malawi": "mwi/mwi_met_centre/data/core/weather/surface-based-observations/synop"
-        };
+        console.log("Use test topics");
+        this.topics = ["rou/rnimh/data/core/weather/surface-based-observations/synop", "mwi/mwi_met_centre/data/core/weather/surface-based-observations/synop"];
       }
       else {
         const apiUrl = `${import.meta.env.VITE_API_URL}/collections/discovery-metadata/items?f=json`;
@@ -63,15 +55,13 @@ export default defineComponent({
             const data = await response.json();
             // If the features object is in the data
             if (data.features) {
-              // Populate the datasets dictionary with the titles as keys
-              // and corresponding topic hierarchies as items
-              this.datasets = data.features.reduce((acc, feature) => {
-                acc[feature.properties.title] = feature.properties["wmo:topicHierarchy"];
-                // acc: accumulator object, used to iteratively build
-                // this datasets dictionary
-                return acc;
-              }, {});
-              console.log("Datasets:", this.datasets);
+              // Use Array.map to create a new array of the topic hierarchies
+              this.topics = data.features.map(feature => {
+                if (feature.properties && feature.properties['wmo:topicHierarchy']) {
+                  return feature.properties['wmo:topicHierarchy']
+                }
+              });
+              console.log("Topics:", this.topics);
             }
             else {
               console.error("API response does not have features property");
@@ -85,8 +75,8 @@ export default defineComponent({
     }
   },
   mounted() {
-    // Get topic hierarchies and titles for the user to select a dataset
-    this.getDatasets();
+    // Get topic hierarchies and titles for the user to select a topic
+    this.getTopics();
   }
 });  
 </script>
