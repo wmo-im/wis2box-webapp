@@ -17,7 +17,7 @@ jobs:
         run: docker-compose -f test/docker-compose.yml up -d
 
       - name: Wait for service to start
-        run: sleep 20
+        run: sleep 25
 
       - name: Check status code
         run: |
@@ -28,3 +28,9 @@ jobs:
             echo ${status_code}
             exit 1
           fi
+      
+      - name: failed tests 🚩
+        if: ${{ failure() }}
+        run: |
+          echo "check docker logs"
+          docker-compose -f test/docker-compose.yml logs
