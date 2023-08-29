@@ -116,7 +116,7 @@
 
           <!-- OUTPUT BUFR -->
           <!-- BUFR files drop-down if there are any output files -->
-          <v-list-group v-if="result.files && result.files.length > 0" ref="fileList" value="Files"
+          <v-list-group v-if="result.data_items && result.data_items.length > 0" ref="fileList" value="Files"
             @click="scrollToRef('fileList')">
             <template v-slot:activator="{ props }">
               <v-list-item v-bind="props" prepend-icon="mdi-check-circle">
@@ -124,21 +124,25 @@
                   <v-icon color="#00BD9D"></v-icon>
                 </template>
                 <!-- If number of BUFR files > 0, set text to green -->
-                <span :style="{ color: '#00BD9D' }">Output BUFR files: {{ result.files.length }}</span>
+                <span :style="{ color: '#00BD9D' }">Output BUFR files: {{ result.data_items.length }}</span>
               </v-list-item>
 
             </template>
-            <v-list-item v-for="(file_url, index) in result.files" :key="index">
+            <v-list-item v-for="(data_item, index) in result.data_items" :key="index">
               <div class="file-actions">
                 <div>
-                  {{ getFileName(file_url) }}
+                  {{ data_item.filename }}
                 </div>
-                <div class="file-actions">
-                  <DownloadButton :fileUrl="file_url" />
-                  <InspectBufrButton :fileUrl="file_url" />
+                <div class="file-actions" v-if="data_item.file_url">
+                    <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url"/>
+                    <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url"/>
+                </div>
+                <div class="file-actions" v-if="data_item.data">
+                    <DownloadButton :fileName="data_item.filename" :data="data_item.data"/>
+                    <InspectBufrButton :fileName="data_item.filename" :data="data_item.data"/>
                 </div>
               </div>
-              <v-divider v-if="index < result.files.length - 1" class="divider-spacing"></v-divider>
+              <v-divider v-if="index < result.data_items.length - 1" class="divider-spacing"></v-divider>
             </v-list-item>
           </v-list-group>
 
@@ -236,15 +240,13 @@ export default defineComponent({
     // Allows us to get the current topic hierarchies available
     async fetchHierarchy() {
       const apiUrl = `${import.meta.env.VITE_API_URL}/collections/discovery-metadata/items?f=json`;
-      // check if TEST=True is set in .env file
-      console.log(import.meta.env);
       // check if TEST_MODE is set in .env file or if VITE_API_URL is not set
       if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
         console.log("TEST_MODE is enabled");
         this.hierachyList = ["test1", "test2", "test3"];
       }
       else {
-        console.log("Fetching topic hierarchy from:", apiUrl);
+        //console.log("Fetching topic hierarchy from:", apiUrl);
         try {
           const response = await fetch(apiUrl);
           if (!response.ok) {
@@ -259,7 +261,7 @@ export default defineComponent({
                   return feature.properties['wmo:topicHierarchy']
                 }
               });
-              console.log(this.hierarchyList)
+              //console.log(this.hierarchyList)
             }
             else {
               console.error("API response is not an object");
@@ -285,9 +287,15 @@ export default defineComponent({
         "result": "Success",
         "messages transformed": 2,
         "messages published": 2,
-        "files": [
-          "http://3.73.37.35/data/2023-12-17/wis/synop/test/WIGOS_0-20000-0-15015_20231217T120000.bufr4",
-          "http://3.73.37.35/data/2023-12-17/wis/synop/test/WIGOS_0-20000-0-15020_20231217T120000.bufr4"
+        "data_items": [
+          {
+            "file_url": "http://3.127.235.197/data/2023-01-19/wis/synop/test/WIGOS_0-20000-0-64400_20230119T060000.bufr4",
+            "filename": "WIGOS_0-20000-0-64400_20230119T060000.bufr4"
+          },
+          {
+            "data": "QlVGUgABgAQAABYAAAAAAAAAAAJuHgAH5wETBgAAAAALAAABgMGWx2AAAVMABOIAAANjQ0MDAAAAAAAAAAAAAAAIDIGxoaGBgAAAAAAAAAAAAAAAAAAAAPzimYBA/78kmTlBBU//////////////////////////////+dUnxn1P///////////26vbYOl////////////////////////////////////////////////////////////////AR////gJH///+T/x/+R/yf////////////7///v9f/////////////////////////////////+J/b/gAff2/4Dz/X/////////////////////////////////////7+kAH//v6QANnH////////////9+j//////////////v0f//////f//+/R/+////////////////////fo//////////////////3+oAP///////////////////8A3Nzc3",
+            "filename": "WIGOS_0-20000-0-64400_20230119T060000.bufr4"
+          }
         ],
         "warnings": [],
         "errors": []
@@ -300,10 +308,17 @@ export default defineComponent({
     testPartialSuccessResult() {
       const testData = {
         "result": "Partial Success",
-        "messages transformed": 1,
+        "messages transformed": 2,
         "messages published": 1,
-        "files": [
-          "http://3.73.37.35/data/2023-12-17/wis/synop/test/WIGOS_0-20000-0-15015_20231217T120000.bufr4"
+        "data_items": [
+          {
+            "file_url": "http://3.127.235.197/data/2023-01-19/wis/synop/test/WIGOS_0-20000-0-64400_20230119T060000.bufr4",
+            "filename": "WIGOS_0-20000-0-64400_20230119T060000.bufr4"
+          },
+          {
+            "data": "QlVGUgABgAQAABYAAAAAAAAAAAJuHgAH5wETBgAAAAALAAABgMGWx2AAAVMABOIAAANjQ0MDAAAAAAAAAAAAAAAIDIGxoaGBgAAAAAAAAAAAAAAAAAAAAPzimYBA/78kmTlBBU//////////////////////////////+dUnxn1P///////////26vbYOl////////////////////////////////////////////////////////////////AR////gJH///+T/x/+R/yf////////////7///v9f/////////////////////////////////+J/b/gAff2/4Dz/X/////////////////////////////////////7+kAH//v6QANnH////////////9+j//////////////v0f//////f//+/R/+////////////////////fo//////////////////3+oAP///////////////////8A3Nzc3",
+            "filename": "WIGOS_0-20000-0-64400_20230119T060000.bufr4"
+          }
         ],
         "warnings": [
           "Missing station height for station 15090",
@@ -320,7 +335,7 @@ export default defineComponent({
         "result": "Failure",
         "messages transformed": 0,
         "messages published": 0,
-        "files": [],
+        "data_items": [],
         "warnings": [],
         "errors": [
           "Error converting to BUFR: local variable 'messages' referenced before assignment",
@@ -345,8 +360,8 @@ export default defineComponent({
 
       const synopUrl = `${import.meta.env.VITE_API_URL}/processes/wis2box-synop-process/execution`
 
-      console.log(payload);
-      console.log(synopUrl);
+      //console.log(payload);
+      //console.log(synopUrl);
       this.input = payload;
 
       const response = await fetch(synopUrl, {
@@ -369,8 +384,8 @@ export default defineComponent({
       } else {
         const data = await response.json();
         this.result = data;
-        console.log("Result:"); // TODO: Remove this line
-        console.log(this.result); // TODO: Remove this line
+        //console.log("Result:"); // TODO: Remove this line
+        //console.log(this.result); // TODO: Remove this line
       }
     },
     // Method for when the user presses the submit button, including
@@ -401,11 +416,6 @@ export default defineComponent({
 
       // End loading animation
       this.loading = false;
-    },
-    // Get filename from output BUFR files so it can be displayed on screen
-    getFileName(url) {
-      const urlParts = url.split('/');
-      return urlParts[urlParts.length - 1];
     }
   },
   watch: {
