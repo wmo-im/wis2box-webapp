@@ -142,7 +142,7 @@
               </v-list-item>
 
             </template>
-            <v-list-item v-for="(file_url, index) in result.files" :key="index">
+            <v-list-item v-for="(data_item, index) in result.data_items" :key="index">
               <!-- Place download and inspect buttons on the right of the file names for tablet and desktop -->
               <div class="hidden-xs">
                 <div class="file-actions">
