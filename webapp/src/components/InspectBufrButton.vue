@@ -26,9 +26,19 @@ import { VCard, VCardTitle, VCardText, VCardItem, VForm, VTextarea, VBtn, VSelec
 export default defineComponent({
     name: 'InspectBufrButton',
     props: {
-        fileUrl: {
+        fileName: {
             type: String,
             required: true,
+        },
+        fileUrl: {
+            type: String,
+            required: false,
+            default: '',
+        },
+        data: {
+            type: String,
+            required: false,
+            default: '',
         },
     },
     components: {
@@ -42,8 +52,6 @@ export default defineComponent({
         VSelect,
     },
     setup(props) {
-        // Extract the file name from the URL
-        const fileName = props.fileUrl.split('/').pop();
         const itemsInBufr = ref([]);
         const dialog = ref(false);
         // function to create new object and to add to store
@@ -91,11 +99,20 @@ export default defineComponent({
         const callInspect = async () => {
             // set items_from_bufr back to empty array
             itemsInBufr.value = [];
-            var payload = {
+            let payload;
+            if (props.fileUrl !== '') {
+              payload = {
                 inputs: {
-                    data_url: props.fileUrl
+                  data_url: props.fileUrl
                 }
-            };      
+              };
+            } else {
+              payload = {
+                inputs: {
+                  data: props.data
+                }
+              };
+            }  
             const inspectUrl = `${import.meta.env.VITE_API_URL}/processes/wis2box-bufr2geojson/execution`
             const response = await fetch(inspectUrl, {
                 method: 'POST',
@@ -110,7 +127,7 @@ export default defineComponent({
                 console.error('HTTP error', response.status);
             } else {
                 const data = await response.json();
-                console.log(data);
+                //console.log(data);
                 if (data.items) {
                 // Use Array.map to create a new array of the items in the bufr file
                 itemsInBufr.value = data.items.map(item => {
@@ -118,15 +135,15 @@ export default defineComponent({
                     return item.properties;
                 }
                 });
-                console.log(itemsInBufr.value);
+                //console.log(itemsInBufr.value);
                 }
             }
         };
         return {
-            fileName,
             itemsInBufr,
             inspectFile,
-            dialog
+            dialog,
+            fileName: props.fileName
         };
     },
 });  
