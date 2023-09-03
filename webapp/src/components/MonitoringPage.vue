@@ -5,8 +5,6 @@
     <!-- Drop down selection for the topic the user wants to monitor -->
     <v-select label="Choose a topic to monitor" v-model="selectedTopic" :items="topics" v-if="topics.length"></v-select>
     
-    <!-- Search bar to search for a WSI and only monitor that station -->
-    <v-text-field label="Search a station to monitor (optional)" clearable />
   </v-card-item>
 
 

@@ -11,11 +11,13 @@
               <v-card>
   
                 <v-card-title class="text-center">
-                  Notifcations
+                  Notifications
                 </v-card-title>
   
-                <vue-apex-charts ref="chart" type="bar" height="400" :options="chartOptions"
-                  :series="chartSeries"></vue-apex-charts>
+                <vue-apex-charts ref="chart" type="bar" height="400" 
+                  :options="chartOptions"
+                  :series="chartSeries">
+                </vue-apex-charts>
               </v-card>
             </v-fade-transition>
           </v-col>
@@ -60,27 +62,25 @@
                     </v-card-title>
                     <!-- Limit the size of the list and add scroll feature -->
                     <div class="scrollable-file-list">
-                      <v-text-field v-model="fileSearch" placeholder="Search for a file..." clearable />
-                      <v-list-item v-for="(file_url, index) in filteredFileUrls.reverse()" :key="index">
+                      <v-list-item v-for="(message, index) in messages" :key="index">
                         <div class="file-actions">
                           <div>
                             <!-- Display the timestamp -->
                             <div class="secondary">
-                              {{ formatTime(filteredPublishTimes[filteredPublishTimes.length - 1 -index])
-                              }}
+                              {{ formatTime(message.pubtime)}}
                             </div>
   
                             <!-- Display the file name -->
                             <div>
-                              {{ getFileName(file_url) }}
+                              {{ message.filename }}
                             </div>
                           </div>
                           <div class="file-actions">
-                            <DownloadButton :fileUrl="file_url" />
-                            <InspectBufrButton :fileUrl="file_url" />
+                            <DownloadButton :fileUrl="messages.canonical_url" :fileName=message.filename />
+                            <InspectBufrButton :fileUrl="messages.canonical_url" :fileName=message.filename />
                           </div>
                         </div>
-                        <v-divider v-if="index < notificationData.fileUrls.length - 1" class="divider-spacing"></v-divider>
+                        <v-divider v-if="index < messages.length - 1" class="divider-spacing"></v-divider>
                       </v-list-item>
                     </div>
                   </v-card>
@@ -99,7 +99,7 @@
               <v-card>
   
                 <v-card-title class="text-center">
-                  Notifcations
+                  Notifications
                 </v-card-title>
   
                 <vue-apex-charts ref="chart" type="bar" height="400" :options="chartOptions"
@@ -175,26 +175,24 @@
                     </v-card-title>
                     <!-- Limit the size of the list and add scroll feature -->
                     <div class="scrollable-file-list">
-                      <v-text-field v-model="fileSearch" placeholder="Search for a file..." clearable />
-                      <v-list-item v-for="(file_url, index) in filteredFileUrls.reverse()" :key="index">
+                      <v-list-item v-for="(message, index) in messages" :key="index">
                         <!-- Tablet view (download and inspect to the right of file name) -->
                         <div class="hidden-sm-and-down">
                           <div class="file-actions">
                             <div>
                               <!-- Display the timestamp -->
                               <div class="secondary">
-                                {{ formatTime(filteredPublishTimes[filteredPublishTimes.length - 1 -index])
-                                }}
+                                {{ formatTime(message.pubtime)}}
                               </div>
     
                               <!-- Display the file name -->
                               <div>
-                                {{ getFileName(file_url) }}
+                                {{ message.filename }}
                               </div>
                             </div>
                             <div class="file-actions">
-                              <DownloadButton :fileUrl="file_url" />
-                              <InspectBufrButton :fileUrl="file_url" />
+                              <DownloadButton :fileUrl="message.canonical_url" :fileName=message.filename />
+                              <InspectBufrButton :fileUrl="message.canonical_url" :fileName=message.filename />
                             </div>
                           </div>
                         </div>
@@ -203,21 +201,20 @@
                           <div>
                             <!-- Display the timestamp -->
                             <div class="secondary">
-                              {{ formatTime(filteredPublishTimes[filteredPublishTimes.length - 1 -index])
-                              }}
+                              {{ formatTime(message.pubtime)}}
                             </div>
   
                             <!-- Display the file name -->
                             <div>
-                              {{ getFileName(file_url) }}
+                              {{ message.filename }}
                             </div>
                           </div>
                           <div class="file-actions">
-                            <DownloadButton :fileUrl="file_url" />
-                            <InspectBufrButton :fileUrl="file_url" />
+                            <DownloadButton :fileUrl="message.canonical_url" :fileName=message.filename />
+                            <InspectBufrButton :fileUrl="message.canonical_url" :fileName=message.filename />
                           </div>
                         </div>
-                        <v-divider v-if="index < notificationData.fileUrls.length - 1" class="divider-spacing"></v-divider>
+                        <v-divider v-if="index < messages.length - 1" class="divider-spacing"></v-divider>
                       </v-list-item>
                     </div>
                   </v-card>
@@ -251,14 +248,21 @@ export default defineComponent({
     // is updated when the user selects another dataset in MonitoringPage.vue
     topicHierarchy(newVal, oldVal) {
       if (newVal !== oldVal) {
-        // Run all important methods
-        this.getNotifications();
-        this.getTimestampCounts();
-        this.getWsiCounts();
-        this.getSummary();
-        this.initChartData();
+        console.log("Topic hierarchy changed to:", newVal);
+        this.update_messages();
       }
-    }
+    },
+    messages: {
+      immediate: false, // To not trigger the watcher immediately on component mount
+      deep: false, // To not deep watch changes within the array
+      handler(newMessages) {
+        console.log("Messages changed");
+        // Run the methods dependent on the messages
+        console.log("Messages: ", newMessages);
+        this.updateSummary();
+        this.updateChartData();
+      },
+    },
   },
   components: {
     VCard,
@@ -271,7 +275,8 @@ export default defineComponent({
   data() {
     return {
       // Messages from API call
-      messages: [],
+      messages: [], // Array of messages
+      messages: [], // Array of messages sorted by pubtime
       // Example message when Romania synoptic dataset selected by user
       testMessageSynoptic: [
         {
@@ -320,12 +325,6 @@ export default defineComponent({
             }]
         }
       ],
-      // Object containing the publish time and associated file URLs of
-      // each notification from the last 24 hours
-      notificationData: {
-        "publishTimes": [],
-        "fileUrls": []
-      },
       // Count for how many files were published at a given time, rounded
       // to the nearest minute
       timestampCounts: {},
@@ -345,30 +344,13 @@ export default defineComponent({
       // Initiate ApexCharts series to be filled with data later
       chartSeries: [
         {
-          name: 'BUFR files published',
+          name: 'WIS2 notifications published',
           data: []
         }
       ],
-      // Search parameter for published files
-      fileSearch: null
-    }
-  },
-  computed: {
-    // Get current time
-    now() {
-      return new Date();
-    },
-    // Get time 1 hour ago from now
-    oneHourAgo() {
-      return new Date(this.now.getTime() - 1 * 60 * this.mins);
-    },
-    // Get time 24 hours ago from now
-    oneDayAgo() {
-      return new Date(this.now.getTime() - 24 * 60 * this.mins);
-    },
-    // Options for the ApexChart bar graph
-    chartOptions() {
-      return {
+      // ApexCharts options
+      // Options for the ApexChart bar graph
+      chartOptions: {
         chart: {
           type: 'bar',
           id: 'realtime',
@@ -402,16 +384,16 @@ export default defineComponent({
         },
         tooltip: {
           x: {
-            format: 'dd MMM HH:mm'
+            format: 'dd MMM HH:mm',
           }
         },
         colors: ['#00BD9D'], // Colour of bars
         xaxis: {
           type: 'datetime',
-          // Earliest displayed time 1 hour from current
-          min: this.oneHourAgo.getTime(),
-          // Latest displayed time is current time
-          max: this.now.getTime()
+          categories: this.getLast24Hours(),
+          labels: {
+            format: "dd MMM HH:mm", // Format the x-axis labels as desired
+          }
         },
         yaxis: {
           min: 0,
@@ -425,56 +407,72 @@ export default defineComponent({
             show: false
           }
         }
-      }
-    },
-    // Filter the file URLs in published data by the search parameter
-    filteredFileUrls() {
-      let fileUrls = this.notificationData.fileUrls;
-      if (this.fileSearch) {
-        fileUrls = fileUrls.filter(url => {
-          const fileName = this.getFileName(url);
-          return fileName.includes(this.fileSearch);
-        });
-      }
-      // Return the urls filtered by the search
-      return fileUrls;
-    },
-    // Filter the associated publish times by the search parameter
-    filteredPublishTimes() {
-      let publishTimes = this.notificationData.publishTimes;
-
-      if (this.fileSearch) {
-        return publishTimes.filter((_, index) => {
-          const fileUrl = this.notificationData.fileUrls[index];
-          const fileName = this.getFileName(fileUrl);
-          return fileName.includes(this.fileSearch);
-        });
-      }
-
-      else {
-        return publishTimes;
-      }
-
+      },
+      // Search parameter for published files
+      fileSearch: null
     }
   },
   methods: {
-    // Builds a topic hierarchy dependent url and fetches the notifications
-    async apiCall() {
-      // If in TEST_MODE or API URL is not defined, just return.
-      if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
-        return;
-      }
+    getLast24Hours() {
+            const now = new Date();
+            const past24Hours = new Date(now - 24 * 60 * 60 * 1000); // Subtract 24 hours in milliseconds
+            const timeRange = [];
 
+            for (let time = past24Hours; time <= now; time += 60 * 60 * 1000) { // Generate data points every hour
+                timeRange.push(time);
+            }
+
+            return timeRange;
+    },
+    now() {
+      return new Date();
+    },
+    // Get time 1 hour ago from now
+    oneHourAgo() {
+      return new Date(this.now().getTime() - 1 * 60 * this.mins);
+    },
+    // Get time 24 hours ago from now
+    oneDayAgo() {
+      return new Date(this.now().getTime() - 24 * 60 * this.mins);
+    },
+    // Builds a topic hierarchy dependent url and fetches the notifications
+    async update_messages() {
+      console.log("Dataset selected: ", this.topicHierarchy);
+      // Check if TEST_MODE is set in .env file or if VITE_API_URL is not set
+      if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
+        console.log("TEST_MODE is enabled");
+        // Use example data selected by user
+        let test_features = [];
+        if (this.topicHierarchy == "rou/rnimh/data/core/weather/surface-based-observations/synop") {
+          test_features = this.testMessageSynoptic;
+        }
+        else if (this.topicHierarchy == "mwi/mwi_met_centre/data/core/weather/surface-based-observations/synop") {
+          test_features = this.testMessageSurface;
+        }
+        const selectedFields = test_features.map(item => ({
+            pubtime: new Date(item.properties.pubtime),
+            canonical_url: this.getCanonicalUrl(item.links),
+            filename: this.getFileName(this.getCanonicalUrl(item.links))
+            // Add more fields as needed
+          }));
+        console.log(selectedFields);
+        this.messages = selectedFields;
+      }
+      else {
+        // Use API to get data
+        await this.apiCall();
+      }
+    },
+    async apiCall() {
       const apiUrl = `${import.meta.env.VITE_API_URL}/collections/messages/items`;
       console.log("Fetching notifications from:", apiUrl);
-
       try {
         const params = new URLSearchParams({
           f: 'json', // Specify the response format as JSON
           data_id: `${this.topicHierarchy}%`, // Filter by data_id that starts with the provided topic hierarchy
           sortBy: '-datetime', // Sort by time in descending order
-          limit: 50, // Limit the results to the last 9999 features
-          datetime: `${this.oneDayAgo.toISOString()}/${this.now.toISOString()}`, // Filter to last 24 hours
+          limit: 500, // Limit the results to the last 500 features
+          datetime: `${this.oneDayAgo().toISOString()}/${this.now().toISOString()}`, // Filter to last 24 hours
         });
         // Make the HTTP GET request
         console.log("API request:", `${apiUrl}?${params}`)
@@ -485,8 +483,14 @@ export default defineComponent({
         else {
           const data = await response.json();
           if (data.features) {
-            this.messages = data.features;
-            console.log("Messages:", this.messages);
+            const selectedFields = data.features.map(item => ({
+              pubtime: new Date(item.properties.pubtime),
+              canonical_url: this.getCanonicalUrl(item.links),
+              filename: this.getFileName(this.getCanonicalUrl(item.links))
+              // Add more fields as needed
+            }));
+            console.log(selectedFields);
+            this.messages = selectedFields;
           }
           else {
             console.error("API response does not contain features:", data);
@@ -499,54 +503,19 @@ export default defineComponent({
     },
     // Method to get summary statistics of total published files in the
     // past hour and past 24 hours
-    async getSummary() {
+    updateSummary() {
+      console.log("Update summary statistics");
       // Get the number of publish times from the last hour
-      const timesWithinHour = this.notificationData.publishTimes.filter(time => {
-        return time >= this.oneHourAgo;
+      const timesWithinHour = this.messages.filter(message => {
+        const publishTime = message.pubtime;
+        return publishTime >= this.oneHourAgo();
       }).length;
-
       // Get the number of publish times from the last 24 hours
       // (which is all of the publish times by the way we call the API)
-      const timesWithinDay = this.notificationData.publishTimes.length;
-
+      const timesWithinDay = this.messages.length;
       // Update the summary statistics object
       this.summaryStats.totalFilesLastHour = timesWithinHour;
       this.summaryStats.totalFilesLastDay = timesWithinDay;
-    },
-    // Loads notification data of publish times and file urls
-    async getNotifications() {
-      // Check if TEST_MODE is set in .env file or if VITE_API_URL is not set
-      if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
-        console.log("TEST_MODE is enabled");
-        console.log("Dataset selected: ", this.topicHierarchy);
-        // Use example data selected by user
-        if (this.topicHierarchy == "rou/rnimh/data/core/weather/surface-based-observations/synop") {
-          this.messages = this.testMessageSynoptic;
-        }
-        else if (this.topicHierarchy == "mwi/mwi_met_centre/data/core/weather/surface-based-observations/synop") {
-          this.messages = this.testMessageSurface;
-        }
-      }
-      else {
-        await this.apiCall();
-      }
-
-      this.notificationData = {
-        // Get the publish times of the notifications as an array
-        publishTimes: this.messages.map(item =>
-          new Date(item.properties.pubtime)),
-        // Get the file urls of the notifications as an array
-        fileUrls: this.messages.map(item => {
-          const canonicalLink = item.links.find(link => link.rel === "canonical");
-          // The file url is the href value associated with the canonical relation
-          return canonicalLink ? canonicalLink.href : null;
-        })
-      }
-
-      // Get summary statistics of notification data
-      await this.getSummary();
-
-      console.log("Publish times and URLs: ", this.notificationData);
     },
     roundToNearestMinute(time) {
       // Get minutes and seconds of the datetime
@@ -564,73 +533,43 @@ export default defineComponent({
       return time;
     },
     // Builds the timestamp count array used in the ApexCharts bar graph
-    async getTimestampCounts() {
+    updateTimestampCounts() {
+      console.log("Update timestamp counts");
       // Reset the timestamp counts
       this.timestampCounts = {};
 
       // For each publish time, round to the nearest minute and update
       // the count
-      this.notificationData["publishTimes"].forEach(time => {
-
-        const roundedTime = this.roundToNearestMinute(time);
-
-        // Update timestampCount object with this rounded publish time
-        if (this.timestampCounts[roundedTime]) {
-          // If the key already exists, add to the count
-          this.timestampCounts[roundedTime]++;
-        }
-        else {
-          // Otherwise begin the count at 1
-          this.timestampCounts[roundedTime] = 1;
+      this.messages.forEach(message => {
+          const publishTime = new Date(message.pubtime);
+          const roundedTime = this.roundToNearestMinute(publishTime);
+          if (this.timestampCounts[roundedTime]) {
+            this.timestampCounts[roundedTime]++;
+          } else {
+            this.timestampCounts[roundedTime] = 1;
         }
       });
-
-      console.log("Timestamp counts: ", this.timestampCounts)
-    },
-    // Builds the wsiCounts object
-    async getWsiCounts() {
-
-      // Reset the wsi counts
-      this.wsiCounts = {};
-
-      // Check if TEST_MODE is set in .env file or if VITE_API_URL is not set
-      if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
-        // Use example data selected by user
-        if (this.topicHierarchy == "rou/rnimh/data/core/weather/surface-based-observations/synop") {
-          this.messages = this.testMessageSynoptic;
-        }
-        else if (this.topicHierarchy == "mwi/mwi_met_centre/data/core/weather/surface-based-observations/synop") {
-          this.messages = this.testMessageSurface;
-        }
-      }
-      else {
-        await this.apiCall();
-      }
-
-      // Group the messages based on 'wigos_station_identifier' add canonical_url property to each item
-      this.messages.forEach((item) => {
-        const canonicalLink = item.links.find(link => link.rel === "canonical");
-        if (canonicalLink) {
-          item.canonical_url = canonicalLink.href;
-        }
-        const identifier = item.properties.wigos_station_identifier;
-        if (this.wsiCounts[identifier]) {
-          this.wsiCounts[identifier]++;
-        }
-        else {
-          this.wsiCounts[identifier] = 1
-        }
-      })
-
-      console.log("WSI counts: ", this.wsiCounts);
+      console.log("Timestamp counts: ", this.timestampCounts);
     },
     // Initialise the data for ApexCharts series bar graph based on 
     // allNotifications
-    initChartData() {
-      // Creates a nested array structure of form [[timestamp1, count1],...]
-      const chartData = Object.entries(this.timestampCounts);
-
-      // Update the chartSeries data with the above
+    updateChartData() {
+      console.log("update chart data");
+      // count messages per minutes and uses this create the chart data
+      const timestampCounts = {};
+      this.messages.forEach(message => {
+          const publishTime = new Date(message.pubtime);
+          const roundedTime = this.roundToNearestMinute(publishTime);
+          if (this.timestampCounts[roundedTime]) {
+            timestampCounts[roundedTime]++;
+          } else {
+            timestampCounts[roundedTime] = 1;
+        }
+      });
+      const chartData = Object.keys(timestampCounts).map(key => {
+        return [new Date(key).getTime(), timestampCounts[key]];
+      });
+      console.log("Chart data: ", chartData);
       this.chartSeries[0].data = chartData;
     },
     // Enables zoom functionality on bar graph
@@ -670,19 +609,17 @@ export default defineComponent({
       const urlParts = url.split('/');
       return urlParts[urlParts.length - 1];
     },
+    getCanonicalUrl(links) {
+      const canonicalLink = links.find(link => link.rel === "canonical");
+      if (canonicalLink) {
+        return canonicalLink.href;
+      }
+      return '';
+    }
   },
   mounted() {
-    this.apiCall();
-    // Get notification data
-    this.getNotifications();
-    // Get timestamp count data
-    this.getTimestampCounts();
-    // Get WSI file count data
-    this.getWsiCounts();
-    // Get summary statistics
-    this.getSummary();
-    // Fill ApexCharts with latest data
-    this.initChartData();
+    console.log("Mounted NotificationDashboard");
+    this.update_messages();
   }
 });
 </script>
