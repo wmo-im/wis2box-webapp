@@ -39,7 +39,11 @@ export default defineComponent({
     async getTopics() {
       if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
         console.log("Use test topics");
-        this.topics = ["rou/rnimh/data/core/weather/surface-based-observations/synop", "mwi/mwi_met_centre/data/core/weather/surface-based-observations/synop"];
+        this.topics = [
+          "rou/rnimh/data/core/weather/surface-based-observations/synop", 
+          "mwi/mwi_met_centre/data/core/weather/surface-based-observations/synop",
+          "tst/topic/with/zero/notifications"
+        ];
       }
       else {
         const apiUrl = `${import.meta.env.VITE_API_URL}/collections/discovery-metadata/items?f=json`;

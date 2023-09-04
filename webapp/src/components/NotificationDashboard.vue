@@ -275,16 +275,57 @@ export default defineComponent({
   data() {
     return {
       // Messages from API call
-      messages: [], // Array of messages
       messages: [], // Array of messages sorted by pubtime
       // Example message when Romania synoptic dataset selected by user
-      testMessageSynoptic: [
+      testMessageRomania: [
         {
           "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d",
           "properties": {
             "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
             "datetime": "2022-03-31T00:00:00Z",
-            "pubtime": "2023-08-24T13:58:20Z",
+            "pubtime": "2023-09-04T03:58:20Z",
+            "wigos_station_identifier": "0-20000-0-15020",
+            "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+          },
+          "links": [
+            {
+              "rel": "canonical",
+              "type": "application/x-bufr",
+              "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+            },
+            {
+              "rel": "via",
+              "type": "text/html",
+              "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+            }]
+        },
+        {
+          "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d",
+          "properties": {
+            "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+            "datetime": "2022-03-31T00:00:00Z",
+            "pubtime": "2023-09-04T03:58:25Z",
+            "wigos_station_identifier": "0-20000-0-15020",
+            "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+          },
+          "links": [
+            {
+              "rel": "canonical",
+              "type": "application/x-bufr",
+              "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+            },
+            {
+              "rel": "via",
+              "type": "text/html",
+              "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+            }]
+        },
+        {
+          "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d",
+          "properties": {
+            "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+            "datetime": "2022-03-31T00:00:00Z",
+            "pubtime": "2023-09-04T11:58:20Z",
             "wigos_station_identifier": "0-20000-0-15020",
             "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
           },
@@ -302,7 +343,7 @@ export default defineComponent({
         }
       ],
       // Example message when Malawi surface dataset selected by user
-      testMessageSurface: [
+      testMessageMalawi: [
         {
           "id": "af14d8c4-5f63-45af-8171-7730ec9932ba",
           "properties": {
@@ -325,11 +366,6 @@ export default defineComponent({
             }]
         }
       ],
-      // Count for how many files were published at a given time, rounded
-      // to the nearest minute
-      timestampCounts: {},
-      // Count for how files were published from a given WSI
-      wsiCounts: {},
       // Object for notification summary statistics
       summaryStats: {
         "totalFilesLastHour": 0,
@@ -414,15 +450,15 @@ export default defineComponent({
   },
   methods: {
     getLast24Hours() {
-            const now = new Date();
-            const past24Hours = new Date(now - 24 * 60 * 60 * 1000); // Subtract 24 hours in milliseconds
-            const timeRange = [];
+      const now = new Date();
+      const past24Hours = new Date(now - 24 * 60 * 60 * 1000); // Subtract 24 hours in milliseconds
+      const timeRange = [];
 
-            for (let time = past24Hours; time <= now; time += 60 * 60 * 1000) { // Generate data points every hour
-                timeRange.push(time);
-            }
-
-            return timeRange;
+      for (let time = past24Hours; time <= now; time += 60 * 60 * 1000) { // Generate data points every hour
+          timeRange.push(time);
+      }
+      console.log("Time range: ", timeRange);
+      return timeRange;
     },
     now() {
       return new Date();
@@ -435,6 +471,17 @@ export default defineComponent({
     oneDayAgo() {
       return new Date(this.now().getTime() - 24 * 60 * this.mins);
     },
+    // Method to get the messages from the features array
+    getMessagesFromFeatures(features) {
+      const selectedFields = features.map(item => ({
+        pubtime: new Date(item.properties.pubtime + "Z"),
+        canonical_url: this.getCanonicalUrl(item.links),
+        filename: this.getFileName(this.getCanonicalUrl(item.links))
+        // Add more fields as needed
+      }));
+      // sort by pubtime descending
+      return selectedFields.sort((a, b) => b.pubtime - a.pubtime);
+    },
     // Builds a topic hierarchy dependent url and fetches the notifications
     async update_messages() {
       console.log("Dataset selected: ", this.topicHierarchy);
@@ -444,19 +491,12 @@ export default defineComponent({
         // Use example data selected by user
         let test_features = [];
         if (this.topicHierarchy == "rou/rnimh/data/core/weather/surface-based-observations/synop") {
-          test_features = this.testMessageSynoptic;
+          test_features = this.testMessageRomania;
         }
         else if (this.topicHierarchy == "mwi/mwi_met_centre/data/core/weather/surface-based-observations/synop") {
-          test_features = this.testMessageSurface;
+          test_features = this.testMessageMalawi;
         }
-        const selectedFields = test_features.map(item => ({
-            pubtime: new Date(item.properties.pubtime),
-            canonical_url: this.getCanonicalUrl(item.links),
-            filename: this.getFileName(this.getCanonicalUrl(item.links))
-            // Add more fields as needed
-          }));
-        console.log(selectedFields);
-        this.messages = selectedFields;
+        this.messages = this.getMessagesFromFeatures(test_features);
       }
       else {
         // Use API to get data
@@ -483,14 +523,7 @@ export default defineComponent({
         else {
           const data = await response.json();
           if (data.features) {
-            const selectedFields = data.features.map(item => ({
-              pubtime: new Date(item.properties.pubtime),
-              canonical_url: this.getCanonicalUrl(item.links),
-              filename: this.getFileName(this.getCanonicalUrl(item.links))
-              // Add more fields as needed
-            }));
-            console.log(selectedFields);
-            this.messages = selectedFields;
+            this.messages = this.getMessagesFromFeatures(data.features);
           }
           else {
             console.error("API response does not contain features:", data);
@@ -517,9 +550,10 @@ export default defineComponent({
       this.summaryStats.totalFilesLastHour = timesWithinHour;
       this.summaryStats.totalFilesLastDay = timesWithinDay;
     },
+    // Round a datetime to the nearest minute, used by updateChartData()
     roundToNearestMinute(time) {
       // Get minutes and seconds of the datetime
-      let minutes = time.getMinutes();
+      let minutes = time.getUTCMinutes();
       let seconds = time.getSeconds();
 
       if (seconds >= 30) {
@@ -532,27 +566,7 @@ export default defineComponent({
 
       return time;
     },
-    // Builds the timestamp count array used in the ApexCharts bar graph
-    updateTimestampCounts() {
-      console.log("Update timestamp counts");
-      // Reset the timestamp counts
-      this.timestampCounts = {};
-
-      // For each publish time, round to the nearest minute and update
-      // the count
-      this.messages.forEach(message => {
-          const publishTime = new Date(message.pubtime);
-          const roundedTime = this.roundToNearestMinute(publishTime);
-          if (this.timestampCounts[roundedTime]) {
-            this.timestampCounts[roundedTime]++;
-          } else {
-            this.timestampCounts[roundedTime] = 1;
-        }
-      });
-      console.log("Timestamp counts: ", this.timestampCounts);
-    },
-    // Initialise the data for ApexCharts series bar graph based on 
-    // allNotifications
+    // updateChartData() counts the number of messages per minute and uses this
     updateChartData() {
       console.log("update chart data");
       // count messages per minutes and uses this create the chart data
@@ -560,49 +574,35 @@ export default defineComponent({
       this.messages.forEach(message => {
           const publishTime = new Date(message.pubtime);
           const roundedTime = this.roundToNearestMinute(publishTime);
-          if (this.timestampCounts[roundedTime]) {
+          if (timestampCounts[roundedTime]) {
             timestampCounts[roundedTime]++;
           } else {
             timestampCounts[roundedTime] = 1;
         }
       });
+      // Convert the timestampCounts object to an array of arrays
       const chartData = Object.keys(timestampCounts).map(key => {
         return [new Date(key).getTime(), timestampCounts[key]];
       });
+      // sort chartData by time
+      chartData.sort((a, b) => a[0] - b[0]);
       console.log("Chart data: ", chartData);
+
+      const now = new Date().getTime();
+      const twentyFourHoursAgo = now - (24 * 60 * this.mins);
+      this.chartOptions.xaxis.min = twentyFourHoursAgo;
+      this.chartOptions.xaxis.max = now;
+
       this.chartSeries[0].data = chartData;
     },
-    // Enables zoom functionality on bar graph
-    updateData: function (timeline) {
-      this.selectedZoom = timeline;
-      // Get current time
-      const now = new Date().getTime();
-
-      // Depending on the button pressed, zoom the x-axis of the bar graph accordingly
-      switch (timeline) {
-        case 'one_hour':
-          this.$refs.chart.zoomX(now - (60 * this.mins), now);
-          break;
-        case 'three_hours':
-          this.$refs.chart.zoomX(now - (3 * 60 * this.mins), now);
-          break;
-        case 'six_hours':
-          this.$refs.chart.zoomX(now - (6 * 60 * this.mins), now);
-          break;
-        case 'twenty_four_hours':
-          this.$refs.chart.zoomX(now - (24 * 60 * this.mins), now);
-          break;
-        default:
-      }
-    },
-    // Shows the HH:mm timestamp for the newest notifications
+    // Shows the time in a human readable format
     formatTime(timestamp) {
-      const year = timestamp.getFullYear();
-      const month = String(timestamp.getMonth() + 1).padStart(2, '0');
-      const day = String(timestamp.getDate()).padStart(2, '0');
-      const hours = String(timestamp.getHours()).padStart(2, '0');
-      const minutes = String(timestamp.getMinutes()).padStart(2, '0');
-      return `${year}/${month}/${day} ${hours}:${minutes}`;
+      const year = timestamp.getUTCFullYear();
+      const month = String(timestamp.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(timestamp.getUTCDate()).padStart(2, '0');
+      const hours = String(timestamp.getUTCHours()).padStart(2, '0');
+      const minutes = String(timestamp.getUTCMinutes()).padStart(2, '0');
+      return `${year}/${month}/${day} ${hours}:${minutes} UTC`;
     },
     // Gets the filename from the canonical href
     getFileName(url) {
