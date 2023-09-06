@@ -42,6 +42,13 @@
                   hint="Topic hierarchy for ingestion of data" persistent-hint></v-select>
               </v-card-item>
 
+              <!-- execution token -->
+              <v-card-item>
+                <v-textarea label="token" v-model="token" rows="1"
+                  hint="Execution token for the bufr-conversion process" persistent-hint>
+                </v-textarea>
+              </v-card-item>
+
             </v-form>
             <v-card-item>
               <!-- Show switch above the submit button on mobile -->
@@ -200,20 +207,6 @@ import DownloadButton from '@/components/DownloadButton.vue';
 
 export default defineComponent({
   name: 'RoleForm',
-  props: {
-    broker: {
-      type: String,
-      default: ''
-    },
-    api: {
-      type: String,
-      default: 'api.opencdms.org'
-    },
-    path: {
-      type: String,
-      default: '/processes/wis2box-synop-process/execution'
-    }
-  },
   data() {
     // Default data values before reactivity
     return {
@@ -229,6 +222,7 @@ export default defineComponent({
       topicList: ["test1", "test2", "test3"], // List of topic hierarchies 
       // before they are obtained from discovery metadata
       topic: "", // Topic hierarchy selected by user
+      token: "", // Execution token to be entered by user
       notificationsOnPending: true, // Realtime variable for if user has 
       // selected notifications or not
       notificationsOn: true, // Variable that updates to the pending variable 
@@ -388,7 +382,7 @@ export default defineComponent({
         }
       };
 
-      const synopUrl = `${import.meta.env.VITE_API_URL}/processes/wis2box-synop-process/execution`
+      const synopUrl = `${import.meta.env.VITE_API_URL}/processes/wis2box-synop2bufr/execution`
 
       //console.log(payload);
       //console.log(synopUrl);
@@ -398,15 +392,23 @@ export default defineComponent({
         method: 'POST',
         headers: {
           'encode': 'json',
-          'Content-Type': 'application/geo+json'
+          'Content-Type': 'application/geo+json',
+          'authorization': 'Bearer ' + this.token
         },
         body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
+        let result;
+        if(response.status == 401) {
+          result = "Unauthorized, please provide a valid execution token"
+        }
+        else {
+          result = "API error"
+        }
         console.error('HTTP error', response.status);
         this.result = {
-          "result": "API error",
+          "result": result,
           "errors": [
             synopUrl + " returned " + response.status
           ]
