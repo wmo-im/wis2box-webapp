@@ -41,7 +41,7 @@ export default defineComponent({
                 // Clean up
                 URL.revokeObjectURL(link.href);
             }
-            else {
+            else if( props.data != '' ) {
                 //console.log("Downloading file from data: " + props.data)
                 // Decode the base64 encoded data
                 const decodedData = atob(props.data);
@@ -58,6 +58,9 @@ export default defineComponent({
                 link.click();
                 // Clean up
                 URL.revokeObjectURL(link.href);
+            }
+            else {
+                console.log("No fileURL or data provided");
             }
         };
         return {

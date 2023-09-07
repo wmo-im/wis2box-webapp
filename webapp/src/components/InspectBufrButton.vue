@@ -6,6 +6,10 @@
       <v-card class="inspect-content">
         <v-card-title>{{ fileName }}</v-card-title>
         <v-card-text>
+          <div v-if="itemsInBufr.length === 0">
+            <!-- Display a message when itemsInBufr is empty -->
+            <p>No items found in bufr</p>
+          </div>
           <div v-for="(item, index) in itemsInBufr" :key="index" class="item-container">
             <div v-for="(value, key) in item" :key="key" class="key-value-pair">
               <span class="key">{{ key }}:</span> {{ value }}
@@ -106,13 +110,16 @@ export default defineComponent({
                   data_url: props.fileUrl
                 }
               };
-            } else {
+            } else if (props.data !== '') {
               payload = {
                 inputs: {
                   data: props.data
                 }
               };
-            }  
+            } else {
+              console.error('No data or fileUrl provided');
+              return;
+            }
             const inspectUrl = `${import.meta.env.VITE_API_URL}/processes/wis2box-bufr2geojson/execution`
             const response = await fetch(inspectUrl, {
                 method: 'POST',

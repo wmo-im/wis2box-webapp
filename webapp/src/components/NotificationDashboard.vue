@@ -76,8 +76,8 @@
                             </div>
                           </div>
                           <div class="file-actions">
-                            <DownloadButton :fileUrl="messages.canonical_url" :fileName=message.filename />
-                            <InspectBufrButton :fileUrl="messages.canonical_url" :fileName=message.filename />
+                            <DownloadButton :fileUrl="message.canonical_url" :fileName=message.filename />
+                            <InspectBufrButton :fileUrl="message.canonical_url" :fileName=message.filename />
                           </div>
                         </div>
                         <v-divider v-if="index < messages.length - 1" class="divider-spacing"></v-divider>
@@ -571,6 +571,10 @@ export default defineComponent({
       console.log("update chart data");
       // count messages per minutes and uses this create the chart data
       const timestampCounts = {};
+      // add 24hour ago, 0 to timestampCounts
+      timestampCounts[this.oneDayAgo()] = 0;
+      // add now, 0 to timestampCounts
+      timestampCounts[this.now()] = 0;
       this.messages.forEach(message => {
           const publishTime = new Date(message.pubtime);
           const roundedTime = this.roundToNearestMinute(publishTime);
@@ -580,10 +584,13 @@ export default defineComponent({
             timestampCounts[roundedTime] = 1;
         }
       });
+
+
       // Convert the timestampCounts object to an array of arrays
       const chartData = Object.keys(timestampCounts).map(key => {
         return [new Date(key).getTime(), timestampCounts[key]];
       });
+
       // sort chartData by time
       chartData.sort((a, b) => a[0] - b[0]);
       console.log("Chart data: ", chartData);
