@@ -153,7 +153,7 @@ export default defineComponent({
             fileName: props.fileName
         };
     },
-});  
+});
 </script>
 
 <style>

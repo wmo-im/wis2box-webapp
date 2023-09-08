@@ -22,8 +22,10 @@
     <div class="hidden-sm-and-down">
       <v-btn color="#F6FFF8" exact to="/">Home</v-btn>
       <v-btn color="#F6FFF8" text to="synop_form">Synop form</v-btn>
+      <v-btn class="bar-button" text to="csv2bufr_form">CSV to BUFR form</v-btn>
       <v-btn color="#F6FFF8" text to="monitoring">Monitoring</v-btn>
     </div>
+
   </v-app-bar>
 
   <!-- Navigation drawer opens when hamburger menu clicked -->
