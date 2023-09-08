@@ -434,7 +434,7 @@
             };
             const submit = async() => {
               CsvToBUFR()
-            }
+            };
             const CsvToBUFR = async() => {
               const payload = {
                   inputs: {
@@ -443,8 +443,8 @@
                       notify: true,
                       template: "aws-template"
                   }
-              }
-              const apiURL = "http://3.127.235.197/oapi/processes/wis2box-csv2bufr/execution"
+              };
+              const apiURL = `${import.meta.env.VITE_API_URL}/processes/wis2box-csv2bufr/execution`;
 
               const response = await fetch(apiURL, {
                 method: 'POST',
