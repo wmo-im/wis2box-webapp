@@ -1,0 +1,313 @@
+{
+    "@context": "http://www.w3.org/ns/csvw",
+    "url": "./aws_example_2.csv",
+    "tableSchema": {
+      "columns": [
+        {
+          "titles": "wsi_series",
+          "dc:description": "WIGOS identifier series",
+          "datatype": {"base": "integer"},
+          "null": "null"
+        },
+        {
+          "titles": "wsi_issuer",
+          "dc:description": "WIGOS issuer of identifier",
+          "datatype": {"base": "integer"},
+          "null": "null"
+        },
+        {
+          "titles": "wsi_issue_number",
+          "dc:description": "WIGOS issue number",
+          "datatype": {"base": "integer"}
+        },
+        {
+          "titles": "wsi_local",
+          "dc:description": "WIGOS local identifier",
+          "datatype": {"base": "string"}
+        },
+        {
+          "titles": "wmo_block_number",
+          "dc:description": "WMO block number",
+          "datatype": {"base": "integer"}
+        },
+        {
+          "titles": "wmo_station_number",
+          "dc:description": "WMO station number",
+          "datatype": {"base": "integer"}
+        },
+        {
+          "titles": "station_type",
+          "dc:description": "Type of observing station, encoding using code table 0 02 001 (set to 0, automatic)",
+          "datatype": {"base": "integer"}
+        },
+        {
+          "titles": "year",
+          "dc:description": "Year (UTC), the time of observation (based on the actual time the barometer is read)",
+          "datatype": {
+            "base": "integer",
+            "minimum": "1900",
+            "maximum": "2023"
+          }
+        },
+        {
+          "titles": "month",
+          "dc:description": "Month (UTC), the time of observation (based on the actual time the barometer is read)",
+          "datatype": {
+            "base": "integer",
+            "minimum": "1",
+            "maximum": "12"
+          }
+        },
+        {
+          "titles": "day",
+          "dc:description": "Day (UTC), the time of observation (based on the actual time the barometer is read)",
+          "datatype": {
+            "base": "integer",
+            "minimum": "1",
+            "maximum": "31"
+          }
+        },
+        {
+          "titles": "hour",
+          "dc:description": "Hour (UTC), the time of observation (based on the actual time the barometer is read)",
+          "datatype": {
+            "base": "integer",
+            "minimum": "0",
+            "maximum": "23"
+          }
+        },
+        {
+          "titles": "minute",
+          "dc:description": "Minute (UTC), the time of observation (based on the actual time the barometer is read)",
+          "datatype": {
+            "base": "integer",
+            "minimum": "0",
+            "maximum": "59"
+          }
+        },
+        {
+          "titles": "latitude",
+          "dc:description": "Latitude of the station (to 5 decimal places)",
+          "datatype": {
+            "base": "decimal",
+            "minimum": "-90",
+            "maximum": "90"
+          }
+        },
+        {
+          "titles": "longitude",
+          "dc:description": "Longitude of the station (to 5 decimal places)",
+          "datatype": {
+            "base": "decimal",
+            "minimum": "-180",
+            "maximum": "180"
+          }
+        },
+        {
+          "titles": "station_height_above_msl",
+          "dc:description": "Height of the station ground above mean sea level (to 1 decimal place)",
+          "datatype": {"base": "decimal"}
+        },
+        {
+          "titles": "barometer_height_above_msl",
+          "dc:description": "Height of the barometer above mean sea level (to 1 decimal place), typically height of station ground plus the height of the sensor above local ground",
+          "datatype": {"base": "decimal"}
+        },
+        {
+          "titles": "station_pressure",
+          "dc:description": "Pressure observed at the station level to the nearest 10 pascals",
+          "datatype": {
+            "base": "integer",
+            "minimum": "50000",
+            "maximum": "150000"
+          }
+        },
+        {
+          "titles": "msl_pressure",
+          "dc:description": "Pressure reduced to mean sea level to the nearest 10 pascals",
+          "datatype": {
+            "base": "integer",
+            "minimum": "50000",
+            "maximum": "150000"
+          }
+        },
+        {
+          "titles": "geopotential_height",
+          "dc:description": "Geoptential height expressed in geopotential meters (gpm) to 0 decimal places",
+          "datatype": {"base": "integer"}
+        },
+        {
+          "titles": "thermometer_height",
+          "dc:description": "Height of thermometer or temperature sensor above the local ground to 2 decimal places",
+          "datatype": {"base": "decimal"}
+        },
+        {
+          "titles": "air_temperature",
+          "dc:description": "Instantaneous air temperature to 2 decimal places",
+          "datatype": {
+            "base": "decimal",
+            "minimum": "0"
+          }
+        },
+        {
+          "titles": "dewpoint_temperature",
+          "dc:description": "Instantaneous dewpoint temperature to 2 decimal places",
+          "datatype": {
+            "base": "decimal",
+            "minimum": "0"
+          }
+        },
+        {
+          "titles": "relative_humidity",
+          "dc:description": "Instantaneous relative humidity to zero decimal places",
+          "datatype": {
+            "base": "integer",
+            "minimum": "0",
+            "maximum": "150"
+          }
+        },
+        {
+          "titles": "method_of_ground_state_measurement",
+          "dc:description": "Method of observing the state of the ground, encoded using code table 0 02 176",
+          "datatype": {"base": "integer"}
+        },
+        {
+          "titles": "ground_state",
+          "dc:description": "State of the ground encoded using code table 0 20 062",
+          "datatype": {"base": "integer"}
+        },
+        {
+          "titles": "method_of_snow_depth_measurement",
+          "dc:description": "Method of observing the snow depth encoded using code table 0 02 177",
+          "datatype": {"base": "integer"}
+        },
+        {
+          "titles": "snow_depth",
+          "dc:description": "Snow depth at time of observation to 2 decimal places",
+          "datatype": {
+            "base": "decimal",
+            "minimum": "0"
+          }
+        },
+        {
+          "titles": "precipitation_intensity",
+          "dc:description": "Intensity of precipitation at time of observation to 5 decimal places",
+          "datatype": {
+            "base": "decimal",
+            "minimum": "0"
+          }
+        },
+        {
+          "titles": "anemometer_height",
+          "dc:description": "Height of the anemometer above local ground  to 2 decimal place",
+          "datatype": {"base": "decimal"}
+        },
+        {
+          "titles": "time_period_of_wind",
+          "dc:description": "Time period over which the wind speed and direction have been averaged. 10 minutes in normal cases or the number of minutes since a significant change occuring in the preceeding 10 minutes.",
+          "datatype": {"base": "negativeInteger"}
+        },
+        {
+          "titles": "wind_direction",
+          "dc:description": "Wind direction (at anemometer height) averaged from the caterisan components over the indicated time period, 0 decimal places",
+          "datatype": {
+            "base": "integer",
+            "minimum": "0",
+            "maximum": "360"
+          }
+        },
+        {
+          "titles": "wind_speed",
+          "dc:description": "Wind speed (at anemometer height) averaged from the cartesian components over the indicated time period, 1 decimal place",
+          "datatype": {"base": "decimal"}
+        },
+        {
+          "titles": "maximum_wind_gust_direction_10_minutes",
+          "dc:description": "Highest 3 second average over the preceding 10 minutes, 0 decimal places",
+          "datatype": {
+            "base": "integer",
+            "minimum": "0",
+            "maximum": "360"
+          }
+        },
+        {
+          "titles": "maximum_wind_gust_speed_10_minutes",
+          "dc:description": "Highest 3 second average over the preceding 10 minutes, 1 decimal place",
+          "datatype": {"base": "decimal"}
+        },
+        {
+          "titles": "maximum_wind_gust_direction_1_hour",
+          "dc:description": "Highest 3 second average over the preceding hour, 0 decimal places",
+          "datatype": {
+            "base": "integer",
+            "minimum": "0",
+            "maximum": "360"
+          }
+        },
+        {
+          "titles": "maximum_wind_gust_speed_1_hour",
+          "dc:description": "Highest 3 second average over the preceding hour, 1 decimal place",
+          "datatype": {"base": "decimal"}
+        },
+        {
+          "titles": "maximum_wind_gust_direction_3_hours",
+          "dc:description": "Highest 3 second average over the preceding 3 hours, 0 decimal places",
+          "datatype": {
+            "base": "integer",
+            "minimum": "0",
+            "maximum": "360"
+          }
+        },
+        {
+          "titles": "maximum_wind_gust_speed_3_hours",
+          "dc:description": "Highest 3 second average over the preceding 3 hours, 1 decimal place",
+          "datatype": {"base": "decimal"}
+        },
+        {
+          "titles": "rain_sensor_height",
+          "dc:description": "Height of the rain gauge above local ground to 2 decimal place",
+          "datatype": {"base": "decimal"}
+        },
+        {
+          "titles": "total_precipitation_1_hour",
+          "dc:description": "Total precipitation over the past hour, 1 decimal place",
+          "datatype": {
+            "base": "decimal",
+            "minimum": "0"
+          }
+        },
+        {
+          "titles": "total_precipitation_3_hours",
+          "dc:description": "Total precipitation over the past 3 hours, 1 decimal place",
+          "datatype": {
+            "base": "decimal",
+            "minimum": "0"
+          }
+        },
+        {
+          "titles": "total_precipitation_6_hours",
+          "dc:description": "Total precipitation over the past 6 hours, 1 decimal place",
+          "datatype": {
+            "base": "decimal",
+            "minimum": "0"
+          }
+        },
+        {
+          "titles": "total_precipitation_12_hours",
+          "dc:description": "Total precipitation over the past 12 hours, 1 decimal place",
+          "datatype": {
+            "base": "decimal",
+            "minimum": "0"
+          }
+        },
+        {
+          "titles": "total_precipitation_24_hours",
+          "dc:description": "Total precipitation over the past 24 hours, 1 decimal place",
+          "datatype": {
+            "base": "decimal",
+            "minimum": "0"
+          }
+        }
+      ]
+    }
+  }

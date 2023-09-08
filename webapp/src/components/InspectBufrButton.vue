@@ -95,7 +95,7 @@ export default defineComponent({
                 inputs: {
                     data_url: props.fileUrl
                 }
-            };      
+            };
             const inspectUrl = `${import.meta.env.VITE_API_URL}/processes/wis2box-bufr2geojson/execution`
             const response = await fetch(inspectUrl, {
                 method: 'POST',
@@ -129,7 +129,7 @@ export default defineComponent({
             dialog
         };
     },
-});  
+});
 </script>
 
 <style>
