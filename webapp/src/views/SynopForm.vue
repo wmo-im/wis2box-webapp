@@ -1,5 +1,5 @@
 <template>
-  <SynopForm api="/oapi/processes/" path="wis2box-synop-process/execution" />
+  <SynopForm />
 </template>
 
 <script setup>
