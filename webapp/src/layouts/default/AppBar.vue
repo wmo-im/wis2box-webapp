@@ -22,7 +22,7 @@
     <div class="hidden-sm-and-down">
       <v-btn color="#F6FFF8" exact to="/">Home</v-btn>
       <v-btn color="#F6FFF8" text to="synop_form">Synop form</v-btn>
-      <v-btn class="bar-button" text to="csv2bufr_form">CSV to BUFR form</v-btn>
+      <v-btn class="#F6FFF8" text to="csv2bufr_form">CSV FORM</v-btn>
       <v-btn color="#F6FFF8" text to="monitoring">Monitoring</v-btn>
     </div>
 
@@ -36,6 +36,9 @@
       </v-list-item>
       <v-list-item to="synop_form">
         <v-list-item-title>SYNOP FORM</v-list-item-title>
+      </v-list-item>
+      <v-list-item to="csv2bufr_form">
+        <v-list-item-title>CSV FORM</v-list-item-title>
       </v-list-item>
       <v-list-item to="monitoring">
         <v-list-item-title>MONITORING</v-list-item-title>
