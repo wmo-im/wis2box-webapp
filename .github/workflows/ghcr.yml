@@ -54,4 +54,5 @@ jobs:
         with:
           context: webapp
           push: true
-          tags: latest, ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.labels.version }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
