@@ -1,0 +1,170 @@
+<template>
+  <v-card>
+    <v-card-title>Stations</v-card-title>
+    <v-card-item>
+      <VTextField style="width: 400px;" v-model="search" prepend-icon="mdi-text-search" label="search" single-line hide-details></VTextField>
+      <v-card-item>
+        <v-btn prepend-icon="mdi-plus" color="success" @click="addRecord()">Add new station</v-btn>
+      </v-card-item>
+      <VDataTable :headers="headers" :items="items" :search="search" dense small>
+          <template v-slot:item.actions="{ item }">
+            <v-icon size="small" @click="editRecord(item)">mdi-pen</v-icon>
+            <v-icon size="small" @click="viewRecord(item)">mdi-eye</v-icon>
+            <v-icon size="small" @click="deleteRecord(item)">mdi-delete</v-icon>
+          </template>
+          <template v-slot:top>
+            <v-dialog v-model="deleteDialog" width="auto" persistent>
+              <v-card>
+                <v-card-text>Please type the WIGOS station identifier to confirm the deletion</v-card-text>
+                <v-card-item><v-text-field v-model="stationToDelete" label="Station to delete"></v-text-field></v-card-item>
+                <v-card-item><v-text-field type="password" clearable v-model="token" label="Auth token"></v-text-field></v-card-item>
+                <v-card-actions>
+                  <v-btn
+                      color="error"
+                      @click="confirmDelete( {item} )"
+                      v-if="selectedStation===stationToDelete && token">Confirm deletion</v-btn>
+                  <v-btn color="success" @click="closeDeleteDialog()">Cancel</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </template>
+      </VDataTable>
+    </v-card-item>
+  </v-card>
+</template>
+
+<script>
+import { defineComponent } from 'vue';
+import { VCard, VCardTitle, VCardText, VChip, VTextField } from 'vuetify/lib/components/index.mjs';
+import { onBeforeMount, onMounted, onBeforeUpdate, onUpdated, onBeforeUnmount, onUnmounted, onErrorCaptured} from 'vue';
+import { ref, computed, watchEffect, watch } from 'vue'
+import { VDataTable } from 'vuetify/lib/labs/VDataTable/index.mjs';
+import {useRoute, useRouter} from 'vue-router';
+
+
+export default defineComponent({
+  name: 'StationTable',
+  components: {
+    VCard,
+    VCardTitle,
+    VCardText,
+    VDataTable,
+    VTextField,
+  },
+  setup(props) {
+    const headers = ref([]);
+    const search = ref("");
+    const sortBy = ref([{key:"", order:"desc"}]);
+    const items = ref([]);
+    const errorMessage = ref(null);
+    const deleteDialog = ref(false);
+    const stationToDelete = ref(null);
+    const selectedStation = ref(null);
+    const router = useRouter();
+    const token = ref(null);
+
+    const loadStations = async () => {
+        const apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items?f=json`;
+        try {
+          var response = await fetch(apiURL);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }else{
+            var featureCollection = await response.json();
+            items.value = featureCollection.features.map( (feature) => {
+              return{
+                actions: "actions",
+                id: feature.id,
+                station_name: feature.properties.name,
+                wigos_station_identifier: feature.properties.wigos_station_identifier,
+                traditional_station_identifier: feature.properties.traditional_station_identifier,
+                facility_type: feature.properties.facility_type,
+                latitude: feature.geometry.coordinates[1],
+                longitude: feature.geometry.coordinates[0],
+                elevation: feature.geometry.coordinates[2],
+                barometer_height: feature.properties.barometer_height,
+                territory_name: feature.properties.territory_name,
+                wmo_region: feature.properties.wmo_region,
+                url: feature.properties.url,
+                topics: feature.properties.topics ? JSON.stringify(feature.properties.topics) : JSON.stringify([feature.properties.topic]),
+                status: feature.properties.operating_status
+                }
+            });
+            console.log(items);
+          }
+        }
+        catch (error) {
+          errorMessage.value = "Error fetching topic hierarchy, please check the API end point." +
+                                " See logs for more information.";
+          console.error("Error fetching topic hierarchy:", error)
+        }
+        headers.value = Object.keys(items.value[0]).map( key => ({
+          title: key,
+          value: key,
+          key: key,
+          sortable: true
+        }));
+    }
+
+    onMounted( async() => {
+      loadStations();
+    });
+
+    const closeDeleteDialog = () => {
+      selectedStation.value = null;
+      stationToDelete.value = null;
+      deleteDialog.value = false;
+    };
+    const confirmDelete = async () => {
+      if( selectedStation.value === stationToDelete.value ){
+        console.log("confirmed");
+        const apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items/${stationToDelete.value}`;
+        try{
+          var response = await fetch(apiURL, {
+              method: 'DELETE',
+              headers: {
+                  'encode': 'json',
+                  'Content-Type': 'application/geo+json',
+                  'authorization': 'Bearer ' + token.value
+              },
+              body: null
+            });
+          if (!response.ok) {
+            console.error('HTTP error', response.status);
+          }else {
+            closeDeleteDialog();
+            // reload the station list
+            setTimeout(500); // short pause to give backend time to catch up.
+            loadStations();
+          }
+        }
+        catch (error) {
+          errorMessage.value = "Error deleting record, see logs for more information.";
+          console.error(error);
+        }
+      }
+    };
+    const deleteRecord = (id) => {
+      selectedStation.value = id.key;
+      deleteDialog.value = true;
+    };
+
+    const editRecord = (id) => {
+      console.log(id.key)
+      router.push("/station/"+id.key+"?action=edit")
+    }
+
+    const viewRecord = (id) => {
+      router.push("/station/"+id.key)
+    }
+
+    const addRecord = () => {
+      router.push("/station/")
+    }
+
+    return {headers, items, search, sortBy, confirmDelete, addRecord, deleteRecord, closeDeleteDialog,
+            stationToDelete, selectedStation, deleteDialog, editRecord, viewRecord, token};
+  }
+
+});
+</script>
