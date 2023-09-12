@@ -28,6 +28,23 @@ const routes = [
         component: () => import('@/views/MonitoringPage.vue'),
         meta: {title: 'wis2box - Monitoring'}
       },
+      {
+        path: '/station',
+        name: 'stationTable',
+        component: () => import('@/views/StationTable.vue'),
+        meta: {title: 'View stations'}
+      },
+      {
+        path: '/station/:id(.*)',
+        children: [
+          {
+            path: '',
+            name: 'stationEditor',
+            component: () => import('@/views/StationEditor.vue'),
+            meta: {title: 'Create / register new station'}
+          }
+        ]
+      }
     ],
   },
 ]

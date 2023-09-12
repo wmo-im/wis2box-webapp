@@ -101,8 +101,7 @@
                         <v-card>
                             <v-card-title>Select topic hierarchy</v-card-title>
                             <v-card-item>
-                              <v-select label="Channel" v-model="hierarchy" :items="hierarchyList" v-if="hierarchyList"
-                                hint="Topic hierarchy for ingestion of data" persistent-hint></v-select>
+                              <TopicHierarchySelector :value="topicSelected" @update:modelValue="newValue => topicSelected = newValue"/>
                             </v-card-item>
                         </v-card>
                     </v-stepper-window-item>
@@ -231,6 +230,8 @@
     import { VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem, VStepperActions} from 'vuetify/lib/labs/VStepper/index.mjs';
     import InspectBufrButton from '@/components/InspectBufrButton.vue';
     import DownloadButton from '@/components/DownloadButton.vue';
+
+    import TopicHierarchySelector from '@/components/TopicHierarchySelector.vue';
     import * as d3 from 'd3';
     export default defineComponent({
         name: 'CsvToBUFRForm',
@@ -238,7 +239,9 @@
             VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VDataTable,
             VChip, VTooltip, VListItem, VList, VListSubheader, VSheet, VContainer,
             VCardTitle, VIcon, VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem,
-            VStepperActions, VDialog, VCardSubtitle, InspectBufrButton, DownloadButton
+            VStepperActions, VDialog, VCardSubtitle, InspectBufrButton, DownloadButton,
+            TopicHierarchySelector
+
         },
         setup() {
             // reactive variables
@@ -251,8 +254,7 @@
             const validationErrors = ref([]);
             const status = ref(null);
             const token = ref(null);
-            const hierarchyList = ref(null);
-            const hierarchy = ref(null);
+            const topicSelected = ref(null);
             const rawCSV = ref(null);
             const msg = ref(null);
             const showDialog = ref(null);
@@ -279,9 +281,6 @@
                 return "WIS2 notifications published: " + messagesPublished;;
             });
             // life cycle hooks
-            onBeforeMount( () => {
-                fetchHierarchy();
-            });
             onMounted( () => {
                 setTimeout(scrollToRef(200));
             });
@@ -396,42 +395,6 @@
                     step.value = 1;
                 };
             };
-            const fetchHierarchy = async() => {
-                const apiUrl = `${import.meta.env.VITE_API_URL}/collections/discovery-metadata/items?f=json`;
-                // check if TEST=True is set in .env file
-                // check if TEST_MODE is set in .env file or if VITE_API_URL is not set
-                if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
-                  console.log("TEST_MODE is enabled");
-                  hierarchyList.value = ["test1", "test2", "test3"];
-                }
-                else {
-                  console.log("Fetching topic hierarchy from:", apiUrl);
-                  try {
-                    const response = await fetch(apiUrl);
-                    if (!response.ok) {
-                      throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    else {
-                      const data = await response.json();
-                      if (data.features) {
-                        // Use Array.map to create a new array of the topic hierarchies
-                        hierarchyList.value = data.features.map(feature => {
-                          if (feature.properties && feature.properties['wmo:topicHierarchy']) {
-                            return feature.properties['wmo:topicHierarchy']
-                          }
-                        });
-                      }
-                      else {
-                        console.error("API response is not an object");
-                      }
-                    }
-                  }
-                  catch (error) {
-                    alert("Error fetching topic hierarchy, please check the API end point");
-                    console.error("Error fetching topic hierarchy:", error)
-                  }
-                }
-            };
             const submit = async() => {
               CsvToBUFR()
             };
@@ -439,7 +402,7 @@
               const payload = {
                   inputs: {
                       data: rawCSV.value,
-                      channel: hierarchy.value,
+                      channel: topicSelected.value.id,
                       notify: true,
                       template: "aws-template"
                   }
@@ -501,6 +464,7 @@
                       proceed = true;
                     }else{
                       showDialog.value = true;
+                      console.log(topicSelected.value)
                       msg.value = "Please select a topic to publish on before proceeding";
                     }
                     break;
@@ -520,7 +484,8 @@
             };
 
             // Define watches
-            watch( hierarchy, (val) => {
+            watch( topicSelected, (val) => {
+              console.log(val);
               if( val ){
                 status.value.topicHierarchy = true;
               }else{
@@ -550,8 +515,8 @@
             });
 
             return {theData, headers, incomingFile, loadCSV, step, prev, next, getFileName, scrollToRef,
-                    validationWarnings, validationErrors, status, token, hierarchyList,
-                    hierarchy, submit, msg, showDialog, result, resultTitle, numberNotifications};
+                    validationWarnings, validationErrors, status, token,
+                    topicSelected, submit, msg, showDialog, result, resultTitle, numberNotifications};
         },
     })
 </script>

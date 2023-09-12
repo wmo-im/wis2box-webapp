@@ -1,0 +1,332 @@
+<template>
+  <v-sheet align="center">
+    <v-dialog v-model="showDialog" width="auto">
+      <v-card>
+        <v-card-text>{{errorMessage}}</v-card-text>
+        <v-card-actions>
+          <v-btn color="primary" block @click="showDialog = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-card-title v-if="!readonly">{{ route.params.id ? 'Edit' : 'Create new' }} station</v-card-title>
+    <v-card-title v-else>View station</v-card-title>
+    <v-card v-if="station" max-width="1200px">
+      <v-card-item>
+        <v-text-field
+          label="Station name"
+          v-model="station.properties.name"
+          :rules="[rules.validName]"
+          :readonly="readonly"
+          hint="Enter name of station" persistent-hint>
+        </v-text-field>
+      </v-card-item>
+      <v-card-item>
+        <v-text-field
+          label="WIGOS station identifier"
+          v-model="station.properties.wigos_station_identifier"
+          :rules="[rules.validWSI]"
+          :readonly="readonly"
+          hint="Enter the WIGOS station identifier" persistent-hint>
+        </v-text-field>
+      </v-card-item>
+      <v-card-item>
+        <v-text-field
+          label="Traditional station identifier"
+          v-model="station.properties.traditional_station_identifier"
+          :readonly="readonly"
+          hint="Enter the traditional (5 or 7 digit) station identifier" persistent-hint>
+        </v-text-field>
+      </v-card-item>
+      <v-card-item>
+        <v-container>
+          <v-row>
+            <v-col cols="6">
+              <v-row>
+              <v-text-field
+                label="Longitude (decimal degrees E), -180 to 180"
+                v-model="station.geometry.longitude"
+                :rules="[rules.validLongitude]"
+                :readonly="readonly"
+                type="number"
+                hint="Enter the station longitude (degrees E)" persistent-hint/>
+              </v-row>
+              <v-row>
+                <v-text-field
+                label="Latitude (decimal degrees N), -90 to 90"
+                v-model="station.geometry.latitude"
+                :rules="[rules.validLatitude]"
+                :readonly="readonly"
+                type="number"
+                hint="Enter the station latitude (degrees N)" persistent-hint/>
+            </v-row>
+            <v-row>
+              <v-text-field
+                label="Station elevation above sea level (metres)"
+                v-model="station.geometry.elevation"
+                :rules="[rules.validElevation]"
+                :readonly="readonly"
+                type="number"
+                hint="Station elevation above sea level (metres)" persistent-hint/>
+            </v-row>
+            <v-row v-if="!readonly">
+              <v-btn @click=getElevation()>Get elevation</v-btn>
+            </v-row>
+            </v-col>
+            <v-col cols="6">
+              <LocatorMap
+                  :longitude="parseFloat(station.geometry.longitude)"
+                  :latitude="parseFloat(station.geometry.latitude)"/>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-item>
+      <v-card-item>
+        <FacilityTypeSelector v-model="station.properties.facility_type" :readonly="readonly"/>
+      </v-card-item>
+      <v-card-item>
+        <v-text-field
+          label="Barometer height above sea level"
+          v-model="station.properties.barometer_height"
+          :rules="[rules.validBarometerHeight]"
+          :readonly="readonly"
+          hint="Enter barometer height (metres)" persistent-hint type="number">
+        </v-text-field>
+      </v-card-item>
+      <v-card-item><WMORegionSelector v-model="station.properties.wmo_region" :readonly="readonly"/></v-card-item>
+      <v-card-item><TerritorySelector v-model="station.properties.territory_name" :readonly="readonly"/></v-card-item>
+      <v-card-item><OperatingStatusSelector v-model="station.properties.status" :readonly="readonly"/></v-card-item>
+      <v-card-item>
+        <TopicHierarchySelector v-model="station.properties.topics" multiple :readonly="readonly"/>
+      </v-card-item>
+      <v-card-item>
+        <v-text-field type="password" clearable v-model="token" label="Auth token"></v-text-field>
+      </v-card-item>
+      <v-card-actions v-if="!readonly">
+        <v-btn @click="registerStation()" elevation=2>Register/Update</v-btn>
+        <v-btn @click="router.push('/station/'+route.params.id)" elevation=2>Cancel</v-btn>
+      </v-card-actions>
+      <v-card-actions v-else>
+        <v-btn @click="router.push('/station/'+route.params.id+'?action=edit')" elevation=2>Edit</v-btn>
+      </v-card-actions>
+    </v-card>
+    </v-sheet>
+  </template>
+  <script>
+    import {defineComponent, ref, watch, onBeforeMount, onMounted} from 'vue';
+    import {VSheet, VCard, VCardItem, VTextField, VContainer, VRow, VCol, VBtn, VCardActions} from 'vuetify/lib/components/index.mjs';
+    import TopicHierarchySelector from '@/components/TopicHierarchySelector.vue';
+    import FacilityTypeSelector from '@/components/FacilityTypeSelector.vue';
+    import WMORegionSelector from '@/components/WMORegionSelector.vue';
+    import TerritorySelector from '@/components/TerritorySelector.vue';
+    import OperatingStatusSelector from '@/components/OperatingStatusSelector.vue';
+    import LocatorMap from '@/components/LocatorMap.vue';
+    import {useRoute, useRouter} from 'vue-router';
+
+
+
+    export default defineComponent({
+      name: 'StationEditor',
+      components: {
+        VContainer, VRow, VContainer, VCard, VCardItem, VTextField, OperatingStatusSelector,
+        TopicHierarchySelector, FacilityTypeSelector, WMORegionSelector, TerritorySelector,
+        VBtn, VCardActions, LocatorMap
+      },
+      setup(){
+        const route = useRoute();
+        const router = useRouter();
+        const station = ref(null);
+        const topics = ref([null]);
+        const showDialog = ref(false);
+        const errorMessage = ref(null);
+        const operatingStatusOptions = ref(null);
+        const territoryOptions = ref(null);
+        const WMORegionOptions = ref(null);
+        const readonly = ref(false);
+        const msg = ref('');
+        const token = ref(null);
+        // define validation rules
+        const rules = ref({
+          validWSI: value => /^0-[0-9]{1,5}-[0-9]{0,5}-[0-9a-zA-Z]{1,16}$/.test(value) || 'Invalid WSI',
+          validLongitude: value => ! (Math.abs(value) > 180 || isNaN(value)) ? true : 'Invalid longitude',
+          validLatitude: value => ! (Math.abs(value) > 90 || isNaN(value)) ? true : 'Invalid latitude',
+          validElevation: value => ! isNaN(value) ? true : 'Invalid elevation',
+          validBarometerHeight: value => ! isNaN(value) ? true : 'Invalid barometer height',
+          validName: value => value && value.length > 3 ? true : 'Name must be more than 3 characters'
+        });
+        // setup initial (empty station)
+
+        const registerStation = async () => {
+          var record = {
+            id: station.value.properties.wigos_station_identifier,  // WSI
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [parseFloat(station.value.geometry.longitude),
+                            parseFloat(station.value.geometry.latitude),
+                            parseFloat(station.value.geometry.elevation)]
+            },
+            properties: {
+              name: station.value.properties.name,
+              wigos_station_identifier: station.value.properties.wigos_station_identifier,  // WSI
+              traditional_station_identifier: station.value.properties.traditional_station_identifier,
+              facility_type: station.value.properties.facility_type.id,
+              territory_name: station.value.properties.territory_name.id,
+              barometer_height: parseFloat(station.value.properties.barometer_height),
+              wmo_region: station.value.properties.wmo_region.id,
+              url: "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/" +
+                      station.value.properties.wigos_station_identifier,
+              topics: station.value.properties.topics.map( (topic) => (topic.id)),
+              status: station.value.properties.status.id,
+              id: station.value.properties.wigos_station_identifier  // WSI
+            }
+          }
+          var apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items`;
+          var leaf = route.params.id ? "/" + route.params.id : "";
+          apiURL = apiURL + leaf;
+          const response = await fetch(apiURL, {
+              method: route.params.id ? 'PUT' : 'POST',
+              headers: {
+                  'encode': 'json',
+                  'Content-Type': 'application/geo+json',
+                  'authorization': 'Bearer '+ token.value
+              },
+              body: JSON.stringify(record)
+            });
+          if (!response.ok) {
+              console.log(record);
+             console.error('HTTP error', response.status);
+          } else {
+            setTimeout(200); // short pause to give backend time to catch up.
+            router.push("/station/"+record.id);
+            errorMessage.value = "Station successfully submitted";
+            showDialog.value = true;
+          }
+        };
+
+        const getElevation = async () => {
+          var isValid = true;
+          if ( isNaN( station.value.geometry.latitude ) || Math.abs(station.value.geometry.latitude) > 90 ){
+            isValid = false;
+          }
+          if ( isNaN( station.value.geometry.longitude ) || Math.abs(station.value.geometry.longitude) > 180 ){
+            isValid = false;
+          }
+          if( isValid ){
+            var query = "https://api.opentopodata.org/v1/aster30m?locations=" +
+                          station.value.geometry.latitude + "," +
+                          station.value.geometry.longitude;
+            const response = await fetch(query);
+            if( !response.ok ){
+              throw new Error(`HTTP error fetching elevation, Status: ${response.status}`);
+            }else{
+              const data = await response.json();
+              station.value.geometry.elevation = data.results[0].elevation;
+            }
+          }else{
+            msg.value = "Please enter a valid location before getting the elevation.";
+            showDialog.value = true;
+          }
+        };
+
+        onBeforeMount( () => {
+          if(route.query.action==="edit"){
+            readonly.value = false;
+          }else{
+            readonly.value = true;
+          }
+        });
+
+
+        onMounted( async () => {
+          // load codes lists
+          if (route.params.id){
+            await loadStation( route.params.id );
+          }
+          if( ! station.value ){
+            readonly.value = false;
+            station.value = {
+              id: null,  // WSI
+              type: 'Feature',
+              geometry: {
+                type: 'Point',
+                coordinates: [null,null,null]
+              },
+              properties: {
+                name: null,
+                wigos_station_identifier: null,  // WSI
+                traditional_station_identifier: null,
+                facility_type: {},
+                territory_name: {},
+                barometer_height: null,
+                wmo_region: {},
+                url: null,
+                topics: [],
+                status: {},
+                id: null  // WSI
+              }
+            };
+          }
+        })
+
+        // load station
+        const loadStation = async (wsi) => {
+          const apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items/${wsi}`;
+          try {
+            const response  = await fetch(apiURL);
+            if (!response.ok && response.status !== 404){
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }else if(response.status === 404){
+              errorMessage.value = "Station not found, please check the ID or register a new station."
+              showDialog.value = true;
+              router.push('/station/');
+            } else{
+              var data = await response.json();
+              station.value = {
+                id: data.id,  // WSI
+                type: data.type,
+                geometry: {
+                  type: data.geometry.type,
+                  coordinates: data.geometry.coordinates,
+                  longitude: data.geometry.coordinates[0],
+                  latitude: data.geometry.coordinates[1],
+                  elevation: data.geometry.coordinates[2]
+                },
+                properties: {
+                  name: data.properties.name,
+                  wigos_station_identifier: data.properties.wigos_station_identifier,  // WSI
+                  traditional_station_identifier: data.properties.traditional_station_identifier,
+                  facility_type: data.properties.facility_type,
+                  territory_name: data.properties.territory_name,
+                  barometer_height: data.properties.barometer_height,
+                  wmo_region: data.properties.wmo_region,
+                  url: data.properties.url,
+                  topics: JSON.parse(JSON.stringify(data.properties.topics)),
+                  status: data.properties.status,
+                  id: data.properties.id  // WSI
+                }
+              };
+            }
+          }
+          catch (error) {
+            errorMessage.value = "Error fetching station details, please check the API end point." +
+                                  " See logs for more information.";
+            console.error("Error fetching station details:", error)
+          }
+        }
+
+        watch( (route), () => {
+          if(route.query.action === "edit"){
+            readonly.value = false;
+          }else{
+            readonly.value = true;
+          }
+        })
+
+
+        return {station, topics, registerStation, getElevation, showDialog, msg, rules, route, router,
+          operatingStatusOptions, WMORegionOptions, territoryOptions, readonly, errorMessage, token
+        };
+      }
+    });
+  </script>
+

@@ -1,0 +1,16 @@
+[
+  {"name": "Air (fixed)", "id": "Air (fixed)", "description": "Airborne station/platform, at fixed position"},
+  {"name": "Air (mobile)", "id": "Air (mobile)", "description": "Airborne station/platform, moving around"},
+  {"name": "Lake/River (fixed)", "id": "Lake/River (fixed)", "description": "Station/platform at lake/river surface, at fixed position"},
+  {"name": "Lake/River (mobile)", "id": "Lake/River (mobile)", "description": "Station/platform at lake/river surface, moving around"},
+  {"name": "Land (fixed)", "id": "Land (fixed)", "description": "Station/platform on solid terrain, at fixed position"},
+  {"name": "Land (mobile)", "id": "Land (mobile)", "description": "Station/platform on solid terrain, moving around"},
+  {"name": "Land (on ice)", "id": "Land (on ice)", "description": "Station/platform on ice-covered ground, moving with the ice"},
+  {"name": "Sea (fixed)", "id": "Sea (fixed)", "description": "Station/platform at sea surface, at fixed position"},
+  {"name": "Sea (mobile)", "id": "Sea (mobile)", "description": "Station/platform at sea surface, moving around"},
+  {"name": "Sea (on ice)", "id": "Sea (on ice)", "description": "Station/platform on floating ice, moving with the ice"},
+  {"name": "Space-based", "id": "Space-based", "description": "Satellite platform in orbit"},
+  {"name": "Underwater (fixed)", "id": "Underwater (fixed)", "description": "Station/platform under water, at fixed horizontal position"},
+  {"name": "Underwater (mobile)", "id": "Underwater (mobile)", "description": "Station/platform under water, moving around also horizontally"},
+  {"name": "unknown", "id": "unknown", "description": "The station/platform type is unknown."}
+]
