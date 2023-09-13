@@ -115,8 +115,9 @@ export default defineComponent({
                 inputs: {
                   data: props.data
                 }
+              };
             };
-            const inspectUrl = `${import.meta.env.VITE_API_URL}/processes/wis2box-bufr2geojson/execution`
+            const inspectUrl = `${import.meta.env.VITE_API_URL}/processes/bufr2geojson/execution`
             const response = await fetch(inspectUrl, {
                 method: 'POST',
                 headers: {
