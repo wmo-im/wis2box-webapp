@@ -14,6 +14,8 @@
     "apexcharts": "^3.41.1",
     "core-js": "^3.29.0",
     "d3": "^7.8.5",
+    "geojson-validation": "^1.0.2",
+    "leaflet": "^1.9.4",
     "roboto-fontface": "*",
     "vue": "^3.2.0",
     "vue-router": "^4.0.0",

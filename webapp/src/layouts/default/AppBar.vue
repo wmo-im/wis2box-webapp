@@ -1,31 +1,15 @@
 <template>
-  <v-app-bar scroll-behavior="hide" scroll-threshold="10" class="bar-sizing" image="@/assets/banner.png">
-
-    <template v-slot:image>
-      <!-- Gradient from white to transparent, making the logo and text clearer on tablets/mobiles -->
-      <v-img gradient="to left, transparent, #FFFFFF"></v-img>
-    </template>
-
-
+  <v-app-bar image="@/assets/banner.png">
     <img src="@/assets/logo-large.png" alt="Logo" class="wmo-logo" />
 
 
     <v-app-bar-title class="wis2-title"> WIS2 in a box
     </v-app-bar-title>
-
-    <!-- Hamburger menu visible only on mobile and tablet -->
-    <template v-slot:append>
-      <v-app-bar-nav-icon class="hidden-md-and-up" color="#F6FFF8" @click="drawer = !drawer"></v-app-bar-nav-icon>
-    </template>
-
-    <!-- App bar buttons only visible on desktop -->
-    <div class="hidden-sm-and-down">
-      <v-btn color="#F6FFF8" exact to="/">Home</v-btn>
-      <v-btn color="#F6FFF8" text to="synop_form">Synop form</v-btn>
-      <v-btn class="#F6FFF8" text to="csv2bufr_form">CSV FORM</v-btn>
-      <v-btn color="#F6FFF8" text to="monitoring">Monitoring</v-btn>
-    </div>
-
+    <v-btn class="bar-button" exact to="/">Home</v-btn>
+    <v-btn class="bar-button" text to="/synop_form">Synop form</v-btn>
+    <v-btn class="bar-button" text to="/csv2bufr_form">CSV to BUFR form</v-btn>
+    <v-btn class="bar-button" text to="/station">Stations</v-btn>
+    <v-btn class="bar-button" text to="/monitoring">Monitoring</v-btn>
   </v-app-bar>
 
   <!-- Navigation drawer opens when hamburger menu clicked -->

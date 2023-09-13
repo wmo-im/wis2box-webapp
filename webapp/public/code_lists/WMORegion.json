@@ -1,0 +1,8 @@
+[
+  {"name": "Africa", "id": "I", "description": "Region I - Africa"},
+  {"name": "Asia", "id": "II", "description": "Region II - Asia"},
+  {"name": "South America", "id": "III", "description": "Region III - South America"},
+  {"name": "North America, Central America and the Caribbean", "id": "IV", "description": "Region IV - North America, Central America and the Caribbean"},
+  {"name": "South-West Pacific", "id": "V", "description": "South-West Pacific"},
+  {"name": "Europe", "id": "VI", "description": "Europe"}
+]
