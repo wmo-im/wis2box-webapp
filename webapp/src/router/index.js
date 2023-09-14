@@ -29,6 +29,12 @@ const routes = [
         meta: {title: 'wis2box - Monitoring'}
       },
       {
+        path: '/import-station',
+        name: 'importOSCAR',
+        component: () => import('@/views/ImportOSCAR.vue'),
+        meta: {title: 'Import from OSCAR'}
+      },
+      {
         path: '/station',
         name: 'stationTable',
         component: () => import('@/views/StationTable.vue'),
