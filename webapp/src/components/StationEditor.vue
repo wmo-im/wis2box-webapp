@@ -106,7 +106,7 @@
           <TopicHierarchySelector v-model="station.properties.topics" multiple :readonly="readonly"/>
         </v-card-item>
         <v-card-item>
-          <v-text-field type="password" clearable v-model="token" label="Auth token"></v-text-field>
+          <v-text-field v-if="!readonly" type="password" clearable v-model="token" label="Auth token"></v-text-field>
         </v-card-item>
         <v-card-actions v-if="!readonly">
           <v-btn @click="registerStation()" elevation=2 :disabled="!formValid">Register/Update</v-btn>
