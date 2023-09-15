@@ -1,10 +1,7 @@
 <template>
   <v-app-bar image="@/assets/banner.png">
-    <img src="@/assets/logo-large.png" alt="Logo" class="wmo-logo" />
-
-
-    <v-app-bar-title class="wis2-title"> WIS2 in a box
-    </v-app-bar-title>
+    <img src="@/assets/logo-large.png" alt="Logo" class="wmo-logo"/>
+    <v-app-bar-title class="wis2-title">WIS2 in a box</v-app-bar-title>
     <v-btn class="bar-button" exact to="/">Home</v-btn>
     <v-btn class="bar-button" text to="/synop_form">Synop form</v-btn>
     <v-btn class="bar-button" text to="/csv2bufr_form">CSV to BUFR form</v-btn>

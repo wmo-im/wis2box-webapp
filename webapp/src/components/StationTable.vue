@@ -6,7 +6,7 @@
       <v-card-item>
         <v-btn prepend-icon="mdi-plus" color="success" @click="addRecord()">Add new station</v-btn>
       </v-card-item>
-      <VDataTable :headers="headers" :items="items" :search="search" dense small>
+      <VDataTable v-if="items" :headers="headers" :items="items" :search="search" dense small>
           <template v-slot:item.actions="{ item }">
             <v-icon size="small" @click="editRecord(item)">mdi-pen</v-icon>
             <v-icon size="small" @click="viewRecord(item)">mdi-eye</v-icon>
@@ -64,6 +64,8 @@ export default defineComponent({
     const token = ref(null);
 
     const loadStations = async () => {
+        items.value = null;
+        console.log(items.value);
         const apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items?f=json`;
         try {
           var response = await fetch(apiURL);
@@ -98,12 +100,14 @@ export default defineComponent({
                                 " See logs for more information.";
           console.error("Error fetching topic hierarchy:", error)
         }
-        headers.value = Object.keys(items.value[0]).map( key => ({
-          title: key,
-          value: key,
-          key: key,
-          sortable: true
-        }));
+        if( items.value ){
+          headers.value = Object.keys(items.value[0]).map( key => ({
+            title: key,
+            value: key,
+            key: key,
+            sortable: true
+          }));
+        };
     }
 
     onMounted( async() => {
@@ -114,6 +118,8 @@ export default defineComponent({
       selectedStation.value = null;
       stationToDelete.value = null;
       deleteDialog.value = false;
+      // reload the stations
+      loadStations();
     };
     const confirmDelete = async () => {
       if( selectedStation.value === stationToDelete.value ){
@@ -132,10 +138,8 @@ export default defineComponent({
           if (!response.ok) {
             console.error('HTTP error', response.status);
           }else {
+            setTimeout(2000); // short pause to give backend time to catch up.
             closeDeleteDialog();
-            // reload the station list
-            setTimeout(500); // short pause to give backend time to catch up.
-            loadStations();
           }
         }
         catch (error) {
@@ -159,7 +163,7 @@ export default defineComponent({
     }
 
     const addRecord = () => {
-      router.push("/station/")
+      router.push("/import-station")
     }
 
     return {headers, items, search, sortBy, confirmDelete, addRecord, deleteRecord, closeDeleteDialog,
