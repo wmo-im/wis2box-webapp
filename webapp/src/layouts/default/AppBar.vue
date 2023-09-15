@@ -10,18 +10,14 @@
     <v-app-bar-title class="wis2-title"> WIS2 in a box
     </v-app-bar-title>
 
-    <template v-slot:append>
-      <v-app-bar-nav-icon color="#F6FFF8" @click="drawer = !drawer"></v-app-bar-nav-icon>
-    </template>
-
   </v-app-bar>
 
-  <v-navigation-drawer v-model="drawer" location="right" :width="200" :rail="rail" permanent>
+  <v-navigation-drawer location="left" :width="200" :rail="rail" permanent>
 
     <v-list-item :class="rail ? 'left-chevron' : 'right-chevron'">
       <template v-slot:append>
-        <v-btn v-if="rail === true" variant="text" icon="mdi-chevron-left" @click.stop="rail = !rail"></v-btn>
-        <v-btn v-if="rail === false" variant="text" icon="mdi-chevron-right" @click.stop="rail = !rail"></v-btn>
+        <v-btn v-if="rail === true" variant="text" icon="mdi-chevron-right" @click.stop="rail = !rail"></v-btn>
+        <v-btn v-if="rail === false" variant="text" icon="mdi-chevron-left" @click.stop="rail = !rail"></v-btn>
       </template>
     </v-list-item>
 
@@ -50,7 +46,6 @@
 
 import { ref } from 'vue';
 
-const drawer = ref(false)
 const rail = ref(true)
 const open = ref(["Forms"])
 
@@ -76,7 +71,7 @@ const open = ref(["Forms"])
 }
 
 .right-chevron {
-   justify-content: flex-start;
-   padding-left: 4px;
+   justify-content: flex-end;
+   padding-right: 5px;
 }
 </style>
