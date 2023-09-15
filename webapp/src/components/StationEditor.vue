@@ -127,8 +127,6 @@
     import LocatorMap from '@/components/LocatorMap.vue';
     import {useRoute, useRouter} from 'vue-router';
 
-
-
     export default defineComponent({
       name: 'StationEditor',
       components: {
@@ -151,7 +149,6 @@
         const msg = ref('');
         const token = ref(null);
         const formValid = ref(null);
-
         // define validation rules
         const rules = ref({
           validWSI: value => /^0-[0-9]{1,5}-[0-9]{0,5}-[0-9a-zA-Z]{1,16}$/.test(value) || 'Invalid WSI',
@@ -161,7 +158,6 @@
           validBarometerHeight: value => ! isNaN(value) ? true : 'Invalid barometer height',
           validName: value => value && value.length > 3 ? true : 'Name must be more than 3 characters'
         });
-
         const cancelEdit = async () => {
           readonly.value = true;
           if( route.params.id ){
@@ -250,7 +246,6 @@
             showDialog.value = true;
           }
         };
-
         onBeforeMount( async () => {
           if(route.query.action==="edit"){
             readonly.value = false;
@@ -265,7 +260,6 @@
           await fetch("/code_lists/operatingStatus.json").then( (response) => response.json()).then( (data) => operatingStatusOptions.value = data);
           await fetch("/code_lists/WMORegion.json").then( (response) => response.json()).then( (data) => WMORegionOptions.value = data);
         });
-
         onMounted( async () => {
           // load codes lists
           if (route.params.id){

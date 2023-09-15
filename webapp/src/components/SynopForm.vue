@@ -3,7 +3,14 @@
     <v-col cols="12">
       <!-- Form entry --><v-fade-transition appear>
         <v-card>
-          <v-card-title class="big-title">Submit FM 12–XIV Ext. SYNOP Bulletin</v-card-title>
+          <!-- Font size of title for tablets and desktops -->
+          <div class="hidden-xs">
+            <v-card-title class="big-title">Submit FM 12–XIV Ext. SYNOP Bulletin</v-card-title>
+          </div>
+          <!-- Font size of title for phones -->
+          <div class="hidden-sm-and-up">
+            <v-card-title class="small-title">Submit FM 12–XIV Ext. SYNOP Bulletin</v-card-title>
+          </div>
           <v-card-text>
             <v-form>
               <v-card-item class="calendar-box">
@@ -16,34 +23,48 @@
                 <p v-else class="hint-text hint-default">Month and year of the data</p>
               </v-card-item>
               <!-- Date selection -->
-  
+
               <!-- FM 12 data entry -->
               <v-card-item>
                 <v-textarea label="FM 12" v-model.lazy="bulletin" @change="checkMessage"></v-textarea>
-                <p v-if="aaxxPresent == false" class="hint-text hint-invalid">AAXX must be present for a valid SYNOP message
+                <p v-if="aaxxPresent == false" class="hint-text hint-invalid">AAXX must be present for a valid SYNOP
+                  message
                 </p>
                 <p v-else-if="equalsPresent == false" class="hint-text hint-invalid">Delimiter (=) must be present for a
                   valid
                   SYNOP message</p>
                 <p v-else class="hint-text hint-default">Raw FM 12 bulletin</p>
               </v-card-item>
-  
+
               <!-- Topic hierarchy selection -->
               <v-card-item>
-                <v-select label="Channel" v-model="hierarchy" :items="hierarchyList" v-if="hierarchyList.length"
+                <v-select label="Topic" v-model="topic" :items="topicList" v-if="topicList.length"
                   hint="Topic hierarchy for ingestion of data" persistent-hint></v-select>
               </v-card-item>
-  
+
+              <!-- execution token -->
+              <v-card-item>
+                <v-textarea label="token" v-model="token" rows="1"
+                  hint="Execution token for the bufr-conversion process" persistent-hint>
+                </v-textarea>
+              </v-card-item>
+
             </v-form>
             <v-card-item>
+              <!-- Show switch above the submit button on mobile -->
+              <v-switch class="hidden-sm-and-up"
+                :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !topic"
+                v-model="notificationsOnPending" label="Publish on WIS2" color="primary" hide-details></v-switch>
               <div class="button-align">
-                <v-btn :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !hierarchy"
+                <v-btn :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !topic"
                   append-icon="mdi-cloud-upload" :loading="loading" @click="submit">Submit
                   <template v-slot:loader>
                     <v-progress-linear indeterminate></v-progress-linear>
                   </template>
                 </v-btn>
-                <v-switch :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !hierarchy"
+                <!-- Show switch on the right of submit button on tablet and desktop -->
+                <v-switch class="hidden-xs"
+                  :disabled="(datePossible === false) || !aaxxPresent || !equalsPresent || !topic"
                   v-model="notificationsOnPending" label="Publish on WIS2" color="primary" hide-details></v-switch>
               </div>
             </v-card-item>
@@ -116,7 +137,7 @@
 
           <!-- OUTPUT BUFR -->
           <!-- BUFR files drop-down if there are any output files -->
-          <v-list-group v-if="result.files && result.files.length > 0" ref="fileList" value="Files"
+          <v-list-group v-if="result.data_items && result.data_items.length > 0" ref="fileList" value="Files"
             @click="scrollToRef('fileList')">
             <template v-slot:activator="{ props }">
               <v-list-item v-bind="props" prepend-icon="mdi-check-circle">
@@ -124,21 +145,44 @@
                   <v-icon color="#00BD9D"></v-icon>
                 </template>
                 <!-- If number of BUFR files > 0, set text to green -->
-                <span :style="{ color: '#00BD9D' }">Output BUFR files: {{ result.files.length }}</span>
+                <span :style="{ color: '#00BD9D' }">Output BUFR files: {{ result.data_items.length }}</span>
               </v-list-item>
 
             </template>
-            <v-list-item v-for="(file_url, index) in result.files" :key="index">
-              <div class="file-actions">
-                <div>
-                  {{ getFileName(file_url) }}
-                </div>
+            <v-list-item v-for="(data_item, index) in result.data_items" :key="index">
+              <!-- Place download and inspect buttons on the right of the file names for tablet and desktop -->
+              <div class="hidden-xs">
                 <div class="file-actions">
-                  <DownloadButton :fileUrl="file_url" />
-                  <InspectBufrButton :fileUrl="file_url" />
+                  <div>
+                    {{ data_item.filename }}
+                  </div>
+                  <div class="file-actions" v-if="data_item.file_url">
+                    <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url"/>
+                    <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url"/>
+                  </div>
+                  <div class="file-actions" v-if="data_item.data">
+                    <DownloadButton :fileName="data_item.filename" :data="data_item.data"/>
+                    <InspectBufrButton :fileName="data_item.filename" :data="data_item.data"/>
+                  </div>
                 </div>
               </div>
-              <v-divider v-if="index < result.files.length - 1" class="divider-spacing"></v-divider>
+              <!-- Place download and inspect buttons below the file names for mobile -->
+              <div class="hidden-sm-and-up">
+                <div>
+                  <div>
+                    {{ data_item.filename }}
+                  </div>
+                  <div class="file-actions" v-if="data_item.file_url">
+                    <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url"/>
+                    <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url"/>
+                  </div>
+                  <div class="file-actions" v-if="data_item.data">
+                    <DownloadButton :fileName="data_item.filename" :data="data_item.data"/>
+                    <InspectBufrButton :fileName="data_item.filename" :data="data_item.data"/>
+                  </div>
+                </div>
+              </div>
+              <v-divider v-if="index < result.data_items.length - 1" class="divider-spacing"></v-divider>
             </v-list-item>
           </v-list-group>
 
@@ -163,24 +207,6 @@ import DownloadButton from '@/components/DownloadButton.vue';
 
 export default defineComponent({
   name: 'RoleForm',
-  props: {
-    broker: {
-      type: String,
-      default: ''
-    },
-    channel: {
-      type: String,
-      default: ''
-    },
-    api: {
-      type: String,
-      default: 'api.opencdms.org'
-    },
-    path: {
-      type: String,
-      default: '/processes/wis2box-synop-process/execution'
-    }
-  },
   data() {
     // Default data values before reactivity
     return {
@@ -193,9 +219,10 @@ export default defineComponent({
       bulletin: "", // FM 12 data
       aaxxPresent: true, // Boolean to check if AAXX is in bulletin
       equalsPresent: true, // Boolean to check if = delimiter is in bulletin
-      hierarchyList: ["test1", "test2", "test3"], // List of topic hierarchies 
+      topicList: ["test1", "test2", "test3"], // List of topic hierarchies 
       // before they are obtained from discovery metadata
-      hierarchy: "", // Topic hierarchy selected by user
+      topic: "", // Topic hierarchy selected by user
+      token: "", // Execution token to be entered by user
       notificationsOnPending: true, // Realtime variable for if user has 
       // selected notifications or not
       notificationsOn: true, // Variable that updates to the pending variable 
@@ -234,17 +261,15 @@ export default defineComponent({
       this.equalsPresent = this.bulletin.includes('=');
     },
     // Allows us to get the current topic hierarchies available
-    async fetchHierarchy() {
+    async fetchTopics() {
       const apiUrl = `${import.meta.env.VITE_API_URL}/collections/discovery-metadata/items?f=json`;
-      // check if TEST=True is set in .env file
-      console.log(import.meta.env);
       // check if TEST_MODE is set in .env file or if VITE_API_URL is not set
       if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
         console.log("TEST_MODE is enabled");
-        this.hierachyList = ["test1", "test2", "test3"];
+        this.topicList = ["test1", "test2", "test3"];
       }
       else {
-        console.log("Fetching topic hierarchy from:", apiUrl);
+        //console.log("Fetching topic hierarchy from:", apiUrl);
         try {
           const response = await fetch(apiUrl);
           if (!response.ok) {
@@ -252,14 +277,15 @@ export default defineComponent({
           }
           else {
             const data = await response.json();
+            // If the features object is in the data
             if (data.features) {
               // Use Array.map to create a new array of the topic hierarchies
-              this.hierarchyList = data.features.map(feature => {
+              this.topicList = data.features.map(feature => {
                 if (feature.properties && feature.properties['wmo:topicHierarchy']) {
                   return feature.properties['wmo:topicHierarchy']
                 }
               });
-              console.log(this.hierarchyList)
+              console.log(this.topicList)
             }
             else {
               console.error("API response is not an object");
@@ -285,9 +311,15 @@ export default defineComponent({
         "result": "Success",
         "messages transformed": 2,
         "messages published": 2,
-        "files": [
-          "http://3.73.37.35/data/2023-12-17/wis/synop/test/WIGOS_0-20000-0-15015_20231217T120000.bufr4",
-          "http://3.73.37.35/data/2023-12-17/wis/synop/test/WIGOS_0-20000-0-15020_20231217T120000.bufr4"
+        "data_items": [
+          {
+            "file_url": "http://3.127.235.197/data/2023-01-19/wis/synop/test/WIGOS_0-20000-0-64400_20230119T060000.bufr4",
+            "filename": "WIGOS_0-20000-0-64400_20230119T060000.bufr4"
+          },
+          {
+            "data": "QlVGUgABgAQAABYAAAAAAAAAAAJuHgAH5wETBgAAAAALAAABgMGWx2AAAVMABOIAAANjQ0MDAAAAAAAAAAAAAAAIDIGxoaGBgAAAAAAAAAAAAAAAAAAAAPzimYBA/78kmTlBBU//////////////////////////////+dUnxn1P///////////26vbYOl////////////////////////////////////////////////////////////////AR////gJH///+T/x/+R/yf////////////7///v9f/////////////////////////////////+J/b/gAff2/4Dz/X/////////////////////////////////////7+kAH//v6QANnH////////////9+j//////////////v0f//////f//+/R/+////////////////////fo//////////////////3+oAP///////////////////8A3Nzc3",
+            "filename": "WIGOS_0-20000-0-64400_20230119T060000.bufr4"
+          }
         ],
         "warnings": [],
         "errors": []
@@ -300,10 +332,17 @@ export default defineComponent({
     testPartialSuccessResult() {
       const testData = {
         "result": "Partial Success",
-        "messages transformed": 1,
+        "messages transformed": 2,
         "messages published": 1,
-        "files": [
-          "http://3.73.37.35/data/2023-12-17/wis/synop/test/WIGOS_0-20000-0-15015_20231217T120000.bufr4"
+        "data_items": [
+          {
+            "file_url": "http://3.127.235.197/data/2023-01-19/wis/synop/test/WIGOS_0-20000-0-64400_20230119T060000.bufr4",
+            "filename": "WIGOS_0-20000-0-64400_20230119T060000.bufr4"
+          },
+          {
+            "data": "QlVGUgABgAQAABYAAAAAAAAAAAJuHgAH5wETBgAAAAALAAABgMGWx2AAAVMABOIAAANjQ0MDAAAAAAAAAAAAAAAIDIGxoaGBgAAAAAAAAAAAAAAAAAAAAPzimYBA/78kmTlBBU//////////////////////////////+dUnxn1P///////////26vbYOl////////////////////////////////////////////////////////////////AR////gJH///+T/x/+R/yf////////////7///v9f/////////////////////////////////+J/b/gAff2/4Dz/X/////////////////////////////////////7+kAH//v6QANnH////////////9+j//////////////v0f//////f//+/R/+////////////////////fo//////////////////3+oAP///////////////////8A3Nzc3",
+            "filename": "WIGOS_0-20000-0-64400_20230119T060000.bufr4"
+          }
         ],
         "warnings": [
           "Missing station height for station 15090",
@@ -320,7 +359,7 @@ export default defineComponent({
         "result": "Failure",
         "messages transformed": 0,
         "messages published": 0,
-        "files": [],
+        "data_items": [],
         "warnings": [],
         "errors": [
           "Error converting to BUFR: local variable 'messages' referenced before assignment",
@@ -338,30 +377,38 @@ export default defineComponent({
           year: this.date.year, // Year of data
           month: this.date.month + 1, // Month of data, +1 as JS starts 
           // from 0 for months
-          channel: this.hierarchy, // Topic hierarchy
+          channel: this.topic, // Topic hierarchy
           notify: this.notificationsOn // Boolean for WIS2 notifications
         }
       };
 
-      const synopUrl = `${import.meta.env.VITE_API_URL}/processes/wis2box-synop-process/execution`
+      const synopUrl = `${import.meta.env.VITE_API_URL}/processes/wis2box-synop2bufr/execution`
 
-      console.log(payload);
-      console.log(synopUrl);
+      //console.log(payload);
+      //console.log(synopUrl);
       this.input = payload;
 
       const response = await fetch(synopUrl, {
         method: 'POST',
         headers: {
           'encode': 'json',
-          'Content-Type': 'application/geo+json'
+          'Content-Type': 'application/geo+json',
+          'authorization': 'Bearer ' + this.token
         },
         body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
+        let result;
+        if(response.status == 401) {
+          result = "Unauthorized, please provide a valid execution token"
+        }
+        else {
+          result = "API error"
+        }
         console.error('HTTP error', response.status);
         this.result = {
-          "result": "API error",
+          "result": result,
           "errors": [
             synopUrl + " returned " + response.status
           ]
@@ -369,8 +416,8 @@ export default defineComponent({
       } else {
         const data = await response.json();
         this.result = data;
-        console.log("Result:"); // TODO: Remove this line
-        console.log(this.result); // TODO: Remove this line
+        //console.log("Result:"); // TODO: Remove this line
+        //console.log(this.result); // TODO: Remove this line
       }
     },
     // Method for when the user presses the submit button, including
@@ -401,11 +448,6 @@ export default defineComponent({
 
       // End loading animation
       this.loading = false;
-    },
-    // Get filename from output BUFR files so it can be displayed on screen
-    getFileName(url) {
-      const urlParts = url.split('/');
-      return urlParts[urlParts.length - 1];
     }
   },
   watch: {
@@ -441,7 +483,7 @@ export default defineComponent({
     DownloadButton
   },
   mounted() {
-    this.fetchHierarchy();
+    this.fetchTopics();
   }
 });
 </script>
@@ -449,6 +491,11 @@ export default defineComponent({
 <style scoped>
 .big-title {
   font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.small-title {
+  font-size: 1.1rem;
   font-weight: 700;
 }
 
@@ -516,5 +563,4 @@ export default defineComponent({
 
 .divider-spacing {
   margin-top: 10px;
-}
-</style>
+}</style>

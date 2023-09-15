@@ -120,7 +120,6 @@ export default defineComponent({
       deleteDialog.value = false;
       // reload the stations
       loadStations();
-
     };
     const confirmDelete = async () => {
       if( selectedStation.value === stationToDelete.value ){
