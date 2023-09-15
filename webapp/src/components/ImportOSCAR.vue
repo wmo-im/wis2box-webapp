@@ -58,7 +58,7 @@
       const router = useRouter();
 
       const submit = async () => {
-        var apiURL = `${import.meta.env.VITE_API_URL}/processes/wis2box-oscar2feature/execution`;
+        var apiURL = `${import.meta.env.VITE_API_URL}/processes/oscar2feature/execution`;
         var payload = {
               "inputs": {
                 "wigos_station_identifier": wsi.value
