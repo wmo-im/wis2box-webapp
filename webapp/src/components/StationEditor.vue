@@ -30,10 +30,6 @@
             hint="Enter the WIGOS station identifier" persistent-hint>
           </v-text-field>
         </v-card-item>
-        <!--<v-card-item v-if="(!readonly) && (!route.params.id)">
-          <v-btn elevation=2 @click="importOSCAR">Import from OSCAR/Surface</v-btn>
-        </v-card-item>
-        -->
         <v-card-item>
           <v-text-field
             label="Traditional station identifier"
@@ -106,7 +102,7 @@
           <TopicHierarchySelector v-model="station.properties.topics" multiple :readonly="readonly"/>
         </v-card-item>
         <v-card-item>
-          <v-text-field type="password" clearable v-model="token" label="Auth token"></v-text-field>
+          <v-text-field v-if="!readonly" type="password" clearable v-model="token" label="Auth token"></v-text-field>
         </v-card-item>
         <v-card-actions v-if="!readonly">
           <v-btn @click="registerStation()" elevation=2 :disabled="!formValid">Register/Update</v-btn>
@@ -154,7 +150,6 @@
         const token = ref(null);
         const formValid = ref(null);
 
-        const selectedFacilityType = ref(null);
         // define validation rules
         const rules = ref({
           validWSI: value => /^0-[0-9]{1,5}-[0-9]{0,5}-[0-9a-zA-Z]{1,16}$/.test(value) || 'Invalid WSI',
@@ -420,13 +415,15 @@
               errorMessage.value = "Error fetching from OSCAR/Surface: " + error;
               showDialog.value = true;
             }
-
+          } else {
+            errorMessage.value = "Please enter a WIGOS station identifier before importing from OSCAR/Surface";
+            showDialog.value = true;
           }
-        };
-
+        }
         return {station, topics, registerStation, getElevation, showDialog, msg, rules, route, router,
           operatingStatusOptions, WMORegionOptions, territoryOptions, readonly, errorMessage, token, formValid,
-          cancelEdit, importOSCAR, selectedFacilityType
+          cancelEdit
+
         };
       }
     });
