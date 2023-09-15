@@ -25,7 +25,7 @@
           <v-text-field :rules="[rules.validWSI]" v-model="wsi" label="WIGOS Station Identifier" hint="Enter WIGOS Station Identifier" persistent-hint/>
           <!-- <v-text-field v-model="token" type="password" clearable label="Auth token"/> -->
           <v-card-actions align="center">
-            <v-btn @click="submit">Submit</v-btn>
+            <v-btn @click="submit">Search</v-btn>
           </v-card-actions>
         </v-form>
       </v-card-item>
@@ -234,8 +234,8 @@
             console.log(station.value);
 
           }else if(data.value.error){
-            redirectMessage.value = "Station not found in OSCAR, unable to import," +
-                                    "please register station in OSCAR/Surface and try again." ;
+            redirectMessage.value = "Station not found in OSCAR, unable to import." +
+                                    " Please register station in OSCAR/Surface and try again." ;
             redirectWarning.value = "For development and testing purposes stations can be created directly." +
                                     "To add a new station to the WIS2box please click the 'create new station' button";
             showRedirect.value = true;
