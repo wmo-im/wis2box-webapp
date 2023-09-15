@@ -236,6 +236,7 @@
           }else if(data.value.error){
             redirectMessage.value = "Station not found in OSCAR, unable to import." +
                                     " Please register station in OSCAR/Surface and try again." ;
+
             redirectWarning.value = "For development and testing purposes stations can be created directly." +
                                     "To add a new station to the WIS2box please click the 'create new station' button";
             showRedirect.value = true;
@@ -247,6 +248,7 @@
         };
       };
       return {wsi, errorMessage, showDialog, rules, router, station, formValid, confirm,
+
           redirectMessage, redirectWarning, showRedirect, submit, token};
     }
   });

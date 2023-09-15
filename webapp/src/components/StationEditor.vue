@@ -149,6 +149,7 @@
         const msg = ref('');
         const token = ref(null);
         const formValid = ref(null);
+
         // define validation rules
         const rules = ref({
           validWSI: value => /^0-[0-9]{1,5}-[0-9]{0,5}-[0-9a-zA-Z]{1,16}$/.test(value) || 'Invalid WSI',
@@ -344,10 +345,81 @@
             readonly.value = true;
           }
         })
+        const importOSCAR = async () => {
+          if( station.value.properties.wigos_station_identifier ){
+            const apiURL = `${import.meta.env.VITE_API_URL}/processes/wis2box-oscar2feature/execution`;
+            // fetch via process
+            const payload = {
+              "inputs": {
+                "wigos_station_identifier": station.value.properties.wigos_station_identifier
+              }
+            }
+            try {
+              const response = await fetch(
+                apiURL, {
+                  method: 'POST',
+                  headers: {
+                      'encode': 'json',
+                      'Content-Type': 'application/json',
+                      'authorization': 'Bearer '+ token.value
+                  },
+                  body: JSON.stringify(payload)
+                }
+              );
+              if( ! response.ok ){
+                console.log( response );
+                errorMessage.value = "Error fetching form OSCAR/Surface: " + response.status;
+                showDialog.value = true;
+              }else{
+                console.log( response );
+                const data = await response.json();
+                console.log(data)
+                // this is currently broken, the drop down selectors are not updated when data are loaded via this route
+                // we may want to import from oscar directly from the station table
+                if( data.feature ){
+                  station.value = {
+                    id: data.feature.id,  // WSI
+                    type: data.feature.type,
+                    geometry: {
+                      type: data.feature.geometry.type,
+                      coordinates: data.feature.geometry.coordinates,
+                      longitude: data.feature.geometry.coordinates[0],
+                      latitude: data.feature.geometry.coordinates[1],
+                      elevation: data.feature.geometry.coordinates[2]
+                    },
+                    properties: {
+                      name: data.feature.properties.name,
+                      wigos_station_identifier: data.feature.properties.wigos_station_identifier,  // WSI
+                      traditional_station_identifier: data.feature.properties.traditional_station_identifier,
+                      territory_name: territoryOptions.value.find( (item) => item.id === data.feature.properties.territory_name ),
+                      barometer_height: data.feature.properties.barometer_height,
+                      wmo_region: WMORegionOptions.value.find( (item) => item.id === data.feature.properties.wmo_region ),
+                      url: data.feature.properties.url,
+                      topics: JSON.parse(JSON.stringify(data.feature.properties.topics)),
+                      status: operatingStatusOptions.value.find( (item) => item.id === data.feature.properties.status ),
+                      id: data.feature.properties.id  // WSI
+                    }
+                  };
+                  // update code list elements separately
+                  selectedFacilityType.value = facilityTypeOptions.value.find( (item) => item.id === data.feature.properties.facility_type );
+                  console.log(station.value);
+                }else if (data.error){
+                  errorMessage.value = JSON.stringify(data.error);
+                  showDialog.value = true;
+                }else{
+                  errorMessage.value = "Unexpected response: " + JSON.stringify(data);
+                  showDialog.value = true;
+                }
+              }
+            } catch( error ) {
+              errorMessage.value = "Error fetching from OSCAR/Surface: " + error;
+              showDialog.value = true;
+            }
 
         return {station, topics, registerStation, getElevation, showDialog, msg, rules, route, router,
           operatingStatusOptions, WMORegionOptions, territoryOptions, readonly, errorMessage, token, formValid,
           cancelEdit
+
         };
       }
     });
