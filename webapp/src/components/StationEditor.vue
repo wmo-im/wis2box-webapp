@@ -415,7 +415,11 @@
               errorMessage.value = "Error fetching from OSCAR/Surface: " + error;
               showDialog.value = true;
             }
-
+          } else {
+            errorMessage.value = "Please enter a WIGOS station identifier before importing from OSCAR/Surface";
+            showDialog.value = true;
+          }
+        }
         return {station, topics, registerStation, getElevation, showDialog, msg, rules, route, router,
           operatingStatusOptions, WMORegionOptions, territoryOptions, readonly, errorMessage, token, formValid,
           cancelEdit
