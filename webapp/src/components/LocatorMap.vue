@@ -7,6 +7,7 @@ import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { VCard, VCardTitle, VCardText } from 'vuetify/lib/components/index.mjs';
 import "leaflet/dist/leaflet.css";
 import L from 'leaflet'
+import "leaflet/dist/images/marker-shadow.png";
 // geojson validator
 import * as gjv from 'geojson-validation';
 
