@@ -1,90 +1,128 @@
 <template>
-  <v-card-title class="big-title">Monitoring Dashboard</v-card-title>
+    <v-row class="justify-center">
+        <v-col cols="12" class="max-dashboard-width">
+            <v-card-title class="big-title">WIS2 Notifications Monitoring Dashboard</v-card-title>
 
-  <v-card-item>
-    <!-- Drop down selection for the topic the user wants to monitor -->
-    <v-select label="Choose a topic to monitor" v-model="selectedTopic" :items="topics" v-if="topics.length"></v-select>
-    
-  </v-card-item>
+            <v-card-item>
+                <!-- Drop down selection for the topic the user wants to monitor -->
+                <TopicHierarchySelector v-model="selectedTopic" class="mb-3"></TopicHierarchySelector>
+
+                <v-row>
+                    <v-col>
+                        <v-row>
+                            <v-col cols="5">
+                                <VueDatePicker v-model="selectedDateRange" range multi-calendars auto-apply required
+                                    :teleport="true" placeholder="Datetime range" format="yyyy/MM/dd HH:mm" />
+                                <p class="hint-text">Choose the datetime range for the notifications (default: previous 24
+                                    hours)</p>
+                            </v-col>
 
 
-  <!-- Dashboard visualising the notifications of the topic selected -->
-  <NotificationDashboard :topicHierarchy="selectedTopic" v-if="selectedTopic" />
+                            <v-col cols="4">
+                                <!-- Search bar to search for a WSI and only monitor that station -->
+                                <v-text-field v-model="searchedWsi" label="WSI"
+                                    hint="Search a WMO Station Identifier (optional)" persistent-hint></v-text-field>
+                            </v-col>
+
+                            <!-- Limit for how many notifications to display (default = 100) -->
+                            <v-col cols="2">
+                                <v-select v-model="selectedLimit" :items="limits" hint="Limit" persistent-hint></v-select>
+                            </v-col>
+
+
+                            <!-- Monitor button, that is only clickable when topic and date range selected -->
+                            <v-col cols="1">
+                                <v-btn :disabled="!canMonitor" @click="handleMonitor">Monitor</v-btn>
+                            </v-col>
+                        </v-row>
+                    </v-col>
+                </v-row>
+            </v-card-item>
+
+            <v-divider :thickness="2" />
+
+            <!-- Dashboard visualising the notifications of the topic selected -->
+            <NotificationDashboard :topicHierarchy="selectedTopic" :startDate="selectedDateRange[0]"
+                :endDate="selectedDateRange[1]" :wsi="searchedWsi" :limit="selectedLimit" v-if="showDashboard"
+                class="my-4" />
+        </v-col>
+    </v-row>
 </template>
-
+  
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { VCardTitle } from 'vuetify/lib/components/index.mjs';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+import TopicHierarchySelector from './TopicHierarchySelector.vue';
 import NotificationDashboard from '@/components/NotificationDashboard.vue';
 
 export default defineComponent({
-  name: 'MonitoringPage',
-  components: {
-    VCardTitle,
-    NotificationDashboard
-  },
-  data() {
-    return {
-      // Options for user to filter the dashboard (surface, upper air, etc)
-      topics: [],
-      // Title selected by the user, used to get the topic hierarchy
-      // from the topics array
-      selectedTopic: null
-    }
-  },
-  methods: {
-    // Method to get topic hierarchies and corresponding titles from the 
-    // discovery metadata, in order to allow the user to select the topic
-    // dsisplayed in the dashboard
-    async getTopics() {
-      if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
-        console.log("Use test topics");
-        this.topics = [
-          "rou/rnimh/data/core/weather/surface-based-observations/synop", 
-          "mwi/mwi_met_centre/data/core/weather/surface-based-observations/synop",
-          "tst/topic/with/zero/notifications"
-        ];
-      }
-      else {
-        const apiUrl = `${import.meta.env.VITE_API_URL}/collections/discovery-metadata/items?f=json`;
-        console.log("Fetching topic hierarchy from:", apiUrl);
-        try {
-          const response = await fetch(apiUrl);
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          else {
-            const data = await response.json();
-            // If the features object is in the data
-            if (data.features) {
-              // Use Array.map to create a new array of the topic hierarchies
-              this.topics = data.features.map(feature => {
-                if (feature.properties && feature.properties['wmo:topicHierarchy']) {
-                  return feature.properties['wmo:topicHierarchy']
-                }
-              });
-              console.log("Topics:", this.topics);
-            }
-            else {
-              console.error("API response does not have features property");
-            }
-          }
+    name: 'MonitoringPage',
+    components: {
+        VCardTitle,
+        VueDatePicker,
+        TopicHierarchySelector,
+        NotificationDashboard
+    },
+    setup() {
+        // Reactive variables
+
+        // Topic selected by the user, used to get the topic hierarchy
+        // from the topics array
+        const selectedTopic = ref(null);
+        // Date range for notifications, defaults to [now, 24 hours from now]
+        const selectedDateRange = ref([new Date((new Date()).getTime() - 24 * 60 * 60 * 1000), new Date()]);
+        // WSI searched by the user
+        const searchedWsi = ref(null);
+        // Array of limits for user to select
+        const limits = ref([10, 50, 100, 500, 1000]);
+        // Limits optionally configured by user, defaults to 100
+        const selectedLimit = ref(100);
+        // Boolean to show the notification dashboard
+        const showDashboard = ref(false);
+
+        // Computed
+
+        // Boolean to check if necessary props have been selected to click monitor
+        const canMonitor = ref(selectedTopic.value && selectedDateRange.value && selectedDateRange.value.length === 2);
+
+        // Methods
+
+        // Method to display the notificaiton dashboard when the 
+        // user clicks on the monitor button
+        const handleMonitor = () => {
+            showDashboard.value = true;
         }
-        catch (error) {
-          console.error("Error fetching topic hierarchy:", error)
+
+        return {
+            selectedTopic,
+            selectedDateRange,
+            searchedWsi,
+            limits,
+            selectedLimit,
+            showDashboard,
+            canMonitor,
+            handleMonitor
         }
-      }
     }
-  },
-  mounted() {
-    // Get topic hierarchies and titles for the user to select a topic
-    this.getTopics();
-  }
-});  
+});
 </script>
+  
 <style scoped>
+.max-dashboard-width {
+    max-width: 1500px;
+}
+
 .big-title {
-  font-size: 1.4rem;
-  font-weight: 700;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.hint-text {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    padding-left: 1rem;
+    color: #888;
 }
 </style>

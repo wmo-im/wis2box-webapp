@@ -1,5 +1,6 @@
 <template>
         <v-container class="max-form-width">
+          <v-card-title class="big-title">Submit CSV Data</v-card-title>
             <v-dialog v-model="showDialog" width="auto">
               <v-card>
                 <v-card-text>{{msg}}</v-card-text>
