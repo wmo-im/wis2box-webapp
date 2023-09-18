@@ -230,7 +230,6 @@
     import { VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem, VStepperActions} from 'vuetify/lib/labs/VStepper/index.mjs';
     import InspectBufrButton from '@/components/InspectBufrButton.vue';
     import DownloadButton from '@/components/DownloadButton.vue';
-
     import TopicHierarchySelector from '@/components/TopicHierarchySelector.vue';
     import * as d3 from 'd3';
     export default defineComponent({
@@ -241,7 +240,6 @@
             VCardTitle, VIcon, VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem,
             VStepperActions, VDialog, VCardSubtitle, InspectBufrButton, DownloadButton,
             TopicHierarchySelector
-
         },
         setup() {
             // reactive variables

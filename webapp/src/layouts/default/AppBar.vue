@@ -12,14 +12,7 @@
 
   </v-app-bar>
 
-  <v-navigation-drawer location="left" :width="200" :rail="rail" permanent>
-
-    <v-list-item :class="rail ? 'left-chevron' : 'right-chevron'">
-      <template v-slot:append>
-        <v-btn v-if="rail === true" variant="text" icon="mdi-chevron-right" @click.stop="rail = !rail"></v-btn>
-        <v-btn v-if="rail === false" variant="text" icon="mdi-chevron-left" @click.stop="rail = !rail"></v-btn>
-      </template>
-    </v-list-item>
+  <v-navigation-drawer location="left" :width="200" rail expand-on-hover>
 
     <v-list v-model:opened="open" dense nav>
       <v-list-item prepend-icon="mdi-home" title="Home" exact to="/" />
@@ -32,8 +25,8 @@
           v-else />
         </template>
 
-        <v-list-item v-if="rail === false" title="SYNOP" to="synop_form" />
-        <v-list-item v-if="rail === false" title="CSV" to="csv2bufr_form" />
+        <v-list-item v-if="rail===false" prepend-icon="mdi-card-text" title="SYNOP" to="synop_form" />
+        <v-list-item v-if="rail===false" prepend-icon="mdi-file-excel" title="CSV" to="csv2bufr_form" />
       </v-list-group>
 
       <v-list-item prepend-icon="mdi-satellite-uplink" title="Stations" to="station" />

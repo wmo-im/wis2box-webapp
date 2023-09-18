@@ -116,31 +116,30 @@ export default defineComponent({
                   data: props.data
                 }
               };
-            };
-            const inspectUrl = `${import.meta.env.VITE_API_URL}/processes/bufr2geojson/execution`
-            const response = await fetch(inspectUrl, {
-                method: 'POST',
-                headers: {
-                'encode': 'json',
-                'Content-Type': 'application/geo+json'
-                },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                console.error('HTTP error', response.status);
-            } else {
-                const data = await response.json();
-                //console.log(data);
-                if (data.items) {
-                // Use Array.map to create a new array of the items in the bufr file
-                itemsInBufr.value = data.items.map(item => {
-                if (item.properties) {
-                    return item.properties;
-                }
-                });
-                //console.log(itemsInBufr.value);
-                }
+              const inspectUrl = `${import.meta.env.VITE_API_URL}/processes/bufr2geojson/execution`
+              const response = await fetch(inspectUrl, {
+                  method: 'POST',
+                  headers: {
+                  'encode': 'json',
+                  'Content-Type': 'application/geo+json'
+                  },
+                  body: JSON.stringify(payload)
+              });
+              if (!response.ok) {
+                  console.error('HTTP error', response.status);
+              } else {
+                  const data = await response.json();
+                  //console.log(data);
+                  if (data.items) {
+                  // Use Array.map to create a new array of the items in the bufr file
+                  itemsInBufr.value = data.items.map(item => {
+                  if (item.properties) {
+                      return item.properties;
+                  }
+                  });
+                  //console.log(itemsInBufr.value);
+                  }
+              }
             }
         };
         return {

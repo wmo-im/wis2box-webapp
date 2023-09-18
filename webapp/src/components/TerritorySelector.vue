@@ -56,7 +56,7 @@
       onBeforeMount( async () => {
         await fetchOptions() ;
         // update if we have an initial value
-        if( props.modelValue.length ){
+        if( props.modelValue && props.modelValue.length ){
           selected.value = options.value.find(option => option.id === props.modelValue) ;
         }
       });
