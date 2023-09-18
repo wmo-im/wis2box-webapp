@@ -1,9 +1,5 @@
 <template>
-    <v-sheet
-        border="lg opacity-2"
-        class="text-body-2 mx-auto flex"
-        max-width="100%">
-        <v-container width="100%" style="max-width: 100% !important">
+        <v-container class="max-form-width">
             <v-dialog v-model="showDialog" width="auto">
               <v-card>
                 <v-card-text>{{msg}}</v-card-text>
@@ -218,14 +214,12 @@
                 </v-stepper-actions>
             </v-stepper>
         </v-container>
-    </v-sheet>
 </template>
 
 <script>
-    import { defineComponent, ref,onBeforeMount, onMounted, watch, computed} from 'vue';
+    import { defineComponent, ref, onMounted, watch, computed} from 'vue';
     import { VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VChip, VTooltip } from 'vuetify/lib/components/index.mjs';
-    import { VList, VListItem, VListSubheader, VSheet, VContainer, VCardTitle, VIcon, VDialog} from 'vuetify/lib/components/index.mjs';
-    import { VCardSubtitle} from 'vuetify/lib/components/index.mjs';
+    import { VList, VListItem, VContainer, VCardTitle, VIcon, VDialog} from 'vuetify/lib/components/index.mjs';
     import { VDataTable} from 'vuetify/lib/labs/VDataTable/index.mjs';
     import { VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem, VStepperActions} from 'vuetify/lib/labs/VStepper/index.mjs';
     import InspectBufrButton from '@/components/InspectBufrButton.vue';
@@ -236,9 +230,9 @@
         name: 'CsvToBUFRForm',
         components: {
             VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VDataTable,
-            VChip, VTooltip, VListItem, VList, VListSubheader, VSheet, VContainer,
+            VChip, VTooltip, VListItem, VList, VContainer,
             VCardTitle, VIcon, VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem,
-            VStepperActions, VDialog, VCardSubtitle, InspectBufrButton, DownloadButton,
+            VStepperActions, VDialog, InspectBufrButton, DownloadButton,
             TopicHierarchySelector
         },
         setup() {

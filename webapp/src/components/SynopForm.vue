@@ -534,26 +534,6 @@ export default defineComponent({
   align-items: center;
   gap: 20px;
 }
-
-.warning-item {
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px;
-  background-color: #FEC89A
-}
-
-.error-item {
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px;
-  background-color: #F08080
-}
-
-
 .file-actions {
   display: flex;
   align-items: center;
