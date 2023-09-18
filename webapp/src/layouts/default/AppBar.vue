@@ -3,7 +3,8 @@
     <img src="@/assets/logo-large.png" alt="Logo" class="wmo-logo" />
 
     <template v-slot:image>
-      <!-- Gradient from white to transparent, making the logo and text clearer on tablets/mobiles -->
+      <!-- Gradient from white to transparent, ensuring at all sizes the blue logo
+      will be on a solid background as required by the WMO -->
       <v-img gradient="to left, transparent, #FFFFFF"></v-img>
     </template>
 
@@ -19,14 +20,11 @@
 
       <v-list-group value="Forms">
         <template v-slot:activator="{ props }">
-          <v-list-item v-bind="props" prepend-icon="mdi-notebook-edit" title="Forms" 
-          v-if="rail === true" @click.stop="rail = !rail" />
-          <v-list-item v-bind="props" prepend-icon="mdi-notebook-edit" title="Forms" 
-          v-else />
+          <v-list-item v-bind="props" prepend-icon="mdi-notebook-edit" title="Forms" />
         </template>
 
-        <v-list-item v-if="rail===false" prepend-icon="mdi-card-text" title="SYNOP" to="synop_form" />
-        <v-list-item v-if="rail===false" prepend-icon="mdi-file-excel" title="CSV" to="csv2bufr_form" />
+        <v-list-item prepend-icon="mdi-card-text" title="SYNOP" to="synop_form" />
+        <v-list-item prepend-icon="mdi-file-excel" title="CSV" to="csv2bufr_form" />
       </v-list-group>
 
       <v-list-item prepend-icon="mdi-satellite-uplink" title="Stations" to="station" />
@@ -39,7 +37,6 @@
 
 import { ref } from 'vue';
 
-const rail = ref(true)
 const open = ref(["Forms"])
 
 </script>
