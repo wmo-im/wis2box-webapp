@@ -1,12 +1,9 @@
 <template>
   <v-card>
     <v-card-title>Stations</v-card-title>
-    <v-card-item>
+    <v-card-item v-if="items">
       <VTextField style="width: 400px;" v-model="search" prepend-icon="mdi-text-search" label="search" single-line hide-details></VTextField>
-      <v-card-item>
-        <v-btn prepend-icon="mdi-plus" color="success" @click="addRecord()">Add new station</v-btn>
-      </v-card-item>
-      <VDataTable v-if="items" :headers="headers" :items="items" :search="search" dense small>
+      <VDataTable :headers="headers" :items="items" :search="search" dense small>
           <template v-slot:item.actions="{ item }">
             <v-icon size="small" @click="editRecord(item)">mdi-pen</v-icon>
             <v-icon size="small" @click="viewRecord(item)">mdi-eye</v-icon>
@@ -29,6 +26,9 @@
             </v-dialog>
           </template>
       </VDataTable>
+    </v-card-item>
+    <v-card-item>
+      <v-btn prepend-icon="mdi-plus" color="success" @click="addRecord()">Add new station</v-btn>
     </v-card-item>
   </v-card>
 </template>
@@ -89,7 +89,7 @@ export default defineComponent({
                 wmo_region: feature.properties.wmo_region,
                 url: feature.properties.url,
                 topics: feature.properties.topics ? JSON.stringify(feature.properties.topics) : JSON.stringify([feature.properties.topic]),
-                status: feature.properties.operating_status
+                status: feature.properties.status
                 }
             });
             console.log(items);
@@ -100,7 +100,8 @@ export default defineComponent({
                                 " See logs for more information.";
           console.error("Error fetching topic hierarchy:", error)
         }
-        if( items.value ){
+        if( items.value && items.value.length > 0){
+          console.log( items.value );
           headers.value = Object.keys(items.value[0]).map( key => ({
             title: key,
             value: key,
