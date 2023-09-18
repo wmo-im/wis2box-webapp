@@ -1,5 +1,5 @@
 <template>
-  <v-btn color="#00BD9D" append-icon="mdi-download" @click="downloadFile">Download</v-btn>
+  <v-btn color="#00CCAA" append-icon="mdi-download" @click="downloadFile">Download</v-btn>
 </template>
 
 <script>

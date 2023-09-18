@@ -8,3 +8,19 @@
 // @use 'vuetify/settings' with (
 //   $color-pack: false
 // );
+.max-form-width {
+    max-width: 1200px;
+}
+
+.big-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.warning-color {
+    color: #FD9235
+}
+
+.error-color {
+    color: #EA4848
+}
