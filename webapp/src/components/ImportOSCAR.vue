@@ -8,6 +8,13 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="showLoading" width="auto">
+      <v-card>
+        <v-card-text>Searching for station record on OSCAR/Surface</v-card-text>
+        <v-progress-linear indeterminate rounded height="12" color="#004f9f">
+        </v-progress-linear>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="showRedirect" width="auto">
       <v-card align="center">
         <v-card-text>{{redirectMessage}}</v-card-text>
@@ -120,7 +127,7 @@
 </template>
 <script>
   import {defineComponent, ref, onBeforeMount} from "vue";
-  import {VSheet, VCard, VCardTitle, VCardItem, VForm, VTextField, VBtn, VCardActions} from 'vuetify/lib/components/index.mjs';
+  import {VSheet, VCard, VCardTitle, VCardItem, VForm, VTextField, VBtn, VCardActions, VProgressLinear} from 'vuetify/lib/components/index.mjs';
   import {useRoute, useRouter} from 'vue-router';
   import LocatorMap from '@/components/LocatorMap.vue';
   import CodeListSelector from '@/components/CodeListSelector.vue';
@@ -129,7 +136,7 @@
     name: "ImportOSCAR",
     components: {
       VSheet, VCard, VCardTitle, VCardItem, VForm, VTextField, VBtn, VCardActions, LocatorMap,
-      CodeListSelector
+      CodeListSelector, VProgressLinear
     },
     setup(){
       const wsi = ref("");
@@ -161,9 +168,10 @@
 
       const errorMessage = ref(null);
       const showDialog = ref(false);
+      const showLoading = ref(false);
       const redirectMessage = ref(null);
       const redirectWarning = ref(null);
-      const showRedirect = ref(false)
+      const showRedirect = ref(false);
       const token = ref(null);
       const rules = ref({
         validWSI: value => /^0-[0-9]{1,5}-[0-9]{0,5}-[0-9a-zA-Z]{1,16}$/.test(value) || 'Invalid WSI',
@@ -234,20 +242,24 @@
             console.error('HTTP error', response.status);
             errorMessage.value = "Error submitting record: "+response.status;
             showDialog.value = true;
+            showLoading.value = false;
           } else {
             errorMessage.value = "Station successfully submitted, redirecting to station viewer.";
             showDialog.value = true;
+            showLoading.value = false;
             setTimeout( () => {router.push("/station/"+wsi.value+"?action=view")}, 3000);
           }
         }catch{
           errorMessage.value = "HTTP error posting to API, please see console.";
           showDialog.value = true;
+          showLoading.value = false;
           console.log(station.value)
           throw new Error("HTTP error posting to API, please see console");
         }
       };
 
       const submit = async () => {
+        showLoading.value = true;
         var apiURL = `${import.meta.env.VITE_API_URL}/processes/oscar2feature/execution`;
         var payload = {
               "inputs": {
@@ -272,6 +284,7 @@
             errorMessage.value = "Error fetching form OSCAR/Surface via WIS2box API, please check status of the API and OSCAR/Surface. See console for more details.";
             console.error(response.status);
             showDialog.value = true;
+            showLoading.value = false;
           }else{
             data.value = await response.json();
           };
@@ -279,6 +292,7 @@
           errorMessage.value = "Error fetching form OSCAR/Surface via WIS2box API, please check status of the API and OSCAR/Surface. See console for more details.";
           console.log(error);
           showDialog.value = true;
+          showLoading.value = false;
         };
         if( data.value ){
           if( data.value.feature ){
@@ -306,7 +320,7 @@
             station.value.properties.status =
                 operatingStatusOptions.value.find( (item) => item.id === data.value.feature.properties.status);
             station.value._meta.ready = true;
-
+            showLoading.value = false;
           }else if(data.value.error){
             redirectMessage.value = "Station not found in OSCAR, unable to import." +
                                     " Please register station in OSCAR/Surface and try again." ;
@@ -314,14 +328,16 @@
             redirectWarning.value = "For development and testing purposes stations can be created directly." +
                                     "To add a new station to the WIS2box please click the 'create new station' button";
             showRedirect.value = true;
+            showLoading.value = false;
           }else{
             errorMessage.value = "Unexpected response, see logs for further details.";
             console.error("Error fetching station details:", data.value);
             showDialog.value = true;
+            showLoading.value = false;
           }
         };
       };
-      return {wsi, errorMessage, showDialog, rules, router, station, formValid, confirm,
+      return {wsi, errorMessage, showDialog, rules, router, station, formValid, confirm, showLoading,
           redirectMessage, redirectWarning, showRedirect, submit, token};
     }
   });
