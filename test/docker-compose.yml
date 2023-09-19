@@ -4,9 +4,9 @@ version: '3.3'
 services:
   wis2box-webapp-test:
     container_name: wis2box-webapp-test
-    image: wis2box-webapp:latest
+    build: ../webapp
     environment:
-      - WIS2BOX_API_URL=http://localhost/oapi
+      - WIS2BOX_URL=http://localhost
       - VITE_TEST_MODE=true
     ports:
       - 8080:4173 # port mapping for webapp
