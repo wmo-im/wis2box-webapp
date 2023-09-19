@@ -15,7 +15,7 @@
         />
     </div>
     <div v-else class="error">
-      <v-text-field class="text-error" read-only>{{ errorMessage }}</v-text-field>
+      <v-text-field class="text-error" readonly>{{ errorMessage }}</v-text-field>
     </div>
 </template>
 

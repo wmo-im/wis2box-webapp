@@ -7,6 +7,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <div v-if="!_error">
     <v-autocomplete
       v-if="options !== null"
       :items="options"
@@ -21,6 +22,10 @@
       persistent-hint
       return-object
       />
+    </div>
+    <div v-else class="error">
+      <v-text-field :label="props.label" class="text-error" readonly hint="Unable to fetch code list, please see console." persistent-hint/>
+    </div>
 </template>
 
 <script>
@@ -45,10 +50,11 @@
       const options = ref(null);
       const selected = ref(null);
       const showDialog = ref(false);
+      const _error = ref(false);
 
       const fetchOptions = async() => {
         try {
-          var apiUrl = "/code_lists/" + props.codeList + ".json"
+          var apiUrl = `${import.meta.env.VITE_BASE_URL}/code_lists/${props.codeList}.json`;
           const response = await fetch(apiUrl);
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -57,6 +63,8 @@
           options.value = data; // Assuming the API response contains the options in the expected format
         } catch (error) {
           console.error('Error fetching ' + props.label + ' options:', error);
+          showDialog.value = true;
+          _error.value = true;
         }
       };
 
@@ -66,7 +74,7 @@
       watch( () => selected.value, (newValue) => {
         emit("update.modelValue", newValue);
       });
-      return {selected, options, props, showDialog};
+      return {selected, options, props, showDialog, _error};
     }
   });
 </script>

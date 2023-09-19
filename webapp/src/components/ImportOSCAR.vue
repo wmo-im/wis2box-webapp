@@ -201,7 +201,7 @@
 
       const loadCodeList = async (codeList) => {
         try{
-          const clist = await fetch("/code_lists/" + codeList + ".json");
+          const clist = await fetch(`${import.meta.env.VITE_BASE_URL}/code_lists/${codeList}.json`);
           var data = null;
           if( clist.ok ){
             await clist.json().then( (d) => data = d);
