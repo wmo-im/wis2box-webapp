@@ -1,5 +1,6 @@
 <template>
   <v-sheet align="center">
+    <APIStatus/>
     <v-dialog v-model="showDialog" width="auto">
       <v-card>
         <v-card-text>{{errorMessage}}</v-card-text>
@@ -30,7 +31,6 @@
       <v-card-item>
         <v-form>
           <v-text-field :rules="[rules.validWSI]" v-model="wsi" label="WIGOS Station Identifier" hint="Enter WIGOS Station Identifier" persistent-hint/>
-          <!-- <v-text-field v-model="token" type="password" clearable label="Auth token"/> -->
           <v-card-actions align="center">
             <v-btn @click="submit">Search</v-btn>
           </v-card-actions>
@@ -115,7 +115,7 @@
         <v-card-item><CodeListSelector codeList="territory" label="Territory or WMO member operating the station" defaultHint= "Select territory" v-model="station.properties.territory_name"/></v-card-item>
         <v-card-item><CodeListSelector codeList="operatingStatus" label="Operating status" defaultHint= "Select operating status" v-model="station.properties.status"/></v-card-item>
         <v-card-item>
-          <v-text-field :rules="[rules.token]" type="password" clearable v-model="token" label="Auth token"></v-text-field>
+          <v-text-field :rules="[rules.token]" type="password" clearable v-model="token" label="Station metadata token" hint="Enter authorization token for publishing station metadata" persistent-token></v-text-field>
         </v-card-item>
         <v-card-actions>
           <v-btn @click="confirm()" :disabled="!formValid" elevation=2>Save</v-btn>
@@ -131,12 +131,13 @@
   import {useRoute, useRouter} from 'vue-router';
   import LocatorMap from '@/components/LocatorMap.vue';
   import CodeListSelector from '@/components/CodeListSelector.vue';
+  import APIStatus from '@/components/APIStatus.vue';
 
   export default defineComponent({
     name: "ImportOSCAR",
     components: {
       VSheet, VCard, VCardTitle, VCardItem, VForm, VTextField, VBtn, VCardActions, LocatorMap,
-      CodeListSelector, VProgressLinear
+      CodeListSelector, VProgressLinear, APIStatus
     },
     setup(){
       const wsi = ref("");
@@ -192,11 +193,33 @@
       const operatingStatusOptions = ref(null);
 
       onBeforeMount( async() => {
-          await fetch("/code_lists/territory.json").then( (response) => response.json()).then( (data) => territoryOptions.value = data);
-          await fetch("/code_lists/facilityType.json").then( (response) => response.json()).then( (data) => facilityTypeOptions.value = data);
-          await fetch("/code_lists/operatingStatus.json").then( (response) => response.json()).then( (data) => operatingStatusOptions.value = data);
-          await fetch("/code_lists/WMORegion.json").then( (response) => response.json()).then( (data) => WMORegionOptions.value = data);
+          territoryOptions.value = await loadCodeList('territory');
+          facilityTypeOptions.value = await loadCodeList('facilityType');
+          operatingStatusOptions.value = await loadCodeList('operatingStatus');
+          WMORegionOptions.value = await loadCodeList('WMORegion');
       });
+
+      const loadCodeList = async (codeList) => {
+        try{
+          const clist = await fetch("/code_lists/" + codeList + ".json");
+          var data = null;
+          if( clist.ok ){
+            await clist.json().then( (d) => data = d);
+          }else{
+           errorMessage.value = "HTTP error fetching code list, please see console.";
+           console.log(clist);
+           showDialog.value = true;
+           showLoading.value = false;
+          }
+        }catch(error){
+          errorMessage.value = "HTTP error fetching code list, please see console.";
+          showDialog.value = true;
+          showLoading.value = false;
+          console.log(error);
+        };
+        return data;
+      };
+
 
       const confirm = async () => {
         var apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items`;
