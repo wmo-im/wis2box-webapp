@@ -186,7 +186,7 @@
         validElevation: value => value && ! isNaN(value) ? true : 'Invalid elevation',
         validBarometerHeight: value => value && ! isNaN(value) ? true : 'Invalid barometer height',
         validName: value => value && value.length > 3 ? true : 'Name must be more than 3 characters',
-        token: value => value && value.length > 0 ? true: 'Please enter the authorization token'.
+        token: value => value && value.length > 0 ? true: 'Please enter the authorization token',
         topic: value => value.length > 0 ? true : 'Select at least one topic'
 
       });
