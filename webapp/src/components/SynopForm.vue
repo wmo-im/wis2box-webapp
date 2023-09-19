@@ -371,8 +371,8 @@ export default defineComponent({
         "data_items": [],
         "warnings": [],
         "errors": [
-          "Error converting to BUFR: local variable 'messages' referenced before assignment",
-          "No SYNOP messages converted"
+          "No data returned for WSI=0-20000-0-15001 and timestamp=20230919132400",
+          "No data returned for WSI=0-20000-0-15002 and timestamp=20230919132400"
         ]
       };
       // Update the result variable with the test data

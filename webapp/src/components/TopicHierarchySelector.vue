@@ -1,12 +1,22 @@
 <template>
-  <div v-if="!errorMessage">
-    <v-autocomplete v-if="(options !== null)" :items="options" item-title="name" item-value="id" label="Topic hierarchy"
-      v-model="selected" :readonly="readonly" :hint="selected ? selected.description : 'Select topic hierarchy for ingestion of data'"
-      persistent-hint :multiple=true return-object />
-  </div>
-  <div v-else class="error">
-    <v-text-field class="text-error" read-only>{{ errorMessage }}</v-text-field>
-  </div>
+    <div v-if="! errorMessage">
+      <v-autocomplete
+        v-if="(options !== null)"
+        :items="options"
+        item-title="name"
+        item-value="id"
+        label="Topic hierarchy"
+        v-model="selected"
+        :readonly="readonly"
+        :hint="selected ? selected.description : 'Select topic hierarchy'"
+        persistent-hint
+        :multiple="multiple"
+        return-object
+        />
+    </div>
+    <div v-else class="error">
+      <v-text-field class="text-error" readonly>{{ errorMessage }}</v-text-field>
+    </div>
 </template>
 
 <script>
@@ -21,7 +31,8 @@ export default defineComponent({
   },
   props: {
     modelValue: {},
-    readonly: false
+    readonly: false,
+    multiple: false
   },
   emits: ["update:modelValue"],
   setup(props, { emit }) {

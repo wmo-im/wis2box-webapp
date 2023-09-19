@@ -1,5 +1,6 @@
 <template>
   <v-sheet align="center">
+    <APIStatus/>
     <v-dialog v-model="showDialog" width="auto">
       <v-card>
         <v-card-text>{{errorMessage}}</v-card-text>
@@ -17,7 +18,7 @@
             label="Station name"
             v-model="station.properties.name"
             :rules="[rules.validName]"
-            :readonly="readonly"
+            :readonly="readonly || route.params.id.length>0"
             hint="Enter name of station" persistent-hint>
           </v-text-field>
         </v-card-item>
@@ -26,7 +27,7 @@
             label="WIGOS station identifier"
             v-model="station.properties.wigos_station_identifier"
             :rules="[rules.validWSI]"
-            :readonly="readonly"
+            :readonly="readonly || route.params.id.length>0"
             hint="Enter the WIGOS station identifier" persistent-hint>
           </v-text-field>
         </v-card-item>
@@ -83,9 +84,7 @@
             </v-row>
           </v-container>
         </v-card-item>
-        <v-card-item>
-          <FacilityTypeSelector v-model="station.properties.facility_type" :readonly="readonly"/>
-        </v-card-item>
+        <v-card-item><CodeListSelector :readonly="readonly" codeList="facilityType" label="Facility type" defaultHint= "Select facility type" v-model="station.properties.facility_type"/></v-card-item>
         <v-card-item>
           <v-text-field
             label="Barometer height above sea level"
@@ -95,17 +94,17 @@
             hint="Enter barometer height (metres)" persistent-hint type="number">
           </v-text-field>
         </v-card-item>
-        <v-card-item><WMORegionSelector v-model="station.properties.wmo_region" :readonly="readonly"/></v-card-item>
-        <v-card-item><TerritorySelector v-model="station.properties.territory_name" :readonly="readonly"/></v-card-item>
-        <v-card-item><OperatingStatusSelector v-model="station.properties.status" :readonly="readonly"/></v-card-item>
-        <v-card-item>
+        <v-card-item><CodeListSelector :readonly="readonly" codeList="WMORegion" label="WMO Region" defaultHint= "Select WMO region" v-model="station.properties.wmo_region"/></v-card-item>
+        <v-card-item><CodeListSelector :readonly="readonly" codeList="territory" label="Territory or WMO member operating the station" defaultHint= "Select territory" v-model="station.properties.territory_name"/></v-card-item>
+        <v-card-item><CodeListSelector :readonly="readonly" codeList="operatingStatus" label="Operating status" defaultHint= "Select operating status" v-model="station.properties.status"/></v-card-item>
+         <v-card-item>
           <TopicHierarchySelector v-model="station.properties.topics" multiple :readonly="readonly"/>
         </v-card-item>
         <v-card-item>
-          <v-text-field v-if="!readonly" type="password" clearable v-model="token" label="Auth token"></v-text-field>
+          <v-text-field :rules="[rules.token]" type="password" clearable v-model="token" label="Station metadata token" hint="Enter authorization token for publishing station metadata" persistent-token></v-text-field>
         </v-card-item>
         <v-card-actions v-if="!readonly">
-          <v-btn @click="registerStation()" elevation=2 :disabled="!formValid">Register/Update</v-btn>
+          <v-btn @click="registerStation()" elevation=2 :disabled="!formValid">Save</v-btn>
           <v-btn @click="cancelEdit()" elevation=2>Cancel</v-btn>
         </v-card-actions>
         <v-card-actions v-else>
@@ -120,19 +119,18 @@
     import {VSheet, VCard, VCardItem, VTextField, VContainer, VRow, VCol, VBtn, VCardActions} from 'vuetify/lib/components/index.mjs';
     import {VForm} from 'vuetify/lib/components/index.mjs';
     import TopicHierarchySelector from '@/components/TopicHierarchySelector.vue';
-    import FacilityTypeSelector from '@/components/FacilityTypeSelector.vue';
-    import WMORegionSelector from '@/components/WMORegionSelector.vue';
-    import TerritorySelector from '@/components/TerritorySelector.vue';
-    import OperatingStatusSelector from '@/components/OperatingStatusSelector.vue';
     import LocatorMap from '@/components/LocatorMap.vue';
     import {useRoute, useRouter} from 'vue-router';
+    import CodeListSelector from '@/components/CodeListSelector.vue';
+    import APIStatus from '@/components/APIStatus.vue';
+
+
 
     export default defineComponent({
       name: 'StationEditor',
       components: {
-        VContainer, VRow, VContainer, VCard, VCardItem, VTextField, OperatingStatusSelector,
-        TopicHierarchySelector, FacilityTypeSelector, WMORegionSelector, TerritorySelector,
-        VBtn, VCardActions, LocatorMap, VForm
+        VContainer, VRow, VContainer, VCard, VCardItem, VTextField, APIStatus,
+        TopicHierarchySelector, VBtn, VCardActions, LocatorMap, VForm, CodeListSelector
       },
       setup(){
         const route = useRoute();
@@ -153,11 +151,13 @@
         // define validation rules
         const rules = ref({
           validWSI: value => /^0-[0-9]{1,5}-[0-9]{0,5}-[0-9a-zA-Z]{1,16}$/.test(value) || 'Invalid WSI',
+          validTSI: value => (!value) || (/^\d{5}(\d{2})?$/.test(value) ) ? true : 'Invalid TSI',
           validLongitude: value => ! (Math.abs(value) > 180 || isNaN(value)) ? true : 'Invalid longitude',
-          validLatitude: value => ! (Math.abs(value) > 90 || isNaN(value)) ? true : 'Invalid latitude',
-          validElevation: value => ! isNaN(value) ? true : 'Invalid elevation',
-          validBarometerHeight: value => ! isNaN(value) ? true : 'Invalid barometer height',
-          validName: value => value && value.length > 3 ? true : 'Name must be more than 3 characters'
+          validLatitude: value => value && ! (Math.abs(value) > 90 || isNaN(value)) ? true : 'Invalid latitude',
+          validElevation: value => value && ! isNaN(value) ? true : 'Invalid elevation',
+          validBarometerHeight: value => value && ! isNaN(value) ? true : 'Invalid barometer height',
+          validName: value => value && value.length > 3 ? true : 'Name must be more than 3 characters',
+          token: value => value && value.length > 0 ? true: 'Please enter the authorization token'
         });
         const cancelEdit = async () => {
           readonly.value = true;
@@ -254,13 +254,32 @@
             readonly.value = true;
           }
           // fetch code lists
-          var data = null;
-          var response;
-          await fetch("/code_lists/territory.json").then( (response) => response.json()).then( (data) => territoryOptions.value = data);
-          await fetch("/code_lists/facilityType.json").then( (response) => response.json()).then( (data) => facilityTypeOptions.value = data);
-          await fetch("/code_lists/operatingStatus.json").then( (response) => response.json()).then( (data) => operatingStatusOptions.value = data);
-          await fetch("/code_lists/WMORegion.json").then( (response) => response.json()).then( (data) => WMORegionOptions.value = data);
+          territoryOptions.value = await loadCodeList('territory');
+          facilityTypeOptions.value = await loadCodeList('facilityType');
+          operatingStatusOptions.value = await loadCodeList('operatingStatus');
+          WMORegionOptions.value = await loadCodeList('WMORegion');
         });
+
+        const loadCodeList = async (codeList) => {
+          try{
+            const clist = await fetch(`${import.meta.env.VITE_BASE_URL}/code_lists/${codeList}.json`);
+            var data = null;
+            if( clist.ok ){
+              await clist.json().then( (d) => data = d);
+            }else{
+             errorMessage.value = "HTTP error fetching code list, please see console.";
+             console.error(clist);
+             showDialog.value = true;
+            }
+          }catch(error){
+            errorMessage.value = "HTTP error fetching code list, please see console.";
+            showDialog.value = true;
+            console.error(error);
+          };
+          return data;
+        };
+
+
         onMounted( async () => {
           // load codes lists
           if (route.params.id){
@@ -279,13 +298,13 @@
                 name: null,
                 wigos_station_identifier: null,  // WSI
                 traditional_station_identifier: null,
-                facility_type: {},
-                territory_name: {},
+                facility_type: null,
+                territory_name: null,
                 barometer_height: null,
-                wmo_region: {},
+                wmo_region: null,
                 url: null,
                 topics: [],
-                status: {},
+                status: null,
                 id: null  // WSI
               }
             };

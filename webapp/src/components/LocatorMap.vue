@@ -7,6 +7,7 @@ import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { VCard, VCardTitle, VCardText } from 'vuetify/lib/components/index.mjs';
 import "leaflet/dist/leaflet.css";
 import L from 'leaflet'
+import "leaflet/dist/images/marker-shadow.png";
 // geojson validator
 import * as gjv from 'geojson-validation';
 
@@ -61,8 +62,8 @@ export default defineComponent({
 
     onMounted( () =>{
       map.value = L.map(props.id, {zoomAnimation:false, fadeAnimation:true, markerZoomAnimation:true}).setView( props.center, props.zoom );
-      map.value.attributionControl.setPrefix('<a href="https://leafletjs.com/">Leaflet</a>')
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; OpenStreetMap contributors'}).addTo(map.value);
+      //map.value.attributionControl.setPrefix('<a href="https://leafletjs.com/">Leaflet</a>');
+      L.tileLayer(`${import.meta.env.VITE_BASEMAP_URL}`, {attribution: `${import.meta.env.VITE_BASEMAP_ATTRIBUTION}`}).addTo(map.value);
       // check whether we have a location to show
       if( geom.value.geometry ){
         updateMarker();
