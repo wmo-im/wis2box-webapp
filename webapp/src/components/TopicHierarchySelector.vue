@@ -8,6 +8,7 @@
         label="Topic hierarchy"
         v-model="selected"
         :readonly="readonly"
+        :rules="rules"
         :hint="selected ? selected.description : 'Select topic hierarchy'"
         persistent-hint
         :multiple="multiple"
@@ -32,7 +33,10 @@
     props: {
       modelValue: {},
       readonly: false,
-      multiple: false
+      multiple: false,
+      rules: {
+        type: Array
+      }
     },
     emits: ["update:modelValue"],
     setup(props, {emit}){

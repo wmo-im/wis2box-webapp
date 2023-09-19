@@ -8,6 +8,7 @@ import { VCard, VCardTitle, VCardText } from 'vuetify/lib/components/index.mjs';
 import "leaflet/dist/leaflet.css";
 import L from 'leaflet'
 import "leaflet/dist/images/marker-shadow.png";
+import "leaflet/dist/images/marker-icon.png";
 // geojson validator
 import * as gjv from 'geojson-validation';
 
@@ -62,7 +63,7 @@ export default defineComponent({
 
     onMounted( () =>{
       map.value = L.map(props.id, {zoomAnimation:false, fadeAnimation:true, markerZoomAnimation:true}).setView( props.center, props.zoom );
-      //map.value.attributionControl.setPrefix('<a href="https://leafletjs.com/">Leaflet</a>');
+      map.value.attributionControl.setPrefix('');
       L.tileLayer(`${import.meta.env.VITE_BASEMAP_URL}`, {attribution: `${import.meta.env.VITE_BASEMAP_ATTRIBUTION}`}).addTo(map.value);
       // check whether we have a location to show
       if( geom.value.geometry ){

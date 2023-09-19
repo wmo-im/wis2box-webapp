@@ -98,10 +98,10 @@
         <v-card-item><CodeListSelector :readonly="readonly" codeList="territory" label="Territory or WMO member operating the station" defaultHint= "Select territory" v-model="station.properties.territory_name"/></v-card-item>
         <v-card-item><CodeListSelector :readonly="readonly" codeList="operatingStatus" label="Operating status" defaultHint= "Select operating status" v-model="station.properties.status"/></v-card-item>
          <v-card-item>
-          <TopicHierarchySelector v-model="station.properties.topics" multiple :readonly="readonly"/>
+          <TopicHierarchySelector v-model="station.properties.topics" multiple :readonly="readonly" :rules="[rules.topic]"/>
         </v-card-item>
         <v-card-item>
-          <v-text-field :rules="[rules.token]" type="password" clearable v-model="token" label="Station metadata token" hint="Enter authorization token for publishing station metadata" persistent-token></v-text-field>
+          <v-text-field :rules="[rules.token]" type="password" clearable v-model="token" label='wis2box auth token for "collections/stations"' hint='Enter wis2box auth token for "collections/stations"' persistent-token></v-text-field>
         </v-card-item>
         <v-card-actions v-if="!readonly">
           <v-btn @click="registerStation()" elevation=2 :disabled="!formValid">Save</v-btn>
@@ -157,7 +157,8 @@
           validElevation: value => value && ! isNaN(value) ? true : 'Invalid elevation',
           validBarometerHeight: value => value && ! isNaN(value) ? true : 'Invalid barometer height',
           validName: value => value && value.length > 3 ? true : 'Name must be more than 3 characters',
-          token: value => value && value.length > 0 ? true: 'Please enter the authorization token'
+          token: value => value && value.length > 0 ? true : 'Please enter the authorization token',
+          topic: value => value.length > 0 ? true : 'Select at least one topic'
         });
         const cancelEdit = async () => {
           readonly.value = true;
