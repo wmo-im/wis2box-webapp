@@ -1,4 +1,5 @@
 <template>
+  <APIStatus/>
   <v-card>
     <v-card-title>Stations</v-card-title>
     <v-card-item v-if="items">
@@ -40,6 +41,7 @@ import { onBeforeMount, onMounted, onBeforeUpdate, onUpdated, onBeforeUnmount, o
 import { ref, computed, watchEffect, watch } from 'vue'
 import { VDataTable } from 'vuetify/lib/labs/VDataTable/index.mjs';
 import {useRoute, useRouter} from 'vue-router';
+import APIStatus from '@/components/APIStatus.vue';
 
 
 export default defineComponent({
@@ -50,6 +52,7 @@ export default defineComponent({
     VCardText,
     VDataTable,
     VTextField,
+    APIStatus
   },
   setup(props) {
     const headers = ref([]);
@@ -65,7 +68,6 @@ export default defineComponent({
 
     const loadStations = async () => {
         items.value = null;
-        console.log(items.value);
         const apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items?f=json`;
         try {
           var response = await fetch(apiURL);
@@ -92,7 +94,6 @@ export default defineComponent({
                 status: feature.properties.status
                 }
             });
-            console.log(items);
           }
         }
         catch (error) {
@@ -101,7 +102,6 @@ export default defineComponent({
           console.error("Error fetching topic hierarchy:", error)
         }
         if( items.value && items.value.length > 0){
-          console.log( items.value );
           headers.value = Object.keys(items.value[0]).map( key => ({
             title: key,
             value: key,
@@ -124,7 +124,6 @@ export default defineComponent({
     };
     const confirmDelete = async () => {
       if( selectedStation.value === stationToDelete.value ){
-        console.log("confirmed");
         const apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items/${stationToDelete.value}`;
         try{
           var response = await fetch(apiURL, {
@@ -155,7 +154,6 @@ export default defineComponent({
     };
 
     const editRecord = (id) => {
-      console.log(id.key)
       router.push("/station/"+id.key+"?action=edit")
     }
 

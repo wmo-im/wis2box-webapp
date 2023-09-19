@@ -1,5 +1,6 @@
 <template>
   <v-sheet align="center">
+    <APIStatus/>
     <v-dialog v-model="showDialog" width="auto">
       <v-card>
         <v-card-text>{{errorMessage}}</v-card-text>
@@ -100,7 +101,7 @@
           <TopicHierarchySelector v-model="station.properties.topics" multiple :readonly="readonly"/>
         </v-card-item>
         <v-card-item>
-          <v-text-field v-if="!readonly" type="password" clearable v-model="token" label="Auth token"></v-text-field>
+          <v-text-field :rules="[rules.token]" type="password" clearable v-model="token" label="Station metadata token" hint="Enter authorization token for publishing station metadata" persistent-token></v-text-field>
         </v-card-item>
         <v-card-actions v-if="!readonly">
           <v-btn @click="registerStation()" elevation=2 :disabled="!formValid">Save</v-btn>
@@ -121,14 +122,14 @@
     import LocatorMap from '@/components/LocatorMap.vue';
     import {useRoute, useRouter} from 'vue-router';
     import CodeListSelector from '@/components/CodeListSelector.vue';
-
+    import APIStatus from '@/components/APIStatus.vue';
 
 
 
     export default defineComponent({
       name: 'StationEditor',
       components: {
-        VContainer, VRow, VContainer, VCard, VCardItem, VTextField,
+        VContainer, VRow, VContainer, VCard, VCardItem, VTextField, APIStatus,
         TopicHierarchySelector, VBtn, VCardActions, LocatorMap, VForm, CodeListSelector
       },
       setup(){
@@ -253,13 +254,32 @@
             readonly.value = true;
           }
           // fetch code lists
-          var data = null;
-          var response;
-          await fetch("/code_lists/territory.json").then( (response) => response.json()).then( (data) => territoryOptions.value = data);
-          await fetch("/code_lists/facilityType.json").then( (response) => response.json()).then( (data) => facilityTypeOptions.value = data);
-          await fetch("/code_lists/operatingStatus.json").then( (response) => response.json()).then( (data) => operatingStatusOptions.value = data);
-          await fetch("/code_lists/WMORegion.json").then( (response) => response.json()).then( (data) => WMORegionOptions.value = data);
+          territoryOptions.value = await loadCodeList('territory');
+          facilityTypeOptions.value = await loadCodeList('facilityType');
+          operatingStatusOptions.value = await loadCodeList('operatingStatus');
+          WMORegionOptions.value = await loadCodeList('WMORegion');
         });
+
+        const loadCodeList = async (codeList) => {
+          try{
+            const clist = await fetch(`${import.meta.env.VITE_BASE_URL}/code_lists/${codeList}.json`);
+            var data = null;
+            if( clist.ok ){
+              await clist.json().then( (d) => data = d);
+            }else{
+             errorMessage.value = "HTTP error fetching code list, please see console.";
+             console.error(clist);
+             showDialog.value = true;
+            }
+          }catch(error){
+            errorMessage.value = "HTTP error fetching code list, please see console.";
+            showDialog.value = true;
+            console.error(error);
+          };
+          return data;
+        };
+
+
         onMounted( async () => {
           // load codes lists
           if (route.params.id){
