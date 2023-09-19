@@ -114,6 +114,9 @@
         <v-card-item><CodeListSelector codeList="WMORegion" label="WMO Region" defaultHint= "Select WMO region" v-model="station.properties.wmo_region"/></v-card-item>
         <v-card-item><CodeListSelector codeList="territory" label="Territory or WMO member operating the station" defaultHint= "Select territory" v-model="station.properties.territory_name"/></v-card-item>
         <v-card-item><CodeListSelector codeList="operatingStatus" label="Operating status" defaultHint= "Select operating status" v-model="station.properties.status"/></v-card-item>
+         <v-card-item>
+          <TopicHierarchySelector v-model="station.properties.topics" multiple/>
+        </v-card-item>
         <v-card-item>
           <v-text-field :rules="[rules.token]" type="password" clearable v-model="token" label="Station metadata token" hint="Enter authorization token for publishing station metadata" persistent-token></v-text-field>
         </v-card-item>
@@ -126,9 +129,10 @@
   </v-sheet>
 </template>
 <script>
-  import {defineComponent, ref, onBeforeMount} from "vue";
+  import {defineComponent, ref, onBeforeMount, watch} from "vue";
   import {VSheet, VCard, VCardTitle, VCardItem, VForm, VTextField, VBtn, VCardActions, VProgressLinear} from 'vuetify/lib/components/index.mjs';
   import {useRoute, useRouter} from 'vue-router';
+  import TopicHierarchySelector from '@/components/TopicHierarchySelector.vue';
   import LocatorMap from '@/components/LocatorMap.vue';
   import CodeListSelector from '@/components/CodeListSelector.vue';
   import APIStatus from '@/components/APIStatus.vue';
@@ -137,7 +141,7 @@
     name: "ImportOSCAR",
     components: {
       VSheet, VCard, VCardTitle, VCardItem, VForm, VTextField, VBtn, VCardActions, LocatorMap,
-      CodeListSelector, VProgressLinear, APIStatus
+      CodeListSelector, VProgressLinear, APIStatus, TopicHierarchySelector
     },
     setup(){
       const wsi = ref("");
@@ -256,7 +260,7 @@
               headers: {
                   'encode': 'json',
                   'Content-Type': 'application/geo+json',
-                  'authorization': 'Bearer '+ token.value
+                  'Authorization': 'Bearer '+ token.value
               },
               body: JSON.stringify(record)
             });
@@ -272,12 +276,13 @@
             showLoading.value = false;
             setTimeout( () => {router.push("/station/"+wsi.value+"?action=view")}, 3000);
           }
-        }catch{
+        }catch(error){
           errorMessage.value = "HTTP error posting to API, please see console.";
           showDialog.value = true;
           showLoading.value = false;
-          console.log(station.value)
-          throw new Error("HTTP error posting to API, please see console");
+          console.log(record);
+          console.log(error);
+          console.log(apiURL);
         }
       };
 
@@ -360,6 +365,11 @@
           }
         };
       };
+
+      watch( () => station.value.properties.wmo_region, (newValue) => {
+        console.log(newValue);
+      });
+
       return {wsi, errorMessage, showDialog, rules, router, station, formValid, confirm, showLoading,
           redirectMessage, redirectWarning, showRedirect, submit, token};
     }
