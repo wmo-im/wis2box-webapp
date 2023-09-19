@@ -270,12 +270,10 @@
              errorMessage.value = "HTTP error fetching code list, please see console.";
              console.error(clist);
              showDialog.value = true;
-             showLoading.value = false;
             }
           }catch(error){
             errorMessage.value = "HTTP error fetching code list, please see console.";
             showDialog.value = true;
-            showLoading.value = false;
             console.error(error);
           };
           return data;
