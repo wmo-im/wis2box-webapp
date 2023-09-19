@@ -14,7 +14,7 @@ jobs:
         run: docker build -t wis2box-webapp ./webapp/
 
       - name: Start Docker Compose services
-        run: docker-compose -f test/docker-compose.yml up -d
+        run: docker-compose -f test/docker-compose.yml up -d --build
 
       - name: Wait for service to start
         run: sleep 45
