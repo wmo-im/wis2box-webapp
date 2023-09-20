@@ -4,90 +4,46 @@
         <v-col cols="12">
             <v-row>
                 <!-- ApexCharts bar graph for latest notifications received -->
-                <v-col cols="6">
+                <v-col cols="7">
                     <v-fade-transition appear>
-                        <v-card>
-
-                            <v-card-title class="text-center">
-                                Notifications
-                            </v-card-title>
-
-                            <vue-apex-charts ref="chart" type="bar" height="400" :options="chartOptions"
-                                :series="chartSeries">
-                            </vue-apex-charts>
-                        </v-card>
+                        <BarChart
+                        :messages="messages"
+                        :startDate="startDate"
+                        :endDate="endDate"></BarChart>
                     </v-fade-transition>
                 </v-col>
 
-                <v-col cols="6">
+                <v-col cols="5">
                     <!-- Top right -->
                     <v-row>
                         <!-- Total number of publications submitted in the last hour -->
-                        <v-col cols="6">
+                        <v-col cols="12">
                             <v-fade-transition appear>
-
-                                <v-card>
-                                    <v-card-title class="text-center text-wrap">
-                                        Total publications in last hour:
-                                    </v-card-title>
-                                    <h1 class="text-center">{{ summaryStats.totalFilesLastHour }}</h1>
-                                </v-card>
-                            </v-fade-transition>
-                        </v-col>
-
-                        <!-- Total number of publications submitted in the last 24 hours -->
-                        <v-col cols="6">
-                            <v-fade-transition appear>
-                                <v-card>
-                                    <v-card-title class="text-center text-wrap">
-                                        Total publications in last 24 hours:
-                                    </v-card-title>
-                                    <h1 class="text-center">{{ summaryStats.totalFilesLastDay }}</h1>
-                                </v-card>
+                                <SummaryStats
+                                :messages="messages"></SummaryStats>
                             </v-fade-transition>
                         </v-col>
                     </v-row>
 
                     <!-- Bottom right -->
-                    <!-- Latest files published, ready to download and inspect -->
+                    <!-- List of WSIs and the number of associated notifications -->
                     <v-row>
                         <v-col cols="12">
                             <v-fade-transition appear>
-                                <v-card>
-                                    <v-card-title class="text-left">
-                                        Published Data
-                                    </v-card-title>
-                                    <!-- Limit the size of the list and add scroll feature -->
-                                    <div class="scrollable-file-list">
-                                        <v-list-item v-for="(message, index) in messages" :key="index">
-                                            <div class="file-actions">
-                                                <div>
-                                                    <!-- Display the timestamp -->
-                                                    <div class="secondary">
-                                                        {{ formatTime(message.pubtime) }}
-                                                    </div>
-
-                                                    <!-- Display the file name -->
-                                                    <div>
-                                                        {{ message.filename }}
-                                                    </div>
-                                                </div>
-                                                <div class="file-actions">
-                                                    <DownloadButton :fileUrl="message.canonical_url"
-                                                        :fileName=message.filename />
-                                                    <InspectBufrButton :fileUrl="message.canonical_url"
-                                                        :fileName=message.filename />
-                                                </div>
-                                            </div>
-                                            <v-divider v-if="index < messages.length - 1"
-                                                class="divider-spacing"></v-divider>
-                                        </v-list-item>
-                                    </div>
-                                </v-card>
+                                <StationStats :messages="messages"></StationStats>
                             </v-fade-transition>
                         </v-col>
                     </v-row>
 
+                </v-col>
+            </v-row>
+
+            <v-row>
+                <v-col cols="12">
+                    <v-fade-transition appear>
+                        <!-- Files published, ready to download and inspect -->
+                        <PublishedData :messages="messages"></PublishedData>
+                    </v-fade-transition>
                 </v-col>
             </v-row>
         </v-col>
@@ -95,14 +51,11 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
-import { VCard, VCardTitle } from 'vuetify/lib/components/index.mjs';
-import VueApexCharts from 'vue3-apexcharts'
-import BarGraph from './BarGraph.vue';
+import { defineComponent, ref, onMounted } from 'vue';
+import BarChart from './BarChart.vue';
 import SummaryStats from './SummaryStats.vue';
 import StationStats from './StationStats.vue';
 import PublishedData from './PublishedData.vue';
-import MapStats from './MapStats.vue';
 
 export default defineComponent({
     name: 'NotificationDashboard',
@@ -129,14 +82,10 @@ export default defineComponent({
         },
     },
     components: {
-        VCard,
-        VCardTitle,
-        VueApexCharts,
-        BarGraph,
+        BarChart,
         SummaryStats,
         StationStats,
-        PublishedData,
-        MapStats
+        PublishedData
     },
     setup(props) {
 
@@ -144,8 +93,7 @@ export default defineComponent({
 
         // Messages from API call
         const messages = ref([])
-        // Example message when Romania synoptic dataset selected
-        // by user
+        // Example message of Romania synoptic dataset
         const testMessageSynoptic = ref([
             {
                 "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
@@ -155,8 +103,224 @@ export default defineComponent({
                 "properties": {
                     "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
                     "datetime": "2022-03-31T00:00:00Z",
-                    "pubtime": "2023-08-24T13:58:20Z",
+                    "pubtime": "2023-09-19T13:58:20Z",
                     "wigos_station_identifier": "0-20000-0-15020",
+                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                },
+                "links": [
+                    {
+                        "rel": "canonical",
+                        "type": "application/x-bufr",
+                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+                    },
+                    {
+                        "rel": "via",
+                        "type": "text/html",
+                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+                    }]
+            },
+            {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
+                    "type": "Point",
+                    "coordinates": [46.223432, 6.146197]
+                },
+                "properties": {
+                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+                    "datetime": "2022-03-31T00:00:00Z",
+                    "pubtime": "2023-09-19T13:58:20Z",
+                    "wigos_station_identifier": "0-20000-0-15020",
+                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                },
+                "links": [
+                    {
+                        "rel": "canonical",
+                        "type": "application/x-bufr",
+                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+                    },
+                    {
+                        "rel": "via",
+                        "type": "text/html",
+                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+                    }]
+            },
+            {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
+                    "type": "Point",
+                    "coordinates": [46.223432, 6.146197]
+                },
+                "properties": {
+                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+                    "datetime": "2022-03-31T00:00:00Z",
+                    "pubtime": "2023-09-19T13:58:20Z",
+                    "wigos_station_identifier": "0-20000-0-15030",
+                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                },
+                "links": [
+                    {
+                        "rel": "canonical",
+                        "type": "application/x-bufr",
+                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+                    },
+                    {
+                        "rel": "via",
+                        "type": "text/html",
+                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+                    }]
+            },
+            {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
+                    "type": "Point",
+                    "coordinates": [46.223432, 6.146197]
+                },
+                "properties": {
+                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+                    "datetime": "2022-03-31T00:00:00Z",
+                    "pubtime": "2023-09-19T13:58:20Z",
+                    "wigos_station_identifier": "0-20000-0-15040",
+                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                },
+                "links": [
+                    {
+                        "rel": "canonical",
+                        "type": "application/x-bufr",
+                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+                    },
+                    {
+                        "rel": "via",
+                        "type": "text/html",
+                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+                    }]
+            },
+            {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
+                    "type": "Point",
+                    "coordinates": [46.223432, 6.146197]
+                },
+                "properties": {
+                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+                    "datetime": "2022-03-31T00:00:00Z",
+                    "pubtime": "2023-09-19T13:58:20Z",
+                    "wigos_station_identifier": "0-20000-0-15050",
+                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                },
+                "links": [
+                    {
+                        "rel": "canonical",
+                        "type": "application/x-bufr",
+                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+                    },
+                    {
+                        "rel": "via",
+                        "type": "text/html",
+                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+                    }]
+            },
+            {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
+                    "type": "Point",
+                    "coordinates": [46.223432, 6.146197]
+                },
+                "properties": {
+                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+                    "datetime": "2022-03-31T00:00:00Z",
+                    "pubtime": "2023-09-19T13:58:20Z",
+                    "wigos_station_identifier": "0-20000-0-15060",
+                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                },
+                "links": [
+                    {
+                        "rel": "canonical",
+                        "type": "application/x-bufr",
+                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+                    },
+                    {
+                        "rel": "via",
+                        "type": "text/html",
+                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+                    }]
+            },
+            {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
+                    "type": "Point",
+                    "coordinates": [46.223432, 6.146197]
+                },
+                "properties": {
+                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+                    "datetime": "2022-03-31T00:00:00Z",
+                    "pubtime": "2023-09-19T13:58:20Z",
+                    "wigos_station_identifier": "0-20000-0-15070",
+                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                },
+                "links": [
+                    {
+                        "rel": "canonical",
+                        "type": "application/x-bufr",
+                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+                    },
+                    {
+                        "rel": "via",
+                        "type": "text/html",
+                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+                    }]
+            },
+            {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
+                    "type": "Point",
+                    "coordinates": [46.223432, 6.146197]
+                },
+                "properties": {
+                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+                    "datetime": "2022-03-31T00:00:00Z",
+                    "pubtime": "2023-09-19T13:58:20Z",
+                    "wigos_station_identifier": "0-20000-0-15080",
+                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                },
+                "links": [
+                    {
+                        "rel": "canonical",
+                        "type": "application/x-bufr",
+                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+                    },
+                    {
+                        "rel": "via",
+                        "type": "text/html",
+                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+                    }]
+            },
+            {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
+                    "type": "Point",
+                    "coordinates": [46.223432, 6.146197]
+                },
+                "properties": {
+                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+                    "datetime": "2022-03-31T00:00:00Z",
+                    "pubtime": "2023-09-19T13:58:20Z",
+                    "wigos_station_identifier": "0-20000-0-15090",
+                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                },
+                "links": [
+                    {
+                        "rel": "canonical",
+                        "type": "application/x-bufr",
+                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+                    },
+                    {
+                        "rel": "via",
+                        "type": "text/html",
+                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+                    }]
+            },
+            {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
+                    "type": "Point",
+                    "coordinates": [46.223432, 6.146197]
+                },
+                "properties": {
+                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+                    "datetime": "2022-03-31T00:00:00Z",
+                    "pubtime": "2023-09-19T13:56:20Z",
+                    "wigos_station_identifier": "0-20000-0-15100",
                     "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
                 },
                 "links": [
@@ -172,7 +336,7 @@ export default defineComponent({
                     }]
             }
         ])
-        // Example message when Malawi surface dataset selected by user
+        // Example message of Malawi surface dataset
         const testMessageSurface = ref([
             {
                 "id": "af14d8c4-5f63-45af-8171-7730ec9932ba",
@@ -183,7 +347,7 @@ export default defineComponent({
                 "properties": {
                     "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15015_20220331T000000",
                     "datetime": "2022-03-31T00:00:00Z",
-                    "pubtime": "2023-08-24T13:40:49Z",
+                    "pubtime": "2023-09-19T13:40:49Z",
                     "wigos_station_identifier": "0-20000-0-15015",
                     "id": "af14d8c4-5f63-45af-8171-7730ec9932ba"
                 },
@@ -212,18 +376,12 @@ export default defineComponent({
             return '';
         }
 
-        // Method to get filename from the canonical href
-        const getFileName = (url) => {
-            const urlParts = url.split('/');
-            return urlParts[urlParts.length - 1];
-        }
-
         // Method to get the messages from the features array
         const getMessagesFromFeatures = (features) => {
             const selectedFields = features.map(item => ({
-                pubtime: new Date(item.properties.pubtime + "Z"),
+                pubtime: new Date(item.properties.pubtime),
                 canonical_url: getCanonicalUrl(item.links),
-                filename: getFileName(getCanonicalUrl(item.links)),
+                wsi: item.properties.wigos_station_identifier,
                 coordinates: item.geometry.coordinates
             }));
             // sort by pubtime descending
@@ -285,19 +443,31 @@ export default defineComponent({
                 console.log("Dataset selected: ", props.topicHierarchy);
                 // Use example data selected by user
                 if (props.topicHierarchy == "test1") {
-                    this.messages = this.testMessageSynoptic;
+                    messages.value = getMessagesFromFeatures(testMessageSynoptic.value);
+                    console.log(messages.value)
                 }
-                else if (this.topicHierarchy == "test2") {
-                    this.messages = this.testMessageSurface;
+                else if (props.topicHierarchy == "test2") {
+                    messages.value = getMessagesFromFeatures(testMessageSurface.value);
+                }
+                else if (props.topicHierarchy == "test3") {
+                    messages.value = getMessagesFromFeatures(testMessageSynoptic.value);
                 }
             }
+            // If not in test mode, make the API call
             else {
-                await this.apiCall();
+                await apiCall();
             }
         }
 
+        // Mounted lifecycle hook to display newest notification dashboard
+        onMounted(() => {
+            console.log("Mounted updateMessages")
+            updateMessages();
+        })
+
         return {
-            // Fill up
+            messages,
+            updateMessages
         }
     }
 });

@@ -106,7 +106,11 @@
                         <v-card>
                             <v-card-title>Authorize and publish</v-card-title>
                             <v-card-item>
-                              <v-text-field type="password" clearable v-model="token"></v-text-field>
+                              <v-text-field label="Execution token" v-model="token" rows="1"
+                              :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                              @click:append="showToken = !showToken" hint="Enter wis2box auth token for 'processes/wis2box'"
+                              persistent-hint>
+                            </v-text-field>
                             </v-card-item>
                             <v-card-item v-if="token">Click next to submit the data</v-card-item>
                         </v-card>
@@ -246,6 +250,8 @@
             const validationWarnings = ref([]);
             const validationErrors = ref([]);
             const status = ref(null);
+            // Variable to control whether token is seen or not
+            const showToken = ref(false);
             const token = ref(null);
             const topicSelected = ref(null);
             const rawCSV = ref(null);
@@ -508,7 +514,7 @@
             });
 
             return {theData, headers, incomingFile, loadCSV, step, prev, next, getFileName, scrollToRef,
-                    validationWarnings, validationErrors, status, token,
+                    validationWarnings, validationErrors, status, showToken, token,
                     topicSelected, submit, msg, showDialog, result, resultTitle, numberNotifications};
         },
     })
