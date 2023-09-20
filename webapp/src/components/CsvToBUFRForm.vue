@@ -1,9 +1,6 @@
 <template>
-    <v-sheet
-        border="lg opacity-2"
-        class="text-body-2 mx-auto flex"
-        max-width="100%">
-        <v-container width="100%" style="max-width: 100% !important">
+        <v-container class="max-form-width">
+          <v-card-title class="big-title">Submit CSV Data</v-card-title>
             <v-dialog v-model="showDialog" width="auto">
               <v-card>
                 <v-card-text>{{msg}}</v-card-text>
@@ -109,7 +106,11 @@
                         <v-card>
                             <v-card-title>Authorize and publish</v-card-title>
                             <v-card-item>
-                              <v-text-field type="password" clearable v-model="token" hint='Enter wis2box auth token for "processes/wis2box"' label='wis2box auth token for "processes/wis2box"' persistent-hint ></v-text-field>
+                              <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
+                              :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                              @click:append="showToken = !showToken" hint="Enter wis2box auth token for 'processes/wis2box'"
+                              persistent-hint>
+                            </v-text-field>
                             </v-card-item>
                             <v-switch class="hidden-xs" v-model="notificationsOnPending" label="Publish on WIS2" color="primary" hide-details></v-switch>
                             <v-card-item v-if="token">Click next to submit the data</v-card-item>
@@ -219,7 +220,6 @@
                 </v-stepper-actions>
             </v-stepper>
         </v-container>
-    </v-sheet>
 </template>
 
 <script>
@@ -237,7 +237,7 @@
         name: 'CsvToBUFRForm',
         components: {
             VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VDataTable,
-            VChip, VTooltip, VListItem, VList, VListSubheader, VSheet, VContainer,
+            VChip, VTooltip, VListItem, VList, VContainer,
             VCardTitle, VIcon, VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem,
             VStepperActions, VDialog, VCardSubtitle, InspectBufrButton, DownloadButton,
             TopicHierarchySelector, VSwitch
@@ -252,6 +252,8 @@
             const validationWarnings = ref([]);
             const validationErrors = ref([]);
             const status = ref(null);
+            // Variable to control whether token is seen or not
+            const showToken = ref(false);
             const token = ref(null);
             const topicSelected = ref(null);
             const rawCSV = ref(null);
@@ -515,7 +517,7 @@
             });
 
             return {theData, headers, incomingFile, loadCSV, step, prev, next, getFileName, scrollToRef,
-                    validationWarnings, validationErrors, status, token, notificationsOnPending,
+                    validationWarnings, validationErrors, status, showToken, token, notificationsOnPending,
                     topicSelected, submit, msg, showDialog, result, resultTitle, numberNotifications};
         },
     })
