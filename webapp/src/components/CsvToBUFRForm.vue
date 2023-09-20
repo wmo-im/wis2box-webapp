@@ -109,8 +109,9 @@
                         <v-card>
                             <v-card-title>Authorize and publish</v-card-title>
                             <v-card-item>
-                              <v-text-field type="password" clearable v-model="token"></v-text-field>
+                              <v-text-field type="password" clearable v-model="token" hint='Enter wis2box auth token for "processes/wis2box"' label='wis2box auth token for "processes/wis2box"' persistent-hint ></v-text-field>
                             </v-card-item>
+                            <v-switch class="hidden-xs" v-model="notificationsOnPending" label="Publish on WIS2" color="primary" hide-details></v-switch>
                             <v-card-item v-if="token">Click next to submit the data</v-card-item>
                         </v-card>
                     </v-stepper-window-item>
@@ -223,7 +224,7 @@
 
 <script>
     import { defineComponent, ref,onBeforeMount, onMounted, watch, computed} from 'vue';
-    import { VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VChip, VTooltip } from 'vuetify/lib/components/index.mjs';
+    import { VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VChip, VTooltip, VSwitch } from 'vuetify/lib/components/index.mjs';
     import { VList, VListItem, VListSubheader, VSheet, VContainer, VCardTitle, VIcon, VDialog} from 'vuetify/lib/components/index.mjs';
     import { VCardSubtitle} from 'vuetify/lib/components/index.mjs';
     import { VDataTable} from 'vuetify/lib/labs/VDataTable/index.mjs';
@@ -239,7 +240,7 @@
             VChip, VTooltip, VListItem, VList, VListSubheader, VSheet, VContainer,
             VCardTitle, VIcon, VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem,
             VStepperActions, VDialog, VCardSubtitle, InspectBufrButton, DownloadButton,
-            TopicHierarchySelector
+            TopicHierarchySelector, VSwitch
         },
         setup() {
             // reactive variables
@@ -264,6 +265,7 @@
                 password: false
             }
             const result = ref(null);
+            const notificationsOnPending = ref(false);
             // computed properties
             const resultTitle = computed( () => {
                 if( result.value && result.value.result){
@@ -401,7 +403,7 @@
                   inputs: {
                       data: rawCSV.value,
                       channel: topicSelected.value.id,
-                      notify: true,
+                      notify: notificationsOnPending.value,
                       template: "aws-template"
                   }
               };
@@ -513,7 +515,7 @@
             });
 
             return {theData, headers, incomingFile, loadCSV, step, prev, next, getFileName, scrollToRef,
-                    validationWarnings, validationErrors, status, token,
+                    validationWarnings, validationErrors, status, token, notificationsOnPending,
                     topicSelected, submit, msg, showDialog, result, resultTitle, numberNotifications};
         },
     })

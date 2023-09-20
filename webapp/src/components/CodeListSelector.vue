@@ -7,7 +7,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <div v-if="!_error">
+    <div v-if="!error_">
     <v-autocomplete
       v-if="options !== null"
       :items="options"
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-  import { defineComponent, ref, onBeforeMount, watch} from 'vue';
+  import { defineComponent, ref, onBeforeMount, watch, onMounted} from 'vue';
   import { VCard, VCardItem, VAutocomplete} from 'vuetify/lib/components/index.mjs';
 
 
@@ -50,7 +50,7 @@
       const options = ref(null);
       const selected = ref(null);
       const showDialog = ref(false);
-      const _error = ref(false);
+      const error_ = ref(false);
 
       const fetchOptions = async() => {
         try {
@@ -64,17 +64,23 @@
         } catch (error) {
           console.error('Error fetching ' + props.label + ' options:', error);
           showDialog.value = true;
-          _error.value = true;
+          error_.value = true;
         }
       };
 
       onBeforeMount( async () => {
         fetchOptions();
+        selected.value = props.modelValue;
       });
+
+      watch( () => props.modelValue, (newValue) => {
+        selected.value = newValue;
+      });
+
       watch( () => selected.value, (newValue) => {
         emit("update.modelValue", newValue);
       });
-      return {selected, options, props, showDialog, _error};
+      return {selected, options, props, showDialog, error_};
     }
   });
 </script>

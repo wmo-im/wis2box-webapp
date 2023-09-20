@@ -3,11 +3,11 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, onMounted, watch } from 'vue';
+import { defineComponent, ref, computed, onMounted, watch, onBeforeMount } from 'vue';
 import { VCard, VCardTitle, VCardText } from 'vuetify/lib/components/index.mjs';
 import "leaflet/dist/leaflet.css";
 import L from 'leaflet'
-import "leaflet/dist/images/marker-shadow.png";
+
 // geojson validator
 import * as gjv from 'geojson-validation';
 
@@ -51,6 +51,17 @@ export default defineComponent({
 
     mapContainer.value = props.id;
 
+
+    // 'hack' to fix leaflet marker issue
+    var mapMarker = new L.Icon({
+      iconUrl: import.meta.env.VITE_BASE_URL + '/assets/marker-icon.png',
+      shadowUrl:  import.meta.env.VITE_BASE_URL + '/assets/marker-shadow.png'
+    });
+
+    const addMarker = (feature, latlng) => {
+      return L.marker(latlng, {icon: mapMarker} )
+    };
+
     const geom = computed( () => ({
       type: "Feature",
       geometry: {
@@ -62,7 +73,7 @@ export default defineComponent({
 
     onMounted( () =>{
       map.value = L.map(props.id, {zoomAnimation:false, fadeAnimation:true, markerZoomAnimation:true}).setView( props.center, props.zoom );
-      //map.value.attributionControl.setPrefix('<a href="https://leafletjs.com/">Leaflet</a>');
+      map.value.attributionControl.setPrefix('');
       L.tileLayer(`${import.meta.env.VITE_BASEMAP_URL}`, {attribution: `${import.meta.env.VITE_BASEMAP_ATTRIBUTION}`}).addTo(map.value);
       // check whether we have a location to show
       if( geom.value.geometry ){
@@ -72,15 +83,16 @@ export default defineComponent({
     });
 
     const updateMarker = async () => {
+      console.log(   L.Icon.Default.prototype._getIconUrl() )
       if( markerLayer.value ){
         markerLayer.value.remove();
       }
       // now check whether the new marker is valid and plot
       if( ! (isNaN(geom.value.geometry.coordinates[0]) || isNaN(geom.value.geometry.coordinates[1]))  ){
         if( gjv.isFeature(geom.value) ){
-          markerLayer.value = L.geoJSON(geom.value).addTo(map.value);
+          markerLayer.value = L.geoJSON(geom.value, {pointToLayer: addMarker}).addTo(map.value);
           map.value.fitBounds(markerLayer.value.getBounds());
-          map.value.setZoom(12);
+          map.value.setZoom(10);
         }
       }
     };

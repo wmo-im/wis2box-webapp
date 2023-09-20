@@ -8,9 +8,10 @@
         label="Topic hierarchy"
         v-model="selected"
         :readonly="readonly"
+        :rules="rules"
         :hint="selected ? selected.description : 'Select topic hierarchy'"
         persistent-hint
-        :multiple=true
+        :multiple="multiple"
         return-object
         />
     </div>
@@ -31,7 +32,11 @@
     },
     props: {
       modelValue: {},
-      readonly: false
+      readonly: false,
+      multiple: false,
+      rules: {
+        type: Array
+      }
     },
     emits: ["update:modelValue"],
     setup(props, {emit}){
@@ -78,13 +83,13 @@
 
       onBeforeMount( async () => {
         await fetchOptions();
-        if( props.modelValue.length ){
+        if(props.modelValue.length ){
           for(var topic in props.modelValue){
-            console.log(topic);
             selected.value.push(options.value.find(option => option.id === props.modelValue[topic]));
           }
         }
       });
+
 
       watch( selected, (newValue) => {
         if( selected.value ){
