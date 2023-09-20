@@ -8,6 +8,7 @@
         label="Topic hierarchy"
         v-model="selected"
         :readonly="readonly"
+        :rules="rules"
         :hint="selected ? selected.description : 'Select topic hierarchy'"
         persistent-hint
         :multiple="multiple"
@@ -32,7 +33,10 @@ export default defineComponent({
   props: {
     modelValue: {},
     readonly: false,
-    multiple: false
+    multiple: false,
+    rules: {
+      type: Array
+    }
   },
   emits: ["update:modelValue"],
   setup(props, { emit }) {
@@ -91,7 +95,6 @@ export default defineComponent({
       await fetchOptions();
       if (props.modelValue && props.modelValue.length) {
         for (var topic in props.modelValue) {
-          console.log(topic);
           selected.value.push(options.value.find(option => option.id === props.modelValue[topic]));
         }
       }

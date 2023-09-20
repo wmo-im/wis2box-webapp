@@ -43,7 +43,7 @@
 
               <!-- Execution token -->
               <v-card-item>
-                <v-text-field label="Execution token" v-model="token" rows="1"
+                <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
                   :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
                   @click:append="showToken = !showToken" hint="Enter wis2box auth token for 'processes/wis2box'"
                   persistent-hint>

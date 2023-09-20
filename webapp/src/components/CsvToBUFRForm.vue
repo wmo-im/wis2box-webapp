@@ -106,12 +106,13 @@
                         <v-card>
                             <v-card-title>Authorize and publish</v-card-title>
                             <v-card-item>
-                              <v-text-field label="Execution token" v-model="token" rows="1"
+                              <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
                               :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
                               @click:append="showToken = !showToken" hint="Enter wis2box auth token for 'processes/wis2box'"
                               persistent-hint>
                             </v-text-field>
                             </v-card-item>
+                            <v-switch class="hidden-xs" v-model="notificationsOnPending" label="Publish on WIS2" color="primary" hide-details></v-switch>
                             <v-card-item v-if="token">Click next to submit the data</v-card-item>
                         </v-card>
                     </v-stepper-window-item>
@@ -222,9 +223,10 @@
 </template>
 
 <script>
-    import { defineComponent, ref, onMounted, watch, computed} from 'vue';
-    import { VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VChip, VTooltip } from 'vuetify/lib/components/index.mjs';
-    import { VList, VListItem, VContainer, VCardTitle, VIcon, VDialog} from 'vuetify/lib/components/index.mjs';
+    import { defineComponent, ref,onBeforeMount, onMounted, watch, computed} from 'vue';
+    import { VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VChip, VTooltip, VSwitch } from 'vuetify/lib/components/index.mjs';
+    import { VList, VListItem, VListSubheader, VSheet, VContainer, VCardTitle, VIcon, VDialog} from 'vuetify/lib/components/index.mjs';
+    import { VCardSubtitle} from 'vuetify/lib/components/index.mjs';
     import { VDataTable} from 'vuetify/lib/labs/VDataTable/index.mjs';
     import { VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem, VStepperActions} from 'vuetify/lib/labs/VStepper/index.mjs';
     import InspectBufrButton from '@/components/InspectBufrButton.vue';
@@ -237,8 +239,8 @@
             VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VDataTable,
             VChip, VTooltip, VListItem, VList, VContainer,
             VCardTitle, VIcon, VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem,
-            VStepperActions, VDialog, InspectBufrButton, DownloadButton,
-            TopicHierarchySelector
+            VStepperActions, VDialog, VCardSubtitle, InspectBufrButton, DownloadButton,
+            TopicHierarchySelector, VSwitch
         },
         setup() {
             // reactive variables
@@ -265,6 +267,7 @@
                 password: false
             }
             const result = ref(null);
+            const notificationsOnPending = ref(false);
             // computed properties
             const resultTitle = computed( () => {
                 if( result.value && result.value.result){
@@ -359,7 +362,7 @@
                                     if( header.dataType.minimum ){
                                         valid_min = header.dataType.minimum
                                     }
-                                    if( valid_min && (value < valid_min)){
+                                    if( value && valid_min && (value < valid_min)){
                                         msg = "Line " + count + ": Column '" +
                                             key + "' out of range, value (" + value + ") < valid min (" +
                                             valid_min + ")";
@@ -369,7 +372,7 @@
                                     if( header.dataType.maximum ){
                                         valid_max = header.dataType.maximum
                                     }
-                                    if( valid_max && (value > valid_max)){
+                                    if( value && valid_max && (value > valid_max)){
                                         msg = "Line " + count + ": Column '" + key +
                                             "' out of range, value (" + value + ") > valid max (" + valid_max + ")";
                                         status = 'error';
@@ -402,7 +405,7 @@
                   inputs: {
                       data: rawCSV.value,
                       channel: topicSelected.value.id,
-                      notify: true,
+                      notify: notificationsOnPending.value,
                       template: "aws-template"
                   }
               };
@@ -514,7 +517,7 @@
             });
 
             return {theData, headers, incomingFile, loadCSV, step, prev, next, getFileName, scrollToRef,
-                    validationWarnings, validationErrors, status, showToken, token,
+                    validationWarnings, validationErrors, status, showToken, token, notificationsOnPending,
                     topicSelected, submit, msg, showDialog, result, resultTitle, numberNotifications};
         },
     })

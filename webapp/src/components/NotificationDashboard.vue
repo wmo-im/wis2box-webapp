@@ -6,10 +6,7 @@
                 <!-- ApexCharts bar graph for latest notifications received -->
                 <v-col cols="7">
                     <v-fade-transition appear>
-                        <BarChart
-                        :messages="messages"
-                        :startDate="startDate"
-                        :endDate="endDate"></BarChart>
+                        <BarChart :messages="messages" :startDate="startDate" :endDate="endDate"></BarChart>
                     </v-fade-transition>
                 </v-col>
 
@@ -19,8 +16,7 @@
                         <!-- Total number of publications submitted in the last hour -->
                         <v-col cols="12">
                             <v-fade-transition appear>
-                                <SummaryStats
-                                :messages="messages"></SummaryStats>
+                                <SummaryStats :messages="messages"></SummaryStats>
                             </v-fade-transition>
                         </v-col>
                     </v-row>
@@ -96,7 +92,7 @@ export default defineComponent({
         // Example message of Romania synoptic dataset
         const testMessageSynoptic = ref([
             {
-                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d", "geometry": {
                     "type": "Point",
                     "coordinates": [46.223432, 6.146197]
                 },
@@ -105,222 +101,6 @@ export default defineComponent({
                     "datetime": "2022-03-31T00:00:00Z",
                     "pubtime": "2023-09-19T13:58:20Z",
                     "wigos_station_identifier": "0-20000-0-15020",
-                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
-                },
-                "links": [
-                    {
-                        "rel": "canonical",
-                        "type": "application/x-bufr",
-                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
-                    },
-                    {
-                        "rel": "via",
-                        "type": "text/html",
-                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
-                    }]
-            },
-            {
-                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
-                    "type": "Point",
-                    "coordinates": [46.223432, 6.146197]
-                },
-                "properties": {
-                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
-                    "datetime": "2022-03-31T00:00:00Z",
-                    "pubtime": "2023-09-19T13:58:20Z",
-                    "wigos_station_identifier": "0-20000-0-15020",
-                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
-                },
-                "links": [
-                    {
-                        "rel": "canonical",
-                        "type": "application/x-bufr",
-                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
-                    },
-                    {
-                        "rel": "via",
-                        "type": "text/html",
-                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
-                    }]
-            },
-            {
-                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
-                    "type": "Point",
-                    "coordinates": [46.223432, 6.146197]
-                },
-                "properties": {
-                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
-                    "datetime": "2022-03-31T00:00:00Z",
-                    "pubtime": "2023-09-19T13:58:20Z",
-                    "wigos_station_identifier": "0-20000-0-15030",
-                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
-                },
-                "links": [
-                    {
-                        "rel": "canonical",
-                        "type": "application/x-bufr",
-                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
-                    },
-                    {
-                        "rel": "via",
-                        "type": "text/html",
-                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
-                    }]
-            },
-            {
-                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
-                    "type": "Point",
-                    "coordinates": [46.223432, 6.146197]
-                },
-                "properties": {
-                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
-                    "datetime": "2022-03-31T00:00:00Z",
-                    "pubtime": "2023-09-19T13:58:20Z",
-                    "wigos_station_identifier": "0-20000-0-15040",
-                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
-                },
-                "links": [
-                    {
-                        "rel": "canonical",
-                        "type": "application/x-bufr",
-                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
-                    },
-                    {
-                        "rel": "via",
-                        "type": "text/html",
-                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
-                    }]
-            },
-            {
-                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
-                    "type": "Point",
-                    "coordinates": [46.223432, 6.146197]
-                },
-                "properties": {
-                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
-                    "datetime": "2022-03-31T00:00:00Z",
-                    "pubtime": "2023-09-19T13:58:20Z",
-                    "wigos_station_identifier": "0-20000-0-15050",
-                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
-                },
-                "links": [
-                    {
-                        "rel": "canonical",
-                        "type": "application/x-bufr",
-                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
-                    },
-                    {
-                        "rel": "via",
-                        "type": "text/html",
-                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
-                    }]
-            },
-            {
-                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
-                    "type": "Point",
-                    "coordinates": [46.223432, 6.146197]
-                },
-                "properties": {
-                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
-                    "datetime": "2022-03-31T00:00:00Z",
-                    "pubtime": "2023-09-19T13:58:20Z",
-                    "wigos_station_identifier": "0-20000-0-15060",
-                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
-                },
-                "links": [
-                    {
-                        "rel": "canonical",
-                        "type": "application/x-bufr",
-                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
-                    },
-                    {
-                        "rel": "via",
-                        "type": "text/html",
-                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
-                    }]
-            },
-            {
-                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
-                    "type": "Point",
-                    "coordinates": [46.223432, 6.146197]
-                },
-                "properties": {
-                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
-                    "datetime": "2022-03-31T00:00:00Z",
-                    "pubtime": "2023-09-19T13:58:20Z",
-                    "wigos_station_identifier": "0-20000-0-15070",
-                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
-                },
-                "links": [
-                    {
-                        "rel": "canonical",
-                        "type": "application/x-bufr",
-                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
-                    },
-                    {
-                        "rel": "via",
-                        "type": "text/html",
-                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
-                    }]
-            },
-            {
-                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
-                    "type": "Point",
-                    "coordinates": [46.223432, 6.146197]
-                },
-                "properties": {
-                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
-                    "datetime": "2022-03-31T00:00:00Z",
-                    "pubtime": "2023-09-19T13:58:20Z",
-                    "wigos_station_identifier": "0-20000-0-15080",
-                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
-                },
-                "links": [
-                    {
-                        "rel": "canonical",
-                        "type": "application/x-bufr",
-                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
-                    },
-                    {
-                        "rel": "via",
-                        "type": "text/html",
-                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
-                    }]
-            },
-            {
-                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
-                    "type": "Point",
-                    "coordinates": [46.223432, 6.146197]
-                },
-                "properties": {
-                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
-                    "datetime": "2022-03-31T00:00:00Z",
-                    "pubtime": "2023-09-19T13:58:20Z",
-                    "wigos_station_identifier": "0-20000-0-15090",
-                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
-                },
-                "links": [
-                    {
-                        "rel": "canonical",
-                        "type": "application/x-bufr",
-                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
-                    },
-                    {
-                        "rel": "via",
-                        "type": "text/html",
-                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
-                    }]
-            },
-            {
-                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d","geometry": {
-                    "type": "Point",
-                    "coordinates": [46.223432, 6.146197]
-                },
-                "properties": {
-                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
-                    "datetime": "2022-03-31T00:00:00Z",
-                    "pubtime": "2023-09-19T13:56:20Z",
-                    "wigos_station_identifier": "0-20000-0-15100",
                     "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
                 },
                 "links": [
