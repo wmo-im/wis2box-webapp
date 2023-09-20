@@ -391,34 +391,31 @@ export default defineComponent({
           notify: notificationsOn.value // Boolean for WIS2 notifications
         }
       };
-
-      const synopUrl = `${import.meta.env.VITE_API_URL}/processes/wis2box-synop2bufr/execution`
-
-      //console.log(payload);
-      //console.log(synopUrl);
-      input.value = payload;
-
-      const response = await fetch(synopUrl, {
-        method: 'POST',
-        headers: {
+      var headers = {
           'encode': 'json',
           'Content-Type': 'application/geo+json',
           'authorization': 'Bearer ' + token.value
-        },
+      };
+
+      const synopUrl = `${import.meta.env.VITE_API_URL}/processes/wis2box-synop2bufr/execution`
+
+      const response = await fetch(synopUrl, {
+        method: 'POST',
+        headers: headers,
         body: JSON.stringify(payload)
       });
 
       if (!response.ok) {
-        let result;
+        let res;
         if (response.status == 401) {
-          result = "Unauthorized, please provide a valid execution token"
+          res = "Unauthorized, please provide a valid execution token"
         }
         else {
-          result = "API error"
+          res = "API error"
         }
         console.error('HTTP error', response.status);
         result.value = {
-          "result": result,
+          "result": res,
           "errors": [
             synopUrl + " returned " + response.status
           ]
