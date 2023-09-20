@@ -360,7 +360,7 @@
                                     if( header.dataType.minimum ){
                                         valid_min = header.dataType.minimum
                                     }
-                                    if( valid_min && (value < valid_min)){
+                                    if( value && valid_min && (value < valid_min)){
                                         msg = "Line " + count + ": Column '" +
                                             key + "' out of range, value (" + value + ") < valid min (" +
                                             valid_min + ")";
@@ -370,7 +370,7 @@
                                     if( header.dataType.maximum ){
                                         valid_max = header.dataType.maximum
                                     }
-                                    if( valid_max && (value > valid_max)){
+                                    if( value && valid_max && (value > valid_max)){
                                         msg = "Line " + count + ": Column '" + key +
                                             "' out of range, value (" + value + ") > valid max (" + valid_max + ")";
                                         status = 'error';
