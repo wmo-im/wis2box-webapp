@@ -413,7 +413,8 @@
                 method: 'POST',
                 headers: {
                     'encode': 'json',
-                    'Content-Type': 'application/geo+json'
+                    'Content-Type': 'application/geo+json',
+                    'Authorization': 'Bearer '+ token.value
                 },
                 body: JSON.stringify(payload)
               });
