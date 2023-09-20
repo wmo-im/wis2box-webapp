@@ -106,12 +106,12 @@
         {
           "titles": "station_height_above_msl",
           "dc:description": "Height of the station ground above mean sea level (to 1 decimal place)",
-          "datatype": {"base": "decimal", "minimum": -500, "maximum":  9000}
+          "datatype": {"base": "decimal", "minimum": -400, "maximum":  9000}
         },
         {
           "titles": "barometer_height_above_msl",
           "dc:description": "Height of the barometer above mean sea level (to 1 decimal place), typically height of station ground plus the height of the sensor above local ground",
-          "datatype": {"base": "decimal",  "minimum": -500, "maximum":  9000}
+          "datatype": {"base": "decimal",  "minimum": -400, "maximum":  9000}
         },
         {
           "titles": "station_pressure",
@@ -126,7 +126,7 @@
         {
           "titles": "geopotential_height",
           "dc:description": "Geoptential height expressed in geopotential meters (gpm) to 0 decimal places",
-          "datatype": {"base": "integer", "minimum": -4000, "maximum":  1306710}
+          "datatype": {"base": "integer", "minimum": -1000, "maximum":  130071}
         },
         {
           "titles": "thermometer_height",
@@ -153,7 +153,7 @@
           "datatype": {
             "base": "integer",
             "minimum": 0,
-            "maximum": 150
+            "maximum": 100
           }
         },
         {

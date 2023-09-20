@@ -189,14 +189,18 @@
                                 </v-list-item>
 
                               </template>
-                              <v-list-item v-for="(file_url, index) in result.files" :key="index">
+                              <v-list-item v-for="(data_item, index) in result.data_items" :key="index">
                                 <div class="file-actions">
                                   <div>
-                                    {{ getFileName(file_url) }}
+                                    {{ data_item.filename }}
                                   </div>
-                                  <div class="file-actions">
-                                    <DownloadButton :fileUrl="file_url" />
-                                    <InspectBufrButton :fileUrl="file_url" />
+                                  <div class="file-actions" v-if="data_item.file_url">
+                                    <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url"/>
+                                    <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url"/>
+                                  </div>
+                                  <div class="file-actions" v-if="data_item.data">
+                                    <DownloadButton :fileName="data_item.filename" :data="data_item.data"/>
+                                    <InspectBufrButton :fileName="data_item.filename" :data="data_item.data"/>
                                   </div>
                                 </div>
                                 <v-divider v-if="index < result.files.length - 1" class="divider-spacing"></v-divider>
@@ -284,12 +288,6 @@
             onMounted( () => {
                 setTimeout(scrollToRef(200));
             });
-
-            // methods
-            const getFileName = (url) => {
-              const urlParts = url.split('/');
-              return urlParts[urlParts.length - 1];
-            }
 
             const scrollToRef = () => {
               if (scrollRef.value) {
@@ -419,7 +417,14 @@
                 body: JSON.stringify(payload)
               });
               if (!response.ok) {
-                console.error('HTTP error', response.status);
+                if( response.status == 401){
+                  msg.value = "Unauthorized, please provide a valid execution token";
+                  showDialog.value = true;
+                }else{
+                  msg.value = "API Error, please check the console";
+                  showDialog.value = true;
+                  console.error('HTTP error', response.status);
+                }
                 result.value = {
                   "result": "API error",
                   "errors": [
@@ -515,7 +520,7 @@
               }
             });
 
-            return {theData, headers, incomingFile, loadCSV, step, prev, next, getFileName, scrollToRef,
+            return {theData, headers, incomingFile, loadCSV, step, prev, next, scrollToRef,
                     validationWarnings, validationErrors, status, token, notificationsOnPending,
                     topicSelected, submit, msg, showDialog, result, resultTitle, numberNotifications};
         },
