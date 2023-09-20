@@ -523,7 +523,7 @@
             });
 
             return {theData, headers, incomingFile, loadCSV, step, prev, next, scrollToRef,
-                    validationWarnings, validationErrors, status, token, notificationsOnPending,
+                    validationWarnings, validationErrors, status, showToken, token, notificationsOnPending,
                     topicSelected, submit, msg, showDialog, result, resultTitle, numberNotifications};
         },
     })

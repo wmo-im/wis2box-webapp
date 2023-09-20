@@ -83,7 +83,6 @@ export default defineComponent({
     });
 
     const updateMarker = async () => {
-      console.log(   L.Icon.Default.prototype._getIconUrl() )
       if( markerLayer.value ){
         markerLayer.value.remove();
       }

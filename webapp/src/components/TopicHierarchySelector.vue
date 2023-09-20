@@ -42,7 +42,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const apiUrl = `${import.meta.env.VITE_API_URL}/collections/discovery-metadata/items?f=json`;
     const options = ref(null);
-    const selected = ref(null);
+    const selected = ref([]);
     const errorMessage = ref(null);
 
     const fetchOptions = async () => {
@@ -53,7 +53,7 @@ export default defineComponent({
         options.value = [
           {name: "test1", id: "test1", description: "Test 1"}, {name: "test2", id: "test2", description: "Test 2"}, {name: "test3", id: "test3", description: "Test 3"}
         ]
-        
+
       }
       else {
         console.log("Fetching topic hierarchy from:", apiUrl);
