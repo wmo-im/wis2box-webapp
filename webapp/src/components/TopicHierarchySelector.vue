@@ -21,32 +21,41 @@
 </template>
 
 <script>
-  import { defineComponent, ref, onBeforeMount, watch, onErrorCaptured} from 'vue';
-  import {VAutocomplete, VTextField} from 'vuetify/lib/components/index.mjs';
+import { defineComponent, ref, onBeforeMount, watch, onErrorCaptured } from 'vue';
+import { VAutocomplete, VTextField } from 'vuetify/lib/components/index.mjs';
 
 
-  export default defineComponent({
-    name: 'SelectTopicHierarchy',
-    components: {
-      VAutocomplete, VTextField
-    },
-    props: {
-      modelValue: {},
-      readonly: false,
-      multiple: false,
-      rules: {
-        type: Array
+export default defineComponent({
+  name: 'SelectTopicHierarchy',
+  components: {
+    VAutocomplete, VTextField
+  },
+  props: {
+    modelValue: {},
+    readonly: false,
+    multiple: false,
+    rules: {
+      type: Array
+    }
+  },
+  emits: ["update:modelValue"],
+  setup(props, { emit }) {
+    const apiUrl = `${import.meta.env.VITE_API_URL}/collections/discovery-metadata/items?f=json`;
+    const options = ref(null);
+    const selected = ref(null);
+    const errorMessage = ref(null);
+
+    const fetchOptions = async () => {
+      // Get topic hierarchies
+      if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
+        // If test mode enabled, show test topics
+        console.log("TEST_MODE is enabled");
+        options.value = [
+          {name: "test1", id: "test1", description: "Test 1"}, {name: "test2", id: "test2", description: "Test 2"}, {name: "test3", id: "test3", description: "Test 3"}
+        ]
+        
       }
-    },
-    emits: ["update:modelValue"],
-    setup(props, {emit}){
-      const apiUrl = `${import.meta.env.VITE_API_URL}/collections/discovery-metadata/items?f=json`;
-      const options = ref(null);
-      const selected = ref([]);
-      const errorMessage = ref(null);
-
-      const fetchOptions = async () => {
-// Get topic hierarchies
+      else {
         console.log("Fetching topic hierarchy from:", apiUrl);
         try {
           const response = await fetch(apiUrl);
@@ -63,9 +72,9 @@
                     name: feature.properties['wmo:topicHierarchy'],
                     id: feature.properties['wmo:topicHierarchy'],
                     description: feature.properties['description']
-                    }
                   }
                 }
+              }
               );
             }
             else {
@@ -75,29 +84,29 @@
         }
         catch (error) {
           errorMessage.value = "Error fetching topic hierarchy, please check the API end point." +
-                                " See logs for more information.";
+            " See logs for more information.";
           console.error("Error fetching topic hierarchy:", error)
         }
-      };
+      }
+    };
 
 
-      onBeforeMount( async () => {
-        await fetchOptions();
-        if(props.modelValue.length ){
-          for(var topic in props.modelValue){
-            selected.value.push(options.value.find(option => option.id === props.modelValue[topic]));
-          }
+    onBeforeMount(async () => {
+      await fetchOptions();
+      if (props.modelValue && props.modelValue.length) {
+        for (var topic in props.modelValue) {
+          selected.value.push(options.value.find(option => option.id === props.modelValue[topic]));
         }
-      });
+      }
+    });
 
+    watch(selected, (newValue) => {
+      if (selected.value) {
+        emit("update:modelValue", newValue);
+      }
+    });
 
-      watch( selected, (newValue) => {
-        if( selected.value ){
-          emit("update:modelValue", newValue);
-        }
-      });
-
-      return {selected, options, errorMessage};
-    }
-  });
+    return { selected, options, errorMessage };
+  }
+});
 </script>

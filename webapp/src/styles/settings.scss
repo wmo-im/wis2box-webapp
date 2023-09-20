@@ -8,3 +8,41 @@
 // @use 'vuetify/settings' with (
 //   $color-pack: false
 // );
+.max-form-width {
+    max-width: 1200px;
+}
+
+.big-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.warning-color {
+    color: #FD9235
+}
+
+.warning-item {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    background-color: #FEC89A
+}
+
+.error-color {
+    color: #EA4848
+}
+
+.error-item {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    background-color: #F08080
+}
+
+.secondary {
+    color: #767B91;
+  }
