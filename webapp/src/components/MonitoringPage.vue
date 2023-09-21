@@ -52,8 +52,10 @@
 
         <v-col cols="12" class="max-dashboard-width">
             <!-- Dashboard visualising the notifications of the topic selected -->
+            <!-- A key is needed to ensure this dashboard updates when the props are changed -->
             <NotificationDashboard :topicHierarchy="selectedTopic.id" :startDate="selectedStartDate"
-                :endDate="selectedEndDate" :wsi="searchedWsi" :limit="selectedLimit" v-if="showDashboard" class="my-4" />
+                :endDate="selectedEndDate" :wsi="searchedWsi" :limit="selectedLimit" v-if="showDashboard"
+                :key="dashboardKey" class="my-4" />
         </v-col>
     </v-row>
 </template>
@@ -103,6 +105,8 @@ export default defineComponent({
         const selectedLimit = ref(100);
         // Boolean to show the notification dashboard
         const showDashboard = ref(false);
+        // Key to make sure dashboard always updates when the update button is pressed
+        const dashboardKey = ref(0);
 
         // Computed
 
@@ -122,6 +126,8 @@ export default defineComponent({
             selectedEndDate.value = new Date(selectedDateRangeTemp.value[1]);
             searchedWsi.value = searchedWsiTemp.value;
             selectedLimit.value = selectedLimitTemp.value;
+            // Add 1 to the key so that the dashboard is forced to update
+            dashboardKey.value++
             // Display dashboard
             showDashboard.value = true;
         }
@@ -138,6 +144,7 @@ export default defineComponent({
             selectedLimitTemp,
             selectedLimit,
             showDashboard,
+            dashboardKey,
             updateDisabled,
             handleUpdate
         }
