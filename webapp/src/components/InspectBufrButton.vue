@@ -4,7 +4,10 @@
       <v-btn color="#49C6E5" :block="block" append-icon="mdi-feature-search" v-bind="props" @click="inspectFile">Inspect</v-btn>
     </template>
       <v-card class="inspect-content">
-        <v-card-title>{{ fileName }}</v-card-title>
+        <!-- Close dialog button represented by cross at top right -->
+        <v-btn icon="mdi-close"
+        class="close-button" variant="plain" @click="dialog = false"></v-btn>
+        <v-card-title class="pad-filename">{{ fileName }}</v-card-title>
         <v-card-text>
           <div v-if="itemsInBufr.length === 0">
             <!-- Display a message when itemsInBufr is empty -->
@@ -16,9 +19,6 @@
             </div>
           </div>
         </v-card-text>
-        <v-card-actions>
-          <v-btn color="#1994b3" block @click="dialog = false">Close Dialog</v-btn>
-        </v-card-actions>
       </v-card>
   </v-dialog>
 </template>
@@ -149,14 +149,25 @@ export default defineComponent({
         return {
             itemsInBufr,
             inspectFile,
-            dialog,
-            fileName: props.fileName
+            dialog
         };
     },
 });
 </script>
 
 <style>
+
+.pad-filename {
+  margin-top: 1.5rem;
+}
+
+.close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+
 .inspect-content {
   align-self: center;
   align-items: center;
