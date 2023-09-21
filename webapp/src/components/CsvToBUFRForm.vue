@@ -195,14 +195,28 @@
                                   <div>
                                     {{ data_item.filename }}
                                   </div>
-                                  <div class="file-actions" v-if="data_item.file_url">
-                                    <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url"/>
-                                    <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url"/>
-                                  </div>
-                                  <div class="file-actions" v-if="data_item.data">
-                                    <DownloadButton :fileName="data_item.filename" :data="data_item.data"/>
-                                    <InspectBufrButton :fileName="data_item.filename" :data="data_item.data"/>
-                                  </div>
+                                  <!-- For wider windows, make buttons wider -->
+                                    <div class="hidden-md-and-down">
+                                      <div class="file-actions" v-if="data_item.file_url">
+                                        <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
+                                        <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
+                                      </div>
+                                      <div class="file-actions" v-if="data_item.data">
+                                        <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
+                                        <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
+                                      </div>
+                                    </div>
+                                    <!-- For narrow windows, make buttons less wide -->
+                                    <div class="hidden-lg-and-up">
+                                      <div class="file-actions" v-if="data_item.file_url">
+                                        <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
+                                        <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
+                                      </div>
+                                      <div class="file-actions" v-if="data_item.data">
+                                        <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
+                                        <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
+                                      </div>
+                                    </div>
                                 </div>
                                 <v-divider v-if="index < result.files.length - 1" class="divider-spacing"></v-divider>
                               </v-list-item>

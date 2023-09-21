@@ -32,5 +32,13 @@ else
 fi
 echo "VITE_BASEMAP_ATTRIBUTION=$VITE_BASEMAP_ATTRIBUTION"
 
+# vite welcome message
+if [ -z "$WIS2BOX_WEBAPP_HOMEPAGE_MESSAGE" ]; then
+  echo "WIS2BOX_WEBAPP_HOMEPAGE_MESSAGE is not set use default"
+  VITE_WEBAPP_HOMEPAGE_MESSAGE="<h2>Welcome to the wis2box-webapp!</h2><br> This web-application allows you to submit ASCII and CSV data and check notifications sent by this wis2box. <br>If you encounter any issues, please contact: <a href = "mailto: abc@example.com">abc@example.com</a>"
+else
+  export VITE_WEBAPP_HOMEPAGE_MESSAGE=$WIS2BOX_WEBAPP_HOMEPAGE_MESSAGE
+fi
+
 npm run build
 npm run preview

@@ -1,7 +1,7 @@
 <template>
   <APIStatus/>
   <v-card>
-    <v-card-title>Stations</v-card-title>
+    <v-card-title class="big-title">Stations</v-card-title>
     <v-card-item v-if="items">
       <VTextField style="width: 400px;" v-model="search" prepend-icon="mdi-text-search" label="search" single-line hide-details></VTextField>
       <VDataTable :headers="headers" :items="items" :search="search" dense small>

@@ -15,19 +15,15 @@
 
   <v-navigation-drawer location="left" :width="200" rail expand-on-hover permanent="">
 
-    <v-list v-model:opened="open" dense nav>
+    <v-list :opened="open" dense nav>
       <v-list-item prepend-icon="mdi-home" title="Home" exact to="/" />
 
-      <v-list-group value="Forms">
-        <template v-slot:activator="{ props }">
-          <v-list-item v-bind="props" prepend-icon="mdi-notebook-edit" title="Forms" />
-        </template>
+      <v-list-item prepend-icon="mdi-card-text" title="SYNOP Form" exact to="/synop_form" />
 
-        <v-list-item prepend-icon="mdi-card-text" title="SYNOP" exact to="/synop_form" />
-        <v-list-item prepend-icon="mdi-file-excel" title="CSV" exact to="/csv2bufr_form" />
-      </v-list-group>
+      <v-list-item prepend-icon="mdi-file-excel" title="CSV Form" exact to="/csv2bufr_form" />
 
       <v-list-item prepend-icon="mdi-satellite-uplink" title="Stations" exact to="/station" />
+
       <v-list-item prepend-icon="mdi-chart-box" title="Monitoring" exact to="/monitoring" />
     </v-list>
   </v-navigation-drawer>
@@ -48,6 +44,7 @@ const open = ref(["Forms"])
 
 .wmo-logo {
   height: 60px;
+  margin-left: 10px;
 }
 
 .wis2-title {

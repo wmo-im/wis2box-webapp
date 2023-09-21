@@ -8,28 +8,28 @@
     <div class="scrollable-file-list">
       <template v-for="(file_url, index) in filteredFileUrls" :key="index">
         <v-list class="file-list">
-          <v-row>
-            <v-col cols="5">
-              <!-- Display the timestamp -->
-              <div class="secondary">
-                {{ formatTime(filteredPublishTimes[index]) }}
-              </div>
+            <v-row justify="center" align="center">
+              <v-col cols="5">
 
-              <!-- Display the file name -->
-              <div class="url-font">
-                {{ getFileName(file_url) }}
-              </div>
-            </v-col>
+                <!-- Display the timestamp -->
+                <div class="secondary">
+                  {{ formatTime(filteredPublishTimes[index]) }}
+                </div>
 
-            <v-col cols="3">
-              <DownloadButton :fileName="getFileName(file_url)" :fileUrl="file_url" :block="true" />
-            </v-col>
+                <!-- Display the file name -->
+                <div class="url-font">
+                  {{ getFileName(file_url) }}
+                </div>
+              </v-col>
 
-            <v-col cols="3">
-              <InspectBufrButton :fileName="getFileName(file_url)" :fileUrl="file_url" :block="true" />
-            </v-col>
-          </v-row>
+              <v-col cols="3">
+                <DownloadButton :fileName="getFileName(file_url)" :fileUrl="file_url" :block="true" />
+              </v-col>
 
+              <v-col cols="3">
+                <InspectBufrButton :fileName="getFileName(file_url)" :fileUrl="file_url" :block="true" />
+              </v-col>
+            </v-row>
         </v-list>
         <v-divider />
       </template>

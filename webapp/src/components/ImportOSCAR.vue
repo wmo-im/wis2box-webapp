@@ -27,7 +27,7 @@
       </v-card>
     </v-dialog>
     <v-card max-width="1200px">
-      <v-card-title>Import station from OSCAR/Surface</v-card-title>
+      <v-card-title class="big-title">Import station from OSCAR/Surface</v-card-title>
       <v-card-item>
         <v-form>
           <v-text-field :rules="[rules.validWSI]" v-model="wsi" label="WIGOS Station Identifier" hint="Enter WIGOS Station Identifier" persistent-hint/>
