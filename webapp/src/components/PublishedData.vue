@@ -8,22 +8,27 @@
     <div class="scrollable-file-list">
       <template v-for="(file_url, index) in filteredFileUrls" :key="index">
         <v-list class="file-list">
-          <div class="file-container">
-            <!-- Display the timestamp -->
-            <div class="secondary">
-              {{ formatTime(filteredPublishTimes[index]) }}
-            </div>
+          <v-row>
+            <v-col cols="5">
+              <!-- Display the timestamp -->
+              <div class="secondary">
+                {{ formatTime(filteredPublishTimes[index]) }}
+              </div>
 
-            <!-- Display the file name -->
-            <div class="url-font">
-              {{ getFileName(file_url) }}
-            </div>
-          </div>
+              <!-- Display the file name -->
+              <div class="url-font">
+                {{ getFileName(file_url) }}
+              </div>
+            </v-col>
 
-          <div class="button-container">
-            <DownloadButton :fileName="getFileName(file_url)" :fileUrl="file_url" class="button"/>
-            <InspectBufrButton :fileName="getFileName(file_url)" :fileUrl="file_url" class="button"/>
-          </div>
+            <v-col cols="3">
+              <DownloadButton :fileName="getFileName(file_url)" :fileUrl="file_url" :block="true" />
+            </v-col>
+
+            <v-col cols="3">
+              <InspectBufrButton :fileName="getFileName(file_url)" :fileUrl="file_url" :block="true" />
+            </v-col>
+          </v-row>
 
         </v-list>
         <v-divider />
@@ -141,9 +146,11 @@ export default defineComponent({
 }
 
 .button {
-  flex-grow: 0.5;
+  flex-grow: 1;
+  min-width: 100px;
 }
+
 .url-font {
-  font-size: 20px;
+  font-size: 18px;
 }
 </style>

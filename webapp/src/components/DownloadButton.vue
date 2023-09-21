@@ -1,5 +1,5 @@
 <template>
-  <v-btn color="#00CCAA" append-icon="mdi-download" @click="downloadFile">Download</v-btn>
+  <v-btn color="#00CCAA" :block="block" append-icon="mdi-download" @click="downloadFile">Download</v-btn>
 </template>
 
 <script>
@@ -23,6 +23,11 @@ export default defineComponent({
             required: false,
             default: '',
         },
+        block: {
+            type: Boolean,
+            required: false,
+            default: false
+        }
     },
     components: {
         VBtn

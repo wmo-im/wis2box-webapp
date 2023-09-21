@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="dialog" width="auto">
     <template v-slot:activator="{ props }">
-      <v-btn color="#49C6E5" append-icon="mdi-feature-search" v-bind="props" @click="inspectFile">Inspect</v-btn>
+      <v-btn color="#49C6E5" :block="block" append-icon="mdi-feature-search" v-bind="props" @click="inspectFile">Inspect</v-btn>
     </template>
       <v-card class="inspect-content">
         <v-card-title>{{ fileName }}</v-card-title>
@@ -44,6 +44,11 @@ export default defineComponent({
             required: false,
             default: '',
         },
+        block: {
+          type: Boolean,
+          required: false,
+          default: false
+        }
     },
     components: {
         VCard,

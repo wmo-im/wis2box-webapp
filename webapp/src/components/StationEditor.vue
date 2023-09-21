@@ -173,7 +173,7 @@
         const registerStation = async () => {
           if( ! formValid.value ){
             errorMessage.value = "Please correct validation errors before submitting"
-            showDialog = true;
+            showDialog.value = true;
             return;
           }
           var record = {
