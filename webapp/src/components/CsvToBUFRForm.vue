@@ -433,14 +433,20 @@
                 body: JSON.stringify(payload)
               });
               if (!response.ok) {
-                if( response.status == 401){
-                  msg.value = "Unauthorized, please provide a valid execution token";
-                  showDialog.value = true;
-                }else{
+                if (response.status == 401) {
+                  msg.value = "Unauthorized, please provide a valid execution token"
+                }
+                else if (response.status == 404) {
+                  msg.value = "Error submitting data: API not found"
+                }
+                else if (response.status == 500) {
+                  msg.value = "Error submitting data: Internal server error"
+                }
+                else {
                   msg.value = "API Error, please check the console";
-                  showDialog.value = true;
                   console.error('HTTP error', response.status);
                 }
+                showDialog.value = true;
                 result.value = {
                   "result": "API error",
                   "errors": [

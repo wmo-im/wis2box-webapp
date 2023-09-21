@@ -53,8 +53,8 @@
                   </template>
                 </v-btn>
                 <!-- Show switch on the right of submit button -->
-                <v-switch :disabled="submitDisabled" v-model="notificationsOnPending"
-                  label="Publish on WIS2" color="primary" hide-details></v-switch>
+                <v-switch :disabled="submitDisabled" v-model="notificationsOnPending" label="Publish on WIS2"
+                  color="primary" hide-details></v-switch>
               </div>
             </v-card-item>
           </v-card-text>
@@ -139,33 +139,33 @@
 
             </template>
             <v-list-item v-for="(data_item, index) in result.data_items" :key="index">
-                <div class="file-actions">
-                  <div>
-                    {{ data_item.filename }}
+              <div class="file-actions">
+                <div>
+                  {{ data_item.filename }}
+                </div>
+                <!-- For wider windows, make buttons wider -->
+                <div class="hidden-md-and-down">
+                  <div class="file-actions" v-if="data_item.file_url">
+                    <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
+                    <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
                   </div>
-                  <!-- For wider windows, make buttons wider -->
-                  <div class="hidden-md-and-down">
-                    <div class="file-actions" v-if="data_item.file_url">
-                      <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
-                      <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
-                    </div>
-                    <div class="file-actions" v-if="data_item.data">
-                      <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
-                      <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
-                    </div>
-                  </div>
-                  <!-- For narrow windows, make buttons less wide -->
-                  <div class="hidden-lg-and-up">
-                    <div class="file-actions" v-if="data_item.file_url">
-                      <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
-                      <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
-                    </div>
-                    <div class="file-actions" v-if="data_item.data">
-                      <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
-                      <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
-                    </div>
+                  <div class="file-actions" v-if="data_item.data">
+                    <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
+                    <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
                   </div>
                 </div>
+                <!-- For narrow windows, make buttons less wide -->
+                <div class="hidden-lg-and-up">
+                  <div class="file-actions" v-if="data_item.file_url">
+                    <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
+                    <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
+                  </div>
+                  <div class="file-actions" v-if="data_item.data">
+                    <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
+                    <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
+                  </div>
+                </div>
+              </div>
               <v-divider v-if="index < result.data_items.length - 1" class="divider-spacing"></v-divider>
             </v-list-item>
           </v-list-group>
@@ -396,8 +396,14 @@ export default defineComponent({
         if (response.status == 401) {
           res = "Unauthorized, please provide a valid execution token"
         }
+        else if (response.status == 404) {
+          res = "Error submitting data: API not found"
+        }
+        else if (response.status == 500) {
+          res = "Error submitting data: Internal server error"
+        }
         else {
-          res = "API error"
+          res = "API Error, please check the console";
         }
         console.error('HTTP error', response.status);
         result.value = {
