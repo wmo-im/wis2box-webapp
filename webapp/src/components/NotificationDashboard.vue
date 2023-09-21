@@ -85,12 +85,10 @@ export default defineComponent({
     },
     setup(props) {
 
-        // Reactive variables
+        // Static variables
 
-        // Messages from API call
-        const messages = ref([])
         // Example message of Romania synoptic dataset
-        const testMessageSynoptic = ref([
+        const testMessageSynoptic = [
             {
                 "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d", "geometry": {
                     "type": "Point",
@@ -115,9 +113,9 @@ export default defineComponent({
                         "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
                     }]
             }
-        ])
+        ]
         // Example message of Malawi surface dataset
-        const testMessageSurface = ref([
+        const testMessageSurface = [
             {
                 "id": "af14d8c4-5f63-45af-8171-7730ec9932ba",
                 "geometry": {
@@ -143,7 +141,12 @@ export default defineComponent({
                         "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
                     }]
             }
-        ])
+        ]
+
+        // Reactive variables
+
+        // Messages from API call
+        const messages = ref([])
 
         // Methods
 
@@ -223,14 +226,14 @@ export default defineComponent({
                 console.log("Dataset selected: ", props.topicHierarchy);
                 // Use example data selected by user
                 if (props.topicHierarchy == "test1") {
-                    messages.value = getMessagesFromFeatures(testMessageSynoptic.value);
+                    messages.value = getMessagesFromFeatures(testMessageSynoptic);
                     console.log(messages.value)
                 }
                 else if (props.topicHierarchy == "test2") {
-                    messages.value = getMessagesFromFeatures(testMessageSurface.value);
+                    messages.value = getMessagesFromFeatures(testMessageSurface);
                 }
                 else if (props.topicHierarchy == "test3") {
-                    messages.value = getMessagesFromFeatures(testMessageSynoptic.value);
+                    messages.value = getMessagesFromFeatures(testMessageSynoptic);
                 }
             }
             // If not in test mode, make the API call

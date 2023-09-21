@@ -155,12 +155,12 @@
                     {{ data_item.filename }}
                   </div>
                   <div class="file-actions" v-if="data_item.file_url">
-                    <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" />
-                    <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" />
+                    <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
+                    <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
                   </div>
                   <div class="file-actions" v-if="data_item.data">
-                    <DownloadButton :fileName="data_item.filename" :data="data_item.data" />
-                    <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" />
+                    <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
+                    <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
                   </div>
                 </div>
               </div>
@@ -392,9 +392,9 @@ export default defineComponent({
         }
       };
       var headers = {
-          'encode': 'json',
-          'Content-Type': 'application/geo+json',
-          'authorization': 'Bearer ' + token.value
+        'encode': 'json',
+        'Content-Type': 'application/geo+json',
+        'authorization': 'Bearer ' + token.value
       };
 
       const synopUrl = `${import.meta.env.VITE_API_URL}/processes/wis2box-synop2bufr/execution`
@@ -531,10 +531,11 @@ export default defineComponent({
   align-items: center;
   gap: 20px;
 }
+
 .file-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 30px;
   padding: 4px;
 }
 
