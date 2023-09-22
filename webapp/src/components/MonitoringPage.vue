@@ -15,9 +15,9 @@
                     <v-col>
                         <v-row>
                             <v-col cols="5">
-                                <VueDatePicker v-model="selectedDateRangeTemp" range multi-calendars auto-apply required
+                                <VueDatePicker v-model="selectedDateRangeTemp" timezone="UTC" range multi-calendars auto-apply required
                                     :teleport="true" placeholder="Datetime range" format="yyyy/MM/dd HH:mm" />
-                                <p class="hint-text">Choose the datetime range for the notifications (default: previous 24
+                                <p class="hint-text">Choose the UTC datetime range for the notifications (default: previous 24
                                     hours)</p>
                             </v-col>
 
@@ -78,8 +78,9 @@ export default defineComponent({
     },
     setup() {
         // Static variables
-        const now = new Date().toISOString().replace('Z', '');
-        const twentyFourHoursAgo = new Date((new Date()).getTime() - 24 * 60 * 60 * 1000).toISOString().replace('Z', '');
+
+        const now = new Date();
+        const twentyFourHoursAgo = new Date(now.getTime() - 86400000);
 
         // Reactive variables
 
@@ -130,6 +131,8 @@ export default defineComponent({
             dashboardKey.value++
             // Display dashboard
             showDashboard.value = true;
+            // Log
+            console.log('Sent end time:', selectedEndDate.value)
         }
 
         return {

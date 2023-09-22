@@ -8,28 +8,28 @@
     <div class="scrollable-file-list">
       <template v-for="(file_url, index) in filteredFileUrls" :key="index">
         <v-list class="file-list">
-          <v-row>
-            <v-col cols="5">
-              <!-- Display the timestamp -->
-              <div class="secondary">
-                {{ formatTime(filteredPublishTimes[index]) }}
-              </div>
+            <v-row justify="center" align="center">
+              <v-col cols="5">
 
-              <!-- Display the file name -->
-              <div class="url-font">
-                {{ getFileName(file_url) }}
-              </div>
-            </v-col>
+                <!-- Display the timestamp -->
+                <div class="secondary">
+                  {{ formatTime(filteredPublishTimes[index]) }} UTC
+                </div>
 
-            <v-col cols="3">
-              <DownloadButton :fileName="getFileName(file_url)" :fileUrl="file_url" :block="true" />
-            </v-col>
+                <!-- Display the file name -->
+                <div class="url-font">
+                  {{ getFileName(file_url) }}
+                </div>
+              </v-col>
 
-            <v-col cols="3">
-              <InspectBufrButton :fileName="getFileName(file_url)" :fileUrl="file_url" :block="true" />
-            </v-col>
-          </v-row>
+              <v-col cols="3">
+                <DownloadButton :fileName="getFileName(file_url)" :fileUrl="file_url" :block="true" />
+              </v-col>
 
+              <v-col cols="3">
+                <InspectBufrButton :fileName="getFileName(file_url)" :fileUrl="file_url" :block="true" />
+              </v-col>
+            </v-row>
         </v-list>
         <v-divider />
       </template>
@@ -98,13 +98,13 @@ export default defineComponent({
       return urlParts[urlParts.length - 1];
     };
 
-    // Shows the publish time in a more readable format
+    // Shows the UTC publish time in a more readable format
     const formatTime = (timestamp) => {
-      const year = timestamp.getFullYear();
-      const month = String(timestamp.getMonth() + 1).padStart(2, '0');
-      const day = String(timestamp.getDate()).padStart(2, '0');
-      const hours = String(timestamp.getHours()).padStart(2, '0');
-      const minutes = String(timestamp.getMinutes()).padStart(2, '0');
+      const year = timestamp.getUTCFullYear();
+      const month = String(timestamp.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(timestamp.getUTCDate()).padStart(2, '0');
+      const hours = String(timestamp.getUTCHours()).padStart(2, '0');
+      const minutes = String(timestamp.getUTCMinutes()).padStart(2, '0');
       return `${year}/${month}/${day} ${hours}:${minutes}`;
     };
 

@@ -27,7 +27,7 @@
       </v-card>
     </v-dialog>
     <v-card max-width="1200px">
-      <v-card-title>Import station from OSCAR/Surface</v-card-title>
+      <v-card-title class="big-title">Import station from OSCAR/Surface</v-card-title>
       <v-card-item>
         <v-form>
           <v-text-field :rules="[rules.validWSI]" v-model="wsi" label="WIGOS Station Identifier" hint="Enter WIGOS Station Identifier" persistent-hint/>
@@ -268,8 +268,22 @@
             });
           if (!response.ok) {
             console.log(record);
-            console.error('HTTP error', response.status);
-            errorMessage.value = "Error submitting record: "+response.status;
+              if (response.status == 400) {
+                  errorMessage.value = "Station already imported, please edit via the station list"
+              }
+              else if (response.status == 401) {
+                errorMessage.value = "Unauthorized, please provide a valid 'collections/stations' token"
+              }
+              else if (response.status == 404) {
+                errorMessage.value = "Error submitting record, API not found"
+              }
+              else if (response.status == 500) {
+                errorMessage.value = "Error submitting record, internal server error"
+              }
+              else {
+                errorMessage.value = "Error submitting record, please check the console";
+                console.error('HTTP error', response.status);
+              }
             showDialog.value = true;
             showLoading.value = false;
           } else {

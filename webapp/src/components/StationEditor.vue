@@ -214,8 +214,19 @@
             });
           if (!response.ok) {
               console.log(record);
-              console.error('HTTP error', response.status);
-              errorMessage.value = "Error submitting record: "+response.status;
+              if (response.status == 401) {
+                errorMessage.value = "Unauthorized, please provide a valid 'collections/stations' token"
+              }
+              else if (response.status == 404) {
+                errorMessage.value = "Error submitting record, API not found"
+              }
+              else if (response.status == 500) {
+                errorMessage.value = "Error submitting record, internal server error"
+              }
+              else {
+                errorMessage.value = "Error submitting record, please check the console";
+                console.error('HTTP error', response.status);
+              }
               showDialog.value = true;
           } else {
             errorMessage.value = "Station successfully submitted, redirecting to station list.";

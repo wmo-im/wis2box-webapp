@@ -2,7 +2,7 @@
     <v-row>
         <v-col cols="12">
             <v-card>
-                <v-card-title class="text-center text-wrap">Number of publications per station</v-card-title>
+                <v-card-title class="text-center text-wrap">Number of publications per station:</v-card-title>
                 <v-divider />
                 <div class="scrollable-list">
                     <template v-for="(count, wsi) in wsiCounts" :key="wsi">

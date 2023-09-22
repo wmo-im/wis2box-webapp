@@ -4,13 +4,7 @@
       <!-- Form entry --><v-fade-transition appear>
         <v-card>
           <!-- Font size of title for tablets and desktops -->
-          <div class="hidden-xs">
-            <v-card-title class="big-title">Submit FM 12–XIV Ext. SYNOP Bulletin</v-card-title>
-          </div>
-          <!-- Font size of title for phones -->
-          <div class="hidden-sm-and-up">
-            <v-card-title class="small-title">Submit FM 12–XIV Ext. SYNOP Bulletin</v-card-title>
-          </div>
+          <v-card-title class="big-title">Submit FM 12–XIV Ext. SYNOP Bulletin</v-card-title>
           <v-card-text>
             <v-form>
               <!-- Date selection -->
@@ -52,18 +46,15 @@
 
             </v-form>
             <v-card-item>
-              <!-- Show switch above the submit button on mobile -->
-              <v-switch class="hidden-sm-and-up" :disabled="submitDisabled" v-model="notificationsOnPending"
-                label="Publish on WIS2" color="primary" hide-details></v-switch>
               <div class="button-align">
                 <v-btn :disabled="submitDisabled" append-icon="mdi-cloud-upload" :loading="loading" @click="submit">Submit
                   <template v-slot:loader>
                     <v-progress-linear indeterminate></v-progress-linear>
                   </template>
                 </v-btn>
-                <!-- Show switch on the right of submit button on tablet and desktop -->
-                <v-switch class="hidden-xs" :disabled="submitDisabled" v-model="notificationsOnPending"
-                  label="Publish on WIS2" color="primary" hide-details></v-switch>
+                <!-- Show switch on the right of submit button -->
+                <v-switch :disabled="submitDisabled" v-model="notificationsOnPending" label="Publish on WIS2"
+                  color="primary" hide-details></v-switch>
               </div>
             </v-card-item>
           </v-card-text>
@@ -148,12 +139,12 @@
 
             </template>
             <v-list-item v-for="(data_item, index) in result.data_items" :key="index">
-              <!-- Place download and inspect buttons on the right of the file names for tablet and desktop -->
-              <div class="hidden-xs">
-                <div class="file-actions">
-                  <div>
-                    {{ data_item.filename }}
-                  </div>
+              <div class="file-actions">
+                <div>
+                  {{ data_item.filename }}
+                </div>
+                <!-- For wider windows, make buttons wider -->
+                <div class="hidden-md-and-down">
                   <div class="file-actions" v-if="data_item.file_url">
                     <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
                     <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
@@ -163,20 +154,15 @@
                     <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
                   </div>
                 </div>
-              </div>
-              <!-- Place download and inspect buttons below the file names for mobile -->
-              <div class="hidden-sm-and-up">
-                <div>
-                  <div>
-                    {{ data_item.filename }}
-                  </div>
+                <!-- For narrow windows, make buttons less wide -->
+                <div class="hidden-lg-and-up">
                   <div class="file-actions" v-if="data_item.file_url">
-                    <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" />
-                    <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" />
+                    <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
+                    <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
                   </div>
                   <div class="file-actions" v-if="data_item.data">
-                    <DownloadButton :fileName="data_item.filename" :data="data_item.data" />
-                    <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" />
+                    <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
+                    <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
                   </div>
                 </div>
               </div>
@@ -408,10 +394,16 @@ export default defineComponent({
       if (!response.ok) {
         let res;
         if (response.status == 401) {
-          res = "Unauthorized, please provide a valid execution token"
+          res = "Unauthorized, please provide a valid 'processes/wis2box' token"
+        }
+        else if (response.status == 404) {
+          res = "Error submitting data: API not found"
+        }
+        else if (response.status == 500) {
+          res = "Error submitting data: Internal server error"
         }
         else {
-          res = "API error"
+          res = "API Error, please check the console";
         }
         console.error('HTTP error', response.status);
         result.value = {

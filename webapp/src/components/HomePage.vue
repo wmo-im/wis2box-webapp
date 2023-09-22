@@ -1,36 +1,22 @@
 <template>
     <v-card>
-        <v-card-title class="big-title">
-            Welcome to WIS2 in a box!
-        </v-card-title>
         <v-card-item>
-            At this page you can submit FM 12 SYNOP bulletin and monitor notifications from topics found in your wis2box.
+            <span v-html="homeContent"></span>
         </v-card-item>
-        <v-card-item v-html="homeContent"></v-card-item>
     </v-card>
 </template>
 
 <script setup>
 
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 
-const homeContent = ref('If you encounter any issues, please contact: <a href = "mailto: abc@example.com">abc@example.com</a>')
+const homeContent = ref('<h2>Welcome to the wis2box-webapp!</h2><br> This web-application allows you to submit ASCII and CSV data and check notifications sent by this wis2box. <br>If you encounter any issues, please contact: <a href = "mailto: abc@example.com">abc@example.com</a>')
 
-if (import.meta.env.VITE_HOME_CONTENT_PATH != undefined) {
-    onMounted(async () => {
-        const response = await fetch(import.meta.env.VITE_HOME_CONTENT_PATH);
-        if (response.ok) {
-            homeContent.value = await response.text();
-        }
-    });
+if (import.meta.env.VITE_WEBAPP_HOMEPAGE_MESSAGE != undefined) {
+    homeContent.value = import.meta.env.VITE_WEBAPP_HOMEPAGE_MESSAGE;
 }
 </script>
 
 <style scoped>
-
-.big-title {
-  font-size: 1.4rem;
-  font-weight: 700;
-}
 
 </style>
