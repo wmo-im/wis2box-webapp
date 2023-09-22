@@ -177,11 +177,14 @@ export default defineComponent({
             console.log("Fetching notifications from:", apiUrl);
             try {
                 let params;
+
+                // data_id is props.topicHierarchy with origin/a/wis2/ removed
+                let data_id = props.topicHierarchy.replace("origin/a/wis2/", "");
                 // If WSI prop is given, include it in the search:
                 if (props.wsi) {
                     params = new URLSearchParams({
                         f: 'json', // Specify the response format as JSON
-                        data_id: `${props.topicHierarchy}%`, // Filter by data_id that starts with the provided topic hierarchy
+                        data_id: `${data_id}%`, // Filter by data_id that starts with the provided topic hierarchy
                         sortBy: '-datetime', // Sort by time in descending order
                         datetime: `${props.startDate.toISOString()}/${props.endDate.toISOString()}`, // Filter to date range specified by user
                         wigos_station_identifier: `${props.wsi}`, // Filter by WSI searched
@@ -191,7 +194,7 @@ export default defineComponent({
                 else {
                     params = new URLSearchParams({
                         f: 'json', // Specify the response format as JSON
-                        data_id: `${props.topicHierarchy}%`, // Filter by data_id that starts with the provided topic hierarchy
+                        data_id: `${data_id}%`, // Filter by data_id that starts with the provided topic hierarchy
                         sortBy: '-datetime', // Sort by time in descending order
                         datetime: `${props.startDate.toISOString()}/${props.endDate.toISOString()}`, // Filter to date range specified by user
                         limit: `${props.limit}`, // Limit number of notifications shown on dashboard
