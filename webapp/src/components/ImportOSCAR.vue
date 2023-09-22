@@ -268,7 +268,10 @@
             });
           if (!response.ok) {
             console.log(record);
-              if (response.status == 401) {
+              if (response.status == 400) {
+                  errorMessage.value = "Station already imported, please edit via the station list"
+              }
+              else if (response.status == 401) {
                 errorMessage.value = "Unauthorized, please provide a valid 'collections/stations' token"
               }
               else if (response.status == 404) {

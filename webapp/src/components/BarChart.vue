@@ -95,7 +95,7 @@ export default defineComponent({
                     },
                 },
                 labels: {
-                    format: "dd MMM HH:mm", // Format the x-axis labels as desired
+                    format: "dd MMM HH:mm",
                 },
                 axisBorder: {
                     show: true
@@ -122,8 +122,8 @@ export default defineComponent({
 
         // Round a datetime to the nearest minute, used by updateChartData()
         const roundToNearestMinute = (time) => {
-            // Get minutes and seconds of the datetime
-            let minutes = time.getMinutes();
+            // Get minutes (in UTC) and seconds of the datetime
+            let minutes = time.getUTCMinutes();
             let seconds = time.getSeconds();
 
             if (seconds >= 30) {

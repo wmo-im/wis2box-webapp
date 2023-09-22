@@ -100,11 +100,11 @@ export default defineComponent({
 
     // Shows the UTC publish time in a more readable format
     const formatTime = (timestamp) => {
-      const year = timestamp.getFullYear();
-      const month = String(timestamp.getMonth() + 1).padStart(2, '0');
-      const day = String(timestamp.getDate()).padStart(2, '0');
+      const year = timestamp.getUTCFullYear();
+      const month = String(timestamp.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(timestamp.getUTCDate()).padStart(2, '0');
       const hours = String(timestamp.getUTCHours()).padStart(2, '0');
-      const minutes = String(timestamp.getMinutes()).padStart(2, '0');
+      const minutes = String(timestamp.getUTCMinutes()).padStart(2, '0');
       return `${year}/${month}/${day} ${hours}:${minutes}`;
     };
 
