@@ -78,6 +78,7 @@ export default defineComponent({
     },
     setup() {
         // Static variables
+
         const now = new Date();
         const twentyFourHoursAgo = new Date(now.getTime() - 86400000);
 
