@@ -83,6 +83,17 @@ export default defineComponent({
                 type: 'datetime',
                 min: props.startDate.getTime(),
                 max: props.endDate.getTime(),
+                title: {
+                    text: 'Publish Time in UTC',
+                    offsetX: 0,
+                    offsetY: 0,
+                    style: {
+                        fontSize: '12px',
+                        fontFamily: 'Roboto',
+                        fontWeight: 600,
+                        cssClass: 'apexcharts-xaxis-title',
+                    },
+                },
                 labels: {
                     format: "dd MMM HH:mm", // Format the x-axis labels as desired
                 },
@@ -112,7 +123,7 @@ export default defineComponent({
         // Round a datetime to the nearest minute, used by updateChartData()
         const roundToNearestMinute = (time) => {
             // Get minutes and seconds of the datetime
-            let minutes = time.getUTCMinutes();
+            let minutes = time.getMinutes();
             let seconds = time.getSeconds();
 
             if (seconds >= 30) {

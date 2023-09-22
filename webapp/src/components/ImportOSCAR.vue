@@ -269,7 +269,7 @@
           if (!response.ok) {
             console.log(record);
               if (response.status == 401) {
-                errorMessage.value = "Unauthorized, please provide a valid station token"
+                errorMessage.value = "Unauthorized, please provide a valid 'collections/stations' token"
               }
               else if (response.status == 404) {
                 errorMessage.value = "Error submitting record, API not found"

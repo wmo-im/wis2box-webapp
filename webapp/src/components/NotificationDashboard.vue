@@ -97,7 +97,7 @@ export default defineComponent({
                 "properties": {
                     "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
                     "datetime": "2022-03-31T00:00:00Z",
-                    "pubtime": "2023-09-19T13:58:20Z",
+                    "pubtime": "2023-09-22T08:55:20Z",
                     "wigos_station_identifier": "0-20000-0-15020",
                     "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
                 },

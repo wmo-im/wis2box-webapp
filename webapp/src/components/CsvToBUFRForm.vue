@@ -434,7 +434,7 @@
               });
               if (!response.ok) {
                 if (response.status == 401) {
-                  msg.value = "Unauthorized, please provide a valid execution token"
+                  msg.value = "Unauthorized, please provide a valid 'processes/wis2box' token"
                 }
                 else if (response.status == 404) {
                   msg.value = "Error submitting data: API not found"

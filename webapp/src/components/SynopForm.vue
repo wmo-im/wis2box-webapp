@@ -394,7 +394,7 @@ export default defineComponent({
       if (!response.ok) {
         let res;
         if (response.status == 401) {
-          res = "Unauthorized, please provide a valid execution token"
+          res = "Unauthorized, please provide a valid 'processes/wis2box' token"
         }
         else if (response.status == 404) {
           res = "Error submitting data: API not found"
