@@ -16,7 +16,7 @@ export default defineComponent({
   props: {
     center: {
       type: Object,
-      default: () => ({lat: 0, 0, lng: 0})
+      default: () => ({lat: 0, lng: 0})
     },
     zoom: {
       type: Number,
