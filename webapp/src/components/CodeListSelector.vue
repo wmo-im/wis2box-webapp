@@ -54,7 +54,7 @@
 
       const fetchOptions = async() => {
         try {
-          var apiUrl = `${import.meta.env.VITE_BASE_URL}/code_lists/${props.codeList}.json`;
+          var apiUrl = `${import.meta.env.VITE_BASE_URL}/codelists/${props.codeList}.json`;
           const response = await fetch(apiUrl);
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
