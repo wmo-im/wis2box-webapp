@@ -10,7 +10,6 @@ To test the webapp locally without docker, you need to install the following dep
 Then, you can run the following commands:
 
 ```bash
-    cd webapp
     npm install
     npm run dev
 ```
@@ -98,8 +97,8 @@ See [Configuration Reference](https://vitejs.dev/config/).
 
 ```bash
 # create release (x.y.z is the release version)
-vi webapp/package.json  # update "version"
-vi webapp/package-lock.json  # update 'version' and 'packages."".version
+vi package.json  # update "version"
+vi package-lock.json  # update 'version' and 'packages."".version
 git commit -am 'update release version x.y.z'
 git push origin main
 git tag -a x.y.z -m 'tagging release version x.y.z'
