@@ -1,6 +1,6 @@
 {
-  "name": "synop-webapp",
-  "version": "0.0.0",
+  "name": "wis2box-webapp",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "vite --port 8080 --host",

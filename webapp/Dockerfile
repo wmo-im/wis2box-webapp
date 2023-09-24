@@ -18,7 +18,7 @@ EXPOSE 4173
 # Copy the entrypoint script into /app and make it executable
 RUN chmod +x /wis2box-webapp/docker/entrypoint.sh
 
-COPY healthcheck.sh /wis2box-webapp/healthcheck.sh
+COPY docker/healthcheck.sh /wis2box-webapp/healthcheck.sh
 
 RUN chmod +x /wis2box-webapp/healthcheck.sh
 
