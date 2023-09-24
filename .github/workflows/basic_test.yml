@@ -1,24 +1,19 @@
-name: Basic test (build and run)
+name: Smoke test
 
 on: [ push, pull_request ]
 
 jobs:
-  build:
+  smoke-test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
       - name: Build Docker image
-        run: docker build -t wis2box-webapp ./webapp/
-
+        run: docker build -t wis2box-webapp .
       - name: Start Docker Compose services
-        run: docker-compose -f test/docker-compose.yml up -d --build
-
+        run: docker-compose -f tests/docker-compose.yml up -d --build
       - name: Wait for service to start
         run: sleep 45
-
       - name: Check status code
         run: |
           curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/wis2box-webapp
@@ -28,9 +23,8 @@ jobs:
             echo ${status_code}
             exit 1
           fi
-      
       - name: failed tests 🚩
         if: ${{ failure() }}
         run: |
           echo "check docker logs"
-          docker-compose -f test/docker-compose.yml logs
+          docker-compose -f tests/docker-compose.yml logs

@@ -23,7 +23,7 @@ This will start the webapp which will be available at http://localhost:8080/wis2
 Run the following command to build the image:
 
 ```bash
-    docker build -t wis2box-webapp ./webapp/
+    docker build -t wis2box-webapp .
 ```
 
 ## Test the image
@@ -31,7 +31,7 @@ Run the following command to build the image:
 Test the result with the following command:
 
 ```bash
-    docker-compose -f test/docker-compose.yml up -d
+    docker-compose -f tests/docker-compose.yml up -d
 ```
 
 This will start the webapp which will be available at http://localhost:8080/wis2box-webapp/

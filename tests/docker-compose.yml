@@ -4,7 +4,7 @@ version: '3.3'
 services:
   wis2box-webapp-test:
     container_name: wis2box-webapp-test
-    build: ../webapp
+    build: ..
     environment:
       - WIS2BOX_URL=http://localhost
       - VITE_TEST_MODE=true
