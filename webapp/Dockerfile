@@ -1,8 +1,5 @@
 FROM node:lts-alpine
 
-# current version
-LABEL version="1.0b5"
-
 # Set the working directory inside the container
 WORKDIR /wis2box-webapp
 
