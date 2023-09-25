@@ -117,118 +117,122 @@
                         </v-card>
                     </v-stepper-window-item>
                     <v-stepper-window-item value="5">
-                        <!-- Output data -->
-                        <v-card v-if="result">
-                          <v-card-title>{{ resultTitle }}</v-card-title>
+                      <v-row class="justify-center">
+                        <v-col cols="12">
+                          <!-- Output data -->
+                          <v-card v-if="result">
+                            <v-card-title>{{ resultTitle }}</v-card-title>
 
-                          <v-list>
+                            <v-list>
 
-                            <v-list-item class="hint-default">
-                              {{ numberNotifications }}</v-list-item>
+                              <v-list-item class="hint-default">
+                                {{ numberNotifications }}</v-list-item>
 
-                            <!-- WARNINGS -->
-                            <!-- Warnings drop-down if there are any warnings -->
-                            <v-list-group v-if="result.warnings && result.warnings.length > 0" ref="warningList" value="Warnings"
-                              @click="scrollToRef('warningList')">
-                              <template v-slot:activator="{ props }">
-                                <v-list-item v-bind="props" prepend-icon="mdi-alert-circle">
-                                  <template v-slot:prepend>
-                                    <v-icon color="#FD9235"></v-icon>
-                                  </template>
-                                  <!-- If number of warnings > 0, set text to orange -->
-                                  <span class="warning-color">Warnings: {{ result.warnings.length }}</span>
+                              <!-- WARNINGS -->
+                              <!-- Warnings drop-down if there are any warnings -->
+                              <v-list-group v-if="result.warnings && result.warnings.length > 0" ref="warningList" value="Warnings"
+                                @click="scrollToRef('warningList')">
+                                <template v-slot:activator="{ props }">
+                                  <v-list-item v-bind="props" prepend-icon="mdi-alert-circle">
+                                    <template v-slot:prepend>
+                                      <v-icon color="#FD9235"></v-icon>
+                                    </template>
+                                    <!-- If number of warnings > 0, set text to orange -->
+                                    <span class="warning-color">Warnings: {{ result.warnings.length }}</span>
+                                  </v-list-item>
+                                </template>
+
+                                <v-list-item v-for="(warning, index) in result.warnings" :key="index" class="warning-item">
+                                  {{ warning }}
                                 </v-list-item>
-                              </template>
+                              </v-list-group>
 
-                              <v-list-item v-for="(warning, index) in result.warnings" :key="index" class="warning-item">
-                                {{ warning }}
+                              <!-- Warnings drop-down if there are no warnings -->
+                              <v-list-item v-else prepend-icon="mdi-alert-circle">
+                                <span>Warnings: 0</span>
                               </v-list-item>
-                            </v-list-group>
-
-                            <!-- Warnings drop-down if there are no warnings -->
-                            <v-list-item v-else prepend-icon="mdi-alert-circle">
-                              <span>Warnings: 0</span>
-                            </v-list-item>
 
 
-                            <!-- ERRORS -->
-                            <!-- Errors drop-down if there are any errors -->
-                            <v-list-group v-if="result.errors && result.errors.length > 0" ref="errorList" value="Errors"
-                              @click="scrollToRef('errorList')">
-                              <template v-slot:activator="{ props }">
-                                <v-list-item v-bind="props" prepend-icon="mdi-close-circle">
-                                  <template v-slot:prepend>
-                                    <v-icon color="#EA4848"></v-icon>
-                                  </template>
-                                  <!-- If number of errors > 0, set text to red -->
-                                  <span class="error-color">Errors: {{ result.errors.length }}</span>
+                              <!-- ERRORS -->
+                              <!-- Errors drop-down if there are any errors -->
+                              <v-list-group v-if="result.errors && result.errors.length > 0" ref="errorList" value="Errors"
+                                @click="scrollToRef('errorList')">
+                                <template v-slot:activator="{ props }">
+                                  <v-list-item v-bind="props" prepend-icon="mdi-close-circle">
+                                    <template v-slot:prepend>
+                                      <v-icon color="#EA4848"></v-icon>
+                                    </template>
+                                    <!-- If number of errors > 0, set text to red -->
+                                    <span class="error-color">Errors: {{ result.errors.length }}</span>
+                                  </v-list-item>
+                                </template>
+
+                                <v-list-item v-for="(error, index) in result.errors" :key="index" class="error-item">
+                                  {{ error }}
                                 </v-list-item>
-                              </template>
+                              </v-list-group>
 
-                              <v-list-item v-for="(error, index) in result.errors" :key="index" class="error-item">
-                                {{ error }}
+                              <!-- Errors drop-down if there are no warnings -->
+                              <v-list-item v-else prepend-icon="mdi-close-circle">
+                                <span>Errors: 0</span>
                               </v-list-item>
-                            </v-list-group>
-
-                            <!-- Errors drop-down if there are no warnings -->
-                            <v-list-item v-else prepend-icon="mdi-close-circle">
-                              <span>Errors: 0</span>
-                            </v-list-item>
 
 
-                            <!-- OUTPUT BUFR -->
-                            <!-- BUFR files drop-down if there are any output files -->
-                            <v-list-group v-if="result.files && result.files.length > 0" ref="fileList" value="Files"
-                              @click="scrollToRef('fileList')">
-                              <template v-slot:activator="{ props }">
-                                <v-list-item v-bind="props" prepend-icon="mdi-check-circle">
-                                  <template v-slot:prepend>
-                                    <v-icon color="#00BD9D"></v-icon>
-                                  </template>
-                                  <!-- If number of BUFR files > 0, set text to green -->
-                                  <span :style="{ color: '#00BD9D' }">Output BUFR files: {{ result.files.length }}</span>
-                                </v-list-item>
+                              <!-- OUTPUT BUFR -->
+                              <!-- BUFR files drop-down if there are any output files -->
+                              <v-list-group v-if="result.files && result.files.length > 0" ref="fileList" value="Files"
+                                @click="scrollToRef('fileList')">
+                                <template v-slot:activator="{ props }">
+                                  <v-list-item v-bind="props" prepend-icon="mdi-check-circle">
+                                    <template v-slot:prepend>
+                                      <v-icon color="#00BD9D"></v-icon>
+                                    </template>
+                                    <!-- If number of BUFR files > 0, set text to green -->
+                                    <span :style="{ color: '#00BD9D' }">Output BUFR files: {{ result.files.length }}</span>
+                                  </v-list-item>
 
-                              </template>
-                              <v-list-item v-for="(data_item, index) in result.data_items" :key="index">
-                                <div class="file-actions">
-                                  <div>
-                                    {{ data_item.filename }}
+                                </template>
+                                <v-list-item v-for="(data_item, index) in result.data_items" :key="index">
+                                  <div class="file-actions">
+                                    <div>
+                                      {{ data_item.filename }}
+                                    </div>
+                                    <!-- For wider windows, make buttons wider -->
+                                      <div class="hidden-md-and-down">
+                                        <div class="file-actions" v-if="data_item.file_url">
+                                          <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
+                                          <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
+                                        </div>
+                                        <div class="file-actions" v-if="data_item.data">
+                                          <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
+                                          <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
+                                        </div>
+                                      </div>
+                                      <!-- For narrow windows, make buttons less wide -->
+                                      <div class="hidden-lg-and-up">
+                                        <div class="file-actions" v-if="data_item.file_url">
+                                          <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
+                                          <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
+                                        </div>
+                                        <div class="file-actions" v-if="data_item.data">
+                                          <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
+                                          <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
+                                        </div>
+                                      </div>
                                   </div>
-                                  <!-- For wider windows, make buttons wider -->
-                                    <div class="hidden-md-and-down">
-                                      <div class="file-actions" v-if="data_item.file_url">
-                                        <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
-                                        <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
-                                      </div>
-                                      <div class="file-actions" v-if="data_item.data">
-                                        <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
-                                        <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
-                                      </div>
-                                    </div>
-                                    <!-- For narrow windows, make buttons less wide -->
-                                    <div class="hidden-lg-and-up">
-                                      <div class="file-actions" v-if="data_item.file_url">
-                                        <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
-                                        <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
-                                      </div>
-                                      <div class="file-actions" v-if="data_item.data">
-                                        <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
-                                        <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
-                                      </div>
-                                    </div>
-                                </div>
-                                <v-divider v-if="index < result.files.length - 1" class="divider-spacing"></v-divider>
+                                  <v-divider v-if="index < result.files.length - 1" class="divider-spacing"></v-divider>
+                                </v-list-item>
+                              </v-list-group>
+
+                              <!-- BUFR files drop-down if there are no warnings -->
+                              <v-list-item v-else prepend-icon="mdi-check-circle">
+                                <span>Output BUFR files: 0</span>
                               </v-list-item>
-                            </v-list-group>
 
-                            <!-- BUFR files drop-down if there are no warnings -->
-                            <v-list-item v-else prepend-icon="mdi-check-circle">
-                              <span>Output BUFR files: 0</span>
-                            </v-list-item>
-
-                          </v-list>
-                        </v-card>
+                            </v-list>
+                          </v-card>
+                        </v-col>
+                      </v-row>
                     </v-stepper-window-item>
                 </v-stepper-window>
                 <v-stepper-actions
