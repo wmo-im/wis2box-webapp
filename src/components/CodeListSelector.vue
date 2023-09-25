@@ -45,7 +45,7 @@
       readonly: false,
       modelValue: null
     },
-    emits: ["update.modelValue"],
+    emits: ["update:modelValue"],
     setup(props, {emit}){
       const options = ref(null);
       const selected = ref(null);
