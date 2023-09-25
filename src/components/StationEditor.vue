@@ -184,14 +184,14 @@
               name: station.value.properties.name,
               wigos_station_identifier: station.value.properties.wigos_station_identifier,  // WSI
               traditional_station_identifier: station.value.properties.traditional_station_identifier,
-              facility_type: station.value.properties.facility_type?.id ?? null,
-              territory_name: station.value.properties.territory_name?.id ?? null,
+              facility_type: station.value.properties.facility_type.id ?? null,
+              territory_name: station.value.properties.territory_name.id ?? null,
               barometer_height: parseFloat(station.value.properties.barometer_height),
-              wmo_region: station.value.properties.wmo_region?.id ?? null,
+              wmo_region: station.value.properties.wmo_region.id ?? null,
               url: "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/" +
                       station.value.properties.wigos_station_identifier,
               topics: station.value.properties.topics.map( (topic) => (topic.id)),
-              status: station.value.properties.status?.id ?? null,
+              status: station.value.properties.status.id ?? null,
               id: station.value.properties.wigos_station_identifier  // WSI
             }
           }
