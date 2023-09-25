@@ -16,11 +16,11 @@ export default defineComponent({
   props: {
     center: {
       type: Object,
-      default: () => ({ lat: -6.155595235231087, lng: 106.84202325990253})
+      default: () => ({lat: 0, lng: 0})
     },
     zoom: {
       type: Number,
-      default: 10
+      default: 2
     },
     id: {
       type: String,
