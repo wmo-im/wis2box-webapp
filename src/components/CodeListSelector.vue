@@ -78,7 +78,7 @@
       });
 
       watch( () => selected.value, (newValue) => {
-        emit("update.modelValue", newValue);
+        emit("update:modelValue", newValue);
       });
       return {selected, options, props, showDialog, error_};
     }

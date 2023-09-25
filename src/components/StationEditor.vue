@@ -187,11 +187,11 @@
               facility_type: station.value.properties.facility_type?.id ?? null,
               territory_name: station.value.properties.territory_name?.id ?? null,
               barometer_height: parseFloat(station.value.properties.barometer_height),
-              wmo_region: station.value.properties.wmo_region.id ?? null,
+              wmo_region: station.value.properties.wmo_region?.id ?? null,
               url: "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/" +
                       station.value.properties.wigos_station_identifier,
               topics: station.value.properties.topics.map( (topic) => (topic.id)),
-              status: station.value.properties.status.id ?? null,
+              status: station.value.properties.status?.id ?? null,
               id: station.value.properties.wigos_station_identifier  // WSI
             }
           }
@@ -230,30 +230,6 @@
           }
         };
 
-        const getElevation = async () => {
-          var isValid = true;
-          if ( isNaN( station.value.geometry.latitude ) || Math.abs(station.value.geometry.latitude) > 90 ){
-            isValid = false;
-          }
-          if ( isNaN( station.value.geometry.longitude ) || Math.abs(station.value.geometry.longitude) > 180 ){
-            isValid = false;
-          }
-          if( isValid ){
-            var query = "https://api.opentopodata.org/v1/aster30m?locations=" +
-                          station.value.geometry.latitude + "," +
-                          station.value.geometry.longitude;
-            const response = await fetch(query);
-            if( !response.ok ){
-              throw new Error(`HTTP error fetching elevation, Status: ${response.status}`);
-            }else{
-              const data = await response.json();
-              station.value.geometry.elevation = data.results[0].elevation;
-            }
-          }else{
-            msg.value = "Please enter a valid location before getting the elevation.";
-            showDialog.value = true;
-          }
-        };
         onBeforeMount( async () => {
           if(route.query.action==="edit"){
             readonly.value = false;
@@ -371,7 +347,7 @@
             readonly.value = true;
           }
         })
-        return {station, topics, registerStation, getElevation, showDialog, msg, rules, route, router,
+        return {station, topics, registerStation, showDialog, msg, rules, route, router,
           operatingStatusOptions, WMORegionOptions, territoryOptions, readonly, errorMessage, token, formValid,
           cancelEdit
 
