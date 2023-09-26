@@ -70,11 +70,6 @@
                   type="number"
                   hint="Station elevation above sea level (metres)" persistent-hint/>
               </v-row>
-              <!--
-              <v-row v-if="!readonly">
-                <v-btn @click=getElevation()>Get elevation</v-btn>
-              </v-row>
-              -->
               </v-col>
               <v-col cols="8">
                 <LocatorMap
@@ -189,14 +184,14 @@
               name: station.value.properties.name,
               wigos_station_identifier: station.value.properties.wigos_station_identifier,  // WSI
               traditional_station_identifier: station.value.properties.traditional_station_identifier,
-              facility_type: station.value.properties.facility_type.id ? station.value.properties.facility_type.id : null,
-              territory_name: station.value.properties.territory_name.id ? station.value.properties.territory_name.id : null,
+              facility_type: station.value.properties.facility_type.id ?? null,
+              territory_name: station.value.properties.territory_name.id ?? null,
               barometer_height: parseFloat(station.value.properties.barometer_height),
-              wmo_region: station.value.properties.wmo_region.id ? station.value.properties.wmo_region.id : null,
+              wmo_region: station.value.properties.wmo_region.id ?? null,
               url: "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/" +
                       station.value.properties.wigos_station_identifier,
               topics: station.value.properties.topics.map( (topic) => (topic.id)),
-              status: station.value.properties.status.id ? station.value.properties.status.id : null,
+              status: station.value.properties.status.id ?? null,
               id: station.value.properties.wigos_station_identifier  // WSI
             }
           }
@@ -235,30 +230,6 @@
           }
         };
 
-        const getElevation = async () => {
-          var isValid = true;
-          if ( isNaN( station.value.geometry.latitude ) || Math.abs(station.value.geometry.latitude) > 90 ){
-            isValid = false;
-          }
-          if ( isNaN( station.value.geometry.longitude ) || Math.abs(station.value.geometry.longitude) > 180 ){
-            isValid = false;
-          }
-          if( isValid ){
-            var query = "https://api.opentopodata.org/v1/aster30m?locations=" +
-                          station.value.geometry.latitude + "," +
-                          station.value.geometry.longitude;
-            const response = await fetch(query);
-            if( !response.ok ){
-              throw new Error(`HTTP error fetching elevation, Status: ${response.status}`);
-            }else{
-              const data = await response.json();
-              station.value.geometry.elevation = data.results[0].elevation;
-            }
-          }else{
-            msg.value = "Please enter a valid location before getting the elevation.";
-            showDialog.value = true;
-          }
-        };
         onBeforeMount( async () => {
           if(route.query.action==="edit"){
             readonly.value = false;
@@ -376,82 +347,7 @@
             readonly.value = true;
           }
         })
-        const importOSCAR = async () => {
-          if( station.value.properties.wigos_station_identifier ){
-            const apiURL = `${import.meta.env.VITE_API_URL}/processes/wis2box-oscar2feature/execution`;
-            // fetch via process
-            const payload = {
-              "inputs": {
-                "wigos_station_identifier": station.value.properties.wigos_station_identifier
-              }
-            }
-            try {
-              const response = await fetch(
-                apiURL, {
-                  method: 'POST',
-                  headers: {
-                      'encode': 'json',
-                      'Content-Type': 'application/json',
-                      'authorization': 'Bearer '+ token.value
-                  },
-                  body: JSON.stringify(payload)
-                }
-              );
-              if( ! response.ok ){
-                console.log( response );
-                errorMessage.value = "Error fetching form OSCAR/Surface: " + response.status;
-                showDialog.value = true;
-              }else{
-                console.log( response );
-                const data = await response.json();
-                console.log(data)
-                // this is currently broken, the drop down selectors are not updated when data are loaded via this route
-                // we may want to import from oscar directly from the station table
-                if( data.feature ){
-                  station.value = {
-                    id: data.feature.id,  // WSI
-                    type: data.feature.type,
-                    geometry: {
-                      type: data.feature.geometry.type,
-                      coordinates: data.feature.geometry.coordinates,
-                      longitude: data.feature.geometry.coordinates[0],
-                      latitude: data.feature.geometry.coordinates[1],
-                      elevation: data.feature.geometry.coordinates[2]
-                    },
-                    properties: {
-                      name: data.feature.properties.name,
-                      wigos_station_identifier: data.feature.properties.wigos_station_identifier,  // WSI
-                      traditional_station_identifier: data.feature.properties.traditional_station_identifier,
-                      territory_name: territoryOptions.value.find( (item) => item.id === data.feature.properties.territory_name ),
-                      barometer_height: data.feature.properties.barometer_height,
-                      wmo_region: WMORegionOptions.value.find( (item) => item.id === data.feature.properties.wmo_region ),
-                      url: data.feature.properties.url,
-                      topics: JSON.parse(JSON.stringify(data.feature.properties.topics)),
-                      status: operatingStatusOptions.value.find( (item) => item.id === data.feature.properties.status ),
-                      id: data.feature.properties.id  // WSI
-                    }
-                  };
-                  // update code list elements separately
-                  selectedFacilityType.value = facilityTypeOptions.value.find( (item) => item.id === data.feature.properties.facility_type );
-                  console.log(station.value);
-                }else if (data.error){
-                  errorMessage.value = JSON.stringify(data.error);
-                  showDialog.value = true;
-                }else{
-                  errorMessage.value = "Unexpected response: " + JSON.stringify(data);
-                  showDialog.value = true;
-                }
-              }
-            } catch( error ) {
-              errorMessage.value = "Error fetching from OSCAR/Surface: " + error;
-              showDialog.value = true;
-            }
-          } else {
-            errorMessage.value = "Please enter a WIGOS station identifier before importing from OSCAR/Surface";
-            showDialog.value = true;
-          }
-        }
-        return {station, topics, registerStation, getElevation, showDialog, msg, rules, route, router,
+        return {station, topics, registerStation, showDialog, msg, rules, route, router,
           operatingStatusOptions, WMORegionOptions, territoryOptions, readonly, errorMessage, token, formValid,
           cancelEdit
 
