@@ -112,7 +112,7 @@
                               persistent-hint>
                             </v-text-field>
                             </v-card-item>
-                            <v-switch class="hidden-xs" v-model="notificationsOnPending" label="Publish on WIS2" color="primary" hide-details></v-switch>
+                            <v-switch v-model="notificationsOnPending" label="Publish on WIS2" color="primary" hide-details></v-switch>
                             <v-card-item v-if="token">Click next to submit the data</v-card-item>
                         </v-card>
                     </v-stepper-window-item>

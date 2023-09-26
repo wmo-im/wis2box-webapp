@@ -491,47 +491,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.small-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-}
-
 .calendar-box {
   width: 250px;
-}
-
-.hint-text {
-  font-size: 0.75rem;
-  margin-top: 0.25rem;
-  padding-left: 1rem;
-}
-
-.hint-default {
-  color: #888;
-}
-
-.hint-valid {
-  color: green;
-}
-
-.hint-invalid {
-  color: red;
 }
 
 .button-align {
   display: flex;
   align-items: center;
   gap: 20px;
-}
-
-.file-actions {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  padding: 4px;
-}
-
-.divider-spacing {
-  margin-top: 10px;
 }
 </style>
