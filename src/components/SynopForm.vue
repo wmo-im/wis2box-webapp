@@ -147,22 +147,22 @@
                 <div class="hidden-md-and-down">
                   <div class="file-actions" v-if="data_item.file_url">
                     <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
-                    <InspectButtonMapped :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
+                    <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="true" />
                   </div>
                   <div class="file-actions" v-if="data_item.data">
                     <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
-                    <InspectButtonMapped :fileName="data_item.filename" :data="data_item.data" :block="true" />
+                    <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="true" />
                   </div>
                 </div>
                 <!-- For narrow windows, make buttons less wide -->
                 <div class="hidden-lg-and-up">
                   <div class="file-actions" v-if="data_item.file_url">
                     <DownloadButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
-                    <InspectButtonMapped :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
+                    <InspectBufrButton :fileName="data_item.filename" :fileUrl="data_item.file_url" :block="false" />
                   </div>
                   <div class="file-actions" v-if="data_item.data">
                     <DownloadButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
-                    <InspectButtonMapped :fileName="data_item.filename" :data="data_item.data" :block="false" />
+                    <InspectBufrButton :fileName="data_item.filename" :data="data_item.data" :block="false" />
                   </div>
                 </div>
               </div>
@@ -180,14 +180,14 @@
     </v-col>
   </v-row>
 </template>
-
+  
 <script>
 import { defineComponent, ref, computed, watch } from 'vue';
 import { VCard, VCardTitle, VCardText, VCardItem, VForm, VTextarea, VBtn, VListGroup } from 'vuetify/lib/components/index.mjs';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import TopicHierarchySelector from './TopicHierarchySelector.vue';
-import InspectButtonMapped from '@/components/InspectButtonMapped.vue';
+import InspectBufrButton from '@/components/InspectBufrButton.vue';
 import DownloadButton from '@/components/DownloadButton.vue';
 
 export default defineComponent({
@@ -203,7 +203,7 @@ export default defineComponent({
     VListGroup,
     VueDatePicker,
     TopicHierarchySelector,
-    InspectButtonMapped,
+    InspectBufrButton,
     DownloadButton
   },
   setup() {
@@ -321,7 +321,7 @@ export default defineComponent({
       result.value = testData;
     }
 
-    // Simulated output response in test environment
+    // Simulated output response in test environment 
     // representing a partial success
     const testPartialSuccessResult = () => {
       const testData = {
@@ -371,7 +371,7 @@ export default defineComponent({
         inputs: {
           data: bulletin.value, // Raw FM 12 data
           year: date.value.year, // Year of data
-          month: date.value.month + 1, // Month of data, +1 as JS starts
+          month: date.value.month + 1, // Month of data, +1 as JS starts 
           // from 0 for months
           channel: topic.value.id, // Topic hierarchy
           notify: notificationsOn.value // Boolean for WIS2 notifications
@@ -418,8 +418,8 @@ export default defineComponent({
       }
     }
 
-    // Method for when the user presses the submit button,
-    // including a loading animation and obtaining the result
+    // Method for when the user presses the submit button, 
+    // including a loading animation and obtaining the result 
     const submit = async () => {
       // Start loading animation
       loading.value = true;
@@ -491,47 +491,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.small-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-}
-
 .calendar-box {
   width: 250px;
-}
-
-.hint-text {
-  font-size: 0.75rem;
-  margin-top: 0.25rem;
-  padding-left: 1rem;
-}
-
-.hint-default {
-  color: #888;
-}
-
-.hint-valid {
-  color: green;
-}
-
-.hint-invalid {
-  color: red;
 }
 
 .button-align {
   display: flex;
   align-items: center;
   gap: 20px;
-}
-
-.file-actions {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  padding: 4px;
-}
-
-.divider-spacing {
-  margin-top: 10px;
 }
 </style>

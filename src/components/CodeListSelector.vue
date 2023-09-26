@@ -45,7 +45,7 @@
       readonly: false,
       modelValue: null
     },
-    emits: ["update.modelValue"],
+    emits: ["update:modelValue"],
     setup(props, {emit}){
       const options = ref(null);
       const selected = ref(null);
@@ -78,7 +78,7 @@
       });
 
       watch( () => selected.value, (newValue) => {
-        emit("update.modelValue", newValue);
+        emit("update:modelValue", newValue);
       });
       return {selected, options, props, showDialog, error_};
     }
