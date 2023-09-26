@@ -3,188 +3,157 @@
     <template v-slot:activator="{ props }">
       <v-btn color="#49C6E5" :block="block" append-icon="mdi-feature-search" v-bind="props" @click="inspectFile">Inspect</v-btn>
     </template>
-      <v-card class="inspect-content">
-        <!-- Close dialog button represented by cross at top right -->
-        <v-btn icon="mdi-close"
-        class="close-button" variant="plain" @click="dialog = false"></v-btn>
-        <v-card-title class="pad-filename">{{ fileName }}</v-card-title>
-        <v-card-text>
-          <div v-if="itemsInBufr.length === 0">
-            <!-- Display a message when itemsInBufr is empty -->
-            <p>No items found in bufr</p>
-          </div>
-          <div v-for="(item, index) in itemsInBufr" :key="index" class="item-container">
-            <div v-for="(value, key) in item" :key="key" class="key-value-pair">
-              <span class="key">{{ key }}:</span> {{ value }}
-            </div>
-          </div>
-        </v-card-text>
-      </v-card>
+    <v-card class="inspect-content">
+      <v-btn icon="mdi-close" class="close-button" variant="plain" @click="dialog = false"></v-btn>
+      <v-card-title class="pad-filename">{{ fileName }}</v-card-title>
+      <v-card-item>
+        <v-card-text>WIGOS Identifier: {{result.wsi}}</v-card-text>
+        <v-card-text>Station name: {{result.name}}</v-card-text>
+        <v-card-text>Station elevation: {{result.elevation}} (m)</v-card-text>
+        <v-card-text>Barometer height above mean sea level: {{result.barometerHeight}} (m)</v-card-text>
+        <v-card-text>Nominal report time: {{result.resultTime}}</v-card-text>
+      </v-card-item>
+      <v-card-item min-width="600px">
+        <LocatorMap :longitude="result.longitude" :latitude="result.latitude"/>
+      </v-card-item>
+      <v-card-item>
+        <v-data-table :items="result.items" :headers="result.headers"/>
+      </v-card-item>
+    </v-card>
   </v-dialog>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
-import { VCard, VCardTitle, VCardText, VCardItem, VForm, VTextarea, VBtn, VSelect } from 'vuetify/lib/components/index.mjs';
-
-export default defineComponent({
-    name: 'InspectBufrButton',
+  // imports
+  import {defineComponent, onBeforeMount, onMounted, ref} from "vue";
+  import {VCard, VCardTitle, VCardText, VCardItem, VBtn} from "vuetify/lib/components/index.mjs";
+  import {VDialog, VContainer, VRow, VCol, VTextField} from "vuetify/lib/components/index.mjs";
+  import { VDataTable } from 'vuetify/lib/labs/VDataTable/index.mjs';
+  import LocatorMap from '@/components/LocatorMap.vue';
+  // now component to export
+  export default defineComponent({
+    name: "InspectBufrButton",
     props: {
-        fileName: {
-            type: String,
-            required: true,
-        },
-        fileUrl: {
-            type: String,
-            required: false,
-            default: '',
-        },
-        data: {
-            type: String,
-            required: false,
-            default: '',
-        },
-        block: {
-          type: Boolean,
-          required: false,
-          default: false
-        }
+      fileUrl: {
+        type: String,
+        required: false,
+        default: ""
+      },
+      data: {
+        type: String,
+        required: false,
+        default: ""
+      },
+      fileName:{
+        type: String,
+        required: true
+      },
+      block: {
+        type: Boolean,
+        required: false,
+        default: false
+      }
     },
     components: {
-        VCard,
-        VCardTitle,
-        VCardText,
-        VCardItem,
-        VForm,
-        VTextarea,
-        VBtn,
-        VSelect,
+      VCard, VCardTitle, VCardText, VCardItem,
+      VDialog,  VContainer, VRow, VCol, VTextField,
+      LocatorMap, VBtn, VDataTable,
     },
-    setup(props) {
-        const itemsInBufr = ref([]);
-        const dialog = ref(false);
-        // function to create new object and to add to store
-        const inspectFile = async () => {
-            dialog.value = true;
-            // check if TEST_MODE is set in .env file or if VITE_API_URL is not set
-            if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
-                console.log("TEST_MODE is enabled");
-                itemsInBufr.value = [
-                {
-                    "wigos_station_identifier": "0-894-2-ZimbaSS",
-                    "phenomenonTime": "2023-07-27T12:54:00Z",
-                    "resultTime": "2023-07-27T12:54:00Z",
-                    "name": "air_temperature",
-                    "value": 25.75,
-                    "units": "Celsius",
-                    "description": null,
-                    "fxxyyy": "012101"
-                },
-                {
-                    "wigos_station_identifier": "0-894-2-ZimbaSS",
-                    "phenomenonTime": "2023-07-27T12:54:00Z",
-                    "resultTime": "2023-07-27T12:54:00Z",
-                    "name": "characteristic_of_pressure_tendency",
-                    "value": 7,
-                    "units": "CODE TABLE",
-                    "description": "DECREASING",
-                    "fxxyyy": "010063"
-                }]
+    setup( props ){
+      const result = ref(null);
+      const dialog = ref(false);
+
+      const loadData = async () =>{
+        var payload;
+        // result result object
+        result.value = {
+          wsi: null,
+          name: null,
+          elevation: null,
+          resultTime: null,
+          items: [],
+          headers: []
+        }
+        // determine whether we have data or need to load the data from a file
+        if( props.fileUrl !== ""){
+          payload = {
+            inputs: {
+              data_url: props.fileUrl
             }
-            else {
-                await callInspect();
+          };
+        }else if( props.data !== ""){
+          payload = {
+            inputs: {
+              data: props.data
             }
-            const desiredKeys = ['wigos_station_identifier','phenomenonTime','resultTime','name', 'value', 'units', 'description', 'fxxyyy'];
-            // filter out the desired keys from the itemsInBufr array
-            itemsInBufr.value = itemsInBufr.value.map(item => {
-                return Object.keys(item)
-                .filter(key => desiredKeys.includes(key))
-                .reduce((obj, key) => {
-                    obj[key] = item[key];
-                    return obj;
-                }, {});
-            });
-        };
-        const callInspect = async () => {
-            // set items_from_bufr back to empty array
-            itemsInBufr.value = [];
-            let payload;
-            if (props.fileUrl !== '') {
-              payload = {
-                inputs: {
-                  data_url: props.fileUrl
-                }
+          };
+        }
+        // now call to bufr to geojson to extract and transform
+        const apiURL = `${import.meta.env.VITE_API_URL}/processes/bufr2geojson/execution`;
+        const response = await fetch(apiURL,{
+            method: "POST",
+            headers: {
+              "encode": "json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          }
+        );
+        // check response status
+        if( !response.ok){
+          console.error("HTTP error", response.status);  // do we want to give user feedback?
+        }else{
+          const data = await response.json();
+          // we should have a single subset per file but should add a check to make sure that is the case
+          // assume one file for now, add to ToDo.
+          // Get location, elevation, WSI and station name from first object
+          if( data.items ){
+            result.value.wsi = data.items[0].properties.wigos_station_identifier;
+            result.value.name = data.items[0].properties.metadata.find( (item) => item.name === "station_or_site_name")?.description ?? "";
+            result.value.elevation = data.items[0].geometry.coordinates[2];
+            result.value.longitude = data.items[0].geometry.coordinates[0];
+            result.value.latitude = data.items[0].geometry.coordinates[1];
+            result.value.resultTime = data.items[0].properties.resultTime;
+            result.value.barometerHeight = data.items[0].properties.metadata.find( (item) => item.name === "height_of_barometer_above_mean_sea_level")?.value ?? "";
+            result.value.items = data.items.map( (item) => {
+              var varName = item.properties.name.replace(/_/g," ").replace(/([0-9])([A-Za-z])/g,"$1 $2");
+              var varValue = item.properties.value;
+              var varUnits = item.properties.units;
+              //var varPhenomenonTime = item.properties.phenomenonTime;
+              return {
+                //phenomenonTime: varPhenomenonTime,
+                observedProperty: varName,
+                value: varValue,
+                units: varUnits
               };
-            } else if (props.data !== '') {
-              payload = {
-                inputs: {
-                  data: props.data
-                }
-              };
-            }
-            const inspectUrl = `${import.meta.env.VITE_API_URL}/processes/bufr2geojson/execution`
-            const response = await fetch(inspectUrl, {
-                method: 'POST',
-                headers: {
-                'encode': 'json',
-                'Content-Type': 'application/geo+json'
-                },
-                body: JSON.stringify(payload)
             });
-            if (!response.ok) {
-                console.error('HTTP error', response.status);
-            } else {
-              const data = await response.json();
-              //console.log(data);
-              if (data.items) {
-              // Use Array.map to create a new array of the items in the bufr file
-              itemsInBufr.value = data.items.map(item => {
-                if (item.properties) {
-                  return item.properties;
-                }
-              });
-            }
-          }; 
+          }
+        }
+
+      };
+      const inspectFile = async () => {
+        await loadData();
+        if( result.value.items && result.value.items.length > 0){
+          result.value.headers = Object.keys( result.value.items[0] ).map( key => ({
+            title: key,
+            value: key,
+            key: key,
+            sortable: false
+          }));
         };
-        return {
-            itemsInBufr,
-            inspectFile,
-            dialog
-        };
-    },
-});
+        dialog.value = true;
+      };
+      onBeforeMount( async () => {
+        result.value = {
+          wsi: null,
+          name: null,
+          elevation: null,
+          resultTime: null,
+          items: [],
+          headers: []
+        }
+      });
+      return {result, dialog, inspectFile};
+    }
+  });
 </script>
-
-<style>
-
-.pad-filename {
-  margin-top: 1.5rem;
-}
-
-.close-button {
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1;
-}
-
-.inspect-content {
-  align-self: center;
-  align-items: center;
-}
-.item-container {
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 4px;
-}
-
-.key-value-pair {
-  margin-bottom: 5px;
-}
-
-.key {
-  font-weight: bold;
-  margin-right: 5px;
-}
-</style>

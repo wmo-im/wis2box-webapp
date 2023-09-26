@@ -3,7 +3,7 @@
     <template v-slot:activator="{ props }">
       <v-btn color="#49C6E5" :block="block" append-icon="mdi-feature-search" v-bind="props" @click="inspectFile">Inspect</v-btn>
     </template>
-    <v-card>
+    <v-card class="inspect-content">
       <v-btn icon="mdi-close" class="close-button" variant="plain" @click="dialog = false"></v-btn>
       <v-card-title class="pad-filename">{{ fileName }}</v-card-title>
       <v-card-item>
@@ -26,13 +26,13 @@
 <script>
   // imports
   import {defineComponent, onBeforeMount, onMounted, ref} from "vue";
-  import {VCard, VCardTitle, VCardText, VCardItem, VForm, VBtn, VSelect} from "vuetify/lib/components/index.mjs";
+  import {VCard, VCardTitle, VCardText, VCardItem, VBtn} from "vuetify/lib/components/index.mjs";
   import {VDialog, VContainer, VRow, VCol, VTextField} from "vuetify/lib/components/index.mjs";
   import { VDataTable } from 'vuetify/lib/labs/VDataTable/index.mjs';
   import LocatorMap from '@/components/LocatorMap.vue';
   // now component to export
   export default defineComponent({
-    name: "InspectBUFR",
+    name: "InspectBufrButton",
     props: {
       fileUrl: {
         type: String,
@@ -55,19 +55,30 @@
       }
     },
     components: {
-      VDialog, VCard, VContainer, VRow, VCol, VTextField,
-      LocatorMap, VCardItem, VDataTable
+      VCard, VCardTitle, VCardText, VCardItem,
+      VDialog,  VContainer, VRow, VCol, VTextField,
+      LocatorMap, VBtn, VDataTable,
     },
     setup( props ){
       const result = ref(null);
       const dialog = ref(false);
+
       const loadData = async () =>{
-        // determine whether we have data or need to load the data from a file
         var payload;
+        // result result object
+        result.value = {
+          wsi: null,
+          name: null,
+          elevation: null,
+          resultTime: null,
+          items: [],
+          headers: []
+        }
+        // determine whether we have data or need to load the data from a file
         if( props.fileUrl !== ""){
           payload = {
             inputs: {
-              date_url: props.fileUrl
+              data_url: props.fileUrl
             }
           };
         }else if( props.data !== ""){
@@ -105,12 +116,12 @@
             result.value.resultTime = data.items[0].properties.resultTime;
             result.value.barometerHeight = data.items[0].properties.metadata.find( (item) => item.name === "height_of_barometer_above_mean_sea_level")?.value ?? "";
             result.value.items = data.items.map( (item) => {
-              var varName = item.properties.name;
+              var varName = item.properties.name.replace(/_/g," ").replace(/([0-9])([A-Za-z])/g,"$1 $2");
               var varValue = item.properties.value;
               var varUnits = item.properties.units;
-              var varPhenomenonTime = item.properties.phenomenonTime;
+              //var varPhenomenonTime = item.properties.phenomenonTime;
               return {
-                phenomenonTime: varPhenomenonTime,
+                //phenomenonTime: varPhenomenonTime,
                 observedProperty: varName,
                 value: varValue,
                 units: varUnits
@@ -121,6 +132,15 @@
 
       };
       const inspectFile = async () => {
+        await loadData();
+        if( result.value.items && result.value.items.length > 0){
+          result.value.headers = Object.keys( result.value.items[0] ).map( key => ({
+            title: key,
+            value: key,
+            key: key,
+            sortable: false
+          }));
+        };
         dialog.value = true;
       };
       onBeforeMount( async () => {
@@ -133,19 +153,19 @@
           headers: []
         }
       });
-      onMounted( async () => {
-        if( props.fileUrl !== "" || props.data !== "" ){
-          await loadData();
-          if( result.value.items && result.value.items.length > 0){
-            result.value.headers = Object.keys( result.value.items[0] ).map( key => ({
-              title: key,
-              value: key,
-              key: key,
-              sortable: false
-            }));
-          };
-        }
-      });
+      //onMounted( async () => {
+      //  if( props.fileUrl !== "" || props.data !== "" ){
+      //    await loadData();
+      //    if( result.value.items && result.value.items.length > 0){
+      //      result.value.headers = Object.keys( result.value.items[0] ).map( key => ({
+      //        title: key,
+      //        value: key,
+      //        key: key,
+      //        sortable: false
+      //      }));
+      //    };
+      //  }
+      //});
       return {result, dialog, inspectFile};
     }
   });
