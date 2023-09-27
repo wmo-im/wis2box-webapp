@@ -277,8 +277,9 @@ export default defineComponent({
     // Check if AAXX and = delimiter present in the FM 12 data entered
     const checkMessage = () => {
       aaxxPresent.value = bulletin.value.includes('AAXX ');
-      // Now check that it ends with the delimiter
-      const trimmedBulletin = bulletin.value.replace(/\n+$/, "");
+      // Remove trailing newline characters and 'nnnn'/'NNNN'
+      // from bulletin before checking if the report ends in '='
+      const trimmedBulletin = bulletin.value.replace(/(nnnn|\n)+$/i, "");
       const lastChar = trimmedBulletin.charAt(trimmedBulletin.length - 1);
       equalsPresent.value = lastChar.includes('=')
     }
