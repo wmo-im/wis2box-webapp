@@ -1,9 +1,11 @@
 <template>
-    <v-card>
-        <v-card-item>
-            <span v-html="homeContent"></span>
-        </v-card-item>
-    </v-card>
+    <v-row class="justify-center">
+        <v-card class="max-form-width">
+            <v-card-item>
+                <span v-html="homeContent"></span>
+            </v-card-item>
+        </v-card>
+    </v-row>
 </template>
 
 <script setup>
@@ -17,6 +19,4 @@ if (import.meta.env.VITE_WEBAPP_HOMEPAGE_MESSAGE != undefined) {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

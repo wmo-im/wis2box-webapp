@@ -6,19 +6,30 @@
     <v-card class="inspect-content">
       <v-btn icon="mdi-close" class="close-button" variant="plain" @click="dialog = false"></v-btn>
       <v-card-title class="pad-filename">{{ fileName }}</v-card-title>
-      <v-card-item>
-        <v-card-text>WIGOS Identifier: {{result.wsi}}</v-card-text>
-        <v-card-text>Station name: {{result.name}}</v-card-text>
-        <v-card-text>Station elevation: {{result.elevation}} (m)</v-card-text>
-        <v-card-text>Barometer height above mean sea level: {{result.barometerHeight}} (m)</v-card-text>
-        <v-card-text>Nominal report time: {{result.resultTime}}</v-card-text>
-      </v-card-item>
-      <v-card-item min-width="600px">
-        <LocatorMap :longitude="result.longitude" :latitude="result.latitude"/>
-      </v-card-item>
-      <v-card-item>
-        <v-data-table :items="result.items" :headers="result.headers"/>
-      </v-card-item>
+      <v-row>
+        <!-- Left side of window -->
+        <v-col cols="6">
+          <v-card-item>
+            <v-card-text>WIGOS Identifier: {{result.wsi}}</v-card-text>
+            <v-card-text>Station name: {{result.name}}</v-card-text>
+            <v-card-text>Station elevation: {{result.elevation}} (m)</v-card-text>
+            <v-card-text>Barometer height above mean sea level: {{result.barometerHeight}} (m)</v-card-text>
+            <v-card-text>Nominal report time: {{result.resultTime}}</v-card-text>
+          </v-card-item>
+          <v-card-item min-width="600px">
+            <LocatorMap :longitude="result.longitude" :latitude="result.latitude"/>
+          </v-card-item>
+        </v-col>
+        <v-divider vertical inset></v-divider>
+        <!-- Right side of window -->
+        <v-col cols="6">
+          <v-card-item>
+            <v-data-table :items="result.items" :headers="result.headers"
+            items-per-page="25"
+            items-per-page-text="Properties per page"/>
+          </v-card-item>
+        </v-col>
+      </v-row>
     </v-card>
   </v-dialog>
 </template>
@@ -157,3 +168,36 @@
     }
   });
 </script>
+<style scoped>
+
+.pad-filename {
+  margin-top: 0.2rem;
+}
+
+.close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.inspect-content {
+  align-self: center;
+  align-items: center;
+}
+.item-container {
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.key-value-pair {
+  margin-bottom: 5px;
+}
+
+.key {
+  font-weight: bold;
+  margin-right: 5px;
+}
+</style>

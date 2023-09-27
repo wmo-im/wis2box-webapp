@@ -1,37 +1,42 @@
 <template>
   <APIStatus/>
-  <v-card>
-    <v-card-title class="big-title">Stations</v-card-title>
-    <v-card-item v-if="items">
-      <VTextField style="width: 400px;" v-model="search" prepend-icon="mdi-text-search" label="search" single-line hide-details></VTextField>
-      <VDataTable :headers="headers" :items="items" :search="search" dense small>
-          <template v-slot:item.actions="{ item }">
-            <v-icon size="small" @click="editRecord(item)">mdi-pen</v-icon>
-            <v-icon size="small" @click="viewRecord(item)">mdi-eye</v-icon>
-            <v-icon size="small" @click="deleteRecord(item)">mdi-delete</v-icon>
-          </template>
-          <template v-slot:top>
-            <v-dialog v-model="deleteDialog" width="auto" persistent>
-              <v-card>
-                <v-card-text>Please type the WIGOS station identifier to confirm the deletion</v-card-text>
-                <v-card-item><v-text-field v-model="stationToDelete" label="Station to delete"></v-text-field></v-card-item>
-                <v-card-item><v-text-field type="password" clearable v-model="token" label="Auth token"></v-text-field></v-card-item>
-                <v-card-actions>
-                  <v-btn
-                      color="error"
-                      @click="confirmDelete( {item} )"
-                      v-if="selectedStation===stationToDelete && token">Confirm deletion</v-btn>
-                  <v-btn color="success" @click="closeDeleteDialog()">Cancel</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </template>
-      </VDataTable>
-    </v-card-item>
-    <v-card-item>
-      <v-btn prepend-icon="mdi-plus" color="success" @click="addRecord()">Add new station</v-btn>
-    </v-card-item>
-  </v-card>
+  <v-row class="justify-center">
+    <v-col cols="12" class="max-dashboard-width">
+      <v-card>
+        <v-card-title class="big-title">Stations</v-card-title>
+        <v-card-item v-if="items">
+          <VTextField style="width: 400px;" v-model="search" prepend-icon="mdi-text-search" label="search" single-line hide-details></VTextField>
+          <VDataTable :headers="headers" :items="items" :search="search" dense small>
+              <template v-slot:item.actions="{ item }">
+                <v-icon size="small" @click="editRecord(item)">mdi-pen</v-icon>
+                <v-icon size="small" @click="viewRecord(item)">mdi-eye</v-icon>
+                <v-icon size="small" @click="deleteRecord(item)">mdi-delete</v-icon>
+              </template>
+              <template v-slot:top>
+                <v-dialog v-model="deleteDialog" width="auto" persistent>
+                  <v-card>
+                    <v-card-text>Please type the WIGOS station identifier to confirm the deletion</v-card-text>
+                    <v-card-item><v-text-field v-model="stationToDelete" label="Station to delete"></v-text-field></v-card-item>
+                    <v-card-item><v-text-field type="password" clearable v-model="token" label="Auth token"></v-text-field></v-card-item>
+                    <v-card-actions>
+                      <v-btn
+                          color="error"
+                          @click="confirmDelete( {item} )"
+                          v-if="selectedStation===stationToDelete && token">Confirm deletion</v-btn>
+                      <v-btn color="success" @click="closeDeleteDialog()">Cancel</v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </template>
+          </VDataTable>
+        </v-card-item>
+        <v-card-item>
+          <v-btn prepend-icon="mdi-plus" color="success" @click="addRecord()">Add new station</v-btn>
+        </v-card-item>
+      </v-card>
+    </v-col>
+  </v-row>
+  
 </template>
 
 <script>
