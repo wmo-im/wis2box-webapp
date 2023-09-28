@@ -87,7 +87,7 @@ export default defineComponent({
 
 <style scoped>
 .scrollable-list {
-    height: 343px;
+    height: 310px;
     overflow-y: auto;
 }
 

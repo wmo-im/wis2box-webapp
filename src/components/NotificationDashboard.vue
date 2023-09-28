@@ -34,11 +34,22 @@
                 </v-col>
             </v-row>
 
+            <!-- Below the rest -->
+            <!-- Searchable list of published data with timestamps,
+            download and inspect buttons -->
             <v-row>
                 <v-col cols="12">
                     <v-fade-transition appear>
-                        <!-- Files published, ready to download and inspect -->
                         <PublishedData :messages="messages"></PublishedData>
+                    </v-fade-transition>
+                </v-col>
+            </v-row>
+
+            <!-- Map view of the publications per station -->
+            <v-row>
+                <v-col cols="12">
+                    <v-fade-transition appear>
+                        <StationMap :messages="messages" id="station-map"></StationMap>
                     </v-fade-transition>
                 </v-col>
             </v-row>
@@ -52,6 +63,7 @@ import BarChart from './BarChart.vue';
 import SummaryStats from './SummaryStats.vue';
 import StationStats from './StationStats.vue';
 import PublishedData from './PublishedData.vue';
+import StationMap from './StationMap.vue';
 
 export default defineComponent({
     name: 'NotificationDashboard',
@@ -81,7 +93,8 @@ export default defineComponent({
         BarChart,
         SummaryStats,
         StationStats,
-        PublishedData
+        PublishedData,
+        StationMap
     },
     setup(props) {
 
