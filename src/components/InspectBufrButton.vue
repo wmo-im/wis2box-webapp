@@ -133,12 +133,34 @@
               var varName = item.properties.name.replace(/_/g," ").replace(/([0-9])([A-Za-z])/g,"$1 $2");
               var varValue = item.properties.value;
               var varUnits = item.properties.units;
-              //var varPhenomenonTime = item.properties.phenomenonTime;
+              var varDescription = item.properties.description;
+              var varPhenomenonTime = item.properties.phenomenonTime;
+
+              // If the phenomenon time is a range (two times separated by /),
+              // calculate the time period and append this to the variable name
+              if (varPhenomenonTime.includes('/')) {
+                var [startTimeStr, endTimeStr] = varPhenomenonTime.split('/');
+                var startTime = new Date(startTimeStr);
+                var endTime = new Date(endTimeStr);
+                var timeDifferenceMs = endTime - startTime;
+                // Get time difference in hours and minutes
+                var timeDifferenceHours = timeDifferenceMs / (1000 * 60 * 60);
+                var timeDifferenceMinutes = timeDifferenceMs / (1000 * 60);
+                // If time difference in hours is >= 1, the period
+                // is best expressed in hours. Otherwise, express in minutes
+                if (timeDifferenceHours >= 1) {
+                  varName = `${varName} (${timeDifferenceHours} hours)`
+                }
+                else {
+                  varName = `${varName} (${timeDifferenceMinutes} minutes)`
+                }
+              }
               return {
                 //phenomenonTime: varPhenomenonTime,
                 observedProperty: varName,
                 value: varValue,
-                units: varUnits
+                units: varUnits,
+                description: varDescription
               };
             });
           }
