@@ -9,13 +9,15 @@
       <v-row>
         <!-- Left side of window -->
         <v-col cols="6">
-          <v-card-item>
-            <v-card-text>WIGOS Identifier: {{result.wsi}}</v-card-text>
-            <v-card-text>Station name: {{result.name}}</v-card-text>
-            <v-card-text>Station elevation: {{result.elevation}} (m)</v-card-text>
-            <v-card-text>Barometer height above mean sea level: {{result.barometerHeight}} (m)</v-card-text>
-            <v-card-text>Nominal report time: {{result.resultTime}}</v-card-text>
-          </v-card-item>
+          <v-list lines="zero">
+            <v-list-item>WIGOS Identifier: {{result.wsi}}</v-list-item>
+            <v-list-item>Station name: {{result.name}}</v-list-item>
+            <v-list-item>Station latitude: {{result.latitude}}</v-list-item>
+            <v-list-item>Station longitude: {{result.longitude}}</v-list-item>
+            <v-list-item>Station elevation: {{result.elevation}} (m)</v-list-item>
+            <v-list-item>Barometer height above mean sea level: {{result.barometerHeight}} (m)</v-list-item>
+            <v-list-item>Nominal report time: {{result.resultTime}}</v-list-item>
+          </v-list>
           <v-card-item min-width="600px">
             <LocatorMap :longitude="result.longitude" :latitude="result.latitude"/>
           </v-card-item>
@@ -80,6 +82,7 @@
         result.value = {
           wsi: null,
           name: null,
+          coords: null,
           elevation: null,
           resultTime: null,
           items: [],
