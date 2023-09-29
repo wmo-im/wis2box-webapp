@@ -148,8 +148,11 @@
                 var timeDifferenceMinutes = timeDifferenceMs / (1000 * 60);
                 // If time difference in hours is >= 1, the period
                 // is best expressed in hours. Otherwise, express in minutes
-                if (timeDifferenceHours >= 1) {
+                if (timeDifferenceHours > 1) {
                   varName = `${varName} (${timeDifferenceHours} hours)`
+                }
+                else if (timeDifferenceHours == 1) {
+                  varName = `${varName} (${timeDifferenceHours} hour)`
                 }
                 else {
                   varName = `${varName} (${timeDifferenceMinutes} minutes)`
