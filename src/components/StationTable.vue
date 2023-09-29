@@ -12,6 +12,11 @@
                 <v-icon size="small" @click="viewRecord(item)">mdi-eye</v-icon>
                 <v-icon size="small" @click="deleteRecord(item)">mdi-delete</v-icon>
               </template>
+              <template :item.url="{ item }">
+                <a :href="item">
+                  {{ item }}
+                </a>
+              </template>
               <template v-slot:top>
                 <v-dialog v-model="deleteDialog" width="auto" persistent>
                   <v-card>
