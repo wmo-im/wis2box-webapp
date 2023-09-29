@@ -45,6 +45,10 @@ export default defineComponent({
     },
     setup(props) {
 
+        // Static variables
+        console.log(props.messages[0])
+        // const center = props.messages.value[0]['coordinates'];
+
         // Reactive variables
         const map = ref(null);
         const stationLayer = ref(null);
@@ -65,12 +69,13 @@ export default defineComponent({
             })
         });
 
-        console.log("Features: ", features.value)
-
         // Fill map with markers when data changes
         const updateMarkers = () => {
-            if (map.value) {
+            if (map.value && props.messages.length > 0) {
                 stationLayer.value.clearLayers();
+                // Instantiate LatLngBounds object
+                var bounds = L.latLngBounds()
+                // Structue features array in form required for markers
                 features.value.map((feature) => {
                     let coords = feature.geometry.coordinates;
                     const marker = L.marker(coords, {
@@ -88,9 +93,12 @@ export default defineComponent({
                     // Set type of marker
                     marker.type = "host";
                     // Add popup to marker
-                    marker.bindPopup('<h3> Station: ' + feature.properties.wigos_station_identifer + '<br>Publications: ADD CODE</h3>');
+                    marker.bindPopup('<h3> Station: ' + feature.properties.wigos_station_identifer + '</h3>');
+                    // Extend LatLngBounds with coordinates
+                    bounds.extend(coords)
                     stationLayer.value.addLayer(marker);
                 })
+                map.value.fitBounds(bounds);
             }
         };
 

@@ -7,14 +7,20 @@
                 <div class="scrollable-list">
                     <template v-for="(count, wsi) in wsiCounts" :key="wsi">
                         <v-list-item lines="one">
-                            <span class="wsi-font">{{ wsi }}</span>
-                            <v-chip class="count-font">{{ count }}</v-chip>
+                            <v-row>
+                                <v-col cols="7">
+                                    <span class="wsi-font">{{ wsi }}</span>
+                                </v-col>
+                                <v-divider vertical></v-divider>
+                                <v-col cols="5" class="text-center">
+                                    <v-chip class="count-font">{{ count }}</v-chip>
+                                </v-col>
+                            </v-row>
                         </v-list-item>
                         <v-divider />
                     </template>
                 </div>
             </v-card>
-
         </v-col>
     </v-row>
 </template>
@@ -93,8 +99,6 @@ export default defineComponent({
 
 .wsi-font {
     font-size: 20px;
-    margin-left: 1rem;
-    margin-right: 12rem;
 }
 
 .count-font {
