@@ -10,13 +10,13 @@
         <!-- Left side of window -->
         <v-col cols="6">
           <v-list lines="zero">
-            <v-list-item>WIGOS Identifier: {{result.wsi}}</v-list-item>
-            <v-list-item>Station name: {{result.name}}</v-list-item>
-            <v-list-item>Station latitude: {{result.latitude}}</v-list-item>
-            <v-list-item>Station longitude: {{result.longitude}}</v-list-item>
-            <v-list-item>Station elevation: {{result.elevation}} (m)</v-list-item>
-            <v-list-item>Barometer height above mean sea level: {{result.barometerHeight}} (m)</v-list-item>
-            <v-list-item>Nominal report time: {{result.resultTime}}</v-list-item>
+            <v-list-item><b>WIGOS Identifier:</b> {{result.wsi}}</v-list-item>
+            <v-list-item><b>Station name:</b> {{result.name}}</v-list-item>
+            <v-list-item><b>Station latitude:</b> {{result.latitude}}</v-list-item>
+            <v-list-item><b>Station longitude:</b> {{result.longitude}}</v-list-item>
+            <v-list-item><b>Station elevation:</b> {{result.elevation}} (m)</v-list-item>
+            <v-list-item><b>Barometer height above mean sea level:</b> {{result.barometerHeight}} (m)</v-list-item>
+            <v-list-item><b>Nominal report time:</b> {{result.resultTime}}</v-list-item>
           </v-list>
           <v-card-item min-width="600px">
             <LocatorMap :longitude="result.longitude" :latitude="result.latitude"/>
