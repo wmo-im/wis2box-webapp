@@ -11,7 +11,7 @@
           <!-- Left side of window -->
           <v-col cols="5">
             <v-list lines="zero">
-              <v-list-item><b>WIGOS Identifier:</b> {{result.wsi}}</v-list-item>
+              <v-list-item><b>WIGOS Station Identifier:</b> {{result.wsi}}</v-list-item>
               <v-list-item><b>Station name:</b> {{result.name}}</v-list-item>
               <v-list-item><b>Station latitude:</b> {{result.latitude}}</v-list-item>
               <v-list-item><b>Station longitude:</b> {{result.longitude}}</v-list-item>
