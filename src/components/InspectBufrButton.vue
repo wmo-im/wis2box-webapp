@@ -127,8 +127,11 @@
             result.value.wsi = data.items[0].properties.wigos_station_identifier;
             result.value.name = data.items[0].properties.metadata.find( (item) => item.name === "station_or_site_name")?.description ?? "";
             result.value.elevation = parseFloat(data.items[0].geometry.coordinates[2]).toFixed(2);
-            result.value.longitude = data.items[0].geometry.coordinates[0];
-            result.value.latitude = data.items[0].geometry.coordinates[1];
+            // Lon and lat are rounded to 5dp, but as toFixed returns
+            // a string, parseFloat is used again to convert the
+            // result back to a float
+            result.value.longitude = parseFloat(parseFloat(data.items[0].geometry.coordinates[0]).toFixed(5));
+            result.value.latitude = parseFloat(parseFloat(data.items[0].geometry.coordinates[1]).toFixed(5));
             result.value.resultTime = data.items[0].properties.resultTime;
             result.value.barometerHeight = parseFloat(data.items[0].properties.metadata.find( (item) => item.name === "height_of_barometer_above_mean_sea_level")?.value ?? "").toFixed(2);
             result.value.items = data.items.map( (item) => {
