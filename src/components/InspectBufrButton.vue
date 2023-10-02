@@ -222,6 +222,7 @@
 .scrollable-list {
   overflow-y: auto;
   max-height: 800px;
+  max-width: 1600px;
 }
 .item-container {
   margin-bottom: 10px;

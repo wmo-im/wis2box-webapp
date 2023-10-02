@@ -54,6 +54,7 @@ export default defineComponent({
             return props.messages.map(msg => {
                 return {
                     type: 'Feature',
+                    id: msg.id,
                     properties: {
                         wigos_station_identifer: msg.wsi
                     },
@@ -85,13 +86,11 @@ export default defineComponent({
                             popupAnchor: [1, -34]
                         })
                     });
-                    // Set ID for marker
-                    marker.id = feature.properties.wigos_station_identifer;
-                    console.log(`Station ${marker.id} has coordinates ${coords}`)
+                    // Set ID for marker, which is a link to
+                    // the notification
+                    marker.id = feature.id;
                     // Set type of marker
                     marker.type = "host";
-                    // Add popup to marker
-                    marker.bindPopup('<h3> Station: ' + feature.properties.wigos_station_identifer + '</h3>');
                     // Extend LatLngBounds with coordinates
                     bounds.extend(coords)
                     stationLayer.value.addLayer(marker);
@@ -104,7 +103,21 @@ export default defineComponent({
             map.value = L.map(props.id, { zoomAnimation: false, fadeAnimation: true, markerZoomAnimation: true }).setView(props.center, props.zoom);
             map.value.attributionControl.setPrefix('');
             L.tileLayer(`${import.meta.env.VITE_BASEMAP_URL}`, { attribution: `${import.meta.env.VITE_BASEMAP_ATTRIBUTION}` }).addTo(map.value);
-            stationLayer.value = L.markerClusterGroup().addTo(map.value);
+            // Disable the spiderfy and zoom effects
+            let clusters = new L.markerClusterGroup({
+                spiderfyOnMaxZoom: false,
+                showCoverageOnHover: false,
+                zoomToBoundsOnClick: true
+            });
+            // clusters.on('clusterclick', function (a) {
+            //     var markers = a.layer.getAllChildMarkers();
+            //     var id = markers[0].id;
+            //     var title = '<a>' + `${import.meta.env.VITE_API_URL}/collections/messages/items/${id}` + '</a>';
+            //     map.value.openPopup(title, a.layer.getLatLng());
+            // });
+            clusters.addTo(map.value);
+            stationLayer.value = clusters;
+            // Update markers then cluster
             updateMarkers();
         })
 

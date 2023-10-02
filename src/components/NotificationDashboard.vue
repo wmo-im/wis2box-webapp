@@ -125,6 +125,54 @@ export default defineComponent({
                         "type": "text/html",
                         "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
                     }]
+            },
+            {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d", "geometry": {
+                    "type": "Point",
+                    "coordinates": [6.146197, 46.223432, 1]
+                },
+                "properties": {
+                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+                    "datetime": "2022-03-31T00:00:00Z",
+                    "pubtime": "2023-09-22T08:55:20Z",
+                    "wigos_station_identifier": "0-20000-0-15020",
+                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                },
+                "links": [
+                    {
+                        "rel": "canonical",
+                        "type": "application/x-bufr",
+                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+                    },
+                    {
+                        "rel": "via",
+                        "type": "text/html",
+                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+                    }]
+            },
+            {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d", "geometry": {
+                    "type": "Point",
+                    "coordinates": [6.146197, 46.423432, 1]
+                },
+                "properties": {
+                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+                    "datetime": "2022-03-31T00:00:00Z",
+                    "pubtime": "2023-09-22T08:55:20Z",
+                    "wigos_station_identifier": "0-20000-0-15030",
+                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                },
+                "links": [
+                    {
+                        "rel": "canonical",
+                        "type": "application/x-bufr",
+                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+                    },
+                    {
+                        "rel": "via",
+                        "type": "text/html",
+                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+                    }]
             }
         ]
         // Example message of Malawi surface dataset
@@ -175,6 +223,7 @@ export default defineComponent({
         // Method to get the messages from the features array
         const getMessagesFromFeatures = (features) => {
             const selectedFields = features.map(item => ({
+                id: item.id,
                 pubtime: new Date(item.properties.pubtime),
                 canonical_url: getCanonicalUrl(item.links),
                 wsi: item.properties.wigos_station_identifier,
