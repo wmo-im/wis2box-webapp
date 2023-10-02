@@ -400,7 +400,7 @@
                                     msg = "Field not in schema";
                                 }
                                 if(((! value) && (value!==0)) | ( value === 'null')){  // this is horrible, there must be a better way
-                                    msg = "Line " + count + ": Column '" + key + "' missing";
+                                    msg = "Line " + count + ": Column '" + key + "' contains missing data";
                                     status = "warning"
                                     validationWarnings.value.push(msg);
                                 }
