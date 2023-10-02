@@ -107,7 +107,10 @@ export default defineComponent({
             let clusters = new L.markerClusterGroup({
                 spiderfyOnMaxZoom: false,
                 showCoverageOnHover: false,
-                zoomToBoundsOnClick: true
+                // Clicking on a cluster zooms in to show more clusters
+                zoomToBoundsOnClick: true,
+                // Shows a marker as a size 1 cluster
+                singleMarkerMode: true
             });
             // clusters.on('clusterclick', function (a) {
             //     var markers = a.layer.getAllChildMarkers();
