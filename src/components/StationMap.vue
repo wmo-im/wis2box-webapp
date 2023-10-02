@@ -71,9 +71,10 @@ export default defineComponent({
                 stationLayer.value.clearLayers();
                 // Instantiate LatLngBounds object
                 var bounds = L.latLngBounds()
-                // Structue features array in form required for markers
+                // Structure features array in form [lat, lon]
+                // required for markers
                 features.value.map((feature) => {
-                    let coords = feature.geometry.coordinates.reverse();
+                    let coords = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
                     const marker = L.marker(coords, {
                         // Set the marker icon, if desired
                         icon: L.icon({
@@ -86,6 +87,7 @@ export default defineComponent({
                     });
                     // Set ID for marker
                     marker.id = feature.properties.wigos_station_identifer;
+                    console.log(`Station ${marker.id} has coordinates ${coords}`)
                     // Set type of marker
                     marker.type = "host";
                     // Add popup to marker
