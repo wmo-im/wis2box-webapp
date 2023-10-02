@@ -6,32 +6,34 @@
     <v-card class="inspect-content">
       <v-btn icon="mdi-close" class="close-button" variant="plain" @click="dialog = false"></v-btn>
       <v-card-title class="pad-filename">{{ fileName }}</v-card-title>
-      <v-row>
-        <!-- Left side of window -->
-        <v-col cols="6">
-          <v-list lines="zero">
-            <v-list-item><b>WIGOS Identifier:</b> {{result.wsi}}</v-list-item>
-            <v-list-item><b>Station name:</b> {{result.name}}</v-list-item>
-            <v-list-item><b>Station latitude:</b> {{result.latitude}}</v-list-item>
-            <v-list-item><b>Station longitude:</b> {{result.longitude}}</v-list-item>
-            <v-list-item><b>Station elevation:</b> {{result.elevation}} (m)</v-list-item>
-            <v-list-item><b>Barometer height above mean sea level:</b> {{result.barometerHeight}} (m)</v-list-item>
-            <v-list-item><b>Nominal report time:</b> {{result.resultTime}}</v-list-item>
-          </v-list>
-          <v-card-item min-width="600px">
-            <LocatorMap :longitude="result.longitude" :latitude="result.latitude"/>
-          </v-card-item>
-        </v-col>
-        <v-divider vertical inset></v-divider>
-        <!-- Right side of window -->
-        <v-col cols="6">
-          <v-card-item>
-            <v-data-table :items="result.items" :headers="result.headers"
-            items-per-page="25"
-            items-per-page-text="Properties per page"/>
-          </v-card-item>
-        </v-col>
-      </v-row>
+      <v-container class="scrollable-list">
+        <v-row>
+          <!-- Left side of window -->
+          <v-col cols="5">
+            <v-list lines="zero">
+              <v-list-item><b>WIGOS Identifier:</b> {{result.wsi}}</v-list-item>
+              <v-list-item><b>Station name:</b> {{result.name}}</v-list-item>
+              <v-list-item><b>Station latitude:</b> {{result.latitude}}</v-list-item>
+              <v-list-item><b>Station longitude:</b> {{result.longitude}}</v-list-item>
+              <v-list-item><b>Station elevation:</b> {{result.elevation}} (m)</v-list-item>
+              <v-list-item><b>Barometer height above mean sea level:</b> {{result.barometerHeight}} (m)</v-list-item>
+              <v-list-item><b>Nominal report time:</b> {{result.resultTime}}</v-list-item>
+            </v-list>
+            <v-card-item>
+              <LocatorMap :longitude="result.longitude" :latitude="result.latitude"/>
+            </v-card-item>
+          </v-col>
+          <v-divider vertical inset></v-divider>
+          <!-- Right side of window -->
+          <v-col cols="7">
+            <v-card-item>
+              <v-data-table :items="result.items" :headers="result.headers"
+              items-per-page="25"
+              items-per-page-text="Properties per page"/>
+            </v-card-item>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-card>
   </v-dialog>
 </template>
@@ -124,11 +126,11 @@
           if( data.items ){
             result.value.wsi = data.items[0].properties.wigos_station_identifier;
             result.value.name = data.items[0].properties.metadata.find( (item) => item.name === "station_or_site_name")?.description ?? "";
-            result.value.elevation = data.items[0].geometry.coordinates[2];
+            result.value.elevation = parseFloat(data.items[0].geometry.coordinates[2]).toFixed(2);
             result.value.longitude = data.items[0].geometry.coordinates[0];
             result.value.latitude = data.items[0].geometry.coordinates[1];
             result.value.resultTime = data.items[0].properties.resultTime;
-            result.value.barometerHeight = data.items[0].properties.metadata.find( (item) => item.name === "height_of_barometer_above_mean_sea_level")?.value ?? "";
+            result.value.barometerHeight = parseFloat(data.items[0].properties.metadata.find( (item) => item.name === "height_of_barometer_above_mean_sea_level")?.value ?? "").toFixed(2);
             result.value.items = data.items.map( (item) => {
               var varName = item.properties.name.replace(/_/g," ").replace(/([0-9])([A-Za-z])/g,"$1 $2");
               var varValue = item.properties.value;
@@ -212,6 +214,11 @@
 .inspect-content {
   align-self: center;
   align-items: center;
+}
+
+.scrollable-list {
+  overflow-y: auto;
+  max-height: 800px;
 }
 .item-container {
   margin-bottom: 10px;

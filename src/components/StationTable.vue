@@ -13,8 +13,8 @@
                 <v-icon size="small" @click="deleteRecord(item)">mdi-delete</v-icon>
               </template>
               <template v-slot:item.url="{ item }">
-                <a :href="item">
-                  {{ item }}
+                <a :href="item.columns.url">
+                  {{ item.columns.url }}
                 </a>
               </template>
               <template v-slot:top>

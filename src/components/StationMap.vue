@@ -45,10 +45,6 @@ export default defineComponent({
     },
     setup(props) {
 
-        // Static variables
-        console.log(props.messages[0])
-        // const center = props.messages.value[0]['coordinates'];
-
         // Reactive variables
         const map = ref(null);
         const stationLayer = ref(null);
@@ -77,7 +73,7 @@ export default defineComponent({
                 var bounds = L.latLngBounds()
                 // Structue features array in form required for markers
                 features.value.map((feature) => {
-                    let coords = feature.geometry.coordinates;
+                    let coords = feature.geometry.coordinates.reverse();
                     const marker = L.marker(coords, {
                         // Set the marker icon, if desired
                         icon: L.icon({

@@ -105,7 +105,7 @@ export default defineComponent({
             {
                 "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d", "geometry": {
                     "type": "Point",
-                    "coordinates": [46.223432, 6.146197]
+                    "coordinates": [6.146197, 46.223432]
                 },
                 "properties": {
                     "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
@@ -133,7 +133,7 @@ export default defineComponent({
                 "id": "af14d8c4-5f63-45af-8171-7730ec9932ba",
                 "geometry": {
                     "type": "Point",
-                    "coordinates": [46.223432, 6.146197]
+                    "coordinates": [6.146197, 46.223432]
                 },
                 "properties": {
                     "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15015_20220331T000000",
