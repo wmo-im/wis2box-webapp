@@ -7,7 +7,21 @@
       <v-btn icon="mdi-close" class="close-button" variant="plain" @click="dialog = false"></v-btn>
       <v-card-title class="pad-filename">{{ fileName }}</v-card-title>
       <v-container class="scrollable-list">
-        <v-row>
+        <!-- display error in result.error exists -->
+        <v-row v-if="result.error">
+          <v-col cols="12">
+            <v-alert type="error" dismissible>
+              <v-row>
+                <v-col cols="12">
+                  <div class="text-h6">Error</div>
+                  <div>{{result.error}}</div>
+                </v-col>
+              </v-row>
+            </v-alert>
+          </v-col>
+        </v-row>
+        <!-- display result if it exists -->
+        <v-row v-if="result.wsi">
           <!-- Left side of window -->
           <v-col cols="5">
             <v-list lines="zero">
@@ -82,6 +96,7 @@
         var payload;
         // result result object
         result.value = {
+          result: null,
           wsi: null,
           name: null,
           coords: null,
@@ -120,6 +135,11 @@
           console.error("HTTP error", response.status);  // do we want to give user feedback?
         }else{
           const data = await response.json();
+          // check for errors
+          if( data.error ){
+            console.info("bufr2geojon returned the error:", data.error);
+            result.value.error = data.error;
+          }
           // we should have a single subset per file but should add a check to make sure that is the case
           // assume one file for now, add to ToDo.
           // Get location, elevation, WSI and station name from first object
@@ -127,6 +147,10 @@
             result.value.wsi = data.items[0].properties.wigos_station_identifier;
             result.value.name = data.items[0].properties.metadata.find( (item) => item.name === "station_or_site_name")?.description ?? "";
             result.value.elevation = parseFloat(data.items[0].geometry.coordinates[2]).toFixed(2);
+            // if result.value.elevation is NaN, set to 'undefined'
+            if (isNaN(result.value.elevation)) {
+              result.value.elevation = 'undefined';
+            }
             // Lon and lat are rounded to 5dp, but as toFixed returns
             // a string, parseFloat is used again to convert the
             // result back to a float
@@ -134,6 +158,10 @@
             result.value.latitude = parseFloat(parseFloat(data.items[0].geometry.coordinates[1]).toFixed(5));
             result.value.resultTime = data.items[0].properties.resultTime;
             result.value.barometerHeight = parseFloat(data.items[0].properties.metadata.find( (item) => item.name === "height_of_barometer_above_mean_sea_level")?.value ?? "").toFixed(2);
+            // if result.value.barometerHeight is NaN, set to undefined
+            if (isNaN(result.value.barometerHeight)) {
+              result.value.barometerHeight = 'undefined';
+            }
             result.value.items = data.items.map( (item) => {
               var varName = item.properties.name.replace(/_/g," ").replace(/([0-9])([A-Za-z])/g,"$1 $2");
               var varValue = item.properties.value;
