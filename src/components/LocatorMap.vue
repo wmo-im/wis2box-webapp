@@ -1,5 +1,5 @@
 <template>
-  <v-card style="width: 100%; height: 100%; min-height: 400px" :id="id" ></v-card>
+  <v-card style="min-height: 400px" :id="id" ></v-card>
 </template>
 
 <script>
@@ -80,6 +80,8 @@ export default defineComponent({
         updateMarker();
       };
       emit('mapLoaded', map.value);
+      // hack to fix leaflet resize issue 
+      setTimeout(function() { window.dispatchEvent(new Event('resize')) }, 400);
     });
 
     const updateMarker = async () => {
@@ -99,7 +101,6 @@ export default defineComponent({
     watch( geom, () => {
       updateMarker();
     })
-
 
     return {mapContainer};
   }
