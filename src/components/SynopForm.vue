@@ -24,9 +24,8 @@
                 <p v-if="aaxxPresent == false" class="hint-text hint-invalid">AAXX must be present for a valid SYNOP
                   message
                 </p>
-                <p v-else-if="equalsPresent == false" class="hint-text hint-invalid">Delimiter (=) must be present for a
-                  valid
-                  SYNOP message</p>
+                <p v-else-if="equalsPresent == false" class="hint-text hint-invalid">Delimiter (=) must be present at the end
+                of each SYNOP report</p>
                 <p v-else class="hint-text hint-default">Raw FM 12 bulletin</p>
               </v-card-item>
 
@@ -278,7 +277,11 @@ export default defineComponent({
     // Check if AAXX and = delimiter present in the FM 12 data entered
     const checkMessage = () => {
       aaxxPresent.value = bulletin.value.includes('AAXX ');
-      equalsPresent.value = bulletin.value.includes('=');
+      // Remove trailing newline characters and 'nnnn'/'NNNN'
+      // from bulletin before checking if the report ends in '='
+      const trimmedBulletin = bulletin.value.replace(/(nnnn|\n)+$/i, "");
+      const lastChar = trimmedBulletin.charAt(trimmedBulletin.length - 1);
+      equalsPresent.value = lastChar.includes('=')
     }
 
     // When the user clicks on one of the expandable lists such as

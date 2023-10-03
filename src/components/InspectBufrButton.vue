@@ -6,19 +6,34 @@
     <v-card class="inspect-content">
       <v-btn icon="mdi-close" class="close-button" variant="plain" @click="dialog = false"></v-btn>
       <v-card-title class="pad-filename">{{ fileName }}</v-card-title>
-      <v-card-item>
-        <v-card-text>WIGOS Identifier: {{result.wsi}}</v-card-text>
-        <v-card-text>Station name: {{result.name}}</v-card-text>
-        <v-card-text>Station elevation: {{result.elevation}} (m)</v-card-text>
-        <v-card-text>Barometer height above mean sea level: {{result.barometerHeight}} (m)</v-card-text>
-        <v-card-text>Nominal report time: {{result.resultTime}}</v-card-text>
-      </v-card-item>
-      <v-card-item min-width="600px">
-        <LocatorMap :longitude="result.longitude" :latitude="result.latitude"/>
-      </v-card-item>
-      <v-card-item>
-        <v-data-table :items="result.items" :headers="result.headers"/>
-      </v-card-item>
+      <v-container class="scrollable-list">
+        <v-row>
+          <!-- Left side of window -->
+          <v-col cols="5">
+            <v-list lines="zero">
+              <v-list-item><b>WIGOS Station Identifier:</b> {{result.wsi}}</v-list-item>
+              <v-list-item><b>Station name:</b> {{result.name}}</v-list-item>
+              <v-list-item><b>Station latitude:</b> {{result.latitude}}</v-list-item>
+              <v-list-item><b>Station longitude:</b> {{result.longitude}}</v-list-item>
+              <v-list-item><b>Station elevation:</b> {{result.elevation}} (m)</v-list-item>
+              <v-list-item><b>Barometer height above mean sea level:</b> {{result.barometerHeight}} (m)</v-list-item>
+              <v-list-item><b>Nominal report time:</b> {{result.resultTime}}</v-list-item>
+            </v-list>
+            <v-card-item>
+              <LocatorMap :longitude="result.longitude" :latitude="result.latitude"/>
+            </v-card-item>
+          </v-col>
+          <v-divider vertical inset></v-divider>
+          <!-- Right side of window -->
+          <v-col cols="7">
+            <v-card-item>
+              <v-data-table :items="result.items" :headers="result.headers"
+              items-per-page="25"
+              items-per-page-text="Properties per page"/>
+            </v-card-item>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-card>
   </v-dialog>
 </template>
@@ -69,6 +84,7 @@
         result.value = {
           wsi: null,
           name: null,
+          coords: null,
           elevation: null,
           resultTime: null,
           items: [],
@@ -110,21 +126,49 @@
           if( data.items ){
             result.value.wsi = data.items[0].properties.wigos_station_identifier;
             result.value.name = data.items[0].properties.metadata.find( (item) => item.name === "station_or_site_name")?.description ?? "";
-            result.value.elevation = data.items[0].geometry.coordinates[2];
-            result.value.longitude = data.items[0].geometry.coordinates[0];
-            result.value.latitude = data.items[0].geometry.coordinates[1];
+            result.value.elevation = parseFloat(data.items[0].geometry.coordinates[2]).toFixed(2);
+            // Lon and lat are rounded to 5dp, but as toFixed returns
+            // a string, parseFloat is used again to convert the
+            // result back to a float
+            result.value.longitude = parseFloat(parseFloat(data.items[0].geometry.coordinates[0]).toFixed(5));
+            result.value.latitude = parseFloat(parseFloat(data.items[0].geometry.coordinates[1]).toFixed(5));
             result.value.resultTime = data.items[0].properties.resultTime;
-            result.value.barometerHeight = data.items[0].properties.metadata.find( (item) => item.name === "height_of_barometer_above_mean_sea_level")?.value ?? "";
+            result.value.barometerHeight = parseFloat(data.items[0].properties.metadata.find( (item) => item.name === "height_of_barometer_above_mean_sea_level")?.value ?? "").toFixed(2);
             result.value.items = data.items.map( (item) => {
               var varName = item.properties.name.replace(/_/g," ").replace(/([0-9])([A-Za-z])/g,"$1 $2");
               var varValue = item.properties.value;
               var varUnits = item.properties.units;
-              //var varPhenomenonTime = item.properties.phenomenonTime;
+              var varDescription = item.properties.description;
+              var varPhenomenonTime = item.properties.phenomenonTime;
+
+              // If the phenomenon time is a range (two times separated by /),
+              // calculate the time period and append this to the variable name
+              if (varPhenomenonTime.includes('/')) {
+                var [startTimeStr, endTimeStr] = varPhenomenonTime.split('/');
+                var startTime = new Date(startTimeStr);
+                var endTime = new Date(endTimeStr);
+                var timeDifferenceMs = endTime - startTime;
+                // Get time difference in hours and minutes
+                var timeDifferenceHours = timeDifferenceMs / (1000 * 60 * 60);
+                var timeDifferenceMinutes = timeDifferenceMs / (1000 * 60);
+                // If time difference in hours is >= 1, the period
+                // is best expressed in hours. Otherwise, express in minutes
+                if (timeDifferenceHours > 1) {
+                  varName = `${varName} (${timeDifferenceHours} hours)`
+                }
+                else if (timeDifferenceHours == 1) {
+                  varName = `${varName} (${timeDifferenceHours} hour)`
+                }
+                else {
+                  varName = `${varName} (${timeDifferenceMinutes} minutes)`
+                }
+              }
               return {
                 //phenomenonTime: varPhenomenonTime,
                 observedProperty: varName,
                 value: varValue,
-                units: varUnits
+                units: varUnits,
+                description: varDescription
               };
             });
           }
@@ -157,3 +201,42 @@
     }
   });
 </script>
+<style scoped>
+
+.pad-filename {
+  margin-top: 0.2rem;
+}
+
+.close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.inspect-content {
+  align-self: center;
+  align-items: center;
+}
+
+.scrollable-list {
+  overflow-y: auto;
+  max-height: 800px;
+  max-width: 1600px;
+}
+.item-container {
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.key-value-pair {
+  margin-bottom: 5px;
+}
+
+.key {
+  font-weight: bold;
+  margin-right: 5px;
+}
+</style>

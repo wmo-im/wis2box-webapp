@@ -15,9 +15,9 @@
                     <v-col>
                         <v-row>
                             <v-col cols="5">
-                                <VueDatePicker v-model="selectedDateRangeTemp" timezone="UTC" range multi-calendars auto-apply required
-                                    :teleport="true" placeholder="Datetime range" format="yyyy/MM/dd HH:mm" />
-                                <p class="hint-text">Choose the UTC datetime range for the notifications (default: previous 24
+                                <VueDatePicker v-model="selectedDateRangeTemp" range multi-calendars time-picker-inline
+                                    required :teleport="true" placeholder="Datetime range" format="yyyy/MM/dd HH:mm" />
+                                <p class="hint-text hint-default">Choose the datetime range for the notifications (default: previous 24
                                     hours)</p>
                             </v-col>
 
@@ -132,7 +132,8 @@ export default defineComponent({
             // Display dashboard
             showDashboard.value = true;
             // Log
-            console.log('Sent end time:', selectedEndDate.value)
+            console.log('Sent start time:', selectedStartDate.value.toISOString())
+            console.log('Sent end time:', selectedEndDate.value.toISOString())
         }
 
         return {
@@ -156,16 +157,6 @@ export default defineComponent({
 </script>
   
 <style scoped>
-.max-dashboard-width {
-    max-width: 1500px;
-}
-
-.hint-text {
-    font-size: 0.75rem;
-    margin-top: 0.25rem;
-    padding-left: 1rem;
-    color: #888;
-}
 
 .update-button {
     margin-left: -3px;

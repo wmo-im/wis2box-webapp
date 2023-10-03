@@ -34,11 +34,22 @@
                 </v-col>
             </v-row>
 
+            <!-- Below the rest -->
+            <!-- Searchable list of published data with timestamps,
+            download and inspect buttons -->
             <v-row>
                 <v-col cols="12">
                     <v-fade-transition appear>
-                        <!-- Files published, ready to download and inspect -->
                         <PublishedData :messages="messages"></PublishedData>
+                    </v-fade-transition>
+                </v-col>
+            </v-row>
+
+            <!-- Map view of the publications per station -->
+            <v-row>
+                <v-col cols="12">
+                    <v-fade-transition appear>
+                        <StationMap :messages="messages" id="station-map"></StationMap>
                     </v-fade-transition>
                 </v-col>
             </v-row>
@@ -52,6 +63,7 @@ import BarChart from './BarChart.vue';
 import SummaryStats from './SummaryStats.vue';
 import StationStats from './StationStats.vue';
 import PublishedData from './PublishedData.vue';
+import StationMap from './StationMap.vue';
 
 export default defineComponent({
     name: 'NotificationDashboard',
@@ -81,7 +93,8 @@ export default defineComponent({
         BarChart,
         SummaryStats,
         StationStats,
-        PublishedData
+        PublishedData,
+        StationMap
     },
     setup(props) {
 
@@ -92,13 +105,61 @@ export default defineComponent({
             {
                 "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d", "geometry": {
                     "type": "Point",
-                    "coordinates": [46.223432, 6.146197]
+                    "coordinates": [6.146197, 46.223432, 1]
                 },
                 "properties": {
                     "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
                     "datetime": "2022-03-31T00:00:00Z",
                     "pubtime": "2023-09-22T08:55:20Z",
                     "wigos_station_identifier": "0-20000-0-15020",
+                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                },
+                "links": [
+                    {
+                        "rel": "canonical",
+                        "type": "application/x-bufr",
+                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+                    },
+                    {
+                        "rel": "via",
+                        "type": "text/html",
+                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+                    }]
+            },
+            {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d", "geometry": {
+                    "type": "Point",
+                    "coordinates": [6.146197, 46.223432, 1]
+                },
+                "properties": {
+                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+                    "datetime": "2022-03-31T00:00:00Z",
+                    "pubtime": "2023-09-22T08:55:20Z",
+                    "wigos_station_identifier": "0-20000-0-15020",
+                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                },
+                "links": [
+                    {
+                        "rel": "canonical",
+                        "type": "application/x-bufr",
+                        "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
+                    },
+                    {
+                        "rel": "via",
+                        "type": "text/html",
+                        "href": "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/0-20000-0-15015"
+                    }]
+            },
+            {
+                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d", "geometry": {
+                    "type": "Point",
+                    "coordinates": [6.146197, 46.423432, 1]
+                },
+                "properties": {
+                    "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000",
+                    "datetime": "2022-03-31T00:00:00Z",
+                    "pubtime": "2023-09-22T08:55:20Z",
+                    "wigos_station_identifier": "0-20000-0-15030",
                     "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
                 },
                 "links": [
@@ -120,7 +181,7 @@ export default defineComponent({
                 "id": "af14d8c4-5f63-45af-8171-7730ec9932ba",
                 "geometry": {
                     "type": "Point",
-                    "coordinates": [46.223432, 6.146197]
+                    "coordinates": [6.146197, 46.223432]
                 },
                 "properties": {
                     "data_id": "wis2/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15015_20220331T000000",
@@ -162,6 +223,7 @@ export default defineComponent({
         // Method to get the messages from the features array
         const getMessagesFromFeatures = (features) => {
             const selectedFields = features.map(item => ({
+                id: item.id,
                 pubtime: new Date(item.properties.pubtime),
                 canonical_url: getCanonicalUrl(item.links),
                 wsi: item.properties.wigos_station_identifier,
