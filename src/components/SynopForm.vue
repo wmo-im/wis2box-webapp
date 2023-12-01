@@ -453,12 +453,13 @@ export default defineComponent({
 
     // Watches
     watch(date, (newVal) => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      // Get today's date in UTC
+      const todayUTC = new Date().toISOString();
 
       if (newVal) {
         const selectedDate = new Date(newVal.year, newVal.month);
-        datePossible.value = (selectedDate.getTime() <= today.getTime());
+        // Ensure the selected date is not in the future
+        datePossible.value = (selectedDate.getTime() <= Date.parse(todayUTC));
       } else {
         datePossible.value = null;
       }
