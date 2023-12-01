@@ -210,8 +210,8 @@ export default defineComponent({
 
     // Current month/year to compare against user selection
     const date = ref({
-      month: new Date().getMonth(),
-      year: new Date().getFullYear()
+      month: new Date().getUTCMonth(),
+      year: new Date().getUTCFullYear()
     });
     // Verifies entered date is not in the future
     const datePossible = ref(null);
@@ -453,13 +453,12 @@ export default defineComponent({
 
     // Watches
     watch(date, (newVal) => {
-      // Get today's date in UTC
-      const todayUTC = new Date().toISOString();
-
       if (newVal) {
-        const selectedDate = new Date(newVal.year, newVal.month);
-        // Ensure the selected date is not in the future
-        datePossible.value = (selectedDate.getTime() <= Date.parse(todayUTC));
+        // newVal-month and newVal-year are in UTC, construct a new Date object
+        // with the same month and year but in local time
+        const dateInLocalTime = new Date(Date.UTC(newVal.year, newVal.month));
+        // Check if the date is not in the future
+        datePossible.value = dateInLocalTime <= new Date();
       } else {
         datePossible.value = null;
       }
