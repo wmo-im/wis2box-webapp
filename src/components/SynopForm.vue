@@ -10,12 +10,10 @@
               <!-- Date selection -->
               <v-card-item class="calendar-box">
                 <VueDatePicker v-model="date" :teleport="true" :state="datePossible" month-picker auto-apply required />
-                <p v-if="datePossible === false" class="hint-text hint-invalid">Date in the future: please choose a valid
-                  month
-                  and year
+                <p v-if="datePossible === false" class="hint-text hint-invalid">Date in the future: please choose a valid month and year in UTC
                 </p>
-                <p v-else-if="datePossible === true" class="hint-text hint-valid">Date valid</p>
-                <p v-else class="hint-text hint-default">Month and year of the data</p>
+                <p v-else-if="datePossible === true" class="hint-text hint-valid">Date in UTC valid</p>
+                <p v-else class="hint-text hint-default">Month and year in UTC</p>
               </v-card-item>
 
               <!-- FM 12 data entry -->
@@ -210,8 +208,8 @@ export default defineComponent({
 
     // Current month/year to compare against user selection
     const date = ref({
-      month: new Date().getMonth(),
-      year: new Date().getFullYear()
+      month: new Date().getUTCMonth(),
+      year: new Date().getUTCFullYear()
     });
     // Verifies entered date is not in the future
     const datePossible = ref(null);
@@ -453,12 +451,12 @@ export default defineComponent({
 
     // Watches
     watch(date, (newVal) => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
       if (newVal) {
-        const selectedDate = new Date(newVal.year, newVal.month);
-        datePossible.value = (selectedDate.getTime() <= today.getTime());
+        // newVal-month and newVal-year are in UTC, construct a new Date object
+        // with the same month and year but in local time
+        const dateInLocalTime = new Date(Date.UTC(newVal.year, newVal.month));
+        // Check if the date is not in the future
+        datePossible.value = dateInLocalTime <= new Date();
       } else {
         datePossible.value = null;
       }
