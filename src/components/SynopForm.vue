@@ -10,12 +10,10 @@
               <!-- Date selection -->
               <v-card-item class="calendar-box">
                 <VueDatePicker v-model="date" :teleport="true" :state="datePossible" month-picker auto-apply required />
-                <p v-if="datePossible === false" class="hint-text hint-invalid">Date in the future: please choose a valid
-                  month
-                  and year
+                <p v-if="datePossible === false" class="hint-text hint-invalid">Date in the future: please choose a valid month and year in UTC
                 </p>
-                <p v-else-if="datePossible === true" class="hint-text hint-valid">Date valid</p>
-                <p v-else class="hint-text hint-default">Month and year of the data</p>
+                <p v-else-if="datePossible === true" class="hint-text hint-valid">Date in UTC valid</p>
+                <p v-else class="hint-text hint-default">Month and year in UTC</p>
               </v-card-item>
 
               <!-- FM 12 data entry -->
