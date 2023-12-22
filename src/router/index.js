@@ -29,6 +29,12 @@ const routes = [
         meta: {title: 'wis2box - Monitoring'}
       },
       {
+        path: 'metadata_form',
+        name: 'DiscoveryMetadataForm',
+        component: () => import('@/views/DiscoveryMetadataForm.vue'),
+        meta: {title: 'wis2box - Discovery Metadata Form'}
+      },
+      {
         path: '/import-station',
         name: 'importOSCAR',
         component: () => import('@/views/ImportOSCAR.vue'),
