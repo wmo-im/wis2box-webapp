@@ -37,11 +37,12 @@
 </template>
 
 <script>
-import { ref, watch, onMounted } from 'vue';
+import { defineComponent, ref, watch, onMounted } from 'vue';
 import { LMap, LTileLayer, LControlLayers, LRectangle, LFeatureGroup } from "vue-leaflet";
 import { LatLng, LatLngBounds } from "leaflet";
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
     name: "BboxEditor",
     components: {
         LMap,
@@ -135,7 +136,7 @@ export default {
             loadMapObjects
         };
     }
-}
+});
 </script>
 
 <style>
