@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch, onMounted } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import { LMap, LTileLayer, LControlLayers, LRectangle, LFeatureGroup } from "@vue-leaflet/vue-leaflet";
 import { LatLng, LatLngBounds } from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -123,10 +123,6 @@ export default defineComponent({
             }
         }, { deep: true });
 
-        onMounted(() => {
-            // Any additional logic to run on component mount
-        });
-
         return {
             map,
             features,
@@ -140,5 +136,5 @@ export default defineComponent({
 </script>
 
 <style>
-@import "~leaflet/dist/leaflet.css";
+@import "leaflet/dist/leaflet.css";
 </style>

@@ -54,10 +54,8 @@
 
 <script>
   // imports
-  import {defineComponent, onBeforeMount, onMounted, ref} from "vue";
-  import {VCard, VCardTitle, VCardText, VCardItem, VBtn} from "vuetify/lib/components/index.mjs";
-  import {VDialog, VContainer, VRow, VCol, VTextField} from "vuetify/lib/components/index.mjs";
-  import { VDataTable } from 'vuetify/lib/labs/VDataTable/index.mjs';
+  import {defineComponent, onBeforeMount, ref} from "vue";
+  import {VCard, VCardTitle, VCardText, VCardItem, VBtn, VDialog, VContainer, VRow, VCol, VTextField, VDataTable} from "vuetify/lib/components/index.mjs";
   import LocatorMap from '@/components/LocatorMap.vue';
   // now component to export
   export default defineComponent({

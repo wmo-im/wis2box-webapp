@@ -245,12 +245,9 @@
 </template>
 
 <script>
-    import { defineComponent, ref,onBeforeMount, onMounted, watch, computed} from 'vue';
-    import { VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VChip, VTooltip, VSwitch } from 'vuetify/lib/components/index.mjs';
-    import { VList, VListItem, VListSubheader, VSheet, VContainer, VCardTitle, VIcon, VDialog} from 'vuetify/lib/components/index.mjs';
-    import { VCardSubtitle} from 'vuetify/lib/components/index.mjs';
-    import { VDataTable} from 'vuetify/lib/labs/VDataTable/index.mjs';
-    import { VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem, VStepperActions} from 'vuetify/lib/labs/VStepper/index.mjs';
+    import { defineComponent, ref, onMounted, watch, computed} from 'vue';
+    import { VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VChip, VTooltip, VSwitch, VList, VListItem, VContainer, VCardTitle, VIcon, VDialog, VCardSubtitle, VDataTable } from 'vuetify/lib/components/index.mjs';
+    import { VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem, VStepperActions} from 'vuetify/lib/components/VStepper/index.mjs';
     import InspectBufrButton from '@/components/InspectBufrButton.vue';
     import DownloadButton from '@/components/DownloadButton.vue';
     import TopicHierarchySelector from '@/components/TopicHierarchySelector.vue';

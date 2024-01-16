@@ -3,7 +3,7 @@
         <v-col cols="12" class="max-form-width">
             <v-card>
                 <v-toolbar color="#014e9e" dark flat>
-                    <v-toolbar-title v-html="$t(`datasets.dm`)" />
+                    <v-toolbar-title>Datasets</v-toolbar-title>
 
                     <v-spacer />
 
@@ -18,8 +18,95 @@
                 <v-form v-model="filled" v-if="loaded">
                     <bbox-editor @updated="updateGeometry" @loaded="loadGeometry"
                         :input-feature="form.bounds"></bbox-editor>
-                    <!-- Put schema form here -->
+                    <!-- Schema form here -->
 
+                    <!-- Properties section -->
+                    <v-row>
+                        <v-text-field label="Title" hint="Name of data" type="string" v-model="model.properties.title"
+                            :rules="[rules.required]" clearable></v-text-field>
+
+                        <v-text-field label="Description" hint="Brief description of data" type="string"
+                            v-model="model.properties.description" :rules="[rules.required]" clearable></v-text-field>
+
+                        <v-text-field label="Language" hint="Lower case representation of language in 2-letter code"
+                            type="string" v-model="model.properties.language" :rules="[rules.required, rules.language]"
+                            clearable></v-text-field>
+                    </v-row>
+
+                    <!-- Origin section -->
+                    <v-row>
+                        <v-text-field label="Centre ID" hint="Agency acronym (in lower case), as specified by member"
+                            type="string" v-model="model.origin.centreId" :rules="[rules.required, rules.centreId]"
+                            clearable></v-text-field>
+
+                        <VueDatePicker placeholder="Date Started" v-model="model.origin.dateStarted" :teleport="true"
+                            auto-apply required />
+
+                        <VueDatePicker placeholder="Date Stopped" v-model="model.origin.dateStopped" :teleport="true"
+                            auto-apply required />
+
+                        <v-text-field label="North Latitude" hint="Northmost latitude of data region" type="number"
+                            v-model="model.origin.northLatitude" :rules="[rules.required, rules.latitude]"
+                            clearable></v-text-field>
+
+                        <v-text-field label="East Longitude" hint="Eastmost longitude of data region" type="number"
+                            v-model="model.origin.eastLongitude" :rules="[rules.required, rules.longitude]"
+                            clearable></v-text-field>
+
+                        <v-text-field label="South Latitude" hint="Southmost latitude of data region" type="number"
+                            v-model="model.origin.southLatitude" :rules="[rules.required, rules.latitude]"
+                            clearable></v-text-field>
+
+                        <v-text-field label="West Longitude" hint="Westmost longitude of data region" type="number"
+                            v-model="model.origin.westLongitude" :rules="[rules.required, rules.longitude]"
+                            clearable></v-text-field>
+                    </v-row>
+
+                    <!-- Contact (POC) section -->
+                    <v-row>
+                        <v-text-field label="Individual" hint="Full name" type="string" v-model="model.poc.individual"
+                            clearable></v-text-field>
+
+                        <v-text-field label="Position Name" hint="Position held" type="string"
+                            v-model="model.poc.positionName" clearable></v-text-field>
+
+                        <v-text-field label="Name" hint="Organization name" type="string" v-model="model.poc.name"
+                            :rules="[rules.required]" clearable></v-text-field>
+
+                        <v-text-field label="URL" hint="Organization website" type="string" v-model="model.poc.url"
+                            :rules="[rules.url]" clearable></v-text-field>
+
+                        <v-text-field label="Phone" hint="Full international phone number" type="string"
+                            v-model="model.poc.phone" :rules="[rules.required, rules.phone]" clearable></v-text-field>
+
+                        <v-text-field label="Email" hint="Contact email address" type="string" v-model="model.poc.email"
+                            :rules="[rules.required, rules.email]" clearable></v-text-field>
+
+                        <v-text-field label="Address" hint="Street address" type="string" v-model="model.poc.deliveryPoint"
+                            clearable></v-text-field>
+
+                        <v-text-field label="City" hint="Mailing city" type="string" v-model="model.poc.city"
+                            :rules="[rules.required]" clearable></v-text-field>
+
+                        <v-text-field label="State" hint="Mailing state or region" type="string"
+                            v-model="model.poc.administrativeArea" :rules="[rules.required]" clearable></v-text-field>
+
+                        <v-text-field label="Postal Code" hint="Mailing postal code" type="string"
+                            v-model="model.poc.postalCode" clearable></v-text-field>
+
+                        <v-text-field label="Country" hint="Upper case representation of ISO3166 3-letter code"
+                            type="string" v-model="model.poc.country" :rules="[rules.required, rules.country]"
+                            clearable></v-text-field>
+
+                        <v-text-field label="Hours of Service" hint="Normal weekday contact hours" type="string"
+                            v-model="model.poc.hoursOfService" :rules="[rules.required, rules.hoursOfService]"
+                            clearable></v-text-field>
+
+                        <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
+                            v-model="model.poc.contactInstructions" clearable></v-text-field>
+                    </v-row>
+
+                    <!-- Distributor section -->
                 </v-form>
 
                 <v-toolbar color="#DDD" dark flat v-if="loaded">
@@ -55,10 +142,9 @@
 
 <script>
 import BboxEditor from "@/components/BboxEditor.vue";
-import $RefParser from "@apidevtools/json-schema-ref-parser"
-import mergeAllOf from "json-schema-merge-allof"
 import { clean } from "@/scripts/helpers.js"
-import formSchema from "@/models/DiscoveryMetadataForm.json"
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
 import { defineComponent, ref, onMounted } from 'vue';
 import { VCard, VCardTitle, VCardText, VCardItem, VForm, VTextarea, VBtn, VListGroup } from 'vuetify/lib/components/index.mjs';
@@ -72,7 +158,7 @@ export default defineComponent({
     props: ["topic"],
     components: {
         BboxEditor,
-        VJsf,
+        VueDatePicker,
         VCard,
         VCardTitle,
         VCardText,
@@ -80,8 +166,7 @@ export default defineComponent({
         VTextarea,
         VForm,
         VBtn,
-        VListGroup,
-        BBoxEditor
+        VListGroup
     },
     setup() {
         // Reactive variables
@@ -97,21 +182,6 @@ export default defineComponent({
         const model = ref({});
         const isNew = ref(false);
         const schema = ref({});
-        const options = ref({
-            editMode: "inline",
-            rootDisplay: "stepper",
-            autoFocus: true,
-            tooltipProps: {
-                left: true,
-                openOnHover: true,
-                openOnClick: true
-            },
-            formats: {
-                date: function (e) {
-                    return new Date(e).toISOString().split("T")[0];
-                }
-            }
-        });
         const form = ref({
             bounds: [0],
             initialized: true,
@@ -119,6 +189,23 @@ export default defineComponent({
             manual_ids: true,
             country_codes: []
         });
+
+        // Static variables
+
+        // Validation patterns for form fields
+        const rules = {
+            required: (value) => !!value || "Field is required",
+            language: (value) => /^[a-z]{2}$/.test(value) || "Language must be a 2-letter code",
+            centreId: value => /^[a-z_-]{2,}$/.test(value) || 'Invalid centre ID. Must be lowercase with at least 2 characters.',
+            latitude: value => value >= -90 && value <= 90 || 'Latitude must be between -90 and 90.',
+            longitude: value => value >= -180 && value <= 180 || 'Longitude must be between -180 and 180.',
+            url: value => value === '' || /^https?:\/\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(value) || 'Invalid URL format.',
+            phone: value => value === '' || /^\+[0-9]+[0-9\s\.\(\)-]{10,}$/.test(value) || 'Invalid phone number. Must start with \'+\' and include country code.',
+            email: value => /^[a-z0-9._-]+@[a-z0-9-]+\.[a-z0-9.-]+$/.test(value) || 'Invalid email format.',
+            country: value => /^[A-Z]{3}$/.test(value) || 'Invalid country code. Must be 3 uppercase letters.',
+            hoursOfService: value => /^[0-9]{4}h\s-\s[0-9]{4}h\s[A-Z0-9]{3}$/.test(value) || 'Invalid hours of service. Expected format: 0900h - 1700h UTC',
+
+        };
 
         // Methods
 
@@ -202,20 +289,6 @@ export default defineComponent({
                     message.value = "Error loading discovery metadata file.";
                 }
             }
-
-            // Now dereference and merge the schema
-            $RefParser.dereference(formSchema, (err, schema) => {
-                if (err) {
-                    console.error(err);
-                } else {
-                    schema.properties.poc.properties.country.enum = form.value.country_codes;
-                    schema.properties.distrib.properties.country.enum = form.value.country_codes;
-                    const mergedSchema = mergeAllOf(schema);
-                    const parsedSchema = prepareSchema("root", mergedSchema);
-                    // Assign a shallow copy of parsed schema to the schema reactive variable
-                    schema.value = { ...parsedSchema };
-                }
-            })
 
             // Finally, update the UI
             if (!message.value.includes("Error")) {
@@ -852,8 +925,8 @@ export default defineComponent({
             model,
             isNew,
             schema,
-            options,
             form,
+            rules,
             loadList,
             loadMetadata,
             resetMetadata,

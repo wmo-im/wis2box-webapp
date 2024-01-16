@@ -1,8 +1,8 @@
 <template>
-    <DiscoveryMetadataForm/>
-  </template>
+  <DiscoveryMetadataForm />
+</template>
   
-  <script setup>
-    import DiscoveryMetadataForm from '@/components/DiscoveryMetadataForm.vue'
-  </script>
+<script setup>
+import DiscoveryMetadataForm from '@/components/DiscoveryMetadataForm.vue'
+</script>
   

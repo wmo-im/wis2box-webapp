@@ -45,12 +45,9 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
-import { VCard, VCardTitle, VCardText, VChip, VTextField } from 'vuetify/lib/components/index.mjs';
-import { onBeforeMount, onMounted, onBeforeUpdate, onUpdated, onBeforeUnmount, onUnmounted, onErrorCaptured} from 'vue';
-import { ref, computed, watchEffect, watch } from 'vue'
-import { VDataTable } from 'vuetify/lib/labs/VDataTable/index.mjs';
-import {useRoute, useRouter} from 'vue-router';
+import { defineComponent, ref, onMounted } from 'vue';
+import { VCard, VCardTitle, VCardText, VTextField, VDataTable } from 'vuetify/lib/components/index.mjs';
+import {useRouter} from 'vue-router';
 import APIStatus from '@/components/APIStatus.vue';
 
 
