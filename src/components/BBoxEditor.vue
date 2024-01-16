@@ -38,9 +38,9 @@
 
 <script>
 import { defineComponent, ref, watch, onMounted } from 'vue';
-import { LMap, LTileLayer, LControlLayers, LRectangle, LFeatureGroup } from "vue-leaflet";
+import { LMap, LTileLayer, LControlLayers, LRectangle, LFeatureGroup } from "@vue-leaflet/vue-leaflet";
 import { LatLng, LatLngBounds } from "leaflet";
-import { defineComponent } from 'vue';
+import "leaflet/dist/leaflet.css";
 
 export default defineComponent({
     name: "BboxEditor",

@@ -18,8 +18,8 @@
                 <v-form v-model="filled" v-if="loaded">
                     <bbox-editor @updated="updateGeometry" @loaded="loadGeometry"
                         :input-feature="form.bounds"></bbox-editor>
-                    <!-- Original VJSF form -->
-                    <!-- <v-jsf v-model="model" :schema="schema" :options="options" @change-child="updateModel" /> -->
+                    <!-- Put schema form here -->
+
                 </v-form>
 
                 <v-toolbar color="#DDD" dark flat v-if="loaded">
@@ -54,11 +54,11 @@
 </template>
 
 <script>
-import BboxEditor from "@/components/leaflet/BboxEditor.vue";
+import BboxEditor from "@/components/BboxEditor.vue";
 import $RefParser from "@apidevtools/json-schema-ref-parser"
 import mergeAllOf from "json-schema-merge-allof"
 import { clean } from "@/scripts/helpers.js"
-import form_schema from "@/models/DiscoveryMetadataForm.json"
+import formSchema from "@/models/DiscoveryMetadataForm.json"
 
 import { defineComponent, ref, onMounted } from 'vue';
 import { VCard, VCardTitle, VCardText, VCardItem, VForm, VTextarea, VBtn, VListGroup } from 'vuetify/lib/components/index.mjs';
@@ -71,6 +71,8 @@ export default defineComponent({
     template: "#discovery-metadata-form",
     props: ["topic"],
     components: {
+        BboxEditor,
+        VJsf,
         VCard,
         VCardTitle,
         VCardText,
@@ -202,7 +204,7 @@ export default defineComponent({
             }
 
             // Now dereference and merge the schema
-            $RefParser.dereference(form_schema, (err, schema) => {
+            $RefParser.dereference(formSchema, (err, schema) => {
                 if (err) {
                     console.error(err);
                 } else {
@@ -210,7 +212,8 @@ export default defineComponent({
                     schema.properties.distrib.properties.country.enum = form.value.country_codes;
                     const mergedSchema = mergeAllOf(schema);
                     const parsedSchema = prepareSchema("root", mergedSchema);
-                    schema.value = Object.assign({}, parsedSchema);
+                    // Assign a shallow copy of parsed schema to the schema reactive variable
+                    schema.value = { ...parsedSchema };
                 }
             })
 
@@ -622,6 +625,59 @@ export default defineComponent({
             return output;
         };
 
+        const modulateContact = (input) => {
+            const output = JSON.parse(JSON.stringify(input));
+
+            output["contactInfo"] = {};
+
+            output.contactInfo["phone"] = {};
+            output.contactInfo.phone = JSON.parse(JSON.stringify({ "office": output.phone }));
+            delete output.phone;
+
+            output.contactInfo["email"] = {};
+            output.contactInfo.email = JSON.parse(JSON.stringify({ "office": output.email }));
+            delete output.email;
+
+            output.contactInfo["address"] = {};
+            output.contactInfo.address = JSON.parse(JSON.stringify({
+                "office": {
+                    "deliveryPoint": output.deliveryPoint,
+                    "city": output.city,
+                    "administrativeArea": output.administrativeArea,
+                    "postalCode": output.postalCode,
+                    "country": output.country
+                }
+            }));
+            delete output.deliveryPoint;
+            delete output.city;
+            delete output.administrativeArea;
+            delete output.postalCode;
+            delete output.country;
+
+            output.contactInfo["hoursOfService"] = JSON.parse(JSON.stringify(output.hoursOfService));
+            delete output.hoursOfService;
+
+            output.contactInfo["contactInstructions"] = JSON.parse(JSON.stringify(output.contactInstructions));
+            delete output.contactInstructions;
+
+            if ((input.url != null) && (input.url != "")) {
+                console.log(input.url);
+                output.contactInfo["url"] = {};
+                output.contactInfo.url = JSON.parse(JSON.stringify({
+                    "rel": "canonical",
+                    "type": "text/html",
+                    "href": input.url
+                }));
+            }
+            else {
+                delete output.url;
+            };
+
+            output["roles"] = [];
+
+            return output;
+        }
+
         const demodulateModel = (input) => {
             const today = new Date();
             const output = {};
@@ -671,17 +727,25 @@ export default defineComponent({
             }
 
             input.properties.providers.forEach(function (provider) {
-                const is_poc = false
-                const is_distrib = false
+                let is_poc = false
+                let is_distrib = false
                 provider.roles.forEach(function (role) {
-                    if (role.name === "pointOfContact") is_poc = true
-                    if (role.name === "pointOfContact") is_distrib = true
+                    if (role.name === "pointOfContact") {
+                        is_poc = true
+                    }
+                    if (role.name === "pointOfContact") {
+                        is_distrib = true
+                    }
                 })
                 if (is_poc) output["poc"] = self.demodulateContact(provider)
                 if (is_distrib) {
                     output["distrib"] = self.demodulateContact(provider)
-                    if (is_poc) output.distrib["duplicateFromContact"] = true
-                    else output.distrib["duplicateFromContact"] = false
+                    if (is_poc) {
+                        output.distrib["duplicateFromContact"] = true
+                    }
+                    else {
+                        output.distrib["duplicateFromContact"] = false
+                    }
                 }
             })
 
@@ -691,7 +755,9 @@ export default defineComponent({
             output.settings["retention"] = input.properties.wis2box.retention.toLowerCase().replace("p", "")
 
             output.settings["wmo:dataPolicy"] = "core"
-            if ("wmo:dataPolicy" in input.properties) output.settings["wmo:dataPolicy"] = input.properties["wmo:dataPolicy"]
+            if ("wmo:dataPolicy" in input.properties) {
+                output.settings["wmo:dataPolicy"] = input.properties["wmo:dataPolicy"]
+            }
 
             output.settings["keywords"] = []
             input.properties.themes.forEach(function (theme) {
@@ -707,16 +773,24 @@ export default defineComponent({
             const output = {};
 
             output["individual"] = null
-            if ("individual" in input) output["individual"] = input.individual
+            if ("individual" in input) {
+                output["individual"] = input.individual
+            }
 
             output["positionName"] = null
-            if ("positionName" in input) output["positionName"] = input.positionName
+            if ("positionName" in input) {
+                output["positionName"] = input.positionName
+            }
 
             output["name"] = null
-            if ("name" in input) output["name"] = input.name
+            if ("name" in input) {
+                output["name"] = input.name
+            }
 
             output["url"] = null
-            if ("url" in input) output["url"] = input.url
+            if ("url" in input) {
+                output["url"] = input.url
+            }
 
             output["phone"] = input.contactInfo.phone.office
             output["email"] = input.contactInfo.email.office
@@ -731,27 +805,39 @@ export default defineComponent({
             return JSON.parse(JSON.stringify(output))
         };
 
+        // Recursively process a node object
         const prepareSchema = (title, node) => {
             if (typeof node !== "object") {
                 return node;
             } else if (node.length) {
-                for (var i = 0; i < node.length; i++) {
-                    prepareSchema.value(`node-${i}`, node[i])
+                for (let i = 0; i < node.length; i++) {
+                    prepareSchema(`node-${i}`, node[i])
                 }
                 return node;
             } else {
                 for (const [key, val] of Object.entries(node)) {
-                    if (title === "properties") prepareSchema.value(key, val)
-                    else prepareSchema.value("", val)
+                    if (title === "properties") {
+                        prepareSchema(key, val)
+                    }
+                    else {
+                        prepareSchema("", val)
+                    }
                 }
             }
 
             if (!title) {
-                return node.title = clean(node.title) | clean(title)
+                node.title = clean(node.title) | clean(title);
+                return node;
             };
 
             return node;
         };
+
+        // Mounted methods
+        onMounted(() => {
+            const tmp = window.location.href.split("/");
+            loadList(tmp[tmp.length - 1]);
+        })
 
         return {
             loaded,
@@ -778,6 +864,7 @@ export default defineComponent({
             updateGeometry,
             updateModel,
             modulateModel,
+            modulateContact,
             demodulateModel,
             demodulateContact,
             prepareSchema
