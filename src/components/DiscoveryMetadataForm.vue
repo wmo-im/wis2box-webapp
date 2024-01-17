@@ -36,7 +36,7 @@
                     <!-- Origin section -->
                     <v-row>
                         <v-text-field label="Centre ID" hint="Agency acronym (in lower case), as specified by member"
-                            type="string" v-model="model.origin.centreId" :rules="[rules.required, rules.centreId]"
+                            type="string" v-model="model.origin.centre_id" :rules="[rules.required, rules.centre_id]"
                             clearable></v-text-field>
 
                         <VueDatePicker placeholder="Date Started" v-model="model.origin.dateStarted" :teleport="true"
@@ -166,7 +166,7 @@
 
                         <v-text-field label="Topic Hierarchy" hint="Unique hierarchy for this data" type="string"
                             v-model="model.settings.topicHierarchy"
-                            rules="[rules.required, rules.topic_hierarchy]"></v-text-field>
+                            rules="[rules.required, rules.topicHierarchy]"></v-text-field>
 
                         <v-text-field label="WMO Data Policy" hint="Priority of data within WMO" type="string"
                             v-model="model.settings.wmoDataPolicy" rules="[rules.required]"></v-text-field>
@@ -279,7 +279,7 @@ export default defineComponent({
         const rules = {
             required: (value) => !!value || "Field is required",
             language: (value) => /^[a-z]{2}$/.test(value) || "Language must be a 2-letter code",
-            centreId: value => /^[a-z_-]{2,}$/.test(value) || 'Invalid centre ID. Must be lowercase with at least 2 characters.',
+            centre_id: value => /^[a-z_-]{2,}$/.test(value) || 'Invalid centre ID. Must be lowercase with at least 2 characters.',
             latitude: value => value >= -90 && value <= 90 || 'Latitude must be between -90 and 90.',
             longitude: value => value >= -180 && value <= 180 || 'Longitude must be between -180 and 180.',
             url: value => value === '' || /^https?:\/\/[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(value) || 'Invalid URL format.',
@@ -333,20 +333,6 @@ export default defineComponent({
             working.value = true;
             message.value = "Working...";
             form.value.modified = false;
-
-            // Fetch country ISO codes for injection
-            try {
-                const response = await fetch("https://api.worldbank.org/v2/country?format=json&per_page=500", { method: "get" });
-                if (!response.ok) {
-                    throw new Error('Network response was not ok')
-                }
-                const responseData = await response.json();
-                responseData[1].forEach((item) => {
-                    form.country_codes.push(item.id);
-                });
-            } catch (error) {
-                console.error(error);
-            }
 
             // Load a blank new discovery metadata file
             if (identifier.value === "Create New...") {
