@@ -25,15 +25,15 @@ Run the following command to build the image:
     docker build -t wis2box-webapp .
 ```
 
-## Test the image
+## Test the wis2box-webapp image as part of the wis2box stack
 
-Test the result with the following command:
+To test the webapp as part of the wis2box stack, run the following commands:
 
 ```bash
     docker-compose -f tests/docker-compose.yml up -d
 ```
 
-This will start the webapp which will be available at http://localhost:8080/wis2box-webapp/
+This will start the webapp which will be available at http://localhost:4173/wis2box-webapp/
 
 ## Development
 

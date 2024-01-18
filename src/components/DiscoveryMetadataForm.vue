@@ -219,7 +219,7 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import { defineComponent, ref, onMounted, watch } from 'vue';
 import { VCard, VCardTitle, VCardText, VCardItem, VForm, VTextarea, VBtn, VListGroup } from 'vuetify/lib/components/index.mjs';
 
-let oapi = window.VUE_APP_OAPI;
+let oapi = import.meta.env.VITE_API_URL;
 let mqtt = window.MQTT_HOST;
 
 export default defineComponent({
@@ -334,6 +334,7 @@ export default defineComponent({
     // Loads the metadata for a specific item or creates a new metadata structure
     // Also fetches additional required data like country ISO codes
     const loadMetadata = async () => {
+        console.log('Loading metadata');
         loaded.value = false;
         working.value = true;
         message.value = "Working...";
@@ -998,9 +999,9 @@ export default defineComponent({
 
     // Mounted methods
     onMounted(() => {
-    const tmp = window.location.href.split("/");
-    loadList(tmp[tmp.length - 1]);
-        })
+        const tmp = window.location.href.split("/");
+        loadList(tmp[tmp.length - 1]);
+    })
 
 // Watch for the distributor checkbox to enable/disable distributor fields
 watch(() => model.value.distrib.duplicateFromContact, (newValue) => {
