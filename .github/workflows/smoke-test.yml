@@ -1,4 +1,4 @@
-name: Smoke test
+name: Smoke test with wis2box stack
 
 on: [ push, pull_request ]
 
@@ -11,20 +11,22 @@ jobs:
       - name: Build Docker image
         run: docker build -t wis2box-webapp .
       - name: Start Docker Compose services
-        run: docker-compose -f tests/docker-compose.yml up -d --build
+        working-directory: tests
+        run: docker-compose -f docker-compose.yml up -d --build
       - name: Wait for service to start
-        run: sleep 45
+        run: sleep 5
       - name: Check status code
         run: |
-          curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/wis2box-webapp
-          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/wis2box-webapp)
+          curl -s -o /dev/null -w "%{http_code}" http://localhost:4173/wis2box-webapp
+          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:4173/wis2box-webapp)
           if [[ $status_code -ne 200 ]]; then
             echo "Request failed with status code:"
             echo ${status_code}
             exit 1
           fi
       - name: failed tests 🚩
+        working-directory: tests
         if: ${{ failure() }}
         run: |
           echo "check docker logs"
-          docker-compose -f tests/docker-compose.yml logs
+          docker-compose -f docker-compose.yml logs
