@@ -81,6 +81,15 @@ services:
     ports:
       - "5883:1883"
 
+  wis2box-auth:
+    container_name: wis2box-api-test-wis2box-auth
+    restart: always
+    image: ghcr.io/wmo-im/wis2box-auth:latest
+    env_file:
+      - test.env
+    volumes:
+      - /tmp:/data/wis2box:rw
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
     environment:
