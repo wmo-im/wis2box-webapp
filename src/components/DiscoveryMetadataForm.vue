@@ -7,7 +7,7 @@
                     <v-toolbar-title>Datasets</v-toolbar-title>
 
                     <v-select class="mt-3 text-xs-right" v-model="identifier" :items="items" dense
-                        @change="loadMetadata" :disabled="specified"></v-select>
+                        @change="loadMetadata(identifer)" :disabled="datasetSpecified"></v-select>
                 </v-toolbar>
 
                 <!-- Until loaded, play a loading animation -->
@@ -219,7 +219,7 @@ import { clean } from "@/scripts/helpers.js"
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
-import { defineComponent, ref, computed, onMounted, watch } from 'vue';
+import { defineComponent, ref, computed, watch } from 'vue';
 import { VCard, VForm, VBtn } from 'vuetify/lib/components/index.mjs';
 
 const oapi = import.meta.env.VITE_API_URL;
@@ -288,7 +288,7 @@ export default defineComponent({
         const metadataValidated = ref(false);
         const formFilled = ref(false);
         // If no datasets can be found and the user must create a new one, disable the dataset selection
-        const specified = ref(false);
+        const datasetSpecified = ref(false);
         // Messages to display to user (this changes overtime)
         const message = ref("Select existing discovery metadata file or create new.");
         // List of datasets to select from, if any
@@ -297,14 +297,14 @@ export default defineComponent({
         const identifier = ref("");
         // Whether or not the metadata is new or existing
         const isNew = ref(false);
-        // Metadata form according to the WCMP2, initialized with default values
-        const model = ref({ ...defaults });
+        // Metadata form according to the WCMP2 schema, initialized with default values
+        const model = ref({ ...defaults});
 
         // Computed variables
 
         // Controls which parts of the page are displayed
         const formFilledAndValidated = computed(() => {
-            return filled.value && metadataValidated.value;
+            return formFilled.value && metadataValidated.value;
         });
         // Whether or not the distributor fields should be enabled, based on whether the user checks the box to duplicate the contact info
         const distributorFieldsEnabled = computed(() => {
@@ -314,22 +314,83 @@ export default defineComponent({
         // Methods - TO DO
 
         // Fetches a list of metadata items from the OAPI and updates the list
-        const loadList = async (id) => {
+        // This will be shown in the v-select component at the top of the page
+        const loadList = async () => {
             try {
                 // Get list of metadata items from wis2box
                 const response = await fetch(`${oapi}/collections/discovery-metadata/items`)
                 if (!response.ok) {
                     throw new Error('Network response was not okay, failed to load discovery metadata list.');
                 }
-                // Finish code
+                const responseData = await response.json();
+
+                // Update the list of items
+                items.value = responseData.features.map(item => item.properties.identifier);
+                // Also add an option to the v-select for the user to create a new dataset
+                items.value.push('Create New...');
+                // At this point, the user has not specified a dataset
+                datasetSpecified.value = false;
             } catch (error) {
                 console.error(error);
+                // If the list cannot be loaded, the only option is to create a new dataset
                 items.value = ['Create New...'];
+                // Display error message to the user
                 message.value = 'Error loading discovery metadata list.';
             }
         };
 
-        // Mounted - TO DO
+        // When the user specifies a dataset identifer, load the corresponding metadata
+        const loadMetadata = async (identifier) => {
+            // Page values
+            working.value = true;
+            metadataLoaded.value = false;
+            message.value = 'Loading discovery metadata...';
+
+            // If the user selects 'Create New...', populate the form with default values
+            if (identifier.value === "Create New...") {
+                isNew.value = true;
+                metadataValidated.value = false;
+            }
+            // Otherwise, populate the form with the loaded values
+            else {
+                isNew.value = false;
+                metadataValidated.value = true;
+
+                try {
+                    const response = await fetch(`${oapi}/collections/discovery-metadata/items/${identifier.value}`);
+                    if (!response.ok) {
+                        throw new Error('Network response was not okay, failed to load selected discovery metadata.');
+                    }
+                    const responseData = await response.json();
+                    // The response data will have a different format to that of the form, so the data must be transformed
+                    const formValues = transformToForm(responseData);
+                    // Update the form (model) with the loaded values
+                    model.value = formValues;
+                } catch (error) {
+                    console.log(error);
+                    message.value = "Error loading selected discovery metadata file.";
+                }
+            }
+
+            // Now update the UI
+
+            // If no error, display the form and present a success message
+            if (!message.value.includes("Error")) {
+                metadataLoaded.value = true;
+                message.value = "Discovery metadata loaded successfully.";
+            }
+            working.value = false;
+        }
+
+        // Resets the metadata form to the default state
+        const resetMetadata = () => {
+            model.value = defaults;
+            metadataValidated.value = false;
+            formFilled.value = false;
+            message.value = "Discovery metadata reset successfully.";
+            // Reload the map
+            loadGeometry();
+        }
 
         // Watched
 
@@ -340,7 +401,7 @@ export default defineComponent({
                 Object.keys(model.value.poc).forEach(key => {
                     model.value.distrib[key] = model.value.poc[key];
                 });
-            };
+            }
         });
 
         return {
@@ -351,7 +412,7 @@ export default defineComponent({
             metadataLoaded,
             metadataValidated,
             formFilled,
-            specified,
+            datasetSpecified,
             message,
             items,
             identifier,
@@ -359,7 +420,9 @@ export default defineComponent({
             model,
             formFilledAndValidated,
             distributorFieldsEnabled,
-            loadList
+            loadList,
+            loadMetadata,
+            resetMetadata,
         }
     }
 });

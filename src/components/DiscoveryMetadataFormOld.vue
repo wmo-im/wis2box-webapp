@@ -357,7 +357,7 @@ export default defineComponent({
                         identifier: 'urn:x-wmo:md:',
                         retention: '30d'
                     }
-                };;
+                };
                 form.value.bounds = [0];
                 form.value.initialized = false;
                 form.value.manual_ids = false;
