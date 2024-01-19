@@ -193,7 +193,8 @@
                     </v-btn>
 
                     <v-btn color="#FFA500" class="ma-2" title="Export" @click="downloadMetadata"
-                        :disabled="!formFilledAndValidated" v-if="metadataValidated" append-icon="mdi-arrow-down-bold-box-outline">
+                        :disabled="!formFilledAndValidated" v-if="metadataValidated"
+                        append-icon="mdi-arrow-down-bold-box-outline">
                         Export
                     </v-btn>
 
@@ -280,7 +281,7 @@ export default defineComponent({
         };
 
         // Reactive variables
-        
+
         // Controls loading animation
         const working = ref(false);
         // Controls which parts of the page are displayed
@@ -298,7 +299,7 @@ export default defineComponent({
         // Whether or not the metadata is new or existing
         const isNew = ref(false);
         // Metadata form according to the WCMP2 schema, initialized with default values
-        const model = ref({ ...defaults});
+        const model = ref({ ...defaults });
 
         // Computed variables
 
@@ -339,7 +340,7 @@ export default defineComponent({
             }
         };
 
-        // When the user specifies a dataset identifer, load the corresponding metadata
+        // When the user specifies a dataset identifier, load the corresponding metadata
         const loadMetadata = async (identifier) => {
             // Page values
             working.value = true;
@@ -363,9 +364,9 @@ export default defineComponent({
                     }
                     const responseData = await response.json();
                     // The response data will have a different format to that of the form, so the data must be transformed
-                    const formValues = transformToForm(responseData);
+                    const formModel = transformToForm(responseData);
                     // Update the form (model) with the loaded values
-                    model.value = formValues;
+                    model.value = formModel;
                 } catch (error) {
                     console.log(error);
                     message.value = "Error loading selected discovery metadata file.";
@@ -394,13 +395,66 @@ export default defineComponent({
 
         // Validate the current metadata, such as checking the topic hierarchy and WCMP2 schema
         const validateMetadata = async () => {
-            // Push the form data transformed to 
+            // Push the form data transformed to the API format
+            try {
+                const apiModel = transformToAPI(model.value);
+                const response = await fetch(`${oapi}/processes/pywcmp-wis2-wcmp2-ets/execution`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "inputs": {
+                            "record": apiModel
+                        }
+                    })
+                })
+
+                if (!response.ok) {
+                    throw new Error('Network response was not okay, failed to validate discovery metadata.');
+                }
+
+                const responseData = await response.json();
+
+                // If there is a code in the response, then the validation failed
+                if ("code" in responseData) {
+                    // Display the error message to the user
+                    message.value = `Discovery metadata not valid: ${responseData.message}`;
+                    metadataValidated.value = false;
+                }
+                else {
+                    // Otherwise, the validation succeeded
+                    message.value = "Discovery metadata validated successfully.";
+                    metadataValidated.value = true;
+                }
+            } catch (error) {
+                console.error(error);
+                message.value = "Error validating discovery metadata.";
+                metadataValidated.value = false;
+            }
+        };
+
+        // Generates a downloadable JSON file from the filled and validated form, which follows the openAPI WCMP2 schema
+        const downloadMetadata = () => {
+            // Transform the model to the API version
+            const apiModel = transformToAPI(model.value);
+            // Encode as a JSON
+            const content = encodeURI(JSON.stringify(apiModel, null, 4))
+            const element = document.createElement("a")
+            // Download the file
+            element.href = "data:attachment/text," + content
+            element.target = "_blank"
+            element.download = "discovery-metadata.json"
+            element.click()
         }
+
+        // Submits the metadata to the wis2box OAPI endpoint
+
 
         // Watched
 
-         // Watch for the distributor checkbox to duplicate the contact info
-         watch(() => model.value.distrib.duplicateFromContact, (newValue) => {
+        // Watch for the distributor checkbox to duplicate the contact info
+        watch(() => model.value.distrib.duplicateFromContact, (newValue) => {
             if (newValue) {
                 // Copy the POC fields to the distributor fields
                 Object.keys(model.value.poc).forEach(key => {
@@ -429,6 +483,7 @@ export default defineComponent({
             loadMetadata,
             resetMetadata,
             validateMetadata,
+            downloadMetadata
         }
     }
 });
