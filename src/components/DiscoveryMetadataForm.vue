@@ -188,12 +188,12 @@
                     <v-spacer />
 
                     <v-btn color="#009900" class="ma-2" title="Validate" @click="validateMetadata" :disabled="!filled"
-                        v-if="!validated" append-icon="mdi-check-bold">
+                        v-if="!metadataValidated" append-icon="mdi-check-bold">
                         Validate
                     </v-btn>
 
                     <v-btn color="#FFA500" class="ma-2" title="Export" @click="downloadMetadata"
-                        :disabled="!formFilledAndValidated" v-if="validated" append-icon="mdi-arrow-down-bold-box-outline">
+                        :disabled="!formFilledAndValidated" v-if="metadataValidated" append-icon="mdi-arrow-down-bold-box-outline">
                         Export
                     </v-btn>
 
@@ -380,7 +380,7 @@ export default defineComponent({
                 message.value = "Discovery metadata loaded successfully.";
             }
             working.value = false;
-        }
+        };
 
         // Resets the metadata form to the default state
         const resetMetadata = () => {
@@ -390,6 +390,11 @@ export default defineComponent({
             message.value = "Discovery metadata reset successfully.";
             // Reload the map
             loadGeometry();
+        };
+
+        // Validate the current metadata, such as checking the topic hierarchy and WCMP2 schema
+        const validateMetadata = async () => {
+            // Push the form data transformed to 
         }
 
         // Watched
@@ -423,6 +428,7 @@ export default defineComponent({
             loadList,
             loadMetadata,
             resetMetadata,
+            validateMetadata,
         }
     }
 });
