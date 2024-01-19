@@ -222,8 +222,8 @@ import '@vuepic/vue-datepicker/dist/main.css';
 import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { VCard, VForm, VBtn } from 'vuetify/lib/components/index.mjs';
 
-let oapi = window.VUE_APP_OAPI;
-let mqtt = window.MQTT_HOST;
+const oapi = import.meta.env.VITE_API_URL;
+// const mqtt = window.MQTT_HOST;
 
 export default defineComponent({
     name: "DiscoveryMetadataForm",
@@ -260,7 +260,7 @@ export default defineComponent({
         };
 
         // WCMP2 schema version
-        schemaVersion = schema.version;
+        const schemaVersion = schema.version;
 
         // Validation patterns for form fields
         const rules = {
@@ -313,6 +313,22 @@ export default defineComponent({
 
         // Methods - TO DO
 
+        // Fetches a list of metadata items from the OAPI and updates the list
+        const loadList = async (id) => {
+            try {
+                // Get list of metadata items from wis2box
+                const response = await fetch(`${oapi}/collections/discovery-metadata/items`)
+                if (!response.ok) {
+                    throw new Error('Network response was not okay, failed to load discovery metadata list.');
+                }
+                // Finish code
+            } catch (error) {
+                console.error(error);
+                items.value = ['Create New...'];
+                message.value = 'Error loading discovery metadata list.';
+            }
+        };
+
         // Mounted - TO DO
 
         // Watched
@@ -329,6 +345,7 @@ export default defineComponent({
 
         return {
             defaults,
+            schemaVersion,
             rules,
             working,
             metadataLoaded,
@@ -342,22 +359,9 @@ export default defineComponent({
             model,
             formFilledAndValidated,
             distributorFieldsEnabled,
-            loadList,
-            loadMetadata,
-            resetMetadata,
-            validateMetadata,
-            downloadMetadata,
-            submitMetadata,
-            loadGeometry,
-            updateGeometry,
-            updateModel,
-            modulateModel,
-            modulateContact,
-            demodulateModel,
-            demodulateContact,
-            prepareSchema
+            loadList
         }
-    };
+    }
 });
 
 </script>

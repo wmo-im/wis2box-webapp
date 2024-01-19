@@ -253,7 +253,7 @@ export default defineComponent({
 
     // Computes the result title re: success, partial success, or failure
     const resultTitle = computed(() => {
-      if (result.value && result.value.result) {
+      if (result.value?.result) {
         const resultKey = result.value.result;
         return "Result: " + resultKey;
       }
@@ -370,7 +370,7 @@ export default defineComponent({
 
     // Pushing the user input to the synop2bufr process
     const callSynop2Bufr = async () => {
-      var payload = {
+      let payload = {
         inputs: {
           data: bulletin.value, // Raw FM 12 data
           year: date.value.year, // Year of data
@@ -380,7 +380,7 @@ export default defineComponent({
           notify: notificationsOn.value // Boolean for WIS2 notifications
         }
       };
-      var headers = {
+      let headers = {
         'encode': 'json',
         'Content-Type': 'application/geo+json',
         'authorization': 'Bearer ' + token.value
