@@ -1,193 +1,296 @@
 <template>
     <v-row class="justify-center">
-        <v-col cols="12" class="max-form-width">
+        <v-col cols="12" class="max-dashboard-width">
+            <v-card-title class="big-title">Metadata Editor Form</v-card-title>
             <v-card>
                 <!-- Toolbar for user to select a dataset -->
-                <v-toolbar>
-                    <v-toolbar-title>Datasets</v-toolbar-title>
-
-                    <v-select class="mt-3 text-xs-right" v-model="identifier" :items="items" dense
-                        @change="loadMetadata(identifer)" :disabled="datasetSpecified"></v-select>
+                <v-toolbar color="#003DA5">
+                    <v-toolbar-title>Please choose a dataset</v-toolbar-title>
+                    <v-select class="mt-6" label="Dataset" v-model="identifier" :items="items"
+                        @update:modelValue="loadMetadata" :disabled="datasetSpecified"></v-select>
                 </v-toolbar>
 
                 <!-- Until loaded, play a loading animation -->
                 <v-progress-linear indeterminate color="primary" :active="working" />
+            </v-card>
 
+            <v-card class="mt-3 pa-3">
                 <!-- Form which provides a 'filled' boolean for other parts of the page -->
-                <v-form v-model="filled" v-if="metadataLoaded">
-                    <bbox-editor @updated="updateGeometry" @loaded="loadGeometry"
-                        :input-feature="form.bounds"></bbox-editor>
+                <v-form v-model="formFilled" v-if="metadataLoaded">
+                    <!-- <bbox-editor @updated="updateGeometry" @loaded="loadGeometry"
+                        :input-feature="form.bounds"></bbox-editor> -->
                     <!-- Schema form here -->
 
                     <!-- Properties section -->
-                    <v-row>
-                        <v-text-field label="Title" hint="Name of data" type="string" v-model="model.properties.title"
-                            :rules="[rules.required]" clearable></v-text-field>
+                    <v-card-title>Dataset Properties</v-card-title>
+                    <v-row dense>
+                        <v-col cols="4">
+                            <v-text-field label="Title" hint="Name of data" type="string" v-model="model.properties.title"
+                                :rules="[rules.required]" clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Description" hint="Brief description of data" type="string"
-                            v-model="model.properties.description" :rules="[rules.required]" clearable></v-text-field>
+                        <v-col cols="4">
+                            <v-text-field label="Description" hint="Brief description of data" type="string"
+                                v-model="model.properties.description" :rules="[rules.required]" clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Language" hint="Lower case representation of language in 2-letter code"
-                            type="string" v-model="model.properties.language" :rules="[rules.required, rules.language]"
-                            clearable></v-text-field>
+                        <v-col cols="4">
+                            <v-text-field label="Language" hint="Lower case representation of language in 2-letter code"
+                                type="string" v-model="model.properties.language" :rules="[rules.required, rules.language]"
+                                clearable></v-text-field>
+                        </v-col>
                     </v-row>
 
                     <!-- Origin section -->
-                    <v-row>
-                        <v-text-field label="Centre ID" hint="Agency acronym (in lower case), as specified by member"
-                            type="string" v-model="model.origin.centre_id" :rules="[rules.required, rules.centre_id]"
-                            clearable></v-text-field>
+                    <v-card-title>Dataset Origin</v-card-title>
+                    <v-row dense>
+                        <v-col cols="4">
+                            <v-text-field label="Centre ID" hint="Agency acronym (in lower case), as specified by member"
+                                type="string" v-model="model.origin.centre_id" :rules="[rules.required, rules.centre_id]"
+                                clearable></v-text-field>
+                        </v-col>
 
-                        <VueDatePicker placeholder="Date Started" v-model="model.origin.dateStarted" :teleport="true"
-                            auto-apply required />
+                        <v-col cols="4">
+                            <VueDatePicker placeholder="Date Started" v-model="model.origin.dateStarted" :teleport="true"
+                                auto-apply required />
+                        </v-col>
 
-                        <VueDatePicker placeholder="Date Stopped" v-model="model.origin.dateStopped" :teleport="true"
-                            auto-apply required />
+                        <v-col cols="4">
+                            <VueDatePicker placeholder="Date Stopped" v-model="model.origin.dateStopped" :teleport="true"
+                                auto-apply required />
+                        </v-col>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="3">
+                            <v-text-field label="North Latitude" hint="Northmost latitude of data region" type="number"
+                                v-model="model.origin.northLatitude" :rules="[rules.required, rules.latitude]"
+                                clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="North Latitude" hint="Northmost latitude of data region" type="number"
-                            v-model="model.origin.northLatitude" :rules="[rules.required, rules.latitude]"
-                            clearable></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="East Longitude" hint="Eastmost longitude of data region" type="number"
+                                v-model="model.origin.eastLongitude" :rules="[rules.required, rules.longitude]"
+                                clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="East Longitude" hint="Eastmost longitude of data region" type="number"
-                            v-model="model.origin.eastLongitude" :rules="[rules.required, rules.longitude]"
-                            clearable></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="South Latitude" hint="Southmost latitude of data region" type="number"
+                                v-model="model.origin.southLatitude" :rules="[rules.required, rules.latitude]"
+                                clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="South Latitude" hint="Southmost latitude of data region" type="number"
-                            v-model="model.origin.southLatitude" :rules="[rules.required, rules.latitude]"
-                            clearable></v-text-field>
-
-                        <v-text-field label="West Longitude" hint="Westmost longitude of data region" type="number"
-                            v-model="model.origin.westLongitude" :rules="[rules.required, rules.longitude]"
-                            clearable></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="West Longitude" hint="Westmost longitude of data region" type="number"
+                                v-model="model.origin.westLongitude" :rules="[rules.required, rules.longitude]"
+                                clearable></v-text-field>
+                        </v-col>
                     </v-row>
 
                     <!-- Contact (POC) section -->
-                    <v-row>
-                        <v-text-field label="Individual" hint="Full name" type="string" v-model="model.poc.individual"
-                            clearable></v-text-field>
+                    <v-card-title>Point of Contact Information</v-card-title>
+                    <v-row dense>
+                        <v-col cols="3">
+                            <v-text-field label="Individual" hint="Full name" type="string" v-model="model.poc.individual"
+                                clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Position Name" hint="Position held" type="string"
-                            v-model="model.poc.positionName" clearable></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="Position Name" hint="Position held" type="string"
+                                v-model="model.poc.positionName" clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Name" hint="Organization name" type="string" v-model="model.poc.name"
-                            :rules="[rules.required]" clearable></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="Name" hint="Organization name" type="string" v-model="model.poc.name"
+                                :rules="[rules.required]" clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="URL" hint="Organization website" type="string" v-model="model.poc.url"
-                            :rules="[rules.url]" clearable></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="URL" hint="Organization website" type="string" v-model="model.poc.url"
+                                :rules="[rules.url]" clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Phone" hint="Full international phone number" type="string"
-                            v-model="model.poc.phone" :rules="[rules.required, rules.phone]" clearable></v-text-field>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="6">
+                            <v-text-field label="Phone" hint="Full international phone number" type="string"
+                                v-model="model.poc.phone" :rules="[rules.required, rules.phone]" clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Email" hint="Contact email address" type="string" v-model="model.poc.email"
-                            :rules="[rules.required, rules.email]" clearable></v-text-field>
+                        <v-col cols="6">
+                            <v-text-field label="Email" hint="Contact email address" type="string" v-model="model.poc.email"
+                                :rules="[rules.required, rules.email]" clearable></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="6">
+                            <v-text-field label="Address" hint="Street address" type="string"
+                                v-model="model.poc.deliveryPoint" clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Address" hint="Street address" type="string" v-model="model.poc.deliveryPoint"
-                            clearable></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="City" hint="Mailing city" type="string" v-model="model.poc.city"
+                                :rules="[rules.required]" clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="City" hint="Mailing city" type="string" v-model="model.poc.city"
-                            :rules="[rules.required]" clearable></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="State" hint="Mailing state or region" type="string"
+                                v-model="model.poc.administrativeArea" :rules="[rules.required]" clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="State" hint="Mailing state or region" type="string"
-                            v-model="model.poc.administrativeArea" :rules="[rules.required]" clearable></v-text-field>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="3">
+                            <v-text-field label="Postal Code" hint="Mailing postal code" type="string"
+                                v-model="model.poc.postalCode" clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Postal Code" hint="Mailing postal code" type="string"
-                            v-model="model.poc.postalCode" clearable></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="Country" hint="Upper case representation of ISO3166 3-letter code"
+                                type="string" v-model="model.poc.country" :rules="[rules.required, rules.country]"
+                                clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Country" hint="Upper case representation of ISO3166 3-letter code"
-                            type="string" v-model="model.poc.country" :rules="[rules.required, rules.country]"
-                            clearable></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="Hours of Service" hint="Normal weekday contact hours" type="string"
+                                v-model="model.poc.hoursOfService" :rules="[rules.required, rules.hoursOfService]"
+                                clearable></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Hours of Service" hint="Normal weekday contact hours" type="string"
-                            v-model="model.poc.hoursOfService" :rules="[rules.required, rules.hoursOfService]"
-                            clearable></v-text-field>
-
-                        <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
-                            v-model="model.poc.contactInstructions" clearable></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
+                                v-model="model.poc.contactInstructions" clearable></v-text-field>
+                        </v-col>
                     </v-row>
 
                     <!-- Distributor section -->
-                    <v-row>
-                        <v-checkbox label="Same As Contact Info?" v-model="model.distrib.duplicateFromContact"></v-checkbox>
+                    <v-row dense>
+                        <v-card-title>Distributor Information</v-card-title>
+                        <v-switch label="Same As Contact Info?" v-model="model.distrib.duplicateFromContact"
+                            color="#003DA5"></v-switch>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="3">
+                            <v-text-field label="Individual" hint="Full name" type="string"
+                                v-model="model.distrib.individual" clearable
+                                :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Individual" hint="Full name" type="string" v-model="model.distrib.individual"
-                            clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="Position Name" hint="Position held" type="string"
+                                v-model="model.distrib.positionName" clearable
+                                :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Position Name" hint="Position held" type="string"
-                            v-model="model.distrib.positionName" clearable
-                            :disabled="!distributorFieldsEnabled"></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="Name" hint="Organization name" type="string" v-model="model.distrib.name"
+                                :rules="[rules.required]" clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Name" hint="Organization name" type="string" v-model="model.distrib.name"
-                            :rules="[rules.required]" clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="URL" hint="Organization website" type="string" v-model="model.distrib.url"
+                                :rules="[rules.url]" clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="6">
+                            <v-text-field label="Phone" hint="Full international phone number" type="string"
+                                v-model="model.distrib.phone" :rules="[rules.required, rules.phone]" clearable
+                                :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="URL" hint="Organization website" type="string" v-model="model.distrib.url"
-                            :rules="[rules.url]" clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                        <v-col cols="6">
+                            <v-text-field label="Email" hint="Contact email address" type="string"
+                                v-model="model.distrib.email" :rules="[rules.required, rules.email]" clearable
+                                :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="6">
+                            <v-text-field label="Address" hint="Street address" type="string"
+                                v-model="model.distrib.deliveryPoint" clearable
+                                :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Phone" hint="Full international phone number" type="string"
-                            v-model="model.distrib.phone" :rules="[rules.required, rules.phone]" clearable
-                            :disabled="!distributorFieldsEnabled"></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="City" hint="Mailing city" type="string" v-model="model.distrib.city"
+                                :rules="[rules.required]" clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Email" hint="Contact email address" type="string" v-model="model.distrib.email"
-                            :rules="[rules.required, rules.email]" clearable
-                            :disabled="!distributorFieldsEnabled"></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="State" hint="Mailing state or region" type="string"
+                                v-model="model.distrib.administrativeArea" :rules="[rules.required]" clearable
+                                :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="3">
+                            <v-text-field label="Postal Code" hint="Mailing postal code" type="string"
+                                v-model="model.distrib.postalCode" clearable
+                                :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Address" hint="Street address" type="string"
-                            v-model="model.distrib.deliveryPoint" clearable
-                            :disabled="!distributorFieldsEnabled"></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="Country" hint="Upper case representation of ISO3166 3-letter code"
+                                type="string" v-model="model.distrib.country" :rules="[rules.required, rules.country]"
+                                clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="City" hint="Mailing city" type="string" v-model="model.distrib.city"
-                            :rules="[rules.required]" clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="Hours of Service" hint="Normal weekday contact hours" type="string"
+                                v-model="model.distrib.hoursOfService" :rules="[rules.required, rules.hoursOfService]"
+                                clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="State" hint="Mailing state or region" type="string"
-                            v-model="model.distrib.administrativeArea" :rules="[rules.required]" clearable
-                            :disabled="!distributorFieldsEnabled"></v-text-field>
-
-                        <v-text-field label="Postal Code" hint="Mailing postal code" type="string"
-                            v-model="model.distrib.postalCode" clearable
-                            :disabled="!distributorFieldsEnabled"></v-text-field>
-
-                        <v-text-field label="Country" hint="Upper case representation of ISO3166 3-letter code"
-                            type="string" v-model="model.distrib.country" :rules="[rules.required, rules.country]" clearable
-                            :disabled="!distributorFieldsEnabled"></v-text-field>
-
-                        <v-text-field label="Hours of Service" hint="Normal weekday contact hours" type="string"
-                            v-model="model.distrib.hoursOfService" :rules="[rules.required, rules.hoursOfService]" clearable
-                            :disabled="!distributorFieldsEnabled"></v-text-field>
-
-                        <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
-                            v-model="model.distrib.contactInstructions" clearable
-                            :disabled="!distributorFieldsEnabled"></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
+                                v-model="model.distrib.contactInstructions" clearable
+                                :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
                     </v-row>
 
                     <!-- Settings section -->
-                    <v-row>
-                        <v-text-field label="Identifier" hint="Unique identifier for this data" type="string"
-                            v-model="model.settings.identifier" rules="[rules.required, rules.identifier]"></v-text-field>
+                    <v-card-title>Dataset Settings</v-card-title>
+                    <v-row dense>
+                        <v-col cols="4">
+                            <v-text-field label="Identifier" hint="Unique identifier for this data" type="string"
+                                v-model="model.settings.identifier" rules="[rules.required, rules.identifier]"></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Topic Hierarchy" hint="Unique hierarchy for this data" type="string"
-                            v-model="model.settings.topicHierarchy"
-                            rules="[rules.required, rules.topicHierarchy]"></v-text-field>
+                        <v-col cols="4">
+                            <v-text-field label="Topic Hierarchy" hint="Unique hierarchy for this data" type="string"
+                                v-model="model.settings.topicHierarchy"
+                                rules="[rules.required, rules.topicHierarchy]"></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="WMO Data Policy" hint="Priority of data within WMO" type="string"
-                            v-model="model.settings.wmoDataPolicy" rules="[rules.required]"></v-text-field>
+                        <v-col cols="4">
+                            <v-text-field label="WMO Data Policy" hint="Priority of data within WMO" type="string"
+                                v-model="model.settings.wmoDataPolicy" rules="[rules.required]"></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Retention" hint="Minimum length of time data should be retained in WIS2"
-                            type="string" v-model="model.settings.retention" rules="[rules.required]"></v-text-field>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="3">
+                            <v-text-field label="Retention" hint="Minimum length of time data should be retained in WIS2"
+                                type="string" v-model="model.settings.retention" rules="[rules.required]"></v-text-field>
+                        </v-col>
 
-                        <v-text-field label="Keywords" hint="Search keywords for data" type="array"
-                            v-model="model.settings.keywords" rules="[rules.required, rules.keywords]"></v-text-field>
+                        <v-col cols="9">
+                            <v-text-field label="Keywords" hint="Search keywords for data" type="array"
+                                v-model="model.settings.keywords" rules="[rules.required, rules.keywords]"></v-text-field>
+                        </v-col>
                     </v-row>
                 </v-form>
 
                 <!-- Toolbar for user to reset, validate, export, or submit the metadata
                 from the above form -->
-                <v-toolbar v-if="metadataLoaded">
+                <v-row class="pt-5" v-if="metadataLoaded">
                     <v-btn color="red" class="ma-2" title="Reset" @click="resetMetadata" append-icon="mdi-sync">
                         Reset
                     </v-btn>
 
                     <v-spacer />
 
-                    <v-btn color="#009900" class="ma-2" title="Validate" @click="validateMetadata" :disabled="!filled"
+                    <v-btn color="#009900" class="ma-2" title="Validate" @click="validateMetadata" :disabled="!formFilled"
                         v-if="!metadataValidated" append-icon="mdi-check-bold">
                         Validate
                     </v-btn>
@@ -202,12 +305,12 @@
                         :disabled="!formFilledAndValidated" v-if="metadataValidated" append-icon="mdi-cloud-upload">
                         Submit
                     </v-btn>
-                </v-toolbar>
+                </v-row>
 
                 <!-- If the form can't load, present the error message as to why -->
-                <v-card v-if="!metadataLoaded" class="pa-5">
+                <v-row v-if="!metadataLoaded" class="pa-5">
                     <p class="black--text ma-0">{{ message }}</p>
-                </v-card>
+                </v-row>
             </v-card>
         </v-col>
     </v-row>
@@ -215,16 +318,14 @@
 
 <script>
 import BboxEditor from "@/components/BboxEditor.vue";
-import schema from '@/models/DiscoveryMetadataForm.json';
 import { clean } from "@/scripts/helpers.js"
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
-import { defineComponent, ref, computed, watch } from 'vue';
+import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { VCard, VForm, VBtn } from 'vuetify/lib/components/index.mjs';
 
 const oapi = import.meta.env.VITE_API_URL;
-// const mqtt = window.MQTT_HOST;
 
 export default defineComponent({
     name: "DiscoveryMetadataForm",
@@ -243,6 +344,8 @@ export default defineComponent({
         // Default value of the form, not an exhaustive list of all fields
         // Note: This default will change depending on whether the metadata is new or existing
         let defaults = {
+            properties: {},
+            origin: {},
             poc: {
                 phone: '+',
                 hoursOfService: '0900h - 1700h UTC',
@@ -261,7 +364,7 @@ export default defineComponent({
         };
 
         // WCMP2 schema version
-        const schemaVersion = schema.version;
+        const schemaVersion = "http://wis.wmo.int/spec/wcmp/2.0";
 
         // Validation patterns for form fields
         const rules = {
@@ -291,14 +394,14 @@ export default defineComponent({
         // If no datasets can be found and the user must create a new one, disable the dataset selection
         const datasetSpecified = ref(false);
         // Messages to display to user (this changes overtime)
-        const message = ref("Select existing discovery metadata file or create new.");
+        const message = ref("Select existing discovery metadata file or create a new file.");
         // List of datasets to select from, if any
         const items = ref([]);
         // Identifier of the selected dataset, used to load metadata from OAPI
         const identifier = ref("");
         // Whether or not the metadata is new or existing
         const isNew = ref(false);
-        // Metadata form according to the WCMP2 schema, initialized with default values
+        // Metadata form to be filled, initialized with default values
         const model = ref({ ...defaults });
 
         // Computed variables
@@ -327,8 +430,6 @@ export default defineComponent({
 
                 // Update the list of items
                 items.value = responseData.features.map(item => item.properties.identifier);
-                // Also add an option to the v-select for the user to create a new dataset
-                items.value.push('Create New...');
                 // At this point, the user has not specified a dataset
                 datasetSpecified.value = false;
             } catch (error) {
@@ -341,10 +442,12 @@ export default defineComponent({
         };
 
         // When the user specifies a dataset identifier, load the corresponding metadata
-        const loadMetadata = async (identifier) => {
+        const loadMetadata = async () => {
             // Page values
+            console.log("Loading metadata...")
             working.value = true;
             metadataLoaded.value = false;
+            datasetSpecified.value = true;
             message.value = 'Loading discovery metadata...';
 
             // If the user selects 'Create New...', populate the form with default values
@@ -380,6 +483,7 @@ export default defineComponent({
                 metadataLoaded.value = true;
                 message.value = "Discovery metadata loaded successfully.";
             }
+            // Remove working animation
             working.value = false;
         };
 
@@ -390,14 +494,14 @@ export default defineComponent({
             formFilled.value = false;
             message.value = "Discovery metadata reset successfully.";
             // Reload the map
-            loadGeometry();
+            // loadGeometry();
         };
 
-        // Validate the current metadata, such as checking the topic hierarchy and WCMP2 schema
+        // Validate the metadata generated by the format against the WCMP2 schema
         const validateMetadata = async () => {
-            // Push the form data transformed to the API format
+            // Push the form data transformed to the schema format
             try {
-                const apiModel = transformToAPI(model.value);
+                const schemaModel = transformToSchema(model.value);
                 const response = await fetch(`${oapi}/processes/pywcmp-wis2-wcmp2-ets/execution`, {
                     method: 'POST',
                     headers: {
@@ -405,7 +509,7 @@ export default defineComponent({
                     },
                     body: JSON.stringify({
                         "inputs": {
-                            "record": apiModel
+                            "record": schemaModel
                         }
                     })
                 })
@@ -434,12 +538,12 @@ export default defineComponent({
             }
         };
 
-        // Generates a downloadable JSON file from the filled and validated form, which follows the openAPI WCMP2 schema
+        // Generates a downloadable JSON file from the filled and validated form, which follows the WCMP2 schema
         const downloadMetadata = () => {
-            // Transform the model to the API version
-            const apiModel = transformToAPI(model.value);
+            // Transform the model to the WCMP2 schema formatted version
+            const schemaModel = transformToSchema(model.value);
             // Encode as a JSON
-            const content = encodeURI(JSON.stringify(apiModel, null, 4))
+            const content = encodeURI(JSON.stringify(schemaModel, null, 4))
             const element = document.createElement("a")
             // Download the file
             element.href = "data:attachment/text," + content
@@ -449,7 +553,57 @@ export default defineComponent({
         }
 
         // Submits the metadata to the wis2box OAPI endpoint
+        const submitMetadata = async () => {
+            try {
+                let response;
+                // If metadata is new, post the schema formatted version to the OAPI
+                if (isNew.value) {
+                    const schemaModel = transformToSchema(model.value);
+                    response = await fetch(`${oapi.value}/collections/discovery-metadata/items`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(schemaModel)
+                    })
+                }
+                // If updating existing metadata, put the schema formatted version to the OAPI
+                else {
+                    const schemaModel = transformToSchema(model.value);
+                    response = await fetch(`${oapi.value}/collections/discovery-metadata/items/${identifier.value}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(schemaModel)
+                    })
+                }
+                // Check response from OAPI
+                if (!response.ok) {
+                    throw new Error('Network response was not okay, failed to submit discovery metadata.');
+                }
 
+                // If post/put successful, redirect user to home page
+                if ((isNew.value && response.status === 201) || (!isNew.value && response.status === 204)) {
+                    window.location.href = "/"
+                }
+                // Otherwise, show a message with the description of the response
+                else {
+                    const responseData = await response.json()
+                    message.value = responseData.description;
+                }
+            } catch (error) {
+                console.error(error);
+                // If there is an error, display the appropriate error message to the user
+                message.value = isNew.value ? "Error adding discovery metadata." : "Error updating discovery metadata.";
+            }
+        };
+
+
+        // Mounted
+        onMounted(() => {
+            loadList();
+        });
 
         // Watched
 
@@ -483,7 +637,8 @@ export default defineComponent({
             loadMetadata,
             resetMetadata,
             validateMetadata,
-            downloadMetadata
+            downloadMetadata,
+            submitMetadata,
         }
     }
 });

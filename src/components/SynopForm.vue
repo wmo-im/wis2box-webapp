@@ -53,7 +53,7 @@
                 </v-btn>
                 <!-- Show switch on the right of submit button -->
                 <v-switch :disabled="submitDisabled" v-model="notificationsOnPending" label="Publish on WIS2"
-                  color="primary" hide-details></v-switch>
+                  color="#003DA5" hide-details></v-switch>
               </div>
             </v-card-item>
           </v-card-text>
