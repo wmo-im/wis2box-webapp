@@ -31,7 +31,8 @@
 
                         <v-col cols="4">
                             <v-text-field label="Description" hint="Brief description of data" type="string"
-                                v-model="model.properties.description" :rules="[rules.required]" variant="outlined" clearable></v-text-field>
+                                v-model="model.properties.description" :rules="[rules.required]" variant="outlined"
+                                clearable></v-text-field>
                         </v-col>
 
                         <v-col cols="4">
@@ -57,7 +58,7 @@
 
                         <v-col cols="4">
                             <VueDatePicker placeholder="Date Stopped" v-model="model.origin.dateStopped" :teleport="true"
-                                 class="datepicker" auto-apply required />
+                                class="datepicker" auto-apply required />
                         </v-col>
                     </v-row>
                     <v-row dense>
@@ -114,7 +115,7 @@
                         <v-col cols="6">
                             <!-- <v-text-field label="Phone" hint="Full international phone number" type="string"
                                 v-model="model.poc.phone" :rules="[rules.required, rules.phone]" clearable></v-text-field> -->
-                                <vue-tel-input v-model="model.poc.phone"></vue-tel-input>
+                            <vue-tel-input v-model="model.poc.phone"></vue-tel-input>
                         </v-col>
 
                         <v-col cols="6">
@@ -135,7 +136,8 @@
 
                         <v-col cols="3">
                             <v-text-field label="State" hint="Mailing state or region" type="string"
-                                v-model="model.poc.administrativeArea" :rules="[rules.required]" variant="outlined" clearable></v-text-field>
+                                v-model="model.poc.administrativeArea" :rules="[rules.required]" variant="outlined"
+                                clearable></v-text-field>
                         </v-col>
 
                     </v-row>
@@ -184,12 +186,14 @@
 
                         <v-col cols="3">
                             <v-text-field label="Name" hint="Organization name" type="string" v-model="model.distrib.name"
-                                :rules="[rules.required]" variant="outlined" clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                                :rules="[rules.required]" variant="outlined" clearable
+                                :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
 
                         <v-col cols="3">
                             <v-text-field label="URL" hint="Organization website" type="string" v-model="model.distrib.url"
-                                :rules="[rules.url]" variant="outlined" clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                                :rules="[rules.url]" variant="outlined" clearable
+                                :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row dense>
@@ -197,13 +201,14 @@
                             <!-- <v-text-field label="Phone" hint="Full international phone number" type="string"
                                 v-model="model.distrib.phone" :rules="[rules.required, rules.phone]" clearable
                                 :disabled="!distributorFieldsEnabled"></v-text-field> -->
-                            <vue-tel-input v-model="model.distrib.phone" :disabled="!distributorFieldsEnabled"></vue-tel-input>
+                            <vue-tel-input v-model="model.distrib.phone"
+                                :disabled="!distributorFieldsEnabled"></vue-tel-input>
                         </v-col>
 
                         <v-col cols="6">
                             <v-text-field label="Email" hint="Contact email address" type="string"
-                                v-model="model.distrib.email" :rules="[rules.required, rules.email]" variant="outlined" clearable
-                                :disabled="!distributorFieldsEnabled"></v-text-field>
+                                v-model="model.distrib.email" :rules="[rules.required, rules.email]" variant="outlined"
+                                clearable :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row dense>
@@ -215,13 +220,14 @@
 
                         <v-col cols="3">
                             <v-text-field label="City" hint="Mailing city" type="string" v-model="model.distrib.city"
-                                :rules="[rules.required]" variant="outlined" clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                                :rules="[rules.required]" variant="outlined" clearable
+                                :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
 
                         <v-col cols="3">
                             <v-text-field label="State" hint="Mailing state or region" type="string"
-                                v-model="model.distrib.administrativeArea" :rules="[rules.required]" variant="outlined" clearable
-                                :disabled="!distributorFieldsEnabled"></v-text-field>
+                                v-model="model.distrib.administrativeArea" :rules="[rules.required]" variant="outlined"
+                                clearable :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row dense>
@@ -255,23 +261,39 @@
                     <v-row dense>
                         <v-col cols="5">
                             <v-text-field label="Identifier" hint="Unique identifier for this data" type="string"
-                                v-model="model.settings.identifier" :rules="[rules.required, rules.identifier]" variant="outlined" clearable></v-text-field>
+                                v-model="model.settings.identifier" :rules="[rules.required, rules.identifier]"
+                                variant="outlined" clearable></v-text-field>
                         </v-col>
 
                         <v-col cols="5">
                             <v-text-field label="WMO Data Policy" hint="Priority of data within WMO" type="string"
-                                v-model="model.settings.wmoDataPolicy" :rules="[rules.required]" variant="outlined" clearable></v-text-field>
+                                v-model="model.settings.wmoDataPolicy" :rules="[rules.required]" variant="outlined"
+                                clearable></v-text-field>
                         </v-col>
 
                         <v-col cols="2">
                             <v-text-field label="Retention" hint="Minimum length of time data should be retained in WIS2"
-                                type="string" v-model="model.settings.retention" :rules="[rules.required]" variant="outlined" clearable></v-text-field>
+                                type="string" v-model="model.settings.retention" :rules="[rules.required]"
+                                variant="outlined" clearable></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row dense>
-                        <v-col cols="12">
-                            <v-text-field label="Keywords" hint="Search keywords for data" type="array"
-                                v-model="model.settings.keywords" :rules="[rules.required, rules.keywords]" variant="outlined" clearable></v-text-field>
+                        <v-col cols="4">
+                            <v-text-field label="Keywords" hint="Search keywords for data" type="array" v-model="keyword" @keyup.enter="addKeyword" variant="outlined" clearable></v-text-field>
+
+                        </v-col>
+                        <v-col cols="2">
+                            <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"></v-btn>
+                        </v-col>
+
+                        <v-col cols="6">
+                            <v-chip-group v-model="model.settings.keywords">
+                                <v-chip v-for="(keyword, index) in model.settings.keywords" :key="index" close
+                                    @click:close="removeKeyword(index)">
+                                    {{ keyword }}
+                                </v-chip>
+                            </v-chip-group>
+                            {{ model.settings.keywords }}
                         </v-col>
                     </v-row>
                 </v-form>
@@ -313,9 +335,9 @@
 
 <script>
 import BboxEditor from "@/components/BboxEditor.vue";
-import { clean } from "@/scripts/helpers.js"
+import { clean } from "@/scripts/helpers.js";
 
-import { defineComponent, ref, computed, onMounted, watch } from 'vue';
+import { defineComponent, ref, computed, onMounted, watchEffect } from 'vue';
 import { VCard, VForm, VBtn } from 'vuetify/lib/components/index.mjs';
 
 const oapi = import.meta.env.VITE_API_URL;
@@ -349,7 +371,8 @@ export default defineComponent({
             },
             settings: {
                 identifier: 'urn:x-wmo:md:',
-                retention: '30d'
+                retention: '30d',
+                keywords: []
             }
         };
 
@@ -390,6 +413,8 @@ export default defineComponent({
         const identifier = ref("");
         // Whether or not the metadata is new or existing
         const isNew = ref(false);
+        // Each keyword added by the user, before being added to the model
+        const keyword = ref("");
         // Metadata form to be filled, initialized with default values
         const model = ref({ ...defaults });
 
@@ -475,6 +500,20 @@ export default defineComponent({
             // Remove working animation
             working.value = false;
         };
+
+        // Adds a keyword to the model
+        const addKeyword = () => {
+            if (keyword.value !== "") {
+                // Add keyword to array
+                (model.value).settings.keywords.push(keyword.value);
+                keyword.value = "";
+            }
+        };
+
+        // Remove keyword from model when chip is clicked
+        const removeKeyword = (index) => {
+            model.value.settings.keywords = (model.value).settings.keywords.filter((_, i) => i !== index);
+        }
 
         // Resets the metadata form to the default state
         const resetMetadata = () => {
@@ -596,9 +635,10 @@ export default defineComponent({
 
         // Watched
 
-        // Watch for the distributor checkbox to duplicate the contact info
-        watch(() => model.value.distrib.duplicateFromContact, (newValue) => {
-            if (newValue) {
+        // Watch for the distributor checkbox to duplicate the contact info any time the POC information is changed
+        // Note that watchEffect is used here instead of watch, because it should re run whenever any reactive dependency changes
+        watchEffect(() => {
+            if (model.value.distrib.duplicateFromContact) {
                 // Copy the POC fields to the distributor fields
                 Object.keys(model.value.poc).forEach(key => {
                     model.value.distrib[key] = model.value.poc[key];
@@ -619,11 +659,14 @@ export default defineComponent({
             items,
             identifier,
             isNew,
+            keyword,
             model,
             formFilledAndValidated,
             distributorFieldsEnabled,
             loadList,
             loadMetadata,
+            addKeyword,
+            removeKeyword,
             resetMetadata,
             validateMetadata,
             downloadMetadata,

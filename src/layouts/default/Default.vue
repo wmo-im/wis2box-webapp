@@ -26,10 +26,4 @@
   height: 55px;
 }
 
-/* When vue-tel-input cell is disabled, match colour palette of disabled Vuetify cells */
-.vue-tel-input.disabled {
-  background-color: #f0f0f0;
-  color: #b0b0b0;
-}
-
 </style>
