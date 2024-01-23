@@ -19,6 +19,7 @@ import 'vue-tel-input/vue-tel-input.css';
 const globalOptions = {
   mode: 'international',
   autoFormat: true,
+  defaultCountry: 'US',
   validCharactersOnly: true,
   dropdownOptions: {
     showSearchBox: true

@@ -12,6 +12,12 @@
 
                 <!-- Until loaded, play a loading animation -->
                 <v-progress-linear indeterminate color="primary" :active="working" />
+
+                <!-- Display messages to the user -->
+                <v-row class="pa-5">
+                    <p class="black--text ma-0">{{ message }}</p>
+                </v-row>
+
             </v-card>
 
             <v-card class="mt-3 pa-3">
@@ -52,13 +58,13 @@
                         </v-col>
 
                         <v-col cols="4">
-                            <VueDatePicker placeholder="Date Started" v-model="model.origin.dateStarted" :teleport="true"
-                                auto-apply required />
+                            <VueDatePicker placeholder="Date Started in UTC" v-model="model.origin.dateStarted"
+                                :teleport="true" :enable-time-picker="false" auto-apply required />
                         </v-col>
 
                         <v-col cols="4">
-                            <VueDatePicker placeholder="Date Stopped" v-model="model.origin.dateStopped" :teleport="true"
-                                class="datepicker" auto-apply required />
+                            <VueDatePicker placeholder="Date Stopped in UTC" v-model="model.origin.dateStopped"
+                                :teleport="true" :enable-time-picker="false" auto-apply required />
                         </v-col>
                     </v-row>
                     <v-row dense>
@@ -113,9 +119,9 @@
                     </v-row>
                     <v-row dense>
                         <v-col cols="6">
-                            <!-- <v-text-field label="Phone" hint="Full international phone number" type="string"
-                                v-model="model.poc.phone" :rules="[rules.required, rules.phone]" clearable></v-text-field> -->
-                            <vue-tel-input v-model="model.poc.phone"></vue-tel-input>
+                            <vue-tel-input v-model="model.poc.phone" @validate="onPocPhoneValidate"></vue-tel-input>
+                            <p v-if="(typeof isPocPhoneValid !== 'undefined') && !isPocPhoneValid"
+                                class="hint-text hint-invalid">Phone number is not valid</p>
                         </v-col>
 
                         <v-col cols="6">
@@ -154,9 +160,9 @@
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label="Hours of Service" hint="Normal weekday contact hours" type="string"
-                                v-model="model.poc.hoursOfService" :rules="[rules.required, rules.hoursOfService]"
-                                variant="outlined" clearable></v-text-field>
+                            <VueDatePicker placeholder="Please select a time range" v-model="model.poc.hoursOfService"
+                                time-picker range multi-calendars auto-apply required />
+                            <p class="hint-text hint-default">Hours of Service in UTC</p>
                         </v-col>
 
                         <v-col cols="3">
@@ -198,11 +204,10 @@
                     </v-row>
                     <v-row dense>
                         <v-col cols="6" :disabled="!distributorFieldsEnabled">
-                            <!-- <v-text-field label="Phone" hint="Full international phone number" type="string"
-                                v-model="model.distrib.phone" :rules="[rules.required, rules.phone]" clearable
-                                :disabled="!distributorFieldsEnabled"></v-text-field> -->
-                            <vue-tel-input v-model="model.distrib.phone"
-                                :disabled="!distributorFieldsEnabled"></vue-tel-input>
+                            <vue-tel-input v-model="model.distrib.phone" :disabled="!distributorFieldsEnabled"
+                                @validate="onDistribPhoneValidate"></vue-tel-input>
+                            <p v-if="(typeof isDistribPhoneValid !== 'undefined') && !isPocPhoneValid"
+                                class="hint-text hint-invalid">Phone number is not valid</p>
                         </v-col>
 
                         <v-col cols="6">
@@ -244,9 +249,10 @@
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label="Hours of Service" hint="Normal weekday contact hours" type="string"
-                                v-model="model.distrib.hoursOfService" :rules="[rules.required, rules.hoursOfService]"
-                                variant="outlined" clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                            <VueDatePicker placeholder="Please select a time range" v-model="model.distrib.hoursOfService"
+                                time-picker range multi-calendars auto-apply required
+                                :disabled="!distributorFieldsEnabled" />
+                            <p class="hint-text hint-default">Hours of Service in UTC</p>
                         </v-col>
 
                         <v-col cols="3">
@@ -265,38 +271,40 @@
                                 variant="outlined" clearable></v-text-field>
                         </v-col>
 
-                        <v-col cols="5">
+                        <v-col cols="4">
                             <v-text-field label="WMO Data Policy" hint="Priority of data within WMO" type="string"
                                 v-model="model.settings.wmoDataPolicy" :rules="[rules.required]" variant="outlined"
                                 clearable></v-text-field>
                         </v-col>
 
-                        <v-col cols="2">
+                        <v-col cols="3">
                             <v-text-field label="Retention" hint="Minimum length of time data should be retained in WIS2"
                                 type="string" v-model="model.settings.retention" :rules="[rules.required]"
                                 variant="outlined" clearable></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row dense>
-                        <v-col cols="4">
-                            <v-text-field label="Keywords" hint="Search keywords for data" type="array" v-model="keyword" @keyup.enter="addKeyword" variant="outlined" clearable></v-text-field>
+                        <v-col cols="3">
+                            <v-text-field label="Keywords (three minimum)" hint="Search keywords for data" type="array"
+                                v-model="keyword" @keyup.enter="addKeyword" variant="outlined" clearable></v-text-field>
 
                         </v-col>
-                        <v-col cols="2">
+                        <v-col cols="1">
                             <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"></v-btn>
                         </v-col>
 
-                        <v-col cols="6">
-                            <v-chip-group v-model="model.settings.keywords">
-                                <v-chip v-for="(keyword, index) in model.settings.keywords" :key="index" close
-                                    @click:close="removeKeyword(index)">
+                        <v-col cols="8">
+                            <v-chip-group v-model="model.settings.keywords" :rules="[rules.required, rules.keywords]"
+                                multiple>
+                                <v-chip v-for="keyword in model.settings.keywords" :key="keyword" closable
+                                    @click:close="removeKeyword(keyword)">
                                     {{ keyword }}
                                 </v-chip>
                             </v-chip-group>
-                            {{ model.settings.keywords }}
                         </v-col>
                     </v-row>
                 </v-form>
+
 
                 <!-- Toolbar for user to reset, validate, export, or submit the metadata
                 from the above form -->
@@ -304,9 +312,8 @@
                     <v-btn color="red" class="ma-2" title="Reset" @click="resetMetadata" append-icon="mdi-sync">
                         Reset
                     </v-btn>
-
                     <v-spacer />
-
+                    {{ formFilled }}
                     <v-btn color="#009900" class="ma-2" title="Validate" @click="validateMetadata" :disabled="!formFilled"
                         v-if="!metadataValidated" append-icon="mdi-check-bold">
                         Validate
@@ -323,11 +330,6 @@
                         Submit
                     </v-btn>
                 </v-row>
-
-                <!-- If the form can't load, present the error message as to why -->
-                <v-row v-if="!metadataLoaded" class="pa-5">
-                    <p class="black--text ma-0">{{ message }}</p>
-                </v-row>
             </v-card>
         </v-col>
     </v-row>
@@ -338,7 +340,7 @@ import BboxEditor from "@/components/BboxEditor.vue";
 import { clean } from "@/scripts/helpers.js";
 
 import { defineComponent, ref, computed, onMounted, watchEffect } from 'vue';
-import { VCard, VForm, VBtn } from 'vuetify/lib/components/index.mjs';
+import { VCard, VForm, VBtn, VChipGroup, VChip } from 'vuetify/lib/components/index.mjs';
 
 const oapi = import.meta.env.VITE_API_URL;
 
@@ -350,24 +352,31 @@ export default defineComponent({
         BboxEditor,
         VCard,
         VForm,
-        VBtn
+        VBtn,
+        VChipGroup,
+        VChip
     },
     setup() {
         // Static variables
 
         // Default value of the form, not an exhaustive list of all fields
-        // Note: This default will change depending on whether the metadata is new or existing
-        let defaults = {
+        const defaults = {
             properties: {},
             origin: {},
             poc: {
-                hoursOfService: '0900h - 1700h UTC',
-                contactInstructions: 'email'
+                hoursOfService: [
+                    { "hours": 9, "minutes": 0, "seconds": 0 },
+                    { "hours": 17, "minutes": 0, "seconds": 0 }
+                ],
+                contactInstructions: 'Email'
             },
             distrib: {
                 duplicateFromContact: false,
-                hoursOfService: '0900h - 1700h UTC',
-                contactInstructions: 'email'
+                hoursOfService: [
+                    { "hours": 9, "minutes": 0, "seconds": 0 },
+                    { "hours": 17, "minutes": 0, "seconds": 0 }
+                ],
+                contactInstructions: 'Email'
             },
             settings: {
                 identifier: 'urn:x-wmo:md:',
@@ -389,11 +398,15 @@ export default defineComponent({
             url: value => value === '' || /^https?:\/\/[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(value) || 'Invalid URL format.',
             email: value => /^[a-z0-9._-]+@[a-z0-9-]+\.[a-z0-9.-]+$/.test(value) || 'Invalid email format.',
             country: value => /^[A-Z]{3}$/.test(value) || 'Invalid country code. Must be 3 uppercase letters.',
-            hoursOfService: value => /^\d{4}h\s-\s\d{4}h\s[A-Z\d]{3}$/.test(value) || 'Invalid hours of service. Expected format: 0900h - 1700h UTC',
             identifier: value => /^urn:x-wmo:md:[a-z]{3}:[a-z0-9_-]+:[a-z0-9_-]+[a-z0-9:-]*$/.test(value) || 'Invalid identifier. Must start with \'urn:x-wmo:md:\'',
             topicHierarchy: value => /^[a-z]{3}\/[_a-z-]+\/(data|metadata|reports)\/(core|recommended)\/[\\w]+\/[\\w-]+\/[\\w]*$/.test(value) || 'Invalid topic hierarchy. Follow the specified pattern.',
             keywords: value => Array.isArray(value) && value.length >= 3 || 'Keywords must be an array with at least 3 items.',
         };
+
+        // Deep clone function to avoid reference issues between model and default model
+        function deepClone(obj) {
+            return JSON.parse(JSON.stringify(obj));
+        }
 
         // Reactive variables
 
@@ -413,10 +426,13 @@ export default defineComponent({
         const identifier = ref("");
         // Whether or not the metadata is new or existing
         const isNew = ref(false);
+        // Phone number validation for each field
+        const isPocPhoneValid = ref(null);
+        const isDistribPhoneValid = ref(null);
         // Each keyword added by the user, before being added to the model
         const keyword = ref("");
         // Metadata form to be filled, initialized with default values
-        const model = ref({ ...defaults });
+        const model = ref(deepClone(defaults));
 
         // Computed variables
 
@@ -429,7 +445,7 @@ export default defineComponent({
             return !model.value.distrib.duplicateFromContact;
         });
 
-        // Methods - TO DO
+        // Methods
 
         // Fetches a list of metadata items from the OAPI and updates the list
         // This will be shown in the v-select component at the top of the page
@@ -501,6 +517,15 @@ export default defineComponent({
             working.value = false;
         };
 
+        // Validates the phone numbers entered by the user
+        const onPocPhoneValidate = (output) => {
+            isPocPhoneValid.value = output.valid;
+        };
+
+        const onDistribPhoneValidate = (output) => {
+            isDistribPhoneValid.value = output.valid;
+        }
+
         // Adds a keyword to the model
         const addKeyword = () => {
             if (keyword.value !== "") {
@@ -511,13 +536,23 @@ export default defineComponent({
         };
 
         // Remove keyword from model when chip is clicked
-        const removeKeyword = (index) => {
-            model.value.settings.keywords = (model.value).settings.keywords.filter((_, i) => i !== index);
-        }
+        const removeKeyword = (keywordToRemove) => {
+            const index = model.value.settings.keywords.indexOf(keywordToRemove);
+            if (index > -1) {
+                // Create a shallow copy first
+                let updatedKeywords = [...model.value.settings.keywords];
+
+                // Remove the item at the specified index
+                updatedKeywords.splice(index, 1);
+
+                // Reassign the model's keywords to the updated array
+                model.value.settings.keywords = updatedKeywords;
+            }
+        };
 
         // Resets the metadata form to the default state
         const resetMetadata = () => {
-            model.value = defaults;
+            model.value = deepClone(defaults);
             metadataValidated.value = false;
             formFilled.value = false;
             message.value = "Discovery metadata reset successfully.";
@@ -659,12 +694,16 @@ export default defineComponent({
             items,
             identifier,
             isNew,
+            isPocPhoneValid,
+            isDistribPhoneValid,
             keyword,
             model,
             formFilledAndValidated,
             distributorFieldsEnabled,
             loadList,
             loadMetadata,
+            onPocPhoneValidate,
+            onDistribPhoneValidate,
             addKeyword,
             removeKeyword,
             resetMetadata,
