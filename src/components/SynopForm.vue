@@ -183,8 +183,6 @@
 <script>
 import { defineComponent, ref, computed, watch } from 'vue';
 import { VCard, VCardTitle, VCardText, VCardItem, VForm, VTextarea, VBtn, VListGroup } from 'vuetify/lib/components/index.mjs';
-import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css';
 import TopicHierarchySelector from './TopicHierarchySelector.vue';
 import InspectBufrButton from '@/components/InspectBufrButton.vue';
 import DownloadButton from '@/components/DownloadButton.vue';
@@ -200,7 +198,6 @@ export default defineComponent({
     VForm,
     VBtn,
     VListGroup,
-    VueDatePicker,
     TopicHierarchySelector,
     InspectBufrButton,
     DownloadButton
