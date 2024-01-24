@@ -30,19 +30,19 @@
                     <!-- Properties section -->
                     <v-card-title>Dataset Properties</v-card-title>
                     <v-row dense>
-                        <v-col cols="4">
+                        <v-col cols="5">
                             <v-text-field label="Title" hint="Name of data" type="string" v-model="model.properties.title"
                                 :rules="[rules.required]" variant="outlined" clearable></v-text-field>
                         </v-col>
 
-                        <v-col cols="4">
+                        <v-col cols="5">
                             <v-text-field label="Description" hint="Brief description of data" type="string"
                                 v-model="model.properties.description" :rules="[rules.required]" variant="outlined"
                                 clearable></v-text-field>
                         </v-col>
 
-                        <v-col cols="4">
-                            <v-autocomplete label="Language" hint="Lower case representation of language in 2-letter code"
+                        <v-col cols="2">
+                            <v-autocomplete label="Language" hint="ISO639 2-letter code"
                                 persistent-hint v-model="model.properties.language" :items="languageCodeList"
                                 :rules="[rules.required]" variant="outlined"></v-autocomplete>
                         </v-col>
@@ -96,51 +96,50 @@
                     <!-- Contact (POC) section -->
                     <v-card-title>Point of Contact Information</v-card-title>
                     <v-row dense>
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <v-text-field label="Individual" hint="Full name" type="string" v-model="model.poc.individual"
                                 variant="outlined" clearable></v-text-field>
                         </v-col>
 
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <v-text-field label="Position Name" hint="Position held" type="string"
                                 v-model="model.poc.positionName" variant="outlined" clearable></v-text-field>
                         </v-col>
 
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <v-text-field label="Name" hint="Organization name" type="string" v-model="model.poc.name"
                                 :rules="[rules.required]" variant="outlined" clearable></v-text-field>
                         </v-col>
-
-                        <v-col cols="3">
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="4">
                             <v-text-field label="URL" hint="Organization website" type="string" v-model="model.poc.url"
                                 :rules="[rules.url]" variant="outlined" clearable></v-text-field>
                         </v-col>
 
-                    </v-row>
-                    <v-row dense>
-                        <v-col cols="6">
+                        <v-col cols="4">
                             <vue-tel-input v-model="model.poc.phone" @validate="onPocPhoneValidate"></vue-tel-input>
                             <p v-if="(typeof isPocPhoneValid !== 'undefined') && !isPocPhoneValid"
                                 class="hint-text hint-invalid">Phone number is not valid</p>
                         </v-col>
 
-                        <v-col cols="6">
+                        <v-col cols="4">
                             <v-text-field label="Email" hint="Contact email address" type="string" v-model="model.poc.email"
                                 :rules="[rules.required, rules.email]" variant="outlined" clearable></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row dense>
-                        <v-col cols="6">
+                        <v-col cols="4">
                             <v-text-field label="Address" hint="Street address" type="string"
                                 v-model="model.poc.deliveryPoint" variant="outlined" clearable></v-text-field>
                         </v-col>
 
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <v-text-field label="City" hint="Mailing city" type="string" v-model="model.poc.city"
                                 :rules="[rules.required]" variant="outlined" clearable></v-text-field>
                         </v-col>
 
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <v-text-field label="State" hint="Mailing state or region" type="string"
                                 v-model="model.poc.administrativeArea" :rules="[rules.required]" variant="outlined"
                                 clearable></v-text-field>
@@ -154,18 +153,18 @@
                         </v-col>
 
                         <v-col cols="3">
-                            <v-autocomplete label="Country" hint="Upper case representation of ISO3166 3-letter code"
+                            <v-autocomplete label="Country" hint="ISO3166 3-letter code"
                                 persistent-hint :items="countryCodeList" v-model="model.poc.country"
                                 :rules="[rules.required]" variant="outlined"></v-autocomplete>
                         </v-col>
-                    </v-row>
-                    <v-row dense>
+
                         <v-col cols="6">
                             <v-text-field label="Hours of Service" hint="Time period to be contacted"
                                 v-model="model.poc.hoursOfService" :rules="[rules.required]" variant="outlined"
                                 clearable></v-text-field>
                         </v-col>
-
+                    </v-row>
+                    <v-row dense>
                         <v-col cols="6">
                             <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
                                 v-model="model.poc.contactInstructions" variant="outlined" clearable></v-text-field>
@@ -179,58 +178,57 @@
                             color="#003DA5"></v-switch>
                     </v-row>
                     <v-row dense>
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <v-text-field label="Individual" hint="Full name" type="string"
                                 v-model="model.distrib.individual" variant="outlined" clearable
                                 :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
 
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <v-text-field label="Position Name" hint="Position held" type="string"
                                 v-model="model.distrib.positionName" variant="outlined" clearable
                                 :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
 
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <v-text-field label="Name" hint="Organization name" type="string" v-model="model.distrib.name"
                                 :rules="[rules.required]" variant="outlined" clearable
                                 :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
-
-                        <v-col cols="3">
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="4">
                             <v-text-field label="URL" hint="Organization website" type="string" v-model="model.distrib.url"
                                 :rules="[rules.url]" variant="outlined" clearable
                                 :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
-                    </v-row>
-                    <v-row dense>
-                        <v-col cols="6" :disabled="!distributorFieldsEnabled">
+                        <v-col cols="4" :disabled="!distributorFieldsEnabled">
                             <vue-tel-input v-model="model.distrib.phone" :disabled="!distributorFieldsEnabled"
                                 @validate="onDistribPhoneValidate"></vue-tel-input>
                             <p v-if="(typeof isDistribPhoneValid !== 'undefined') && !isPocPhoneValid"
                                 class="hint-text hint-invalid">Phone number is not valid</p>
                         </v-col>
 
-                        <v-col cols="6">
+                        <v-col cols="4">
                             <v-text-field label="Email" hint="Contact email address" type="string"
                                 v-model="model.distrib.email" :rules="[rules.required, rules.email]" variant="outlined"
                                 clearable :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row dense>
-                        <v-col cols="6">
+                        <v-col cols="4">
                             <v-text-field label="Address" hint="Street address" type="string"
                                 v-model="model.distrib.deliveryPoint" variant="outlined" clearable
                                 :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
 
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <v-text-field label="City" hint="Mailing city" type="string" v-model="model.distrib.city"
                                 :rules="[rules.required]" variant="outlined" clearable
                                 :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
 
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <v-text-field label="State" hint="Mailing state or region" type="string"
                                 v-model="model.distrib.administrativeArea" :rules="[rules.required]" variant="outlined"
                                 clearable :disabled="!distributorFieldsEnabled"></v-text-field>
@@ -249,14 +247,14 @@
                                 :rules="[rules.required]" :disabled="!distributorFieldsEnabled"
                                 variant="outlined"></v-autocomplete>
                         </v-col>
-                    </v-row>
-                    <v-row dense>
+
                         <v-col cols="6">
                             <v-text-field label="Hours of Service" hint="Time period to be contacted"
                                 v-model="model.distrib.hoursOfService" :rules="[rules.required]" variant="outlined"
                                 clearable :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
-
+                    </v-row>
+                    <v-row dense>
                         <v-col cols="6">
                             <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
                                 v-model="model.distrib.contactInstructions" variant="outlined" clearable
@@ -267,26 +265,33 @@
                     <!-- Settings section -->
                     <v-card-title>Dataset Settings</v-card-title>
                     <v-row dense>
-                        <v-col cols="7">
+                        <v-col cols="12">
                             <v-text-field label="Identifier" hint="Unique identifier for this data" type="string"
                                 v-model="model.settings.identifier" :rules="[rules.required, rules.identifier]"
                                 variant="outlined" clearable></v-text-field>
                         </v-col>
-
-                        <v-col cols="3">
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="4">
                             <v-select label="WMO Data Policy" hint="Priority of data within WMO" type="string"
                                 :items="['core', 'recommended']" v-model="model.settings.wmoDataPolicy"
                                 :rules="[rules.required]" variant="outlined"></v-select>
                         </v-col>
 
-                        <v-col cols="2">
+                        <v-col cols="4">
+                            <v-select label="WMO Status" hint="Status of data within WMO" type="string"
+                                :items="['operational', 'not operational']" v-model="model.settings.wmoStatus"
+                                :rules="[rules.required]" variant="outlined"></v-select>
+                        </v-col>
+
+                        <v-col cols="4">
                             <v-text-field label="Retention" hint="Minimum length of time data should be retained in WIS2"
                                 type="string" v-model="model.settings.retention" :rules="[rules.required]"
                                 variant="outlined" clearable></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row dense>
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <v-text-field label="Keywords (three minimum)" hint="Search keywords for data" type="array"
                                 v-model="keyword" @keyup.enter="addKeyword" variant="outlined" clearable></v-text-field>
 
@@ -296,7 +301,7 @@
                                 :disabled="keyword == ''"></v-btn>
                         </v-col>
 
-                        <v-col cols="8">
+                        <v-col cols="7">
                             <v-chip-group :rules="[rules.required, rules.keywords]">
                                 <v-chip v-for="keyword in model.settings.keywords" :key="keyword" closable label
                                     @click:close="removeKeyword(keyword)">
@@ -374,6 +379,8 @@ export default defineComponent({
             },
             settings: {
                 identifier: 'urn:x-wmo:md:',
+                wmoDataPolicy: 'core',
+                wmoStatus: 'operational',
                 retention: '30d',
                 keywords: []
             }
@@ -429,6 +436,7 @@ export default defineComponent({
             "settings": {
                 "identifier": "urn:x-wmo:md:zmb:zambia_met_service:surface-weather-observations",
                 "wmoDataPolicy": "core",
+                "wmoStatus": "operational",
                 "retention": "30d",
                 "keywords": [
                     "weather",
@@ -437,7 +445,6 @@ export default defineComponent({
                 ]
             }
         };
-
 
         // WCMP2 schema version
         const schemaVersion = "http://wis.wmo.int/spec/wcmp/2.0";
@@ -488,7 +495,7 @@ export default defineComponent({
         // Each keyword added by the user, before being added to the model
         const keyword = ref("");
         // Metadata form to be filled, initialized with default values
-        const model = ref(deepClone(testModel));
+        const model = ref(deepClone(defaults));
 
         // Computed variables
 
@@ -673,7 +680,8 @@ export default defineComponent({
             const startDate = getDateFrom(form.origin.dateStarted);
             const endDate = getDateFrom(form.origin.dateStopped);
             schemaModel.time.interval = [startDate, endDate];
-            schemaModel.time.resolution = "P1D";
+            // Not sure about this one (resolution vs retention?), this is coming from the old form
+            schemaModel.time.resolution = `P${form.settings.retention.toUpperCase()}`;
 
             // Geometry information
             schemaModel.geometry = {
@@ -719,6 +727,9 @@ export default defineComponent({
                     "postalCode": form.poc.postalCode,
                     "country": form.poc.country
                 }],
+                "links": [{
+                    "href": form.poc.url
+                }],
                 "hoursOfService": form.poc.hoursOfService,
                 "contactInstructions": form.poc.contactInstructions,
                 "roles": ["pointOfContact"]
@@ -741,16 +752,40 @@ export default defineComponent({
                     "postalCode": form.distrib.postalCode,
                     "country": form.distrib.country
                 }],
+                "links": [{
+                    "href": form.distrib.url
+                }],
                 "hoursOfService": form.distrib.hoursOfService,
                 "contactInstructions": form.distrib.contactInstructions,
                 "roles": ["distributor"]
             });
 
-            // Data policy information
+            // Extra information
+            schemaModel.properties.language = form.properties.language;
+            // How should we approach the creation date?
+            schemaModel.properties.updated = new Date().toISOString();
             schemaModel.properties["wmo:dataPolicy"] = form.settings.wmoDataPolicy;
+            schemaModel.properties["wmo:status"] = {
+                "id": form.settings.wmoStatus
+            };
 
+            // Links information
+            schemaModel.links = [];
+            schemaModel.links.push({
+                "rel": "collection",
+                "href": `${form.poc.url}/oapi/collections/${form.settings.identifier}`,
+                "type": "OAFeat",
+                "title": form.settings.identifier
+            })
+            schemaModel.links.push({
+                "rel": "canonical",
+                "href": `${form.poc.url}/oapi/collections/discovery-metadata/items/${form.settings.identifier}`,
+                "type": "OARec",
+                "title": form.settings.identifier
+            });
 
-        }
+            return schemaModel;
+        };
 
         // Validate the metadata generated by the format against the WCMP2 schema
         const validateMetadata = async () => {
