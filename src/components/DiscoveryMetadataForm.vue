@@ -21,8 +21,8 @@
             </v-card>
 
             <v-card class="mt-3 pa-3">
-                <!-- Form which provides a 'filled' boolean for other parts of the page -->
-                <v-form v-model="formFilled" v-if="metadataLoaded">
+                <!-- Form which when filled and validated, can be exported or submitted -->
+                <v-form v-model="formFilled" v-if="metadataLoaded" validate-on="blur">
                     <!-- <bbox-editor @updated="updateGeometry" @loaded="loadGeometry"
                         :input-feature="form.bounds"></bbox-editor> -->
                     <!-- Schema form here -->
@@ -42,9 +42,9 @@
                         </v-col>
 
                         <v-col cols="4">
-                            <v-text-field label="Language" hint="Lower case representation of language in 2-letter code"
-                                type="string" v-model="model.properties.language" :rules="[rules.required, rules.language]"
-                                variant="outlined" clearable></v-text-field>
+                            <v-autocomplete label="Language" hint="Lower case representation of language in 2-letter code"
+                                persistent-hint v-model="model.properties.language" :items="languageCodeList"
+                                :rules="[rules.required]" variant="outlined"></v-autocomplete>
                         </v-col>
                     </v-row>
 
@@ -154,18 +154,19 @@
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label="Country" hint="Upper case representation of ISO3166 3-letter code"
-                                type="string" v-model="model.poc.country" :rules="[rules.required, rules.country]"
-                                variant="outlined" clearable></v-text-field>
+                            <v-autocomplete label="Country" hint="Upper case representation of ISO3166 3-letter code"
+                                persistent-hint :items="countryCodeList" v-model="model.poc.country"
+                                :rules="[rules.required]" variant="outlined"></v-autocomplete>
+                        </v-col>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="6">
+                            <v-text-field label="Hours of Service" hint="Time period to be contacted"
+                                v-model="model.poc.hoursOfService" :rules="[rules.required]" variant="outlined"
+                                clearable></v-text-field>
                         </v-col>
 
-                        <v-col cols="3">
-                            <VueDatePicker placeholder="Please select a time range" v-model="model.poc.hoursOfService"
-                                time-picker range multi-calendars auto-apply required />
-                            <p class="hint-text hint-default">Hours of Service in UTC</p>
-                        </v-col>
-
-                        <v-col cols="3">
+                        <v-col cols="6">
                             <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
                                 v-model="model.poc.contactInstructions" variant="outlined" clearable></v-text-field>
                         </v-col>
@@ -243,19 +244,20 @@
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label="Country" hint="Upper case representation of ISO3166 3-letter code"
-                                type="string" v-model="model.distrib.country" :rules="[rules.required, rules.country]"
-                                variant="outlined" clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                            <v-autocomplete label="Country" hint="Upper case representation of ISO3166 3-letter code"
+                                persistent-hint :items="countryCodeList" v-model="model.distrib.country"
+                                :rules="[rules.required]" :disabled="!distributorFieldsEnabled"
+                                variant="outlined"></v-autocomplete>
+                        </v-col>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="6">
+                            <v-text-field label="Hours of Service" hint="Time period to be contacted"
+                                v-model="model.distrib.hoursOfService" :rules="[rules.required]" variant="outlined"
+                                clearable :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
 
-                        <v-col cols="3">
-                            <VueDatePicker placeholder="Please select a time range" v-model="model.distrib.hoursOfService"
-                                time-picker range multi-calendars auto-apply required
-                                :disabled="!distributorFieldsEnabled" />
-                            <p class="hint-text hint-default">Hours of Service in UTC</p>
-                        </v-col>
-
-                        <v-col cols="3">
+                        <v-col cols="6">
                             <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
                                 v-model="model.distrib.contactInstructions" variant="outlined" clearable
                                 :disabled="!distributorFieldsEnabled"></v-text-field>
@@ -265,19 +267,19 @@
                     <!-- Settings section -->
                     <v-card-title>Dataset Settings</v-card-title>
                     <v-row dense>
-                        <v-col cols="5">
+                        <v-col cols="7">
                             <v-text-field label="Identifier" hint="Unique identifier for this data" type="string"
                                 v-model="model.settings.identifier" :rules="[rules.required, rules.identifier]"
                                 variant="outlined" clearable></v-text-field>
                         </v-col>
 
-                        <v-col cols="4">
-                            <v-text-field label="WMO Data Policy" hint="Priority of data within WMO" type="string"
-                                v-model="model.settings.wmoDataPolicy" :rules="[rules.required]" variant="outlined"
-                                clearable></v-text-field>
+                        <v-col cols="3">
+                            <v-select label="WMO Data Policy" hint="Priority of data within WMO" type="string"
+                                :items="['core', 'recommended']" v-model="model.settings.wmoDataPolicy"
+                                :rules="[rules.required]" variant="outlined"></v-select>
                         </v-col>
 
-                        <v-col cols="3">
+                        <v-col cols="2">
                             <v-text-field label="Retention" hint="Minimum length of time data should be retained in WIS2"
                                 type="string" v-model="model.settings.retention" :rules="[rules.required]"
                                 variant="outlined" clearable></v-text-field>
@@ -290,13 +292,13 @@
 
                         </v-col>
                         <v-col cols="1">
-                            <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"></v-btn>
+                            <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"
+                                :disabled="keyword == ''"></v-btn>
                         </v-col>
 
                         <v-col cols="8">
-                            <v-chip-group v-model="model.settings.keywords" :rules="[rules.required, rules.keywords]"
-                                multiple>
-                                <v-chip v-for="keyword in model.settings.keywords" :key="keyword" closable
+                            <v-chip-group :rules="[rules.required, rules.keywords]">
+                                <v-chip v-for="keyword in model.settings.keywords" :key="keyword" closable label
                                     @click:close="removeKeyword(keyword)">
                                     {{ keyword }}
                                 </v-chip>
@@ -305,7 +307,6 @@
                     </v-row>
                 </v-form>
 
-
                 <!-- Toolbar for user to reset, validate, export, or submit the metadata
                 from the above form -->
                 <v-row class="pt-5" v-if="metadataLoaded">
@@ -313,7 +314,6 @@
                         Reset
                     </v-btn>
                     <v-spacer />
-                    {{ formFilled }}
                     <v-btn color="#009900" class="ma-2" title="Validate" @click="validateMetadata" :disabled="!formFilled"
                         v-if="!metadataValidated" append-icon="mdi-check-bold">
                         Validate
@@ -364,18 +364,12 @@ export default defineComponent({
             properties: {},
             origin: {},
             poc: {
-                hoursOfService: [
-                    { "hours": 9, "minutes": 0, "seconds": 0 },
-                    { "hours": 17, "minutes": 0, "seconds": 0 }
-                ],
+                hoursOfService: "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
                 contactInstructions: 'Email'
             },
             distrib: {
                 duplicateFromContact: false,
-                hoursOfService: [
-                    { "hours": 9, "minutes": 0, "seconds": 0 },
-                    { "hours": 17, "minutes": 0, "seconds": 0 }
-                ],
+                hoursOfService: "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
                 contactInstructions: 'Email'
             },
             settings: {
@@ -385,13 +379,72 @@ export default defineComponent({
             }
         };
 
+        // Test model
+        const testModel = {
+            "properties": {
+                "title": "Test Dataset",
+                "description": "This is a test dataset",
+                "language": "en"
+            },
+            "origin": {
+                "centreID": "test",
+                "dateStarted": "2021-01-01T00:00:00Z",
+                "dateStopped": "2021-01-01T00:00:00Z",
+                "northLatitude": 90,
+                "eastLongitude": 180,
+                "southLatitude": -90,
+                "westLongitude": -180
+            },
+            "poc": {
+                "individual": "Test User",
+                "positionName": "Test Position",
+                "name": "Test Organization",
+                "url": "https://www.test.com",
+                "phone": "+41 77 345 67 89",
+                "email": "contact@example.org",
+                "deliveryPoint": "123 Test Street",
+                "city": "Test City",
+                "administrativeArea": "Test State",
+                "postalCode": "12345",
+                "country": "USA",
+                "hoursOfService": "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
+                "contactInstructions": "Email"
+            },
+            "distrib": {
+                "duplicateFromContact": false,
+                "individual": "Test User",
+                "positionName": "Test Position",
+                "name": "Test Organization",
+                "url": "https://www.test.com",
+                "phone": "+41 77 345 67 89",
+                "email": "contact@example.org",
+                "deliveryPoint": "123 Test Street",
+                "city": "Test City",
+                "administrativeArea": "Test State",
+                "postalCode": "12345",
+                "country": "USA",
+                "hoursOfService": "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
+                "contactInstructions": "Email"
+            },
+            "settings": {
+                "identifier": "urn:x-wmo:md:zmb:zambia_met_service:surface-weather-observations",
+                "wmoDataPolicy": "core",
+                "retention": "30d",
+                "keywords": [
+                    "weather",
+                    "climate",
+                    "data"
+                ]
+            }
+        };
+
+
         // WCMP2 schema version
         const schemaVersion = "http://wis.wmo.int/spec/wcmp/2.0";
 
         // Validation patterns for form fields
         const rules = {
             required: (value) => !!value || "Field is required",
-            language: (value) => /^[a-z]{2}$/.test(value) || "Language must be a 2-letter code",
             centreID: value => /^[a-z_-]{2,}$/.test(value) || 'Invalid centre ID. Must be lowercase with at least 2 characters.',
             latitude: value => value >= -90 && value <= 90 || 'Latitude must be between -90 and 90.',
             longitude: value => value >= -180 && value <= 180 || 'Longitude must be between -180 and 180.',
@@ -399,7 +452,6 @@ export default defineComponent({
             email: value => /^[a-z0-9._-]+@[a-z0-9-]+\.[a-z0-9.-]+$/.test(value) || 'Invalid email format.',
             country: value => /^[A-Z]{3}$/.test(value) || 'Invalid country code. Must be 3 uppercase letters.',
             identifier: value => /^urn:x-wmo:md:[a-z]{3}:[a-z0-9_-]+:[a-z0-9_-]+[a-z0-9:-]*$/.test(value) || 'Invalid identifier. Must start with \'urn:x-wmo:md:\'',
-            topicHierarchy: value => /^[a-z]{3}\/[_a-z-]+\/(data|metadata|reports)\/(core|recommended)\/[\\w]+\/[\\w-]+\/[\\w]*$/.test(value) || 'Invalid topic hierarchy. Follow the specified pattern.',
             keywords: value => Array.isArray(value) && value.length >= 3 || 'Keywords must be an array with at least 3 items.',
         };
 
@@ -415,7 +467,7 @@ export default defineComponent({
         // Controls which parts of the page are displayed
         const metadataLoaded = ref(false);
         const metadataValidated = ref(false);
-        const formFilled = ref(false);
+        const formFilled = ref(true);
         // If no datasets can be found and the user must create a new one, disable the dataset selection
         const datasetSpecified = ref(false);
         // Messages to display to user (this changes overtime)
@@ -424,6 +476,10 @@ export default defineComponent({
         const items = ref([]);
         // Identifier of the selected dataset, used to load metadata from OAPI
         const identifier = ref("");
+        // List of language codes to select from
+        const languageCodeList = ref([]);
+        // List of country codes to select from
+        const countryCodeList = ref([]);
         // Whether or not the metadata is new or existing
         const isNew = ref(false);
         // Phone number validation for each field
@@ -432,7 +488,7 @@ export default defineComponent({
         // Each keyword added by the user, before being added to the model
         const keyword = ref("");
         // Metadata form to be filled, initialized with default values
-        const model = ref(deepClone(defaults));
+        const model = ref(deepClone(testModel));
 
         // Computed variables
 
@@ -517,6 +573,34 @@ export default defineComponent({
             working.value = false;
         };
 
+        // Load language/country codes from a JSON file
+        const loadCodes = async () => {
+            // Load language codes
+            try {
+                const response = await fetch("/codelists/iso-639-1-languages.json");
+                if (!response.ok) {
+                    throw new Error('Failed to load language codes.');
+                }
+                const responseData = await response.json();
+                languageCodeList.value = responseData.map(item => item.code);
+            } catch (error) {
+                console.error(error);
+                message.value = "Error loading language codes.";
+            }
+            // Load country codes
+            try {
+                const response = await fetch("/codelists/iso-3366-1-countries.json");
+                if (!response.ok) {
+                    throw new Error('Failed to load country codes.');
+                }
+                const responseData = await response.json();
+                countryCodeList.value = responseData.map(item => item.code);
+            } catch (error) {
+                console.error(error);
+                message.value = "Error loading country codes.";
+            }
+        };
+
         // Validates the phone numbers entered by the user
         const onPocPhoneValidate = (output) => {
             isPocPhoneValid.value = output.valid;
@@ -559,6 +643,114 @@ export default defineComponent({
             // Reload the map
             // loadGeometry();
         };
+
+        // Method to get the date from a datetime
+        const getDateFrom = (datetime) => {
+            let date = new Date(datetime);
+            let year = date.getFullYear();
+            // getMonth() returns 0-11, so we add 1
+            let month = date.getMonth() + 1;
+            let day = date.getDate();
+
+            // Format the date as YYYY-MM-DD
+            let dateString = `${year}-${month}-${day}`;
+            return dateString;
+        }
+
+        // Transforms the form data to the WCMP2 schema format
+        const transformToSchema = (form) => {
+            // Initialise schema model
+            let schemaModel = {};
+
+            // Starting information
+            schemaModel.id = form.settings.identifier;
+            schemaModel.conformsTo = [schemaVersion];
+            schemaModel.type = "Feature";
+
+            // Time period information
+            schemaModel.time = {};
+            // Get the start and end dates from the form
+            const startDate = getDateFrom(form.origin.dateStarted);
+            const endDate = getDateFrom(form.origin.dateStopped);
+            schemaModel.time.interval = [startDate, endDate];
+            schemaModel.time.resolution = "P1D";
+
+            // Geometry information
+            schemaModel.geometry = {
+                type: "Polygon",
+                coordinates: [
+                    [
+                        // Top left corner
+                        [form.origin.westLongitude, form.origin.northLatitude],
+                        // Top right corner
+                        [form.origin.eastLongitude, form.origin.northLatitude],
+                        // Bottom right corner
+                        [form.origin.eastLongitude, form.origin.southLatitude],
+                        // Bottom left corner
+                        [form.origin.westLongitude, form.origin.southLatitude],
+                        // Back top top left corner to close the polygon
+                        [form.origin.westLongitude, form.origin.northLatitude]
+                    ]
+                ]
+            };
+
+            // Properties information
+            schemaModel.properties = {};
+            schemaModel.properties.title = form.properties.title;
+            schemaModel.properties.description = form.properties.description;
+            schemaModel.properties.keywords = form.settings.keywords;
+            // Contacts information
+            schemaModel.properties.contacts = [];
+            // Point of contact
+            schemaModel.properties.contacts.push({
+                "name": form.poc.individual,
+                "position": form.poc.positionName,
+                "organization": form.poc.name,
+                "phones": [{
+                    "value": form.poc.phone
+                }],
+                "emails": [{
+                    "value": form.poc.email
+                }],
+                "addresses": [{
+                    "deliveryPoint": form.poc.deliveryPoint,
+                    "city": form.poc.city,
+                    "administrativeArea": form.poc.administrativeArea,
+                    "postalCode": form.poc.postalCode,
+                    "country": form.poc.country
+                }],
+                "hoursOfService": form.poc.hoursOfService,
+                "contactInstructions": form.poc.contactInstructions,
+                "roles": ["pointOfContact"]
+            });
+            // Distributor
+            schemaModel.properties.contacts.push({
+                "name": form.distrib.individual,
+                "position": form.distrib.positionName,
+                "organization": form.distrib.name,
+                "phones": [{
+                    "value": form.distrib.phone
+                }],
+                "emails": [{
+                    "value": form.distrib.email
+                }],
+                "addresses": [{
+                    "deliveryPoint": form.distrib.deliveryPoint,
+                    "city": form.distrib.city,
+                    "administrativeArea": form.distrib.administrativeArea,
+                    "postalCode": form.distrib.postalCode,
+                    "country": form.distrib.country
+                }],
+                "hoursOfService": form.distrib.hoursOfService,
+                "contactInstructions": form.distrib.contactInstructions,
+                "roles": ["distributor"]
+            });
+
+            // Data policy information
+            schemaModel.properties["wmo:dataPolicy"] = form.settings.wmoDataPolicy;
+
+
+        }
 
         // Validate the metadata generated by the format against the WCMP2 schema
         const validateMetadata = async () => {
@@ -666,6 +858,7 @@ export default defineComponent({
         // Mounted
         onMounted(() => {
             loadList();
+            loadCodes();
         });
 
         // Watched
@@ -693,6 +886,8 @@ export default defineComponent({
             message,
             items,
             identifier,
+            languageCodeList,
+            countryCodeList,
             isNew,
             isPocPhoneValid,
             isDistribPhoneValid,
