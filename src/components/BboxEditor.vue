@@ -7,9 +7,9 @@
                 <l-tile-layer v-for="tileProvider in tileProviders" :key="tileProvider.name" :name="tileProvider.name"
                     :visible="tileProvider.visible" :url="tileProvider.url" :attribution="tileProvider.attribution"
                     layer-type="base" />
-                <l-feature-group ref="features">
+                <l-feature-group>
                     <l-rectangle v-if="rectangle.visible" :autoPan="true" :autofocus="true" :bounds="rectangle.bounds"
-                        :draggable="true"></l-rectangle>
+                        :draggable="false"></l-rectangle>
                 </l-feature-group>
             </l-map>
         </v-img>
@@ -19,11 +19,11 @@
 <script>
 import { defineComponent, ref, watch } from 'vue';
 import { LMap, LTileLayer, LControlLayers, LRectangle, LFeatureGroup } from "@vue-leaflet/vue-leaflet";
-import * as L from "leaflet";
+import { LatLng, LatLngBounds } from "leaflet";
 import "leaflet/dist/leaflet.css";
-// Allow the user to draw the bounding box
-import 'leaflet-draw';
-import 'leaflet-draw/dist/leaflet.draw.css';
+// // Allow the user to draw the bounding box
+// import 'leaflet-draw';
+// import 'leaflet-draw/dist/leaflet.draw.css';
 
 export default defineComponent({
     name: "BboxEditor",
@@ -35,58 +35,27 @@ export default defineComponent({
         LFeatureGroup
     },
     props: {
-        inputFeature: {},
+        boxBounds: {},
     },
     setup(props, { emit }) {
 
         // Reactive variables
         const map = ref(null);
-        const features = ref(null);
         const zoom = ref(1.5);
         const rectangle = ref({
-            visible: true,
+            visible: false,
             center: [0, 0],
             bounds: [[0, 0], [0, 0]]
         });
 
         // Methods
 
-        // Add the drawing controls
         const loadMapObjects = () => {
-            if (map.value?.mapObject) {
-                let drawControl = new L.Control.Draw({
-                    // Only allow the user to draw a rectangle (bounding box
-                    draw: {
-                        polyline: false,
-                        polygon: false,
-                        circle: false,
-                        marker: false,
-                        circlemarker: false,
-                        rectangle: true
-                    }
+            if (map.mapObject?.on) {
+                map.mapObject.on("draw:created", (event) => {
+                    console.log(event);
                 });
-                map.value.mapObject.addControl(drawControl);
-
-                // Save the corresponding bounding box coordinates
-                map.value.mapObject.on('draw:created', function (e) {
-                    let type = e.layerType,
-                        layer = e.layer;
-
-                    if (type === 'rectangle') {
-                        let bounds = layer.getBounds();
-                        let northLatitude = bounds.getNorth();
-                        let southLatitude = bounds.getSouth();
-                        let eastLongitude = bounds.getEast();
-                        let westLongitude = bounds.getWest();
-
-                        // Emit an event with the bounding box coordinates to be accessed by form
-                        emit('update-geometry', { northLatitude, southLatitude, eastLongitude, westLongitude });
-
-                        // Add the drawn layer to the map
-                        map.value.mapObject.addLayer(layer);
-                    }
-                });
-            }
+            };
             emit('loaded');
         };
 
@@ -119,27 +88,26 @@ export default defineComponent({
         const tileProviders = loadBasemaps();
 
         // Watchers
-        watch(() => props.inputFeature, (input) => {
-            if (input && input.length === 4) {
-                const zoom_factor = 0.05;
-                const topleft = new L.LatLng(input[0], input[1]);
-                const bottomright = new L.LatLng(input[2], input[3]);
-                const tmp = new L.LatLngBounds(topleft, bottomright);
-                rectangle.value.center = tmp.getCenter();
-                rectangle.value.bounds = [tmp.getNorthWest(), tmp.getSouthEast()];
-                map.value?.mapObject.fitBounds([
-                    [input[0] + zoom_factor, input[1] + zoom_factor],
-                    [input[2] - zoom_factor, input[3] - zoom_factor]
-                ]);
+        watch(() => props.boxBounds, () => {
+            if (props.boxBounds) {
+                // Use the four input coordinates to create the rectangle
+                const topLeft = new LatLng(props.boxBounds[0], props.boxBounds[1]);
+                const bottomRight = new LatLng(props.boxBounds[2], props.boxBounds[3]);
+                const bounds = new LatLngBounds(topLeft, bottomRight);
+                // Update the rectangle
+                rectangle.value.center = bounds.getCenter();
+                rectangle.value.bounds = [bounds.getNorthWest(), bounds.getSouthEast()];
                 rectangle.value.visible = true;
             } else {
-                map.value?.mapObject.setZoom(1.5);
+                // Reset the rectangle
+                rectangle.value.center = [0, 0];
+                rectangle.value.bounds = [[0, 0], [0, 0]];
+                rectangle.value.visible = false;
             }
         });
 
         return {
             map,
-            features,
             zoom,
             rectangle,
             tileProviders,

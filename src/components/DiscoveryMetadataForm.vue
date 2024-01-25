@@ -66,7 +66,7 @@
                     <v-row>
                         <v-col cols="12">
                             <!-- Bounding box editor -->
-                            <bbox-editor @update-geometry="updateGeometry" :input-feature="bounds"></bbox-editor>
+                            <bbox-editor :box-bounds="bounds"></bbox-editor>
                         </v-col>
                     </v-row>
                     <v-row>
@@ -495,7 +495,7 @@ export default defineComponent({
         // Whether or not the metadata is new or existing
         const isNew = ref(false);
         // Geometry bounds
-        const bounds = ref([90, 180, -90, -180]);
+        const bounds = ref([[0, 0], [0, 0]]);
         // Phone number validation for each field
         const isPocPhoneValid = ref(null);
         const isDistribPhoneValid = ref(null);
@@ -712,14 +712,14 @@ export default defineComponent({
             }
         };
 
-        // Update the geometry of the form based on the bounding box editor input
-        const updateGeometry = (bbox) => {
-            if (bbox) {
-                model.value.origin.northLatitude = bbox.northLatitude;
-                model.value.origin.eastLongitude = bbox.eastLongitude;
-                model.value.origin.southLatitude = bbox.southLatitude;
-                model.value.origin.westLongitude = bbox.westLongitude;
-            }
+        // Update the rectangle in the map when the user changes the bounding box
+        const updateBbox = () => {
+            bounds.value = [
+                model.value.origin.northLatitude || 90,
+                model.value.origin.eastLongitude || -180,
+                model.value.origin.southLatitude || -90,
+                model.value.origin.westLongitude || 180
+            ];
         };
 
         // Validates the phone numbers entered by the user
@@ -1017,12 +1017,17 @@ export default defineComponent({
             }
         });
 
-        // Also check if the formFilled value changes
+        // Also set the validation state to false if the formFilled value changes
         watch(() => formFilled.value, (oldVal, newVal) => {
             // Set metadataValidated.value to false whenever formFilled is changed
             if (oldVal !== newVal) {
                 metadataValidated.value = false;
             }
+        });
+
+        // Update the map when the user changes the bounding box
+        watch(() => deepClone(model.value.origin), () => {
+            updateBbox();
         });
 
         // Watch for the distributor checkbox to duplicate the contact info any time the POC information is changed
@@ -1051,7 +1056,6 @@ export default defineComponent({
             languageCodeList,
             countryCodeList,
             isNew,
-            updateGeometry,
             bounds,
             isPocPhoneValid,
             isDistribPhoneValid,
