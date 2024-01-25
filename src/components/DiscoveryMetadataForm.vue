@@ -23,10 +23,6 @@
             <v-card class="mt-3 pa-3">
                 <!-- Form which when filled and validated, can be exported or submitted -->
                 <v-form v-model="formFilled" v-if="metadataLoaded" validate-on="blur">
-                    <!-- <bbox-editor @updated="updateGeometry" @loaded="loadGeometry"
-                        :input-feature="form.bounds"></bbox-editor> -->
-                    <!-- Schema form here -->
-
                     <!-- Properties section -->
                     <v-card-title>Dataset Properties</v-card-title>
                     <v-row dense>
@@ -42,9 +38,9 @@
                         </v-col>
 
                         <v-col cols="2">
-                            <v-autocomplete label="Language" hint="ISO639 2-letter code"
-                                persistent-hint v-model="model.properties.language" :items="languageCodeList"
-                                :rules="[rules.required]" variant="outlined"></v-autocomplete>
+                            <v-autocomplete label="Language" hint="ISO639 2-letter code" persistent-hint
+                                v-model="model.properties.language" :items="languageCodeList" :rules="[rules.required]"
+                                variant="outlined"></v-autocomplete>
                         </v-col>
                     </v-row>
 
@@ -67,7 +63,13 @@
                                 :teleport="true" :enable-time-picker="false" auto-apply required />
                         </v-col>
                     </v-row>
-                    <v-row dense>
+                    <v-row>
+                        <v-col cols="12">
+                            <!-- Bounding box editor -->
+                            <bbox-editor @update-geometry="updateGeometry" :input-feature="bounds"></bbox-editor>
+                        </v-col>
+                    </v-row>
+                    <v-row>
                         <v-col cols="3">
                             <v-text-field label="North Latitude" hint="Northmost latitude of data region" type="float"
                                 v-model="model.origin.northLatitude" :rules="[rules.required, rules.latitude]"
@@ -153,9 +155,9 @@
                         </v-col>
 
                         <v-col cols="3">
-                            <v-autocomplete label="Country" hint="ISO3166 3-letter code"
-                                persistent-hint :items="countryCodeList" v-model="model.poc.country"
-                                :rules="[rules.required]" variant="outlined"></v-autocomplete>
+                            <v-autocomplete label="Country" hint="ISO3166 3-letter code" persistent-hint
+                                :items="countryCodeList" v-model="model.poc.country" :rules="[rules.required]"
+                                variant="outlined"></v-autocomplete>
                         </v-col>
 
                         <v-col cols="6">
@@ -274,7 +276,7 @@
                     <v-row dense>
                         <v-col cols="4">
                             <v-select label="WMO Data Policy" hint="Priority of data within WMO" type="string"
-                                :items="['core', 'recommended']" v-model="model.settings.wmoDataPolicy"
+                                :items="['core', 'recommended', 'weather']" v-model="model.settings.wmoDataPolicy"
                                 :rules="[rules.required]" variant="outlined"></v-select>
                         </v-col>
 
@@ -312,6 +314,9 @@
                     </v-row>
                 </v-form>
 
+                <p>{{ metadataValidated }}</p>
+                <p>{{ model }}</p>
+
                 <!-- Toolbar for user to reset, validate, export, or submit the metadata
                 from the above form -->
                 <v-row class="pt-5" v-if="metadataLoaded">
@@ -324,13 +329,13 @@
                         Validate
                     </v-btn>
 
-                    <v-btn color="#FFA500" class="ma-2" title="Export" @click="downloadMetadata"
+                    <v-btn color="#E09D00" class="ma-2" title="Export" @click="downloadMetadata"
                         :disabled="!formFilledAndValidated" v-if="metadataValidated"
                         append-icon="mdi-arrow-down-bold-box-outline">
                         Export
                     </v-btn>
 
-                    <v-btn color="#009900" class="ma-2" title="Submit" @click="submitMetadata"
+                    <v-btn color="#64BF40" class="ma-2" title="Submit" @click="submitMetadata"
                         :disabled="!formFilledAndValidated" v-if="metadataValidated" append-icon="mdi-cloud-upload">
                         Submit
                     </v-btn>
@@ -344,7 +349,7 @@
 import BboxEditor from "@/components/BboxEditor.vue";
 import { clean } from "@/scripts/helpers.js";
 
-import { defineComponent, ref, computed, onMounted, watchEffect } from 'vue';
+import { defineComponent, ref, computed, onMounted, watch, watchEffect } from 'vue';
 import { VCard, VForm, VBtn, VChipGroup, VChip } from 'vuetify/lib/components/index.mjs';
 
 const oapi = import.meta.env.VITE_API_URL;
@@ -388,57 +393,57 @@ export default defineComponent({
 
         // Test model
         const testModel = {
-            "properties": {
-                "title": "Test Dataset",
-                "description": "This is a test dataset",
-                "language": "en"
+            properties: {
+                title: "Test Dataset",
+                description: "This is a test dataset",
+                language: "en"
             },
-            "origin": {
-                "centreID": "test",
-                "dateStarted": "2021-01-01T00:00:00Z",
-                "dateStopped": "2021-01-01T00:00:00Z",
-                "northLatitude": 90,
-                "eastLongitude": 180,
-                "southLatitude": -90,
-                "westLongitude": -180
+            origin: {
+                centreID: "test",
+                dateStarted: "2021-01-01T00:00:00Z",
+                dateStopped: "2021-01-01T00:00:00Z",
+                northLatitude: 90,
+                eastLongitude: 180,
+                southLatitude: -90,
+                westLongitude: -180
             },
-            "poc": {
-                "individual": "Test User",
-                "positionName": "Test Position",
-                "name": "Test Organization",
-                "url": "https://www.test.com",
-                "phone": "+41 77 345 67 89",
-                "email": "contact@example.org",
-                "deliveryPoint": "123 Test Street",
-                "city": "Test City",
-                "administrativeArea": "Test State",
-                "postalCode": "12345",
-                "country": "USA",
-                "hoursOfService": "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
-                "contactInstructions": "Email"
+            poc: {
+                individual: "Test User",
+                positionName: "Test Position",
+                name: "Test Organization",
+                url: "https://www.test.com",
+                phone: "+41 77 345 67 89",
+                email: "contact@example.org",
+                deliveryPoint: "123 Test Street",
+                city: "Test City",
+                administrativeArea: "Test State",
+                postalCode: "12345",
+                country: "USA",
+                hoursOfService: "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
+                contactInstructions: "Email"
             },
-            "distrib": {
-                "duplicateFromContact": false,
-                "individual": "Test User",
-                "positionName": "Test Position",
-                "name": "Test Organization",
-                "url": "https://www.test.com",
-                "phone": "+41 77 345 67 89",
-                "email": "contact@example.org",
-                "deliveryPoint": "123 Test Street",
-                "city": "Test City",
-                "administrativeArea": "Test State",
-                "postalCode": "12345",
-                "country": "USA",
-                "hoursOfService": "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
-                "contactInstructions": "Email"
+            distrib: {
+                duplicateFromContact: false,
+                individual: "Test User",
+                positionName: "Test Position",
+                name: "Test Organization",
+                url: "https://www.test.com",
+                phone: "+41 77 345 67 89",
+                email: "contact@example.org",
+                deliveryPoint: "123 Test Street",
+                city: "Test City",
+                administrativeArea: "Test State",
+                postalCode: "12345",
+                country: "USA",
+                hoursOfService: "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
+                contactInstructions: "Email"
             },
-            "settings": {
-                "identifier": "urn:x-wmo:md:zmb:zambia_met_service:surface-weather-observations",
-                "wmoDataPolicy": "core",
-                "wmoStatus": "operational",
-                "retention": "30d",
-                "keywords": [
+            settings: {
+                identifier: "urn:x-wmo:md:zmb:zambia_met_service:surface-weather-observations",
+                wmoDataPolicy: "core",
+                wmoStatus: "operational",
+                retention: "30d",
+                keywords: [
                     "weather",
                     "climate",
                     "data"
@@ -489,13 +494,15 @@ export default defineComponent({
         const countryCodeList = ref([]);
         // Whether or not the metadata is new or existing
         const isNew = ref(false);
+        // Geometry bounds
+        const bounds = ref([90, 180, -90, -180]);
         // Phone number validation for each field
         const isPocPhoneValid = ref(null);
         const isDistribPhoneValid = ref(null);
         // Each keyword added by the user, before being added to the model
         const keyword = ref("");
-        // Metadata form to be filled, initialized with default values
-        const model = ref(deepClone(defaults));
+        // Metadata form to be filled
+        const model = ref({ 'properties': {}, 'origin': {}, 'poc': {}, 'distrib': {}, 'settings': {} });
 
         // Computed variables
 
@@ -527,12 +534,104 @@ export default defineComponent({
                 datasetSpecified.value = false;
             } catch (error) {
                 console.error(error);
-                // If the list cannot be loaded, the only option is to create a new dataset
-                items.value = ['Create New...'];
                 // Display error message to the user
                 message.value = 'Error loading discovery metadata list.';
             }
+            // Now add the option to create a new dataset, regardless of whether
+            // the list could be loaded or not
+            items.value.push('Create New...');
         };
+
+        // When the metadata is loaded, it must be transformed to the format of the form
+        // (this is because the form has a different structure to the schema)
+        // It is easier to understand the transformToSchema method first, because this
+        // method is just the inverse of that one
+        const transformToForm = (schema) => {
+            // Initialize form model
+            let formModel = {
+                properties: {},
+                origin: {},
+                poc: {},
+                distrib: {},
+                settings: {}
+            };
+
+            // Retrieve the identifier from the schema
+            formModel.settings.identifier = schema.id;
+
+            // Time period information
+            if (schema.time?.interval) {
+                formModel.origin.dateStarted = schema.time.interval[0];
+                formModel.origin.dateStopped = schema.time.interval[1];
+            }
+            // Data retention information
+            if (schema.time?.resolution) {
+                formModel.settings.retention = schema.time.resolution.replace('P', '').toLowerCase();
+            }
+
+            // Geometry information
+            if (schema.geometry?.coordinates) {
+                const coordinates = schema.geometry.coordinates[0];
+                if (coordinates.length >= 4) {
+                    formModel.origin.westLongitude = coordinates[0][0];
+                    formModel.origin.northLatitude = coordinates[0][1];
+                    formModel.origin.eastLongitude = coordinates[2][0];
+                    formModel.origin.southLatitude = coordinates[2][1];
+                }
+            }
+
+            // Properties information
+            formModel.properties.title = schema.properties.title;
+            formModel.properties.description = schema.properties.description;
+            formModel.properties.language = schema.properties.language;
+            formModel.settings.keywords = schema.properties.keywords;
+
+            // Contacts information
+            schema.properties.contacts.forEach(contact => {
+                if (contact.roles?.includes("pointOfContact")) {
+                    formModel.poc = {
+                        individual: contact.name,
+                        positionName: contact.position,
+                        name: contact.organization,
+                        phone: contact.phones ? contact.phones[0].value : '',
+                        email: contact.emails ? contact.emails[0].value : '',
+                        deliveryPoint: contact.addresses ? contact.addresses[0].deliveryPoint : '',
+                        city: contact.addresses ? contact.addresses[0].city : '',
+                        administrativeArea: contact.addresses ? contact.addresses[0].administrativeArea : '',
+                        postalCode: contact.addresses ? contact.addresses[0].postalCode : '',
+                        country: contact.addresses ? contact.addresses[0].country : '',
+                        hoursOfService: contact.hoursOfService,
+                        contactInstructions: contact.contactInstructions,
+                        url: contact.links ? contact.links[0].href : ''
+                    };
+                } else if (contact.roles?.includes("distributor")) {
+                    formModel.distrib = {
+                        individual: contact.name,
+                        positionName: contact.position,
+                        name: contact.organization,
+                        phone: contact.phones ? contact.phones[0].value : '',
+                        email: contact.emails ? contact.emails[0].value : '',
+                        deliveryPoint: contact.addresses ? contact.addresses[0].deliveryPoint : '',
+                        city: contact.addresses ? contact.addresses[0].city : '',
+                        administrativeArea: contact.addresses ? contact.addresses[0].administrativeArea : '',
+                        postalCode: contact.addresses ? contact.addresses[0].postalCode : '',
+                        country: contact.addresses ? contact.addresses[0].country : '',
+                        hoursOfService: contact.hoursOfService,
+                        contactInstructions: contact.contactInstructions,
+                        url: contact.links ? contact.links[0].href : ''
+                    };
+                }
+
+                // Additional settings information
+                if (schema.properties["wmo:dataPolicy"]) {
+                    formModel.settings.wmoDataPolicy = schema.properties["wmo:dataPolicy"];
+                }
+                if (schema.properties["wmo:status"]?.id) {
+                    formModel.settings.wmoStatus = schema.properties["wmo:status"].id;
+                }
+            });
+            return formModel;
+        }
 
         // When the user specifies a dataset identifier, load the corresponding metadata
         const loadMetadata = async () => {
@@ -546,13 +645,13 @@ export default defineComponent({
             // If the user selects 'Create New...', populate the form with default values
             if (identifier.value === "Create New...") {
                 isNew.value = true;
+                // Set model to default values
+                model.value = deepClone(defaults);
                 metadataValidated.value = false;
             }
             // Otherwise, populate the form with the loaded values
             else {
                 isNew.value = false;
-                metadataValidated.value = true;
-
                 try {
                     const response = await fetch(`${oapi}/collections/discovery-metadata/items/${identifier.value}`);
                     if (!response.ok) {
@@ -563,6 +662,11 @@ export default defineComponent({
                     const formModel = transformToForm(responseData);
                     // Update the form (model) with the loaded values
                     model.value = formModel;
+                    // As form was loaded, it must be already validated
+                    // Note: Set time delay to prevent watcher from firing too early
+                    setTimeout(() => {
+                        metadataValidated.value = true;
+                    }, 1000); // Delay of 1 second
                 } catch (error) {
                     console.log(error);
                     message.value = "Error loading selected discovery metadata file.";
@@ -584,7 +688,7 @@ export default defineComponent({
         const loadCodes = async () => {
             // Load language codes
             try {
-                const response = await fetch("/codelists/iso-639-1-languages.json");
+                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/codelists/iso-639-1-languages.json`);
                 if (!response.ok) {
                     throw new Error('Failed to load language codes.');
                 }
@@ -596,7 +700,7 @@ export default defineComponent({
             }
             // Load country codes
             try {
-                const response = await fetch("/codelists/iso-3366-1-countries.json");
+                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/codelists/iso-3366-1-countries.json`);
                 if (!response.ok) {
                     throw new Error('Failed to load country codes.');
                 }
@@ -605,6 +709,16 @@ export default defineComponent({
             } catch (error) {
                 console.error(error);
                 message.value = "Error loading country codes.";
+            }
+        };
+
+        // Update the geometry of the form based on the bounding box editor input
+        const updateGeometry = (bbox) => {
+            if (bbox) {
+                model.value.origin.northLatitude = bbox.northLatitude;
+                model.value.origin.eastLongitude = bbox.eastLongitude;
+                model.value.origin.southLatitude = bbox.southLatitude;
+                model.value.origin.westLongitude = bbox.westLongitude;
             }
         };
 
@@ -647,8 +761,6 @@ export default defineComponent({
             metadataValidated.value = false;
             formFilled.value = false;
             message.value = "Discovery metadata reset successfully.";
-            // Reload the map
-            // loadGeometry();
         };
 
         // Method to get the date from a datetime
@@ -711,53 +823,53 @@ export default defineComponent({
             schemaModel.properties.contacts = [];
             // Point of contact
             schemaModel.properties.contacts.push({
-                "name": form.poc.individual,
-                "position": form.poc.positionName,
-                "organization": form.poc.name,
-                "phones": [{
-                    "value": form.poc.phone
+                name: form.poc.individual,
+                position: form.poc.positionName,
+                organization: form.poc.name,
+                phones: [{
+                    value: form.poc.phone
                 }],
-                "emails": [{
-                    "value": form.poc.email
+                emails: [{
+                    value: form.poc.email
                 }],
-                "addresses": [{
-                    "deliveryPoint": form.poc.deliveryPoint,
-                    "city": form.poc.city,
-                    "administrativeArea": form.poc.administrativeArea,
-                    "postalCode": form.poc.postalCode,
-                    "country": form.poc.country
+                addresses: [{
+                    deliveryPoint: form.poc.deliveryPoint,
+                    city: form.poc.city,
+                    administrativeArea: form.poc.administrativeArea,
+                    postalCode: form.poc.postalCode,
+                    country: form.poc.country
                 }],
-                "links": [{
-                    "href": form.poc.url
+                links: [{
+                    href: form.poc.url
                 }],
-                "hoursOfService": form.poc.hoursOfService,
-                "contactInstructions": form.poc.contactInstructions,
-                "roles": ["pointOfContact"]
+                hoursOfService: form.poc.hoursOfService,
+                contactInstructions: form.poc.contactInstructions,
+                roles: ["pointOfContact"]
             });
             // Distributor
             schemaModel.properties.contacts.push({
-                "name": form.distrib.individual,
-                "position": form.distrib.positionName,
-                "organization": form.distrib.name,
-                "phones": [{
-                    "value": form.distrib.phone
+                name: form.distrib.individual,
+                position: form.distrib.positionName,
+                organization: form.distrib.name,
+                phones: [{
+                    value: form.distrib.phone
                 }],
-                "emails": [{
-                    "value": form.distrib.email
+                emails: [{
+                    value: form.distrib.email
                 }],
-                "addresses": [{
-                    "deliveryPoint": form.distrib.deliveryPoint,
-                    "city": form.distrib.city,
-                    "administrativeArea": form.distrib.administrativeArea,
-                    "postalCode": form.distrib.postalCode,
-                    "country": form.distrib.country
+                addresses: [{
+                    deliveryPoint: form.distrib.deliveryPoint,
+                    city: form.distrib.city,
+                    administrativeArea: form.distrib.administrativeArea,
+                    postalCode: form.distrib.postalCode,
+                    country: form.distrib.country
                 }],
-                "links": [{
-                    "href": form.distrib.url
+                links: [{
+                    href: form.distrib.url
                 }],
-                "hoursOfService": form.distrib.hoursOfService,
-                "contactInstructions": form.distrib.contactInstructions,
-                "roles": ["distributor"]
+                hoursOfService: form.distrib.hoursOfService,
+                contactInstructions: form.distrib.contactInstructions,
+                roles: ["distributor"]
             });
 
             // Extra information
@@ -766,22 +878,22 @@ export default defineComponent({
             schemaModel.properties.updated = new Date().toISOString();
             schemaModel.properties["wmo:dataPolicy"] = form.settings.wmoDataPolicy;
             schemaModel.properties["wmo:status"] = {
-                "id": form.settings.wmoStatus
+                id: form.settings.wmoStatus
             };
 
             // Links information
             schemaModel.links = [];
             schemaModel.links.push({
-                "rel": "collection",
-                "href": `${form.poc.url}/oapi/collections/${form.settings.identifier}`,
-                "type": "OAFeat",
-                "title": form.settings.identifier
+                rel: "collection",
+                href: `${form.poc.url}/oapi/collections/${form.settings.identifier}`,
+                type: "OAFeat",
+                title: form.settings.identifier
             })
             schemaModel.links.push({
-                "rel": "canonical",
-                "href": `${form.poc.url}/oapi/collections/discovery-metadata/items/${form.settings.identifier}`,
-                "type": "OARec",
-                "title": form.settings.identifier
+                rel: "canonical",
+                href: `${form.poc.url}/oapi/collections/discovery-metadata/items/${form.settings.identifier}`,
+                type: "OARec",
+                title: form.settings.identifier
             });
 
             return schemaModel;
@@ -898,6 +1010,21 @@ export default defineComponent({
 
         // Watched
 
+        // Set the validation state to false when the user makes a change to the form
+        watch(() => deepClone(model.value), (oldVal, newVal) => {
+            if (oldVal !== newVal) {
+                metadataValidated.value = false;
+            }
+        });
+
+        // Also check if the formFilled value changes
+        watch(() => formFilled.value, (oldVal, newVal) => {
+            // Set metadataValidated.value to false whenever formFilled is changed
+            if (oldVal !== newVal) {
+                metadataValidated.value = false;
+            }
+        });
+
         // Watch for the distributor checkbox to duplicate the contact info any time the POC information is changed
         // Note that watchEffect is used here instead of watch, because it should re run whenever any reactive dependency changes
         watchEffect(() => {
@@ -924,6 +1051,8 @@ export default defineComponent({
             languageCodeList,
             countryCodeList,
             isNew,
+            updateGeometry,
+            bounds,
             isPocPhoneValid,
             isDistribPhoneValid,
             keyword,
