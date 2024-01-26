@@ -13,6 +13,30 @@
                 <!-- Until loaded, play a loading animation -->
                 <v-progress-linear indeterminate color="primary" :active="working" />
 
+                <!-- Dialog window -->
+                <v-dialog v-model="showDialog" max-width="600px">
+                    <v-card>
+                        <v-card-title>
+                            Please enter some initial information
+                        </v-card-title>
+                        <v-card-text>
+                            <v-autocomplete label="Country" hint="ISO3166 3-letter code" persistent-hint
+                                :items="countryCodeList" v-model="model.poc.country" :rules="[rules.required]"
+                                variant="outlined"></v-autocomplete>
+                            <v-text-field v-model="model.origin.centreID" label="Centre ID"
+                                persistent-hint="Agency acronym (in lower case), as specified by member"
+                                variant="outlined"></v-text-field>
+                            <v-select v-model="datatype" :items="['synop', 'temp', 'other']" label="Data Type"
+                                variant="outlined"></v-select>
+                        </v-card-text>
+                        <v-card-actions>
+                            <v-btn color="#009900" variant="flat" block @click="continueToForm"
+                                :disabled="!dialogFilled">Continue to
+                                Form</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
+
                 <!-- Display messages to the user -->
                 <v-row class="pa-5">
                     <p class="black--text ma-0">{{ message }}</p>
@@ -267,10 +291,16 @@
                     <!-- Settings section -->
                     <v-card-title>Dataset Settings</v-card-title>
                     <v-row dense>
-                        <v-col cols="12">
+                        <v-col cols="6">
                             <v-text-field label="Identifier" hint="Unique identifier for this data" type="string"
                                 v-model="model.settings.identifier" :rules="[rules.required, rules.identifier]"
                                 variant="outlined" clearable></v-text-field>
+                        </v-col>
+
+                        <v-col cols="6">
+                            <v-text-field label="Topic Hierarchy" hint="Unique hierarchy for this data" type="string"
+                                v-model="model.settings.topicHierarchy" :rules="[rules.required, rules.topicHierarchy]"
+                                variant="outlined"></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row dense>
@@ -286,10 +316,16 @@
                                 :rules="[rules.required]" variant="outlined"></v-select>
                         </v-col>
 
-                        <v-col cols="4">
+                        <v-col cols="2">
                             <v-text-field label="Retention" hint="Minimum length of time data should be retained in WIS2"
                                 type="string" v-model="model.settings.retention" :rules="[rules.required]"
                                 variant="outlined" clearable></v-text-field>
+                        </v-col>
+
+                        <v-col cols="2">
+                            <v-text-field label="Resolution" hint="Frequency of data updates" type="string"
+                                v-model="model.settings.resolution" :rules="[rules.required]" variant="outlined"
+                                clearable></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row dense>
@@ -313,9 +349,6 @@
                         </v-col>
                     </v-row>
                 </v-form>
-
-                <p>{{ metadataValidated }}</p>
-                <p>{{ model }}</p>
 
                 <!-- Toolbar for user to reset, validate, export, or submit the metadata
                 from the above form -->
@@ -348,6 +381,8 @@
 <script>
 import BboxEditor from "@/components/BboxEditor.vue";
 import { clean } from "@/scripts/helpers.js";
+import synopTemplate from '@/models/synop-template.json';
+import tempTemplate from '@/models/temp-template.json';
 
 import { defineComponent, ref, computed, onMounted, watch, watchEffect } from 'vue';
 import { VCard, VForm, VBtn, VChipGroup, VChip } from 'vuetify/lib/components/index.mjs';
@@ -386,7 +421,6 @@ export default defineComponent({
                 identifier: 'urn:x-wmo:md:',
                 wmoDataPolicy: 'core',
                 wmoStatus: 'operational',
-                retention: '30d',
                 keywords: []
             }
         };
@@ -464,6 +498,7 @@ export default defineComponent({
             email: value => /^[a-z0-9._-]+@[a-z0-9-]+\.[a-z0-9.-]+$/.test(value) || 'Invalid email format.',
             country: value => /^[A-Z]{3}$/.test(value) || 'Invalid country code. Must be 3 uppercase letters.',
             identifier: value => /^urn:x-wmo:md:[a-z]{3}:[a-z0-9_-]+:[a-z0-9_-]+[a-z0-9:-]*$/.test(value) || 'Invalid identifier. Must start with \'urn:x-wmo:md:\'',
+            topicHierarchy: value => /^[a-z]{3}\/[_a-z-]+\/(data|metadata|reports)\/(core|recommended)\/[\\w]+\/[\\w-]+\/[\\w]*$/.test(value) || 'Invalid topic hierarchy. Follow the specified pattern.',
             keywords: value => Array.isArray(value) && value.length >= 3 || 'Keywords must be an array with at least 3 items.',
         };
 
@@ -486,6 +521,9 @@ export default defineComponent({
         const message = ref("Select existing discovery metadata file or create a new file.");
         // List of datasets to select from, if any
         const items = ref([]);
+        // Dialog window
+        const showDialog = ref(false);
+        const datatype = ref("");
         // Identifier of the selected dataset, used to load metadata from OAPI
         const identifier = ref("");
         // List of language codes to select from
@@ -505,6 +543,11 @@ export default defineComponent({
         const model = ref({ 'properties': {}, 'origin': {}, 'poc': {}, 'distrib': {}, 'settings': {} });
 
         // Computed variables
+
+        // Has the user filled the dialog window?
+        const dialogFilled = computed(() => {
+            return model.value.poc.country && model.value.origin.centreID && datatype.value !== "";
+        });
 
         // Controls which parts of the page are displayed
         const formFilledAndValidated = computed(() => {
@@ -648,6 +691,8 @@ export default defineComponent({
                 // Set model to default values
                 model.value = deepClone(defaults);
                 metadataValidated.value = false;
+                // Open the dialog window
+                showDialog.value = true;
             }
             // Otherwise, populate the form with the loaded values
             else {
@@ -684,6 +729,81 @@ export default defineComponent({
             working.value = false;
         };
 
+        // Dialog window for autofilling form
+        const continueToForm = () => {
+            // Close the dialog
+            showDialog.value = false;
+
+            // Autofill the form based on the input datatype
+            if (datatype.value === 'synop') {
+                applyTemplate(synopTemplate);
+            } else if (datatype.value === 'temp') {
+                applyTemplate(tempTemplate);
+            }
+            else {
+                // At a minimum, automatically find the bounding box
+                getAutoBbox(model.value.poc.country)
+            }
+        }
+
+        // Find the corresponding alpha-2 code to an alpha-3 code
+        const getAlpha2Code = (alpha3Code, countries) => {
+            const country = countries.find(item => item["alpha-3"] === alpha3Code);
+            // Return the code in lower case as we need it in this
+            // form for founding the corresponding bbox
+            return country["alpha-2"].toLowerCase();
+        }
+
+        // Get an automatic bounding box using the country code
+        const getAutoBbox = async (alpha3Code) => {
+            try {
+                // Load country codes
+                const countriesResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/codelists/iso-3366-1-countries.json`);
+                if (!countriesResponse.ok) {
+                    throw new Error('Failed to load country codes.');
+                }
+                const countries = await countriesResponse.json();
+
+                // Use this to find the corresponding alpha-2 code
+                const alpha2Code = getAlpha2Code(alpha3Code, countries);
+
+                // Load bounding boxes
+                const bboxesResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/codelists/country-bbox.json`);
+                if (!bboxesResponse.ok) {
+                    throw new Error('Failed to load bounding boxes.');
+                }
+                const bboxes = await bboxesResponse.json();
+
+                // Use the alpha-2 code to get the corresponding bbox
+                const boundingBox = bboxes['countries'][alpha2Code]['bbox'];
+
+                // Now populate the form with the bounding box values
+                model.value.origin.northLatitude = boundingBox.maxy;
+                model.value.origin.eastLongitude = boundingBox.maxx;
+                model.value.origin.southLatitude = boundingBox.miny;
+                model.value.origin.westLongitude = boundingBox.minx;
+
+            } catch (error) {
+                console.error(error);
+                message.value = "Error loading automatic bounding box.";
+            }
+        }
+
+        // Autofill form based on template
+        const applyTemplate = (template) => {
+            model.value.properties.title = template.title.replace('$CENTRE_ID', model.value.origin.centreID);
+            model.value.properties.language = template.language;
+            model.value.settings.identifier = template.identifier.replace('$CENTRE_ID', model.value.origin.centreID);
+            model.value.settings.topicHierarchy = template.topicHierarchy.replace('$CENTRE_ID', model.value.origin.centreID);
+            model.value.settings.retention = template.retention;
+            model.value.settings.resolution = template.resolution;
+            model.value.settings.keywords = template.keywords;
+            model.value.distrib.duplicateFromContact = template.duplicateFromContact;
+
+            // Now update the bounding box values
+            getAutoBbox(model.value.poc.country);
+        };
+
         // Load language/country codes from a JSON file
         const loadCodes = async () => {
             // Load language codes
@@ -705,7 +825,7 @@ export default defineComponent({
                     throw new Error('Failed to load country codes.');
                 }
                 const responseData = await response.json();
-                countryCodeList.value = responseData.map(item => item.code);
+                countryCodeList.value = responseData.map(item => item["alpha-3"]);
             } catch (error) {
                 console.error(error);
                 message.value = "Error loading country codes.";
@@ -1052,6 +1172,9 @@ export default defineComponent({
             datasetSpecified,
             message,
             items,
+            showDialog,
+            dialogFilled,
+            datatype,
             identifier,
             languageCodeList,
             countryCodeList,
@@ -1065,6 +1188,7 @@ export default defineComponent({
             distributorFieldsEnabled,
             loadList,
             loadMetadata,
+            continueToForm,
             onPocPhoneValidate,
             onDistribPhoneValidate,
             addKeyword,

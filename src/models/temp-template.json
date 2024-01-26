@@ -1,0 +1,10 @@
+{
+    "title": "Upper-level temperature/humidity/wind reports from fixed-land stations (TEMP) ($CENTRE_ID)",
+    "identifier": "urn:x-wmo:md:$CENTRE_ID:surface-based-observations.temp",
+    "topicHierarchy": "$CENTRE_ID.data.core.weather.surface-based-observations.temp",
+    "language": "en",
+    "retention": "P30D",
+    "resolution": "P12H",
+    "keywords": ["upper air", "humidity", "wind", "observations"],
+    "duplicateFromContact": true
+}
