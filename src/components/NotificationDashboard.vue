@@ -227,7 +227,7 @@ export default defineComponent({
                 pubtime: new Date(item.properties.pubtime),
                 canonical_url: getCanonicalUrl(item.links),
                 wsi: item.properties.wigos_station_identifier,
-                coordinates: item.geometry.coordinates
+                coordinates: item.geometry?.coordinates ?? null // Geometry may not be present
             }));
             // sort by pubtime descending
             return selectedFields.sort((a, b) => b.pubtime - a.pubtime);

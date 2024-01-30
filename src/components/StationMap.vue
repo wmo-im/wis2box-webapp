@@ -75,25 +75,30 @@ export default defineComponent({
                 // Structure features array in form [lat, lon]
                 // required for markers
                 features.value.map((feature) => {
-                    let coords = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
-                    const marker = L.marker(coords, {
-                        // Set the marker icon, if desired
-                        icon: L.icon({
-                            iconUrl: import.meta.env.VITE_BASE_URL + '/assets/marker-icon.png',
-                            shadowUrl: import.meta.env.VITE_BASE_URL + '/assets/marker-shadow.png',
-                            iconSize: [25, 41],
-                            iconAnchor: [12, 41],
-                            popupAnchor: [1, -34]
-                        })
-                    });
-                    // Set ID for marker, which is a link to
-                    // the notification
-                    marker.id = feature.id;
-                    // Set type of marker
-                    marker.type = "host";
-                    // Extend LatLngBounds with coordinates
-                    bounds.extend(coords)
-                    stationLayer.value.addLayer(marker);
+                    let coords = feature.geometry?.coordinates;
+                    // Check if coordinates are defined before proceeding
+                    if (coords) {
+                        // Swap coordinates to [lat, lon] for Leaflet
+                        coords = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
+                        const marker = L.marker(coords, {
+                            // Set the marker icon, if desired
+                            icon: L.icon({
+                                iconUrl: import.meta.env.VITE_BASE_URL + '/assets/marker-icon.png',
+                                shadowUrl: import.meta.env.VITE_BASE_URL + '/assets/marker-shadow.png',
+                                iconSize: [25, 41],
+                                iconAnchor: [12, 41],
+                                popupAnchor: [1, -34]
+                            })
+                        });
+                        // Set ID for marker, which is a link to
+                        // the notification
+                        marker.id = feature.id;
+                        // Set type of marker
+                        marker.type = "host";
+                        // Extend LatLngBounds with coordinates
+                        bounds.extend(coords)
+                        stationLayer.value.addLayer(marker);
+                    }
                 })
                 map.value.fitBounds(bounds);
             }

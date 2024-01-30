@@ -76,17 +76,26 @@
                                 type="string" v-model="model.origin.centreID" :rules="[rules.required, rules.centreID]"
                                 variant="outlined" clearable></v-text-field>
                         </v-col>
-
-                        <v-col cols="4">
+                    </v-row>
+                    <v-card-title>Temporal Properties</v-card-title>
+                    <v-row dense>
+                        <v-col cols="3">
                             <VueDatePicker placeholder="Date Started in UTC" v-model="model.origin.dateStarted"
                                 :teleport="true" :enable-time-picker="false" auto-apply required />
                         </v-col>
 
-                        <v-col cols="4">
+                        <v-col cols="3">
                             <VueDatePicker placeholder="Date Stopped in UTC" v-model="model.origin.dateStopped"
                                 :teleport="true" :enable-time-picker="false" auto-apply required />
                         </v-col>
+
+                        <v-col cols="3">
+                            <v-text-field label=" Time Resolution" hint="Frequency of data updates, e.g. 1h" type="string"
+                                v-model="model.settings.resolution" :rules="[rules.required]" variant="outlined"
+                                clearable></v-text-field>
+                        </v-col>
                     </v-row>
+                    <v-card-title>Spatial Properties</v-card-title>
                     <v-row>
                         <v-col cols="12">
                             <!-- Bounding box editor -->
@@ -116,6 +125,60 @@
                             <v-text-field label="West Longitude" hint="Westmost longitude of data region" type="float"
                                 v-model="model.origin.westLongitude" :rules="[rules.required, rules.longitude]"
                                 variant="outlined" clearable></v-text-field>
+                        </v-col>
+                    </v-row>
+
+                    <!-- Settings section -->
+                    <v-card-title>Dataset Settings</v-card-title>
+                    <v-row dense>
+                        <v-col cols="6">
+                            <v-text-field label="Identifier" hint="Unique identifier for this data" type="string"
+                                v-model="model.settings.identifier" :rules="[rules.required, rules.identifier]"
+                                variant="outlined" clearable></v-text-field>
+                        </v-col>
+
+                        <v-col cols="6">
+                            <v-text-field label="Topic Hierarchy" hint="Unique hierarchy for this data" type="string"
+                                v-model="model.settings.topicHierarchy" :rules="[rules.required, rules.topicHierarchy]"
+                                variant="outlined"></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="2">
+                            <v-text-field label="Retention" hint="Minimum length of time data should be retained in WIS2"
+                                type="string" v-model="model.settings.retention" :rules="[rules.required]"
+                                variant="outlined" clearable></v-text-field>
+                        </v-col>
+
+                        <v-col cols="2">
+                            <v-select label="WMO Data Policy" hint="Priority of data within WMO" type="string"
+                                :items="['core', 'recommended', 'weather']" v-model="model.settings.wmoDataPolicy"
+                                :rules="[rules.required]" variant="outlined"></v-select>
+                        </v-col>
+
+                        <v-col cols="2">
+                            <v-select label="WMO Status" hint="Status of data within WMO" type="string"
+                                :items="['operational', 'not operational']" v-model="model.settings.wmoStatus"
+                                :rules="[rules.required]" variant="outlined"></v-select>
+                        </v-col>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="4">
+                            <v-text-field label="Keywords (3 minimum)" hint="Search keywords for data" type="array"
+                                v-model="keyword" @keyup.enter="addKeyword" variant="outlined" clearable></v-text-field>
+    
+                        </v-col>
+                        <v-col cols="1">
+                            <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"
+                                :disabled="keyword == ''"></v-btn>
+                        </v-col>
+                        <v-col cols="7">
+                            <v-chip-group :rules="[rules.required, rules.keywords]">
+                                <v-chip v-for="keyword in model.settings.keywords" :key="keyword" closable label
+                                    @click:close="removeKeyword(keyword)">
+                                    {{ keyword }}
+                                </v-chip>
+                            </v-chip-group>
                         </v-col>
                     </v-row>
 
@@ -287,67 +350,6 @@
                                 :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
                     </v-row>
-
-                    <!-- Settings section -->
-                    <v-card-title>Dataset Settings</v-card-title>
-                    <v-row dense>
-                        <v-col cols="6">
-                            <v-text-field label="Identifier" hint="Unique identifier for this data" type="string"
-                                v-model="model.settings.identifier" :rules="[rules.required, rules.identifier]"
-                                variant="outlined" clearable></v-text-field>
-                        </v-col>
-
-                        <v-col cols="6">
-                            <v-text-field label="Topic Hierarchy" hint="Unique hierarchy for this data" type="string"
-                                v-model="model.settings.topicHierarchy" :rules="[rules.required, rules.topicHierarchy]"
-                                variant="outlined"></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row dense>
-                        <v-col cols="4">
-                            <v-select label="WMO Data Policy" hint="Priority of data within WMO" type="string"
-                                :items="['core', 'recommended', 'weather']" v-model="model.settings.wmoDataPolicy"
-                                :rules="[rules.required]" variant="outlined"></v-select>
-                        </v-col>
-
-                        <v-col cols="4">
-                            <v-select label="WMO Status" hint="Status of data within WMO" type="string"
-                                :items="['operational', 'not operational']" v-model="model.settings.wmoStatus"
-                                :rules="[rules.required]" variant="outlined"></v-select>
-                        </v-col>
-
-                        <v-col cols="2">
-                            <v-text-field label="Retention" hint="Minimum length of time data should be retained in WIS2"
-                                type="string" v-model="model.settings.retention" :rules="[rules.required]"
-                                variant="outlined" clearable></v-text-field>
-                        </v-col>
-
-                        <v-col cols="2">
-                            <v-text-field label="Resolution" hint="Frequency of data updates" type="string"
-                                v-model="model.settings.resolution" :rules="[rules.required]" variant="outlined"
-                                clearable></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row dense>
-                        <v-col cols="4">
-                            <v-text-field label="Keywords (three minimum)" hint="Search keywords for data" type="array"
-                                v-model="keyword" @keyup.enter="addKeyword" variant="outlined" clearable></v-text-field>
-
-                        </v-col>
-                        <v-col cols="1">
-                            <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"
-                                :disabled="keyword == ''"></v-btn>
-                        </v-col>
-
-                        <v-col cols="7">
-                            <v-chip-group :rules="[rules.required, rules.keywords]">
-                                <v-chip v-for="keyword in model.settings.keywords" :key="keyword" closable label
-                                    @click:close="removeKeyword(keyword)">
-                                    {{ keyword }}
-                                </v-chip>
-                            </v-chip-group>
-                        </v-col>
-                    </v-row>
                 </v-form>
 
                 <!-- Toolbar for user to reset, validate, export, or submit the metadata
@@ -419,6 +421,7 @@ export default defineComponent({
             },
             settings: {
                 identifier: 'urn:x-wmo:md:',
+                retention: "30d",
                 wmoDataPolicy: 'core',
                 wmoStatus: 'operational',
                 keywords: []
@@ -436,6 +439,7 @@ export default defineComponent({
                 centreID: "test",
                 dateStarted: "2021-01-01T00:00:00Z",
                 dateStopped: "2021-01-01T00:00:00Z",
+                resolution: "1h",
                 northLatitude: 90,
                 eastLongitude: 180,
                 southLatitude: -90,
@@ -607,9 +611,9 @@ export default defineComponent({
                 formModel.origin.dateStarted = schema.time.interval[0];
                 formModel.origin.dateStopped = schema.time.interval[1];
             }
-            // Data retention information
+            // Minimum time period resolvable in the dataset
             if (schema.time?.resolution) {
-                formModel.settings.retention = schema.time.resolution.replace('P', '').toLowerCase();
+                formModel.origin.resolution = schema.time.resolution.replace('P', '').toLowerCase();
             }
 
             // Geometry information
@@ -793,10 +797,10 @@ export default defineComponent({
         const applyTemplate = (template) => {
             model.value.properties.title = template.title.replace('$CENTRE_ID', model.value.origin.centreID);
             model.value.properties.language = template.language;
+            model.value.origin.resolution = template.resolution;
+            model.value.settings.retention = template.retention;
             model.value.settings.identifier = template.identifier.replace('$CENTRE_ID', model.value.origin.centreID);
             model.value.settings.topicHierarchy = template.topicHierarchy.replace('$CENTRE_ID', model.value.origin.centreID);
-            model.value.settings.retention = template.retention;
-            model.value.settings.resolution = template.resolution;
             model.value.settings.keywords = template.keywords;
             model.value.distrib.duplicateFromContact = template.duplicateFromContact;
 
@@ -912,8 +916,7 @@ export default defineComponent({
             const startDate = getDateFrom(form.origin.dateStarted);
             const endDate = getDateFrom(form.origin.dateStopped);
             schemaModel.time.interval = [startDate, endDate];
-            // Not sure about this one (resolution vs retention?), this is coming from the old form
-            schemaModel.time.resolution = `P${form.settings.retention.toUpperCase()}`;
+            schemaModel.time.resolution = `P${form.origin.resolution.toUpperCase()}`;
 
             // Geometry information
             schemaModel.geometry = {
