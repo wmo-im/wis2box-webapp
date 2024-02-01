@@ -47,23 +47,23 @@
             <v-card class="mt-3 pa-3">
                 <!-- Form which when filled and validated, can be exported or submitted -->
                 <v-form v-model="formFilled" v-if="metadataLoaded" validate-on="blur">
-                    <!-- Properties section -->
-                    <v-card-title>Dataset Properties</v-card-title>
+                    <!-- Identification section -->
+                    <v-card-title>Dataset Identification</v-card-title>
                     <v-row dense>
                         <v-col cols="5">
-                            <v-text-field label="Title" hint="Name of data" type="string" v-model="model.properties.title"
+                            <v-text-field label="Title" hint="Name of data" type="string" v-model="model.identification.title"
                                 :rules="[rules.required]" variant="outlined" clearable></v-text-field>
                         </v-col>
 
                         <v-col cols="5">
                             <v-text-field label="Description" hint="Brief description of data" type="string"
-                                v-model="model.properties.description" :rules="[rules.required]" variant="outlined"
+                                v-model="model.identification.description" :rules="[rules.required]" variant="outlined"
                                 clearable></v-text-field>
                         </v-col>
 
                         <v-col cols="2">
                             <v-autocomplete label="Language" hint="ISO639 2-letter code" persistent-hint
-                                v-model="model.properties.language" :items="languageCodeList" :rules="[rules.required]"
+                                v-model="model.identification.language" :items="languageCodeList" :rules="[rules.required]"
                                 variant="outlined"></v-autocomplete>
                         </v-col>
                     </v-row>
@@ -144,41 +144,51 @@
                         </v-col>
                     </v-row>
                     <v-row dense>
-                        <v-col cols="2">
-                            <v-text-field label="Retention" hint="Minimum length of time data should be retained in WIS2"
-                                type="string" v-model="model.settings.retention" :rules="[rules.required]"
-                                variant="outlined" clearable></v-text-field>
-                        </v-col>
+                        <v-col cols="6">
+                            <v-row>
+                                <v-col cols="4">
+                                    <v-text-field label="Retention"
+                                        hint="Minimum length of time data should be retained in WIS2" type="string"
+                                        v-model="model.settings.retention" :rules="[rules.required]" variant="outlined"
+                                        clearable></v-text-field>
+                                </v-col>
 
-                        <v-col cols="2">
-                            <v-select label="WMO Data Policy" hint="Priority of data within WMO" type="string"
-                                :items="['core', 'recommended', 'weather']" v-model="model.settings.wmoDataPolicy"
-                                :rules="[rules.required]" variant="outlined"></v-select>
-                        </v-col>
+                                <v-col cols="4">
+                                    <v-select label="WMO Data Policy" hint="Priority of data within WMO" type="string"
+                                        :items="['core', 'recommended', 'weather']" v-model="model.settings.wmoDataPolicy"
+                                        :rules="[rules.required]" variant="outlined"></v-select>
+                                </v-col>
 
-                        <v-col cols="2">
-                            <v-select label="WMO Status" hint="Status of data within WMO" type="string"
-                                :items="['operational', 'not operational']" v-model="model.settings.wmoStatus"
-                                :rules="[rules.required]" variant="outlined"></v-select>
+                                <v-col cols="4">
+                                    <v-select label="WMO Status" hint="Status of data within WMO" type="string"
+                                        :items="['operational', 'not operational']" v-model="model.settings.wmoStatus"
+                                        :rules="[rules.required]" variant="outlined"></v-select>
+                                </v-col>
+                            </v-row>
                         </v-col>
-                    </v-row>
-                    <v-row dense>
-                        <v-col cols="4">
-                            <v-text-field label="Keywords (3 minimum)" hint="Search keywords for data" type="array"
-                                v-model="keyword" @keyup.enter="addKeyword" variant="outlined" clearable></v-text-field>
-    
-                        </v-col>
-                        <v-col cols="1">
-                            <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"
-                                :disabled="keyword == ''"></v-btn>
-                        </v-col>
-                        <v-col cols="7">
-                            <v-chip-group :rules="[rules.required, rules.keywords]">
-                                <v-chip v-for="keyword in model.settings.keywords" :key="keyword" closable label
-                                    @click:close="removeKeyword(keyword)">
-                                    {{ keyword }}
-                                </v-chip>
-                            </v-chip-group>
+                        <v-col cols="6">
+                            <v-row dense>
+                                <v-col cols="10">
+                                    <v-text-field label="Keywords (3 minimum)" hint="Search keywords for data" type="array"
+                                        v-model="keyword" @keyup.enter="addKeyword" variant="outlined"
+                                        clearable></v-text-field>
+
+                                </v-col>
+                                <v-col cols="2">
+                                    <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"
+                                        :disabled="keyword == ''"></v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-row dense>
+                                <v-col cols="auto">
+                                    <v-chip-group :rules="[rules.required, rules.keywords]">
+                                        <v-chip v-for="keyword in model.settings.keywords" :key="keyword" closable label
+                                            @click:close="removeKeyword(keyword)">
+                                            {{ keyword }}
+                                        </v-chip>
+                                    </v-chip-group>
+                                </v-col>
+                            </v-row>
                         </v-col>
                     </v-row>
 
@@ -408,20 +418,17 @@ export default defineComponent({
 
         // Default value of the form, not an exhaustive list of all fields
         const defaults = {
-            properties: {},
+            identification: {},
             origin: {},
             poc: {
                 hoursOfService: "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
                 contactInstructions: 'Email'
             },
             distrib: {
-                duplicateFromContact: false,
-                hoursOfService: "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
-                contactInstructions: 'Email'
+                duplicateFromContact: true
             },
             settings: {
                 identifier: 'urn:x-wmo:md:',
-                retention: "30d",
                 wmoDataPolicy: 'core',
                 wmoStatus: 'operational',
                 keywords: []
@@ -430,7 +437,7 @@ export default defineComponent({
 
         // Test model
         const testModel = {
-            properties: {
+            identification: {
                 title: "Test Dataset",
                 description: "This is a test dataset",
                 language: "en"
@@ -544,7 +551,7 @@ export default defineComponent({
         // Each keyword added by the user, before being added to the model
         const keyword = ref("");
         // Metadata form to be filled
-        const model = ref({ 'properties': {}, 'origin': {}, 'poc': {}, 'distrib': {}, 'settings': {} });
+        const model = ref({ 'identification': {}, 'origin': {}, 'poc': {}, 'distrib': {}, 'settings': {} });
 
         // Computed variables
 
@@ -596,7 +603,7 @@ export default defineComponent({
         const transformToForm = (schema) => {
             // Initialize form model
             let formModel = {
-                properties: {},
+                identification: {},
                 origin: {},
                 poc: {},
                 distrib: {},
@@ -628,9 +635,9 @@ export default defineComponent({
             }
 
             // Properties information
-            formModel.properties.title = schema.properties.title;
-            formModel.properties.description = schema.properties.description;
-            formModel.properties.language = schema.properties.language;
+            formModel.identification.title = schema.properties.title;
+            formModel.identification.description = schema.properties.description;
+            formModel.identification.language = schema.properties.language;
             formModel.settings.keywords = schema.properties.keywords;
 
             // Contacts information
@@ -795,14 +802,15 @@ export default defineComponent({
 
         // Autofill form based on template
         const applyTemplate = (template) => {
-            model.value.properties.title = template.title.replace('$CENTRE_ID', model.value.origin.centreID);
-            model.value.properties.language = template.language;
+            model.value.identification.title = template.title.replace('$CENTRE_ID', model.value.origin.centreID);
+            model.value.identification.language = template.language;
             model.value.origin.resolution = template.resolution;
-            model.value.settings.retention = template.retention;
+            model.value.distrib.duplicateFromContact = template.duplicateFromContact;
+            // Remove the P and make lower case (P30D -> 30d)
+            model.value.settings.retention = template.retention.substring(1).toLowerCase();
             model.value.settings.identifier = template.identifier.replace('$CENTRE_ID', model.value.origin.centreID);
             model.value.settings.topicHierarchy = template.topicHierarchy.replace('$CENTRE_ID', model.value.origin.centreID);
             model.value.settings.keywords = template.keywords;
-            model.value.distrib.duplicateFromContact = template.duplicateFromContact;
 
             // Now update the bounding box values
             getAutoBbox(model.value.poc.country);
@@ -939,8 +947,8 @@ export default defineComponent({
 
             // Properties information
             schemaModel.properties = {};
-            schemaModel.properties.title = form.properties.title;
-            schemaModel.properties.description = form.properties.description;
+            schemaModel.properties.title = form.identification.title;
+            schemaModel.properties.description = form.identification.description;
             schemaModel.properties.keywords = form.settings.keywords;
             // Contacts information
             schemaModel.properties.contacts = [];
@@ -996,7 +1004,7 @@ export default defineComponent({
             });
 
             // Extra information
-            schemaModel.properties.language = form.properties.language;
+            schemaModel.properties.language = form.identification.language;
             // How should we approach the creation date?
             schemaModel.properties.updated = new Date().toISOString();
             schemaModel.properties["wmo:dataPolicy"] = form.settings.wmoDataPolicy;
