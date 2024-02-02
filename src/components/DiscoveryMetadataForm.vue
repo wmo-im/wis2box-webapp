@@ -14,15 +14,14 @@
                 <v-progress-linear indeterminate color="primary" :active="working" />
 
                 <!-- Dialog window -->
-                <v-dialog v-model="showDialog" max-width="600px">
+                <v-dialog v-model="showDialog" max-width="600px" persistent>
                     <v-card>
                         <v-card-title>
                             Please enter some initial information
                         </v-card-title>
                         <v-card-text>
-                            <v-autocomplete label="Country" hint="ISO3166 3-letter code" persistent-hint
-                                :items="countryCodeList" v-model="model.poc.country" :rules="[rules.required]"
-                                variant="outlined"></v-autocomplete>
+                            <v-autocomplete label="Country" :items="countryCodeList" item-title="name" item-value="alpha-3"
+                                v-model="model.poc.country" :rules="[rules.required]" variant="outlined"></v-autocomplete>
                             <v-text-field v-model="model.origin.centreID" label="Centre ID"
                                 persistent-hint="Agency acronym (in lower case), as specified by member"
                                 variant="outlined"></v-text-field>
@@ -50,21 +49,39 @@
                     <!-- Identification section -->
                     <v-card-title>Dataset Identification</v-card-title>
                     <v-row dense>
-                        <v-col cols="5">
-                            <v-text-field label="Title" hint="Name of data" type="string" v-model="model.identification.title"
-                                :rules="[rules.required]" variant="outlined" clearable></v-text-field>
+                        <v-col cols="6">
+                            <v-text-field label="Title" hint="Name of data" type="string"
+                                v-model="model.identification.title" :rules="[rules.required]" variant="outlined"
+                                clearable></v-text-field>
                         </v-col>
 
-                        <v-col cols="5">
+                        <v-col cols="6">
                             <v-text-field label="Description" hint="Brief description of data" type="string"
                                 v-model="model.identification.description" :rules="[rules.required]" variant="outlined"
                                 clearable></v-text-field>
                         </v-col>
-
-                        <v-col cols="2">
-                            <v-autocomplete label="Language" hint="ISO639 2-letter code" persistent-hint
-                                v-model="model.identification.language" :items="languageCodeList" :rules="[rules.required]"
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="3">
+                            <v-autocomplete label="Language" v-model="model.identification.language"
+                                :items="languageCodeList" item-title="name" item-value="code" :rules="[rules.required]"
                                 variant="outlined"></v-autocomplete>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-text-field label="Keywords (3 minimum)" hint="Search keywords for data" type="array"
+                                v-model="keyword" @keyup.enter="addKeyword" variant="outlined" clearable></v-text-field>
+                        </v-col>
+                        <v-col cols="1">
+                            <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"
+                                :disabled="keyword == ''"></v-btn>
+                        </v-col>
+                        <v-col cols="5">
+                            <v-chip-group :rules="[rules.required, rules.keywords]">
+                                <v-chip v-for="keyword in model.identification.keywords" :key="keyword" closable label
+                                    @click:close="removeKeyword(keyword)">
+                                    {{ keyword }}
+                                </v-chip>
+                            </v-chip-group>
                         </v-col>
                     </v-row>
 
@@ -72,26 +89,55 @@
                     <v-card-title>Dataset Origin</v-card-title>
                     <v-row dense>
                         <v-col cols="4">
+                            <!-- The centre ID is left disabled as it was selected by the user earlier -->
                             <v-text-field label="Centre ID" hint="Agency acronym (in lower case), as specified by member"
                                 type="string" v-model="model.origin.centreID" :rules="[rules.required, rules.centreID]"
-                                variant="outlined" clearable></v-text-field>
+                                variant="outlined" clearable disabled></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-select label="WMO Data Policy" hint="Priority of data within WMO" type="string"
+                                :items="['core', 'recommended']" v-model="model.origin.wmoDataPolicy"
+                                :rules="[rules.required]" variant="outlined"></v-select>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-text-field label="Retention" hint="Minimum length of time data should be retained in WIS2"
+                                type="string" v-model="model.origin.retention" :rules="[rules.required]" variant="outlined"
+                                clearable></v-text-field>
+                        </v-col>
+
+                    </v-row>
+                    <!-- The identifier and topic hierarchy -->
+                    <!-- Unless the user selects 'other' for the datatype,
+                    these should remain disabled as they are autofilled -->
+                    <v-row dense>
+                        <v-col cols="6">
+                            <v-text-field label="Identifier" hint="Unique identifier for this data" type="string"
+                                v-model="model.origin.identifier" :rules="[rules.required, rules.identifier]"
+                                variant="outlined" clearable :disabled="datatype !== 'other'"></v-text-field>
+                        </v-col>
+
+                        <v-col cols="6">
+                            <v-text-field label="Topic Hierarchy" hint="Unique hierarchy for this data" type="string"
+                                v-model="model.origin.topicHierarchy" :rules="[rules.required, rules.topicHierarchy]"
+                                variant="outlined" :disabled="datatype !== 'other'"></v-text-field>
                         </v-col>
                     </v-row>
+
                     <v-card-title>Temporal Properties</v-card-title>
                     <v-row dense>
                         <v-col cols="3">
-                            <VueDatePicker placeholder="Date Started in UTC" v-model="model.origin.dateStarted"
+                            <VueDatePicker placeholder="Begin Date in UTC" v-model="model.origin.dateStarted"
                                 :teleport="true" :enable-time-picker="false" auto-apply required />
                         </v-col>
 
                         <v-col cols="3">
-                            <VueDatePicker placeholder="Date Stopped in UTC" v-model="model.origin.dateStopped"
-                                :teleport="true" :enable-time-picker="false" auto-apply required />
+                            <VueDatePicker placeholder="End Date in UTC" v-model="model.origin.dateStopped" :teleport="true"
+                                :enable-time-picker="false" auto-apply required />
                         </v-col>
 
                         <v-col cols="3">
                             <v-text-field label=" Time Resolution" hint="Frequency of data updates, e.g. 1h" type="string"
-                                v-model="model.settings.resolution" :rules="[rules.required]" variant="outlined"
+                                v-model="model.origin.resolution" :rules="[rules.required]" variant="outlined"
                                 clearable></v-text-field>
                         </v-col>
                     </v-row>
@@ -128,73 +174,32 @@
                         </v-col>
                     </v-row>
 
-                    <!-- Settings section -->
-                    <v-card-title>Dataset Settings</v-card-title>
-                    <v-row dense>
-                        <v-col cols="6">
-                            <v-text-field label="Identifier" hint="Unique identifier for this data" type="string"
-                                v-model="model.settings.identifier" :rules="[rules.required, rules.identifier]"
-                                variant="outlined" clearable></v-text-field>
-                        </v-col>
-
-                        <v-col cols="6">
-                            <v-text-field label="Topic Hierarchy" hint="Unique hierarchy for this data" type="string"
-                                v-model="model.settings.topicHierarchy" :rules="[rules.required, rules.topicHierarchy]"
-                                variant="outlined"></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row dense>
-                        <v-col cols="6">
-                            <v-row>
-                                <v-col cols="4">
-                                    <v-text-field label="Retention"
-                                        hint="Minimum length of time data should be retained in WIS2" type="string"
-                                        v-model="model.settings.retention" :rules="[rules.required]" variant="outlined"
-                                        clearable></v-text-field>
-                                </v-col>
-
-                                <v-col cols="4">
-                                    <v-select label="WMO Data Policy" hint="Priority of data within WMO" type="string"
-                                        :items="['core', 'recommended', 'weather']" v-model="model.settings.wmoDataPolicy"
-                                        :rules="[rules.required]" variant="outlined"></v-select>
-                                </v-col>
-
-                                <v-col cols="4">
-                                    <v-select label="WMO Status" hint="Status of data within WMO" type="string"
-                                        :items="['operational', 'not operational']" v-model="model.settings.wmoStatus"
-                                        :rules="[rules.required]" variant="outlined"></v-select>
-                                </v-col>
-                            </v-row>
-                        </v-col>
-                        <v-col cols="6">
-                            <v-row dense>
-                                <v-col cols="10">
-                                    <v-text-field label="Keywords (3 minimum)" hint="Search keywords for data" type="array"
-                                        v-model="keyword" @keyup.enter="addKeyword" variant="outlined"
-                                        clearable></v-text-field>
-
-                                </v-col>
-                                <v-col cols="2">
-                                    <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"
-                                        :disabled="keyword == ''"></v-btn>
-                                </v-col>
-                            </v-row>
-                            <v-row dense>
-                                <v-col cols="auto">
-                                    <v-chip-group :rules="[rules.required, rules.keywords]">
-                                        <v-chip v-for="keyword in model.settings.keywords" :key="keyword" closable label
-                                            @click:close="removeKeyword(keyword)">
-                                            {{ keyword }}
-                                        </v-chip>
-                                    </v-chip-group>
-                                </v-col>
-                            </v-row>
-                        </v-col>
-                    </v-row>
-
                     <!-- Contact (POC) section -->
                     <v-card-title>Point of Contact Information</v-card-title>
                     <v-row dense>
+                        <v-col cols="4">
+                            <v-text-field label="Organization Name" type="string" v-model="model.poc.name"
+                                :rules="[rules.required]" variant="outlined" clearable></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                            <v-text-field label="Email" hint="Contact email address" type="string" v-model="model.poc.email"
+                                :rules="[rules.required, rules.email]" variant="outlined" clearable></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                            <!-- The POC country is disabled as it was selected
+                            already in the dialog -->
+                            <v-autocomplete label="Country" item-title="name" item-value="alpha-3" :items="countryCodeList"
+                                v-model="model.poc.country" :rules="[rules.required]" variant="outlined"
+                                disabled></v-autocomplete>
+                        </v-col>
+                    </v-row>
+                    <!-- The following contact fields may return later -->
+                    <!-- <v-row dense>
+                        <v-col cols="4">
+                            <v-text-field label="Organization Name" type="string" v-model="model.poc.name"
+                                :rules="[rules.required]" variant="outlined" clearable></v-text-field>
+                        </v-col>
+
                         <v-col cols="4">
                             <v-text-field label="Individual" hint="Full name" type="string" v-model="model.poc.individual"
                                 variant="outlined" clearable></v-text-field>
@@ -203,11 +208,6 @@
                         <v-col cols="4">
                             <v-text-field label="Position Name" hint="Position held" type="string"
                                 v-model="model.poc.positionName" variant="outlined" clearable></v-text-field>
-                        </v-col>
-
-                        <v-col cols="4">
-                            <v-text-field label="Name" hint="Organization name" type="string" v-model="model.poc.name"
-                                :rules="[rules.required]" variant="outlined" clearable></v-text-field>
                         </v-col>
                     </v-row>
                     <v-row dense>
@@ -243,7 +243,6 @@
                                 v-model="model.poc.administrativeArea" :rules="[rules.required]" variant="outlined"
                                 clearable></v-text-field>
                         </v-col>
-
                     </v-row>
                     <v-row dense>
                         <v-col cols="3">
@@ -252,9 +251,9 @@
                         </v-col>
 
                         <v-col cols="3">
-                            <v-autocomplete label="Country" hint="ISO3166 3-letter code" persistent-hint
-                                :items="countryCodeList" v-model="model.poc.country" :rules="[rules.required]"
-                                variant="outlined"></v-autocomplete>
+                            <v-autocomplete label="Country" item-title="name" item-value="alpha-3" :items="countryCodeList"
+                                v-model="model.poc.country" :rules="[rules.required]" variant="outlined"
+                                disabled></v-autocomplete>
                         </v-col>
 
                         <v-col cols="6">
@@ -268,7 +267,7 @@
                             <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
                                 v-model="model.poc.contactInstructions" variant="outlined" clearable></v-text-field>
                         </v-col>
-                    </v-row>
+                    </v-row> -->
 
                     <!-- Distributor section -->
                     <v-row dense>
@@ -277,6 +276,25 @@
                             color="#003DA5"></v-switch>
                     </v-row>
                     <v-row dense>
+                        <v-col cols="4">
+                            <v-text-field label="Organization Name" type="string" v-model="model.distrib.name"
+                                :rules="[rules.required]" variant="outlined" clearable
+                                :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                            <v-text-field label="Email" hint="Contact email address" type="string"
+                                v-model="model.distrib.email" :rules="[rules.required, rules.email]" variant="outlined"
+                                clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                            <v-autocomplete label="Country" hint="Upper case representation of ISO3166 3-letter code"
+                                persistent-hint :items="countryCodeList" item-title="name" item-value="alpha-3"
+                                v-model="model.distrib.country" :rules="[rules.required]"
+                                :disabled="!distributorFieldsEnabled" variant="outlined"></v-autocomplete>
+                        </v-col>
+                    </v-row>
+                    <!-- The following contact fields may return later -->
+                    <!-- <v-row dense>
                         <v-col cols="4">
                             <v-text-field label="Individual" hint="Full name" type="string"
                                 v-model="model.distrib.individual" variant="outlined" clearable
@@ -342,9 +360,9 @@
 
                         <v-col cols="3">
                             <v-autocomplete label="Country" hint="Upper case representation of ISO3166 3-letter code"
-                                persistent-hint :items="countryCodeList" v-model="model.distrib.country"
-                                :rules="[rules.required]" :disabled="!distributorFieldsEnabled"
-                                variant="outlined"></v-autocomplete>
+                                persistent-hint :items="countryCodeList" item-title="name" item-value="alpha-3"
+                                v-model="model.distrib.country" :rules="[rules.required]"
+                                :disabled="!distributorFieldsEnabled" variant="outlined"></v-autocomplete>
                         </v-col>
 
                         <v-col cols="6">
@@ -359,7 +377,7 @@
                                 v-model="model.distrib.contactInstructions" variant="outlined" clearable
                                 :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
-                    </v-row>
+                    </v-row> -->
                 </v-form>
 
                 <!-- Toolbar for user to reset, validate, export, or submit the metadata
@@ -375,7 +393,6 @@
                     </v-btn>
 
                     <v-btn color="#E09D00" class="ma-2" title="Export" @click="downloadMetadata"
-                        :disabled="!formFilledAndValidated" v-if="metadataValidated"
                         append-icon="mdi-arrow-down-bold-box-outline">
                         Export
                     </v-btn>
@@ -418,81 +435,20 @@ export default defineComponent({
 
         // Default value of the form, not an exhaustive list of all fields
         const defaults = {
-            identification: {},
-            origin: {},
+            identification: {
+                keywords: []
+            },
+            origin: {
+                centreID: '',
+                wmoDataPolicy: 'core',
+                identifier: 'urn:x-wmo:md:',
+            },
             poc: {
                 hoursOfService: "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
                 contactInstructions: 'Email'
             },
             distrib: {
                 duplicateFromContact: true
-            },
-            settings: {
-                identifier: 'urn:x-wmo:md:',
-                wmoDataPolicy: 'core',
-                wmoStatus: 'operational',
-                keywords: []
-            }
-        };
-
-        // Test model
-        const testModel = {
-            identification: {
-                title: "Test Dataset",
-                description: "This is a test dataset",
-                language: "en"
-            },
-            origin: {
-                centreID: "test",
-                dateStarted: "2021-01-01T00:00:00Z",
-                dateStopped: "2021-01-01T00:00:00Z",
-                resolution: "1h",
-                northLatitude: 90,
-                eastLongitude: 180,
-                southLatitude: -90,
-                westLongitude: -180
-            },
-            poc: {
-                individual: "Test User",
-                positionName: "Test Position",
-                name: "Test Organization",
-                url: "https://www.test.com",
-                phone: "+41 77 345 67 89",
-                email: "contact@example.org",
-                deliveryPoint: "123 Test Street",
-                city: "Test City",
-                administrativeArea: "Test State",
-                postalCode: "12345",
-                country: "USA",
-                hoursOfService: "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
-                contactInstructions: "Email"
-            },
-            distrib: {
-                duplicateFromContact: false,
-                individual: "Test User",
-                positionName: "Test Position",
-                name: "Test Organization",
-                url: "https://www.test.com",
-                phone: "+41 77 345 67 89",
-                email: "contact@example.org",
-                deliveryPoint: "123 Test Street",
-                city: "Test City",
-                administrativeArea: "Test State",
-                postalCode: "12345",
-                country: "USA",
-                hoursOfService: "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
-                contactInstructions: "Email"
-            },
-            settings: {
-                identifier: "urn:x-wmo:md:zmb:zambia_met_service:surface-weather-observations",
-                wmoDataPolicy: "core",
-                wmoStatus: "operational",
-                retention: "30d",
-                keywords: [
-                    "weather",
-                    "climate",
-                    "data"
-                ]
             }
         };
 
@@ -611,7 +567,7 @@ export default defineComponent({
             };
 
             // Retrieve the identifier from the schema
-            formModel.settings.identifier = schema.id;
+            formModel.origin.identifier = schema.id;
 
             // Time period information
             if (schema.time?.interval) {
@@ -638,7 +594,7 @@ export default defineComponent({
             formModel.identification.title = schema.properties.title;
             formModel.identification.description = schema.properties.description;
             formModel.identification.language = schema.properties.language;
-            formModel.settings.keywords = schema.properties.keywords;
+            formModel.identification.keywords = schema.properties.keywords;
 
             // Contacts information
             schema.properties.contacts.forEach(contact => {
@@ -678,10 +634,7 @@ export default defineComponent({
 
                 // Additional settings information
                 if (schema.properties["wmo:dataPolicy"]) {
-                    formModel.settings.wmoDataPolicy = schema.properties["wmo:dataPolicy"];
-                }
-                if (schema.properties["wmo:status"]?.id) {
-                    formModel.settings.wmoStatus = schema.properties["wmo:status"].id;
+                    formModel.origin.wmoDataPolicy = schema.properties["wmo:dataPolicy"];
                 }
             });
             return formModel;
@@ -804,13 +757,15 @@ export default defineComponent({
         const applyTemplate = (template) => {
             model.value.identification.title = template.title.replace('$CENTRE_ID', model.value.origin.centreID);
             model.value.identification.language = template.language;
+            model.value.identification.keywords = template.keywords;
             model.value.origin.resolution = template.resolution;
             model.value.distrib.duplicateFromContact = template.duplicateFromContact;
             // Remove the P and make lower case (P30D -> 30d)
-            model.value.settings.retention = template.retention.substring(1).toLowerCase();
-            model.value.settings.identifier = template.identifier.replace('$CENTRE_ID', model.value.origin.centreID);
-            model.value.settings.topicHierarchy = template.topicHierarchy.replace('$CENTRE_ID', model.value.origin.centreID);
-            model.value.settings.keywords = template.keywords;
+            model.value.origin.retention = template.retention.substring(1).toLowerCase();
+            model.value.origin.identifier = template.identifier.replace('$CENTRE_ID', model.value.origin.centreID);
+            model.value.origin.topicHierarchy = template.topicHierarchy
+                .replace('$CENTRE_ID', model.value.origin.centreID)
+                .replace('$DATA_POLICY', model.value.origin.wmoDataPolicy);
 
             // Now update the bounding box values
             getAutoBbox(model.value.poc.country);
@@ -825,7 +780,7 @@ export default defineComponent({
                     throw new Error('Failed to load language codes.');
                 }
                 const responseData = await response.json();
-                languageCodeList.value = responseData.map(item => item.code);
+                languageCodeList.value = responseData;
             } catch (error) {
                 console.error(error);
                 message.value = "Error loading language codes.";
@@ -837,7 +792,7 @@ export default defineComponent({
                     throw new Error('Failed to load country codes.');
                 }
                 const responseData = await response.json();
-                countryCodeList.value = responseData.map(item => item["alpha-3"]);
+                countryCodeList.value = responseData;
             } catch (error) {
                 console.error(error);
                 message.value = "Error loading country codes.";
@@ -874,16 +829,16 @@ export default defineComponent({
 
         // Remove keyword from model when chip is clicked
         const removeKeyword = (keywordToRemove) => {
-            const index = model.value.settings.keywords.indexOf(keywordToRemove);
+            const index = model.value.identification.keywords.indexOf(keywordToRemove);
             if (index > -1) {
                 // Create a shallow copy first
-                let updatedKeywords = [...model.value.settings.keywords];
+                let updatedKeywords = [...model.value.identification.keywords];
 
                 // Remove the item at the specified index
                 updatedKeywords.splice(index, 1);
 
                 // Reassign the model's keywords to the updated array
-                model.value.settings.keywords = updatedKeywords;
+                model.value.identification.keywords = updatedKeywords;
             }
         };
 
@@ -914,9 +869,17 @@ export default defineComponent({
             let schemaModel = {};
 
             // Starting information
-            schemaModel.id = form.settings.identifier;
+            schemaModel.id = form.origin.identifier;
             schemaModel.conformsTo = [schemaVersion];
             schemaModel.type = "Feature";
+
+            // wis2box information
+            // Note: This is an extension to the WCMP2 schema
+            schemaModel.wis2box = {};
+            schemaModel.wis2box.retention = `P${form.origin.retention.toUpperCase()}`;
+            schemaModel.wis2box["topic_hierarchy"] = form.origin.topicHierarchy;
+            schemaModel.wis2box.country = form.poc.country;
+            schemaModel.wis2box["centre_id"] = form.origin.centreID;
 
             // Time period information
             schemaModel.time = {};
@@ -949,7 +912,7 @@ export default defineComponent({
             schemaModel.properties = {};
             schemaModel.properties.title = form.identification.title;
             schemaModel.properties.description = form.identification.description;
-            schemaModel.properties.keywords = form.settings.keywords;
+            schemaModel.properties.keywords = form.identification.keywords;
             // Contacts information
             schemaModel.properties.contacts = [];
             // Point of contact
@@ -1007,24 +970,20 @@ export default defineComponent({
             schemaModel.properties.language = form.identification.language;
             // How should we approach the creation date?
             schemaModel.properties.updated = new Date().toISOString();
-            schemaModel.properties["wmo:dataPolicy"] = form.settings.wmoDataPolicy;
-            schemaModel.properties["wmo:status"] = {
-                id: form.settings.wmoStatus
-            };
+            schemaModel.properties["wmo:dataPolicy"] = form.origin.wmoDataPolicy;
+
 
             // Links information
             schemaModel.links = [];
             schemaModel.links.push({
                 rel: "collection",
-                href: `${form.poc.url}/oapi/collections/${form.settings.identifier}`,
-                type: "OAFeat",
-                title: form.settings.identifier
+                href: `${form.poc.url}/oapi/collections/${form.origin.identifier}`,
+                title: form.origin.identifier
             })
             schemaModel.links.push({
                 rel: "canonical",
-                href: `${form.poc.url}/oapi/collections/discovery-metadata/items/${form.settings.identifier}`,
-                type: "OARec",
-                title: form.settings.identifier
+                href: `${form.poc.url}/oapi/collections/discovery-metadata/items/${form.origin.identifier}`,
+                title: form.origin.identifier
             });
 
             return schemaModel;
@@ -1140,6 +1099,16 @@ export default defineComponent({
         });
 
         // Watched
+
+        // If the user changes the data policy, update the topic hierarcy
+        // using the template
+        watch(() => model.value.origin.wmoDataPolicy, () => {
+            if (datatype.value === 'synop') {
+                applyTemplate(synopTemplate);
+            } else if (datatype.value === 'temp') {
+                applyTemplate(tempTemplate);
+            }
+        });
 
         // Set the validation state to false when the user makes a change to the form
         watch(() => deepClone(model.value), (oldVal, newVal) => {

@@ -2,7 +2,8 @@
     <v-lazy>
         <v-img>
             <l-map ref="map" :zoom="zoom" :center="rectangle.center" @ready="loadMapObjects"
-                style="height: 300px; width: 100%">
+                style="height: 300px; width: 100%"
+                :options="{ attributionControl: false }">
                 <l-control-layers position="bottomleft" :collapsed="true" :sort-layers="true" />
                 <l-tile-layer v-for="tileProvider in tileProviders" :key="tileProvider.name" :name="tileProvider.name"
                     :visible="tileProvider.visible" :url="tileProvider.url" :attribution="tileProvider.attribution"
@@ -21,9 +22,6 @@ import { defineComponent, ref, watch } from 'vue';
 import { LMap, LTileLayer, LControlLayers, LRectangle, LFeatureGroup } from "@vue-leaflet/vue-leaflet";
 import { LatLng, LatLngBounds } from "leaflet";
 import "leaflet/dist/leaflet.css";
-// // Allow the user to draw the bounding box
-// import 'leaflet-draw';
-// import 'leaflet-draw/dist/leaflet.draw.css';
 
 export default defineComponent({
     name: "BboxEditor",
@@ -51,11 +49,11 @@ export default defineComponent({
         // Methods
 
         const loadMapObjects = () => {
-            if (map.mapObject?.on) {
-                map.mapObject.on("draw:created", (event) => {
+            if (map.value.mapObject?.on) {
+                map.value.mapObject.on("draw:created", (event) => {
                     console.log(event);
                 });
-            };
+            }
             emit('loaded');
         };
 

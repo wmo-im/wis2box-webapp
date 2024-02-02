@@ -1,7 +1,7 @@
 {
     "title": "Hourly synoptic observations from fixed-land stations (SYNOP) ($CENTRE_ID)",
     "identifier": "urn:x-wmo:md:$CENTRE_ID:surface-based-observations.synop",
-    "topicHierarchy": "$CENTRE_ID.data.core.weather.surface-based-observations.synop",
+    "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.surface-based-observations.synop",
     "language": "en",
     "retention": "P30D",
     "resolution": "P1H",
