@@ -23,7 +23,7 @@
                             <v-autocomplete label="Country" :items="countryCodeList" item-title="name" item-value="alpha-3"
                                 v-model="model.poc.country" :rules="[rules.required]" variant="outlined"></v-autocomplete>
                             <v-text-field v-model="model.origin.centreID" label="Centre ID"
-                                persistent-hint="Agency acronym (in lower case), as specified by member"
+                                hint="Agency acronym (in lower case), as specified by member" persistent-hint
                                 variant="outlined"></v-text-field>
                             <v-select v-model="datatype" :items="['synop', 'temp', 'other']" label="Data Type"
                                 variant="outlined"></v-select>
@@ -142,7 +142,17 @@
                         </v-col>
                     </v-row>
                     <v-card-title>Spatial Properties</v-card-title>
-                    <v-row>
+                    <v-row dense>
+                        <v-col cols="4">
+                            <!-- Allow the user to select a country different to that of the POC for the auto bbox -->
+                            <v-autocomplete label="Choose another country bounding box (optional)" item-title="name"
+                                item-value="alpha-3" :items="filteredCountryCodeList" v-model="bboxCountry"
+                                @update:modelValue="getAutoBbox(bboxCountry)" 
+                                hint="Note: your country may not have an automatic bounding box" persistent-hint
+                                variant="outlined"></v-autocomplete>
+                        </v-col>
+                    </v-row>
+                    <v-row dense>
                         <v-col cols="12">
                             <!-- Bounding box editor -->
                             <bbox-editor :box-bounds="bounds"></bbox-editor>
@@ -287,8 +297,7 @@
                                 clearable :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
                         <v-col cols="4">
-                            <v-autocomplete label="Country" hint="Upper case representation of ISO3166 3-letter code"
-                                persistent-hint :items="countryCodeList" item-title="name" item-value="alpha-3"
+                            <v-autocomplete label="Country" :items="countryCodeList" item-title="name" item-value="alpha-3"
                                 v-model="model.distrib.country" :rules="[rules.required]"
                                 :disabled="!distributorFieldsEnabled" variant="outlined"></v-autocomplete>
                         </v-col>
@@ -493,14 +502,18 @@ export default defineComponent({
         const datatype = ref("");
         // Identifier of the selected dataset, used to load metadata from OAPI
         const identifier = ref("");
-        // List of language codes to select from
+        // List of languages and language codes
         const languageCodeList = ref([]);
-        // List of country codes to select from
+        // List of country names, alph-2 codes, and alpha-3 codes
         const countryCodeList = ref([]);
+        // Object of country alpha-2 codes with bounding boxes
+        const boundingBoxes = ref({});
         // Whether or not the metadata is new or existing
         const isNew = ref(false);
         // Geometry bounds
         const bounds = ref([[0, 0], [0, 0]]);
+        // Country for the bbox - defaults to the POC country
+        const bboxCountry = ref(null);
         // Phone number validation for each field
         const isPocPhoneValid = ref(null);
         const isDistribPhoneValid = ref(null);
@@ -514,6 +527,15 @@ export default defineComponent({
         // Has the user filled the dialog window?
         const dialogFilled = computed(() => {
             return model.value.poc.country && model.value.origin.centreID && datatype.value !== "";
+        });
+
+        // Filter the country code list so that only the countries
+        // which have an automatic bounding box are shown
+        const filteredCountryCodeList = computed(() => {
+            return countryCodeList.value.filter(country => {
+                // Find out if the (lower case) alpha 2 code is in the bbox list
+                return country["alpha-2"].toLowerCase() in boundingBoxes.value;
+            });
         });
 
         // Controls which parts of the page are displayed
@@ -711,8 +733,8 @@ export default defineComponent({
         }
 
         // Find the corresponding alpha-2 code to an alpha-3 code
-        const getAlpha2Code = (alpha3Code, countries) => {
-            const country = countries.find(item => item["alpha-3"] === alpha3Code);
+        const getAlpha2Code = (alpha3Code) => {
+            const country = countryCodeList.value.find(item => item["alpha-3"] === alpha3Code);
             // Return the code in lower case as we need it in this
             // form for founding the corresponding bbox
             return country["alpha-2"].toLowerCase();
@@ -721,25 +743,11 @@ export default defineComponent({
         // Get an automatic bounding box using the country code
         const getAutoBbox = async (alpha3Code) => {
             try {
-                // Load country codes
-                const countriesResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/codelists/iso-3366-1-countries.json`);
-                if (!countriesResponse.ok) {
-                    throw new Error('Failed to load country codes.');
-                }
-                const countries = await countriesResponse.json();
-
                 // Use this to find the corresponding alpha-2 code
-                const alpha2Code = getAlpha2Code(alpha3Code, countries);
-
-                // Load bounding boxes
-                const bboxesResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/codelists/country-bbox.json`);
-                if (!bboxesResponse.ok) {
-                    throw new Error('Failed to load bounding boxes.');
-                }
-                const bboxes = await bboxesResponse.json();
+                const alpha2Code = getAlpha2Code(alpha3Code);
 
                 // Use the alpha-2 code to get the corresponding bbox
-                const boundingBox = bboxes['countries'][alpha2Code]['bbox'];
+                const boundingBox = boundingBoxes.value[alpha2Code]['bbox'];
 
                 // Now populate the form with the bounding box values
                 model.value.origin.northLatitude = boundingBox.maxy;
@@ -796,6 +804,19 @@ export default defineComponent({
             } catch (error) {
                 console.error(error);
                 message.value = "Error loading country codes.";
+            }
+            // Load bounding boxes
+            try {
+                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/codelists/country-bbox.json`);
+                if (!response.ok) {
+                    throw new Error('Failed to load bounding boxes.');
+                }
+                const responseData = await response.json();
+                // Remove the countries header as it is redundant
+                boundingBoxes.value = responseData['countries'];
+            } catch (error) {
+                console.error(error);
+                message.value = "Error loading default bounding boxes.";
             }
         };
 
@@ -1154,12 +1175,14 @@ export default defineComponent({
             items,
             showDialog,
             dialogFilled,
+            filteredCountryCodeList,
             datatype,
             identifier,
             languageCodeList,
             countryCodeList,
             isNew,
             bounds,
+            bboxCountry,
             isPocPhoneValid,
             isDistribPhoneValid,
             keyword,
@@ -1169,6 +1192,7 @@ export default defineComponent({
             loadList,
             loadMetadata,
             continueToForm,
+            getAutoBbox,
             onPocPhoneValidate,
             onDistribPhoneValidate,
             addKeyword,
@@ -1176,7 +1200,7 @@ export default defineComponent({
             resetMetadata,
             validateMetadata,
             downloadMetadata,
-            submitMetadata,
+            submitMetadata
         }
     }
 });
