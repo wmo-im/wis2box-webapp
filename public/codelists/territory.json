@@ -1,226 +1,2517 @@
-[
-  {"name": "Afghanistan", "id": "Afghanistan", "description": "Afghanistan"},
-  {"name": "Angola", "id": "Angola", "description": "Angola"},
-  {"name": "Anguilla", "id": "Anguilla", "description": "Anguilla"},
-  {"name": "Albania", "id": "Albania", "description": "Albania"},
-  {"name": "Andorra", "id": "Andorra", "description": "Andorra"},
-  {"name": "United Arab Emirates (the)", "id": "United Arab Emirates (the)", "description": "United Arab Emirates (the)"},
-  {"name": "Argentina", "id": "Argentina", "description": "Argentina"},
-  {"name": "Armenia", "id": "Armenia", "description": "Armenia"},
-  {"name": "Antigua and Barbuda", "id": "Antigua and Barbuda", "description": "Antigua and Barbuda"},
-  {"name": "Australia", "id": "Australia", "description": "Australia"},
-  {"name": "Austria", "id": "Austria", "description": "Austria"},
-  {"name": "Azerbaijan", "id": "Azerbaijan", "description": "Azerbaijan"},
-  {"name": "British Caribbean Territories", "id": "British Caribbean Territories", "description": "British Caribbean Territories"},
-  {"name": "Burundi", "id": "Burundi", "description": "Burundi"},
-  {"name": "Belgium", "id": "Belgium", "description": "Belgium"},
-  {"name": "Benin", "id": "Benin", "description": "Benin"},
-  {"name": "Burkina Faso", "id": "Burkina Faso", "description": "Burkina Faso"},
-  {"name": "Bangladesh", "id": "Bangladesh", "description": "Bangladesh"},
-  {"name": "Bulgaria", "id": "Bulgaria", "description": "Bulgaria"},
-  {"name": "Bahrain", "id": "Bahrain", "description": "Bahrain"},
-  {"name": "Bahamas", "id": "Bahamas", "description": "Bahamas"},
-  {"name": "Bosnia and Herzegovina", "id": "Bosnia and Herzegovina", "description": "Bosnia and Herzegovina"},
-  {"name": "Belarus", "id": "Belarus", "description": "Belarus"},
-  {"name": "Belize", "id": "Belize", "description": "Belize"},
-  {"name": "Bermuda", "id": "Bermuda", "description": "Bermuda"},
-  {"name": "Bolivia, Plurinational State of", "id": "Bolivia, Plurinational State of", "description": "Bolivia, Plurinational State of"},
-  {"name": "Brazil", "id": "Brazil", "description": "Brazil"},
-  {"name": "Barbados", "id": "Barbados", "description": "Barbados"},
-  {"name": "Brunei Darussalam", "id": "Brunei Darussalam", "description": "Brunei Darussalam"},
-  {"name": "Bhutan", "id": "Bhutan", "description": "Bhutan"},
-  {"name": "Botswana", "id": "Botswana", "description": "Botswana"},
-  {"name": "Central African Republic", "id": "Central African Republic", "description": "Central African Republic"},
-  {"name": "Canada", "id": "Canada", "description": "Canada"},
-  {"name": "Cocos (Keeling) Islands", "id": "Cocos (Keeling) Islands", "description": "Cocos (Keeling) Islands"},
-  {"name": "Switzerland", "id": "Switzerland", "description": "Switzerland"},
-  {"name": "Chile", "id": "Chile", "description": "Chile"},
-  {"name": "China", "id": "China", "description": "China"},
-  {"name": "Cote d'Ivoire", "id": "Cote d'Ivoire", "description": "Cote d'Ivoire"},
-  {"name": "Cameroon", "id": "Cameroon", "description": "Cameroon"},
-  {"name": "Congo, Democratic Republic of the", "id": "Congo, Democratic Republic of the", "description": "Congo, Democratic Republic of the"},
-  {"name": "Congo", "id": "Congo", "description": "Congo"},
-  {"name": "Cook Islands", "id": "Cook Islands", "description": "Cook Islands"},
-  {"name": "Colombia", "id": "Colombia", "description": "Colombia"},
-  {"name": "Comoros", "id": "Comoros", "description": "Comoros"},
-  {"name": "Cabo Verde", "id": "Cabo Verde", "description": "Cabo Verde"},
-  {"name": "Costa Rica", "id": "Costa Rica", "description": "Costa Rica"},
-  {"name": "Curacao and Sint Maarten", "id": "Curacao and Sint Maarten", "description": "Curacao and Sint Maarten"},
-  {"name": "Cuba", "id": "Cuba", "description": "Cuba"},
-  {"name": "Curacao", "id": "Curacao", "description": "Curacao"},
-  {"name": "Christmas Island", "id": "Christmas Island", "description": "Christmas Island"},
-  {"name": "Cayman Islands", "id": "Cayman Islands", "description": "Cayman Islands"},
-  {"name": "Cyprus", "id": "Cyprus", "description": "Cyprus"},
-  {"name": "Czech Republic", "id": "Czech Republic", "description": "Czech Republic"},
-  {"name": "Germany", "id": "Germany", "description": "Germany"},
-  {"name": "Djibouti", "id": "Djibouti", "description": "Djibouti"},
-  {"name": "Dominica", "id": "Dominica", "description": "Dominica"},
-  {"name": "Denmark", "id": "Denmark", "description": "Denmark"},
-  {"name": "Dominican Republic", "id": "Dominican Republic", "description": "Dominican Republic"},
-  {"name": "Algeria", "id": "Algeria", "description": "Algeria"},
-  {"name": "Ecuador", "id": "Ecuador", "description": "Ecuador"},
-  {"name": "Egypt", "id": "Egypt", "description": "Egypt"},
-  {"name": "Eritrea", "id": "Eritrea", "description": "Eritrea"},
-  {"name": "Western Sahara", "id": "Western Sahara", "description": "Western Sahara"},
-  {"name": "Spain", "id": "Spain", "description": "Spain"},
-  {"name": "Estonia", "id": "Estonia", "description": "Estonia"},
-  {"name": "Ethiopia", "id": "Ethiopia", "description": "Ethiopia"},
-  {"name": "Finland", "id": "Finland", "description": "Finland"},
-  {"name": "Fiji", "id": "Fiji", "description": "Fiji"},
-  {"name": "Falkland Islands (Malvinas)", "id": "Falkland Islands (Malvinas)", "description": "Falkland Islands (Malvinas)"},
-  {"name": "France", "id": "France", "description": "France"},
-  {"name": "Micronesia, Federated States of", "id": "Micronesia, Federated States of", "description": "Micronesia, Federated States of"},
-  {"name": "Gabon", "id": "Gabon", "description": "Gabon"},
-  {"name": "United Kingdom (the)", "id": "United Kingdom (the)", "description": "United Kingdom (the)"},
-  {"name": "Georgia", "id": "Georgia", "description": "Georgia"},
-  {"name": "Ghana", "id": "Ghana", "description": "Ghana"},
-  {"name": "Gibraltar", "id": "Gibraltar", "description": "Gibraltar"},
-  {"name": "Guinea", "id": "Guinea", "description": "Guinea"},
-  {"name": "Gambia", "id": "Gambia", "description": "Gambia"},
-  {"name": "Guinea-Bissau", "id": "Guinea-Bissau", "description": "Guinea-Bissau"},
-  {"name": "Equatorial Guinea", "id": "Equatorial Guinea", "description": "Equatorial Guinea"},
-  {"name": "Greece", "id": "Greece", "description": "Greece"},
-  {"name": "Grenada", "id": "Grenada", "description": "Grenada"},
-  {"name": "Greenland", "id": "Greenland", "description": "Greenland"},
-  {"name": "Guatemala", "id": "Guatemala", "description": "Guatemala"},
-  {"name": "Guyana", "id": "Guyana", "description": "Guyana"},
-  {"name": "Hong Kong, China", "id": "Hong Kong, China", "description": "Hong Kong, China"},
-  {"name": "Honduras", "id": "Honduras", "description": "Honduras"},
-  {"name": "Croatia", "id": "Croatia", "description": "Croatia"},
-  {"name": "Haiti", "id": "Haiti", "description": "Haiti"},
-  {"name": "Hungary", "id": "Hungary", "description": "Hungary"},
-  {"name": "Indonesia", "id": "Indonesia", "description": "Indonesia"},
-  {"name": "India", "id": "India", "description": "India"},
-  {"name": "Ireland", "id": "Ireland", "description": "Ireland"},
-  {"name": "Iran, Islamic Republic of", "id": "Iran, Islamic Republic of", "description": "Iran, Islamic Republic of"},
-  {"name": "Iraq", "id": "Iraq", "description": "Iraq"},
-  {"name": "Iceland", "id": "Iceland", "description": "Iceland"},
-  {"name": "Israel", "id": "Israel", "description": "Israel"},
-  {"name": "Italy", "id": "Italy", "description": "Italy"},
-  {"name": "Jamaica", "id": "Jamaica", "description": "Jamaica"},
-  {"name": "Jordan", "id": "Jordan", "description": "Jordan"},
-  {"name": "Japan", "id": "Japan", "description": "Japan"},
-  {"name": "Kazakhstan", "id": "Kazakhstan", "description": "Kazakhstan"},
-  {"name": "Kenya", "id": "Kenya", "description": "Kenya"},
-  {"name": "Kyrgyzstan", "id": "Kyrgyzstan", "description": "Kyrgyzstan"},
-  {"name": "Cambodia", "id": "Cambodia", "description": "Cambodia"},
-  {"name": "Kiribati", "id": "Kiribati", "description": "Kiribati"},
-  {"name": "Saint Kitts and Nevis", "id": "Saint Kitts and Nevis", "description": "Saint Kitts and Nevis"},
-  {"name": "Korea, Republic of", "id": "Korea, Republic of", "description": "Korea, Republic of"},
-  {"name": "Kuwait", "id": "Kuwait", "description": "Kuwait"},
-  {"name": "Lao People's Democratic Republic", "id": "Lao People's Democratic Republic", "description": "Lao People's Democratic Republic"},
-  {"name": "Lebanon", "id": "Lebanon", "description": "Lebanon"},
-  {"name": "Liberia", "id": "Liberia", "description": "Liberia"},
-  {"name": "Libya", "id": "Libya", "description": "Libya"},
-  {"name": "Saint Lucia", "id": "Saint Lucia", "description": "Saint Lucia"},
-  {"name": "Liechtenstein", "id": "Liechtenstein", "description": "Liechtenstein"},
-  {"name": "Sri Lanka", "id": "Sri Lanka", "description": "Sri Lanka"},
-  {"name": "Lesotho", "id": "Lesotho", "description": "Lesotho"},
-  {"name": "Lithuania", "id": "Lithuania", "description": "Lithuania"},
-  {"name": "Luxembourg", "id": "Luxembourg", "description": "Luxembourg"},
-  {"name": "Latvia", "id": "Latvia", "description": "Latvia"},
-  {"name": "Macao, China", "id": "Macao, China", "description": "Macao, China"},
-  {"name": "Morocco", "id": "Morocco", "description": "Morocco"},
-  {"name": "Monaco", "id": "Monaco", "description": "Monaco"},
-  {"name": "Moldova, Republic of", "id": "Moldova, Republic of", "description": "Moldova, Republic of"},
-  {"name": "Madagascar", "id": "Madagascar", "description": "Madagascar"},
-  {"name": "Maldives", "id": "Maldives", "description": "Maldives"},
-  {"name": "Mexico", "id": "Mexico", "description": "Mexico"},
-  {"name": "Marshall Islands", "id": "Marshall Islands", "description": "Marshall Islands"},
-  {"name": "Macedonia, the former Yugoslav Republic of", "id": "Macedonia, the former Yugoslav Republic of", "description": "Macedonia, the former Yugoslav Republic of"},
-  {"name": "Mali", "id": "Mali", "description": "Mali"},
-  {"name": "Malta", "id": "Malta", "description": "Malta"},
-  {"name": "Myanmar", "id": "Myanmar", "description": "Myanmar"},
-  {"name": "Montenegro", "id": "Montenegro", "description": "Montenegro"},
-  {"name": "Mongolia", "id": "Mongolia", "description": "Mongolia"},
-  {"name": "Mozambique", "id": "Mozambique", "description": "Mozambique"},
-  {"name": "Mauritania", "id": "Mauritania", "description": "Mauritania"},
-  {"name": "Montserrat", "id": "Montserrat", "description": "Montserrat"},
-  {"name": "Mauritius", "id": "Mauritius", "description": "Mauritius"},
-  {"name": "Malawi", "id": "Malawi", "description": "Malawi"},
-  {"name": "Malaysia", "id": "Malaysia", "description": "Malaysia"},
-  {"name": "Namibia", "id": "Namibia", "description": "Namibia"},
-  {"name": "New Caledonia", "id": "New Caledonia", "description": "New Caledonia"},
-  {"name": "Niger", "id": "Niger", "description": "Niger"},
-  {"name": "Nigeria", "id": "Nigeria", "description": "Nigeria"},
-  {"name": "Nicaragua", "id": "Nicaragua", "description": "Nicaragua"},
-  {"name": "Niue", "id": "Niue", "description": "Niue"},
-  {"name": "Netherlands", "id": "Netherlands", "description": "Netherlands"},
-  {"name": "Norway", "id": "Norway", "description": "Norway"},
-  {"name": "Nepal", "id": "Nepal", "description": "Nepal"},
-  {"name": "Nauru", "id": "Nauru", "description": "Nauru"},
-  {"name": "New Zealand", "id": "New Zealand", "description": "New Zealand"},
-  {"name": "Oman", "id": "Oman", "description": "Oman"},
-  {"name": "Pakistan", "id": "Pakistan", "description": "Pakistan"},
-  {"name": "Panama", "id": "Panama", "description": "Panama"},
-  {"name": "Pitcairn", "id": "Pitcairn", "description": "Pitcairn"},
-  {"name": "Peru", "id": "Peru", "description": "Peru"},
-  {"name": "Philippines", "id": "Philippines", "description": "Philippines"},
-  {"name": "Palau", "id": "Palau", "description": "Palau"},
-  {"name": "Papua New Guinea", "id": "Papua New Guinea", "description": "Papua New Guinea"},
-  {"name": "Poland", "id": "Poland", "description": "Poland"},
-  {"name": "Puerto Rico", "id": "Puerto Rico", "description": "Puerto Rico"},
-  {"name": "Korea, Democratic People's Republic of", "id": "Korea, Democratic People's Republic of", "description": "Korea, Democratic People's Republic of"},
-  {"name": "Portugal", "id": "Portugal", "description": "Portugal"},
-  {"name": "Paraguay", "id": "Paraguay", "description": "Paraguay"},
-  {"name": "Palestine, State of", "id": "Palestine, State of", "description": "Palestine, State of"},
-  {"name": "French Polynesia", "id": "French Polynesia", "description": "French Polynesia"},
-  {"name": "Qatar", "id": "Qatar", "description": "Qatar"},
-  {"name": "Romania", "id": "Romania", "description": "Romania"},
-  {"name": "Russian Federation", "id": "Russian Federation", "description": "Russian Federation"},
-  {"name": "Rwanda", "id": "Rwanda", "description": "Rwanda"},
-  {"name": "Saudi Arabia", "id": "Saudi Arabia", "description": "Saudi Arabia"},
-  {"name": "Sudan", "id": "Sudan", "description": "Sudan"},
-  {"name": "Senegal", "id": "Senegal", "description": "Senegal"},
-  {"name": "Singapore", "id": "Singapore", "description": "Singapore"},
-  {"name": "South Georgia and the South Sandwich Islands", "id": "South Georgia and the South Sandwich Islands", "description": "South Georgia and the South Sandwich Islands"},
-  {"name": "Saint Helena", "id": "Saint Helena", "description": "Saint Helena"},
-  {"name": "Solomon Islands", "id": "Solomon Islands", "description": "Solomon Islands"},
-  {"name": "Sierra Leone", "id": "Sierra Leone", "description": "Sierra Leone"},
-  {"name": "El Salvador", "id": "El Salvador", "description": "El Salvador"},
-  {"name": "Somalia", "id": "Somalia", "description": "Somalia"},
-  {"name": "Saint Pierre and Miquelon", "id": "Saint Pierre and Miquelon", "description": "Saint Pierre and Miquelon"},
-  {"name": "Serbia", "id": "Serbia", "description": "Serbia"},
-  {"name": "South Sudan", "id": "South Sudan", "description": "South Sudan"},
-  {"name": "Sao Tome and Principe", "id": "Sao Tome and Principe", "description": "Sao Tome and Principe"},
-  {"name": "Suriname", "id": "Suriname", "description": "Suriname"},
-  {"name": "Slovakia", "id": "Slovakia", "description": "Slovakia"},
-  {"name": "Slovenia", "id": "Slovenia", "description": "Slovenia"},
-  {"name": "Sweden", "id": "Sweden", "description": "Sweden"},
-  {"name": "Eswatini", "id": "Eswatini", "description": "Eswatini"},
-  {"name": "Sint Maarten", "id": "Sint Maarten", "description": "Sint Maarten"},
-  {"name": "Seychelles", "id": "Seychelles", "description": "Seychelles"},
-  {"name": "Syrian Arab Republic", "id": "Syrian Arab Republic", "description": "Syrian Arab Republic"},
-  {"name": "Turks and Caicos Islands", "id": "Turks and Caicos Islands", "description": "Turks and Caicos Islands"},
-  {"name": "Chad", "id": "Chad", "description": "Chad"},
-  {"name": "Togo", "id": "Togo", "description": "Togo"},
-  {"name": "Thailand", "id": "Thailand", "description": "Thailand"},
-  {"name": "Tajikistan", "id": "Tajikistan", "description": "Tajikistan"},
-  {"name": "Tokelau", "id": "Tokelau", "description": "Tokelau"},
-  {"name": "Turkmenistan", "id": "Turkmenistan", "description": "Turkmenistan"},
-  {"name": "Timor-Leste", "id": "Timor-Leste", "description": "Timor-Leste"},
-  {"name": "Tonga", "id": "Tonga", "description": "Tonga"},
-  {"name": "Trinidad and Tobago", "id": "Trinidad and Tobago", "description": "Trinidad and Tobago"},
-  {"name": "Tunisia", "id": "Tunisia", "description": "Tunisia"},
-  {"name": "Turkey", "id": "Turkey", "description": "Turkey"},
-  {"name": "Tuvalu", "id": "Tuvalu", "description": "Tuvalu"},
-  {"name": "Taiwan, Province of China", "id": "Taiwan, Province of China", "description": "Taiwan, Province of China"},
-  {"name": "Tanzania, United Republic of", "id": "Tanzania, United Republic of", "description": "Tanzania, United Republic of"},
-  {"name": "Uganda", "id": "Uganda", "description": "Uganda"},
-  {"name": "Ukraine", "id": "Ukraine", "description": "Ukraine"},
-  {"name": "Uruguay", "id": "Uruguay", "description": "Uruguay"},
-  {"name": "United States (the)", "id": "United States (the)", "description": "United States (the)"},
-  {"name": "Uzbekistan", "id": "Uzbekistan", "description": "Uzbekistan"},
-  {"name": "Saint Vincent and Grenadines", "id": "Saint Vincent and Grenadines", "description": "Saint Vincent and Grenadines"},
-  {"name": "Venezuela, Bolivarian Republic of", "id": "Venezuela, Bolivarian Republic of", "description": "Venezuela, Bolivarian Republic of"},
-  {"name": "British Virgin Islands", "id": "British Virgin Islands", "description": "British Virgin Islands"},
-  {"name": "Viet Nam", "id": "Viet Nam", "description": "Viet Nam"},
-  {"name": "Vanuatu", "id": "Vanuatu", "description": "Vanuatu"},
-  {"name": "Samoa", "id": "Samoa", "description": "Samoa"},
-  {"name": "Yemen", "id": "Yemen", "description": "Yemen"},
-  {"name": "South Africa", "id": "South Africa", "description": "South Africa"},
-  {"name": "Zambia", "id": "Zambia", "description": "Zambia"},
-  {"name": "Zimbabwe", "id": "Zimbabwe", "description": "Zimbabwe"},
-  {"name": "inapplicable", "id": "inapplicable", "description": "inapplicable"},
-  {"name": "unknown", "id": "unknown", "description": "unknown"}
-]
+{
+  "@graph" : [ {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName",
+    "@type" : [ "skos:Collection", "ldp:Container", "reg:Register" ],
+    "dct:description" : "Territory of origin of data",
+    "dct:modified" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-11-21T09:22:09.713Z"
+    },
+    "rdfs:label" : "Territory of origin of data",
+    "owl:versionInfo" : {
+      "@type" : "xsd:integer",
+      "@value" : "2"
+    },
+    "skos:member" : [ {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AUT"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MDG"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/EGY"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NPL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PRY"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TUV"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MCO"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/IRN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BGR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SHN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AZE"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TON"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/DZA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AUS"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CAF"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BHS"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CSM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BLR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NIC"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/COL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PHL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/HRV"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SEN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/DJI"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PCN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MHL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/FLK"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AFG"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LUX"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/URY"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ISR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/WSM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/FJI"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/RWA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ALB"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/HUN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MLT"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LBR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PSE"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BWA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/UGA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MSR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GRC"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/COK"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ARM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PRK"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ETH"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SLB"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KWT"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/EST"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AIA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CUB"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/FRA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SSD"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TZA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KNA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LKA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ARG"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SRB"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ZAF"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/DEU"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ROU"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CXR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NRU"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CIV"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ECU"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TKL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NGA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SOM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GNQ"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CMR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PLW"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SWZ"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PYF"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/JPN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ZWE"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GAB"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/RUS"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CPV"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/VUT"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ESH"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MEX"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CHN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SWE"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/COD"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/VNM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MDV"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/FSM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KAZ"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SDN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PNG"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GRD"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/IND"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SAU"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ATG"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MNG"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BHR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/JOR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TLS"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MKD"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ERI"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/JAM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BGD"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/IDN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CUW"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NOR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/IRL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/POL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/DOM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SUR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SXM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KIR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BLZ"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TKM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GNB"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MRT"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SVK"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MMR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/DNK"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/STP"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/FIN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LVA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TJK"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LTU"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BRA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PER"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TUN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TWN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LBN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SYC"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/OMN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GIB"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LAO"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MWI"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BMU"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NCL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/USA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NAM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BFA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ISL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PRI"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/UZB"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ITA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SYR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CYM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/VEN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TTO"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LBY"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/COM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MOZ"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/VCT"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LSO"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/THA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BCT"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CRI"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ARE"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NER"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/unknown"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GBR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LIE"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TGO"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KGZ"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GMB"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BEN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PAK"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/HTI"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BIH"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NZL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LCA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/DMA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PRT"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/VGB"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AGO"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KEN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BRB"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ZMB"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/YEM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MYS"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GEO"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KOR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/COG"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BRN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BTN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MLI"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SGP"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MDA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ESP"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TCD"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MAC"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MAR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/inapplicable"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/IRQ"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PAN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CHL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GHA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AND"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SLV"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MUS"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CYP"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CHE"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CZE"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/UKR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GRL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GTM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/HKG"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CCK"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TUR"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BDI"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KHM"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GIN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/QAT"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SLE"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BOL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SGS"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BEL"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GUY"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MNE"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SVN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NLD"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NIU"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CAN"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/HND"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TCA"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SPM"
+    } ],
+    "ldp:hasMemberRelation" : {
+      "@id" : "skos:member"
+    }
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AFG",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Afghanistan"
+    },
+    "rdfs:label" : "Afghanistan",
+    "skos:notation" : "AFG"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AGO",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Angola"
+    },
+    "rdfs:label" : "Angola",
+    "skos:notation" : "AGO"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AIA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Anguilla"
+    },
+    "rdfs:label" : "Anguilla",
+    "skos:notation" : "AIA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ALB",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Albania"
+    },
+    "rdfs:label" : "Albania",
+    "skos:notation" : "ALB"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AND",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Andorra"
+    },
+    "rdfs:label" : "Andorra",
+    "skos:notation" : "AND"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ARE",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "United Arab Emirates (the)"
+    },
+    "rdfs:label" : "United Arab Emirates (the)",
+    "skos:notation" : "ARE"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ARG",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Argentina"
+    },
+    "rdfs:label" : "Argentina",
+    "skos:notation" : "ARG"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ARM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Armenia"
+    },
+    "rdfs:label" : "Armenia",
+    "skos:notation" : "ARM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ATG",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Antigua and Barbuda"
+    },
+    "rdfs:label" : "Antigua and Barbuda",
+    "skos:notation" : "ATG"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AUS",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Australia"
+    },
+    "rdfs:label" : "Australia",
+    "skos:notation" : "AUS"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AUT",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Austria"
+    },
+    "rdfs:label" : "Austria",
+    "skos:notation" : "AUT"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/AZE",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Azerbaijan"
+    },
+    "rdfs:label" : "Azerbaijan",
+    "skos:notation" : "AZE"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BCT",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "British Caribbean Territories"
+    },
+    "rdfs:label" : "British Caribbean Territories",
+    "skos:notation" : "BCT"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BDI",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Burundi"
+    },
+    "rdfs:label" : "Burundi",
+    "skos:notation" : "BDI"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BEL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Belgium"
+    },
+    "rdfs:label" : "Belgium",
+    "skos:notation" : "BEL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BEN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Benin"
+    },
+    "rdfs:label" : "Benin",
+    "skos:notation" : "BEN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BFA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Burkina Faso"
+    },
+    "rdfs:label" : "Burkina Faso",
+    "skos:notation" : "BFA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BGD",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Bangladesh"
+    },
+    "rdfs:label" : "Bangladesh",
+    "skos:notation" : "BGD"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BGR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Bulgaria"
+    },
+    "rdfs:label" : "Bulgaria",
+    "skos:notation" : "BGR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BHR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Bahrain"
+    },
+    "rdfs:label" : "Bahrain",
+    "skos:notation" : "BHR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BHS",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Bahamas"
+    },
+    "rdfs:label" : "Bahamas",
+    "skos:notation" : "BHS"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BIH",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Bosnia and Herzegovina"
+    },
+    "rdfs:label" : "Bosnia and Herzegovina",
+    "skos:notation" : "BIH"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BLR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Belarus"
+    },
+    "rdfs:label" : "Belarus",
+    "skos:notation" : "BLR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BLZ",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Belize"
+    },
+    "rdfs:label" : "Belize",
+    "skos:notation" : "BLZ"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BMU",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Bermuda"
+    },
+    "rdfs:label" : "Bermuda",
+    "skos:notation" : "BMU"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BOL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Bolivia, Plurinational State of"
+    },
+    "rdfs:label" : "Bolivia, Plurinational State of",
+    "skos:notation" : "BOL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BRA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Brazil"
+    },
+    "rdfs:label" : "Brazil",
+    "skos:notation" : "BRA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BRB",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Barbados"
+    },
+    "rdfs:label" : "Barbados",
+    "skos:notation" : "BRB"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BRN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Brunei Darussalam"
+    },
+    "rdfs:label" : "Brunei Darussalam",
+    "skos:notation" : "BRN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BTN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Bhutan"
+    },
+    "rdfs:label" : "Bhutan",
+    "skos:notation" : "BTN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/BWA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Botswana"
+    },
+    "rdfs:label" : "Botswana",
+    "skos:notation" : "BWA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CAF",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Central African Republic"
+    },
+    "rdfs:label" : "Central African Republic",
+    "skos:notation" : "CAF"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CAN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Canada"
+    },
+    "rdfs:label" : "Canada",
+    "skos:notation" : "CAN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CCK",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Cocos (Keeling) Islands"
+    },
+    "rdfs:label" : "Cocos (Keeling) Islands",
+    "skos:notation" : "CCK"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CHE",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Switzerland"
+    },
+    "rdfs:label" : "Switzerland",
+    "skos:notation" : "CHE"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CHL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Chile"
+    },
+    "rdfs:label" : "Chile",
+    "skos:notation" : "CHL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CHN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "China"
+    },
+    "rdfs:label" : "China",
+    "skos:notation" : "CHN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CIV",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Côte d'Ivoire"
+    },
+    "rdfs:label" : "Côte d'Ivoire",
+    "skos:notation" : "CIV"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CMR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Cameroon"
+    },
+    "rdfs:label" : "Cameroon",
+    "skos:notation" : "CMR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/COD",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Congo, Democratic Republic of the"
+    },
+    "rdfs:label" : "Congo, Democratic Republic of the",
+    "skos:notation" : "COD"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/COG",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Congo"
+    },
+    "rdfs:label" : "Congo",
+    "skos:notation" : "COG"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/COK",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Cook Islands"
+    },
+    "rdfs:label" : "Cook Islands",
+    "skos:notation" : "COK"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/COL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Colombia"
+    },
+    "rdfs:label" : "Colombia",
+    "skos:notation" : "COL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/COM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Comoros"
+    },
+    "rdfs:label" : "Comoros",
+    "skos:notation" : "COM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CPV",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Cabo Verde"
+    },
+    "rdfs:label" : "Cabo Verde",
+    "skos:notation" : "CPV"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CRI",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Costa Rica"
+    },
+    "rdfs:label" : "Costa Rica",
+    "skos:notation" : "CRI"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CSM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Curacao and Sint Maarten"
+    },
+    "rdfs:label" : "Curacao and Sint Maarten",
+    "skos:notation" : "CSM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CUB",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Cuba"
+    },
+    "rdfs:label" : "Cuba",
+    "skos:notation" : "CUB"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CUW",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Curacao"
+    },
+    "rdfs:label" : "Curacao",
+    "skos:notation" : "CUW"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CXR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Christmas Island"
+    },
+    "rdfs:label" : "Christmas Island",
+    "skos:notation" : "CXR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CYM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Cayman Islands"
+    },
+    "rdfs:label" : "Cayman Islands",
+    "skos:notation" : "CYM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CYP",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Cyprus"
+    },
+    "rdfs:label" : "Cyprus",
+    "skos:notation" : "CYP"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/CZE",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Czech Republic"
+    },
+    "rdfs:label" : "Czech Republic",
+    "skos:notation" : "CZE"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/DEU",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Germany"
+    },
+    "rdfs:label" : "Germany",
+    "skos:notation" : "DEU"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/DJI",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Djibouti"
+    },
+    "rdfs:label" : "Djibouti",
+    "skos:notation" : "DJI"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/DMA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Dominica"
+    },
+    "rdfs:label" : "Dominica",
+    "skos:notation" : "DMA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/DNK",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Denmark"
+    },
+    "rdfs:label" : "Denmark",
+    "skos:notation" : "DNK"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/DOM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Dominican Republic"
+    },
+    "rdfs:label" : "Dominican Republic",
+    "skos:notation" : "DOM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/DZA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Algeria"
+    },
+    "rdfs:label" : "Algeria",
+    "skos:notation" : "DZA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ECU",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Ecuador"
+    },
+    "rdfs:label" : "Ecuador",
+    "skos:notation" : "ECU"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/EGY",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Egypt"
+    },
+    "rdfs:label" : "Egypt",
+    "skos:notation" : "EGY"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ERI",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Eritrea"
+    },
+    "rdfs:label" : "Eritrea",
+    "skos:notation" : "ERI"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ESH",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Western Sahara"
+    },
+    "rdfs:label" : "Western Sahara",
+    "skos:notation" : "ESH"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ESP",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Spain"
+    },
+    "rdfs:label" : "Spain",
+    "skos:notation" : "ESP"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/EST",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Estonia"
+    },
+    "rdfs:label" : "Estonia",
+    "skos:notation" : "EST"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ETH",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Ethiopia"
+    },
+    "rdfs:label" : "Ethiopia",
+    "skos:notation" : "ETH"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/FIN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Finland"
+    },
+    "rdfs:label" : "Finland",
+    "skos:notation" : "FIN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/FJI",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Fiji"
+    },
+    "rdfs:label" : "Fiji",
+    "skos:notation" : "FJI"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/FLK",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Falkland Islands (Malvinas)"
+    },
+    "rdfs:label" : "Falkland Islands (Malvinas)",
+    "skos:notation" : "FLK"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/FRA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "France"
+    },
+    "rdfs:label" : "France",
+    "skos:notation" : "FRA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/FSM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Micronesia, Federated States of"
+    },
+    "rdfs:label" : "Micronesia, Federated States of",
+    "skos:notation" : "FSM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GAB",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Gabon"
+    },
+    "rdfs:label" : "Gabon",
+    "skos:notation" : "GAB"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GBR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "United Kingdom (the)"
+    },
+    "rdfs:label" : "United Kingdom (the)",
+    "skos:notation" : "GBR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GEO",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Georgia"
+    },
+    "rdfs:label" : "Georgia",
+    "skos:notation" : "GEO"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GHA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Ghana"
+    },
+    "rdfs:label" : "Ghana",
+    "skos:notation" : "GHA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GIB",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Gibraltar"
+    },
+    "rdfs:label" : "Gibraltar",
+    "skos:notation" : "GIB"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GIN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Guinea"
+    },
+    "rdfs:label" : "Guinea",
+    "skos:notation" : "GIN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GMB",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Gambia"
+    },
+    "rdfs:label" : "Gambia",
+    "skos:notation" : "GMB"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GNB",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Guinea-Bissau"
+    },
+    "rdfs:label" : "Guinea-Bissau",
+    "skos:notation" : "GNB"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GNQ",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Equatorial Guinea"
+    },
+    "rdfs:label" : "Equatorial Guinea",
+    "skos:notation" : "GNQ"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GRC",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Greece"
+    },
+    "rdfs:label" : "Greece",
+    "skos:notation" : "GRC"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GRD",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Grenada"
+    },
+    "rdfs:label" : "Grenada",
+    "skos:notation" : "GRD"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GRL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Greenland"
+    },
+    "rdfs:label" : "Greenland",
+    "skos:notation" : "GRL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GTM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Guatemala"
+    },
+    "rdfs:label" : "Guatemala",
+    "skos:notation" : "GTM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/GUY",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Guyana"
+    },
+    "rdfs:label" : "Guyana",
+    "skos:notation" : "GUY"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/HKG",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Hong Kong, China"
+    },
+    "rdfs:label" : "Hong Kong, China",
+    "skos:notation" : "HKG"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/HND",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Honduras"
+    },
+    "rdfs:label" : "Honduras",
+    "skos:notation" : "HND"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/HRV",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Croatia"
+    },
+    "rdfs:label" : "Croatia",
+    "skos:notation" : "HRV"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/HTI",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Haiti"
+    },
+    "rdfs:label" : "Haiti",
+    "skos:notation" : "HTI"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/HUN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Hungary"
+    },
+    "rdfs:label" : "Hungary",
+    "skos:notation" : "HUN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/IDN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Indonesia"
+    },
+    "rdfs:label" : "Indonesia",
+    "skos:notation" : "IDN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/IND",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "India"
+    },
+    "rdfs:label" : "India",
+    "skos:notation" : "IND"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/IRL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Ireland"
+    },
+    "rdfs:label" : "Ireland",
+    "skos:notation" : "IRL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/IRN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Iran, Islamic Republic of"
+    },
+    "rdfs:label" : "Iran, Islamic Republic of",
+    "skos:notation" : "IRN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/IRQ",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Iraq"
+    },
+    "rdfs:label" : "Iraq",
+    "skos:notation" : "IRQ"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ISL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Iceland"
+    },
+    "rdfs:label" : "Iceland",
+    "skos:notation" : "ISL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ISR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Israel"
+    },
+    "rdfs:label" : "Israel",
+    "skos:notation" : "ISR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ITA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Italy"
+    },
+    "rdfs:label" : "Italy",
+    "skos:notation" : "ITA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/JAM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Jamaica"
+    },
+    "rdfs:label" : "Jamaica",
+    "skos:notation" : "JAM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/JOR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Jordan"
+    },
+    "rdfs:label" : "Jordan",
+    "skos:notation" : "JOR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/JPN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Japan"
+    },
+    "rdfs:label" : "Japan",
+    "skos:notation" : "JPN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KAZ",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Kazakhstan"
+    },
+    "rdfs:label" : "Kazakhstan",
+    "skos:notation" : "KAZ"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KEN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Kenya"
+    },
+    "rdfs:label" : "Kenya",
+    "skos:notation" : "KEN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KGZ",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Kyrgyzstan"
+    },
+    "rdfs:label" : "Kyrgyzstan",
+    "skos:notation" : "KGZ"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KHM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Cambodia"
+    },
+    "rdfs:label" : "Cambodia",
+    "skos:notation" : "KHM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KIR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Kiribati"
+    },
+    "rdfs:label" : "Kiribati",
+    "skos:notation" : "KIR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KNA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Saint Kitts and Nevis"
+    },
+    "rdfs:label" : "Saint Kitts and Nevis",
+    "skos:notation" : "KNA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KOR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Korea, Republic of"
+    },
+    "rdfs:label" : "Korea, Republic of",
+    "skos:notation" : "KOR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/KWT",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Kuwait"
+    },
+    "rdfs:label" : "Kuwait",
+    "skos:notation" : "KWT"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LAO",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Lao People's Democratic Republic"
+    },
+    "rdfs:label" : "Lao People's Democratic Republic",
+    "skos:notation" : "LAO"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LBN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Lebanon"
+    },
+    "rdfs:label" : "Lebanon",
+    "skos:notation" : "LBN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LBR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Liberia"
+    },
+    "rdfs:label" : "Liberia",
+    "skos:notation" : "LBR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LBY",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Libya"
+    },
+    "rdfs:label" : "Libya",
+    "skos:notation" : "LBY"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LCA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Saint Lucia"
+    },
+    "rdfs:label" : "Saint Lucia",
+    "skos:notation" : "LCA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LIE",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Liechtenstein"
+    },
+    "rdfs:label" : "Liechtenstein",
+    "skos:notation" : "LIE"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LKA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Sri Lanka"
+    },
+    "rdfs:label" : "Sri Lanka",
+    "skos:notation" : "LKA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LSO",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Lesotho"
+    },
+    "rdfs:label" : "Lesotho",
+    "skos:notation" : "LSO"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LTU",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Lithuania"
+    },
+    "rdfs:label" : "Lithuania",
+    "skos:notation" : "LTU"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LUX",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Luxembourg"
+    },
+    "rdfs:label" : "Luxembourg",
+    "skos:notation" : "LUX"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/LVA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Latvia"
+    },
+    "rdfs:label" : "Latvia",
+    "skos:notation" : "LVA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MAC",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Macao, China"
+    },
+    "rdfs:label" : "Macao, China",
+    "skos:notation" : "MAC"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MAR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Morocco"
+    },
+    "rdfs:label" : "Morocco",
+    "skos:notation" : "MAR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MCO",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Monaco"
+    },
+    "rdfs:label" : "Monaco",
+    "skos:notation" : "MCO"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MDA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Moldova, Republic of"
+    },
+    "rdfs:label" : "Moldova, Republic of",
+    "skos:notation" : "MDA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MDG",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Madagascar"
+    },
+    "rdfs:label" : "Madagascar",
+    "skos:notation" : "MDG"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MDV",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Maldives"
+    },
+    "rdfs:label" : "Maldives",
+    "skos:notation" : "MDV"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MEX",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Mexico"
+    },
+    "rdfs:label" : "Mexico",
+    "skos:notation" : "MEX"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MHL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Marshall Islands"
+    },
+    "rdfs:label" : "Marshall Islands",
+    "skos:notation" : "MHL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MKD",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Macedonia, the former Yugoslav Republic of"
+    },
+    "rdfs:label" : "Macedonia, the former Yugoslav Republic of",
+    "skos:notation" : "MKD"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MLI",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Mali"
+    },
+    "rdfs:label" : "Mali",
+    "skos:notation" : "MLI"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MLT",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Malta"
+    },
+    "rdfs:label" : "Malta",
+    "skos:notation" : "MLT"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MMR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Myanmar"
+    },
+    "rdfs:label" : "Myanmar",
+    "skos:notation" : "MMR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MNE",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Montenegro"
+    },
+    "rdfs:label" : "Montenegro",
+    "skos:notation" : "MNE"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MNG",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Mongolia"
+    },
+    "rdfs:label" : "Mongolia",
+    "skos:notation" : "MNG"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MOZ",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Mozambique"
+    },
+    "rdfs:label" : "Mozambique",
+    "skos:notation" : "MOZ"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MRT",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Mauritania"
+    },
+    "rdfs:label" : "Mauritania",
+    "skos:notation" : "MRT"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MSR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Montserrat"
+    },
+    "rdfs:label" : "Montserrat",
+    "skos:notation" : "MSR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MUS",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Mauritius"
+    },
+    "rdfs:label" : "Mauritius",
+    "skos:notation" : "MUS"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MWI",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Malawi"
+    },
+    "rdfs:label" : "Malawi",
+    "skos:notation" : "MWI"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/MYS",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Malaysia"
+    },
+    "rdfs:label" : "Malaysia",
+    "skos:notation" : "MYS"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NAM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Namibia"
+    },
+    "rdfs:label" : "Namibia",
+    "skos:notation" : "NAM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NCL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "New Caledonia"
+    },
+    "rdfs:label" : "New Caledonia",
+    "skos:notation" : "NCL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NER",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Niger"
+    },
+    "rdfs:label" : "Niger",
+    "skos:notation" : "NER"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NGA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Nigeria"
+    },
+    "rdfs:label" : "Nigeria",
+    "skos:notation" : "NGA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NIC",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Nicaragua"
+    },
+    "rdfs:label" : "Nicaragua",
+    "skos:notation" : "NIC"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NIU",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Niue"
+    },
+    "rdfs:label" : "Niue",
+    "skos:notation" : "NIU"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NLD",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Netherlands"
+    },
+    "rdfs:label" : "Netherlands",
+    "skos:notation" : "NLD"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NOR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Norway"
+    },
+    "rdfs:label" : "Norway",
+    "skos:notation" : "NOR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NPL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Nepal"
+    },
+    "rdfs:label" : "Nepal",
+    "skos:notation" : "NPL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NRU",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Nauru"
+    },
+    "rdfs:label" : "Nauru",
+    "skos:notation" : "NRU"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/NZL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "New Zealand"
+    },
+    "rdfs:label" : "New Zealand",
+    "skos:notation" : "NZL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/OMN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Oman"
+    },
+    "rdfs:label" : "Oman",
+    "skos:notation" : "OMN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PAK",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Pakistan"
+    },
+    "rdfs:label" : "Pakistan",
+    "skos:notation" : "PAK"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PAN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Panama"
+    },
+    "rdfs:label" : "Panama",
+    "skos:notation" : "PAN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PCN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Pitcairn"
+    },
+    "rdfs:label" : "Pitcairn",
+    "skos:notation" : "PCN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PER",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Peru"
+    },
+    "rdfs:label" : "Peru",
+    "skos:notation" : "PER"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PHL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Philippines"
+    },
+    "rdfs:label" : "Philippines",
+    "skos:notation" : "PHL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PLW",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Palau"
+    },
+    "rdfs:label" : "Palau",
+    "skos:notation" : "PLW"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PNG",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Papua New Guinea"
+    },
+    "rdfs:label" : "Papua New Guinea",
+    "skos:notation" : "PNG"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/POL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Poland"
+    },
+    "rdfs:label" : "Poland",
+    "skos:notation" : "POL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PRI",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Puerto Rico"
+    },
+    "rdfs:label" : "Puerto Rico",
+    "skos:notation" : "PRI"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PRK",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Korea, Democratic People's Republic of"
+    },
+    "rdfs:label" : "Korea, Democratic People's Republic of",
+    "skos:notation" : "PRK"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PRT",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Portugal"
+    },
+    "rdfs:label" : "Portugal",
+    "skos:notation" : "PRT"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PRY",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Paraguay"
+    },
+    "rdfs:label" : "Paraguay",
+    "skos:notation" : "PRY"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PSE",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Palestine, State of"
+    },
+    "rdfs:label" : "Palestine, State of",
+    "skos:notation" : "PSE"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/PYF",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "French Polynesia"
+    },
+    "rdfs:label" : "French Polynesia",
+    "skos:notation" : "PYF"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/QAT",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Qatar"
+    },
+    "rdfs:label" : "Qatar",
+    "skos:notation" : "QAT"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ROU",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Romania"
+    },
+    "rdfs:label" : "Romania",
+    "skos:notation" : "ROU"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/RUS",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Russian Federation"
+    },
+    "rdfs:label" : "Russian Federation",
+    "skos:notation" : "RUS"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/RWA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Rwanda"
+    },
+    "rdfs:label" : "Rwanda",
+    "skos:notation" : "RWA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SAU",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Saudi Arabia"
+    },
+    "rdfs:label" : "Saudi Arabia",
+    "skos:notation" : "SAU"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SDN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Sudan"
+    },
+    "rdfs:label" : "Sudan",
+    "skos:notation" : "SDN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SEN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Senegal"
+    },
+    "rdfs:label" : "Senegal",
+    "skos:notation" : "SEN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SGP",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Singapore"
+    },
+    "rdfs:label" : "Singapore",
+    "skos:notation" : "SGP"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SGS",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "South Georgia and the South Sandwich Islands"
+    },
+    "rdfs:label" : "South Georgia and the South Sandwich Islands",
+    "skos:notation" : "SGS"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SHN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Saint Helena"
+    },
+    "rdfs:label" : "Saint Helena",
+    "skos:notation" : "SHN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SLB",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Solomon Islands"
+    },
+    "rdfs:label" : "Solomon Islands",
+    "skos:notation" : "SLB"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SLE",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Sierra Leone"
+    },
+    "rdfs:label" : "Sierra Leone",
+    "skos:notation" : "SLE"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SLV",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "El Salvador"
+    },
+    "rdfs:label" : "El Salvador",
+    "skos:notation" : "SLV"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SOM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Somalia"
+    },
+    "rdfs:label" : "Somalia",
+    "skos:notation" : "SOM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SPM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Saint Pierre and Miquelon"
+    },
+    "rdfs:label" : "Saint Pierre and Miquelon",
+    "skos:notation" : "SPM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SRB",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Serbia"
+    },
+    "rdfs:label" : "Serbia",
+    "skos:notation" : "SRB"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SSD",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "South Sudan"
+    },
+    "rdfs:label" : "South Sudan",
+    "skos:notation" : "SSD"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/STP",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Sao Tome and Principe"
+    },
+    "rdfs:label" : "Sao Tome and Principe",
+    "skos:notation" : "STP"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SUR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Suriname"
+    },
+    "rdfs:label" : "Suriname",
+    "skos:notation" : "SUR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SVK",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Slovakia"
+    },
+    "rdfs:label" : "Slovakia",
+    "skos:notation" : "SVK"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SVN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Slovenia"
+    },
+    "rdfs:label" : "Slovenia",
+    "skos:notation" : "SVN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SWE",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Sweden"
+    },
+    "rdfs:label" : "Sweden",
+    "skos:notation" : "SWE"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SWZ",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Eswatini"
+    },
+    "rdfs:label" : "Eswatini",
+    "skos:notation" : "SWZ"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SXM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Sint Maarten"
+    },
+    "rdfs:label" : "Sint Maarten",
+    "skos:notation" : "SXM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SYC",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Seychelles"
+    },
+    "rdfs:label" : "Seychelles",
+    "skos:notation" : "SYC"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/SYR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Syrian Arab Republic"
+    },
+    "rdfs:label" : "Syrian Arab Republic",
+    "skos:notation" : "SYR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TCA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Turks and Caicos Islands"
+    },
+    "rdfs:label" : "Turks and Caicos Islands",
+    "skos:notation" : "TCA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TCD",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Chad"
+    },
+    "rdfs:label" : "Chad",
+    "skos:notation" : "TCD"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TGO",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Togo"
+    },
+    "rdfs:label" : "Togo",
+    "skos:notation" : "TGO"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/THA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Thailand"
+    },
+    "rdfs:label" : "Thailand",
+    "skos:notation" : "THA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TJK",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Tajikistan"
+    },
+    "rdfs:label" : "Tajikistan",
+    "skos:notation" : "TJK"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TKL",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Tokelau"
+    },
+    "rdfs:label" : "Tokelau",
+    "skos:notation" : "TKL"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TKM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Turkmenistan"
+    },
+    "rdfs:label" : "Turkmenistan",
+    "skos:notation" : "TKM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TLS",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Timor-Leste"
+    },
+    "rdfs:label" : "Timor-Leste",
+    "skos:notation" : "TLS"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TON",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Tonga"
+    },
+    "rdfs:label" : "Tonga",
+    "skos:notation" : "TON"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TTO",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Trinidad and Tobago"
+    },
+    "rdfs:label" : "Trinidad and Tobago",
+    "skos:notation" : "TTO"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TUN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Tunisia"
+    },
+    "rdfs:label" : "Tunisia",
+    "skos:notation" : "TUN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TUR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Turkey"
+    },
+    "rdfs:label" : "Turkey",
+    "skos:notation" : "TUR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TUV",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Tuvalu"
+    },
+    "rdfs:label" : "Tuvalu",
+    "skos:notation" : "TUV"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TWN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Taiwan, Province of China"
+    },
+    "rdfs:label" : "Taiwan, Province of China",
+    "skos:notation" : "TWN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/TZA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Tanzania, United Republic of"
+    },
+    "rdfs:label" : "Tanzania, United Republic of",
+    "skos:notation" : "TZA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/UGA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Uganda"
+    },
+    "rdfs:label" : "Uganda",
+    "skos:notation" : "UGA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/UKR",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Ukraine"
+    },
+    "rdfs:label" : "Ukraine",
+    "skos:notation" : "UKR"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/URY",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Uruguay"
+    },
+    "rdfs:label" : "Uruguay",
+    "skos:notation" : "URY"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/USA",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "United States (the)"
+    },
+    "rdfs:label" : "United States (the)",
+    "skos:notation" : "USA"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/UZB",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Uzbekistan"
+    },
+    "rdfs:label" : "Uzbekistan",
+    "skos:notation" : "UZB"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/VCT",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Saint Vincent and Grenadines"
+    },
+    "rdfs:label" : "Saint Vincent and Grenadines",
+    "skos:notation" : "VCT"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/VEN",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Venezuela, Bolivarian Republic of"
+    },
+    "rdfs:label" : "Venezuela, Bolivarian Republic of",
+    "skos:notation" : "VEN"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/VGB",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "British Virgin Islands"
+    },
+    "rdfs:label" : "British Virgin Islands",
+    "skos:notation" : "VGB"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/VNM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Viet Nam"
+    },
+    "rdfs:label" : "Viet Nam",
+    "skos:notation" : "VNM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/VUT",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Vanuatu"
+    },
+    "rdfs:label" : "Vanuatu",
+    "skos:notation" : "VUT"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/WSM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Samoa"
+    },
+    "rdfs:label" : "Samoa",
+    "skos:notation" : "WSM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/YEM",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Yemen"
+    },
+    "rdfs:label" : "Yemen",
+    "skos:notation" : "YEM"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ZAF",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "South Africa"
+    },
+    "rdfs:label" : "South Africa",
+    "skos:notation" : "ZAF"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ZMB",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Zambia"
+    },
+    "rdfs:label" : "Zambia",
+    "skos:notation" : "ZMB"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/ZWE",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Zimbabwe"
+    },
+    "rdfs:label" : "Zimbabwe",
+    "skos:notation" : "ZWE"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/inapplicable",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Territory not applicable."
+    },
+    "rdfs:label" : "inapplicable",
+    "skos:notation" : "inapplicable"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/TerritoryName/unknown",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Territory unknown."
+    },
+    "rdfs:label" : "unknown",
+    "skos:notation" : "unknown"
+  } ],
+  "@context" : {
+    "qudt" : "http://qudt.org/schema/qudt#",
+    "ssd" : "http://www.w3.org/ns/sparql-service-description#",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "skos" : "http://www.w3.org/2004/02/skos/core#",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "qudt-unit" : "http://qudt.org/vocab/unit#",
+    "qb" : "http://purl.org/linked-data/cube#",
+    "dgu" : "http://reference.data.gov.uk/def/reference/",
+    "dct" : "http://purl.org/dc/terms/",
+    "ui" : "http://purl.org/linked-data/registry-ui#",
+    "reg" : "http://purl.org/linked-data/registry#",
+    "grib2-parameter" : "http://codes.wmo.int/grib2/schema/parameter/",
+    "qudt-quantity" : "http://qudt.org/vocab/quantity#",
+    "api" : "http://purl.org/linked-data/api/vocab#",
+    "vann" : "http://purl.org/vocab/vann/",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "cc" : "http://creativecommons.org/ns#",
+    "common-unit" : "http://codes.wmo.int/common/schema/unit/",
+    "grib2-core" : "http://codes.wmo.int/grib2/schema/core/",
+    "void" : "http://rdfs.org/ns/void#",
+    "version" : "http://purl.org/linked-data/version#",
+    "bufr4-core" : "http://codes.wmo.int/bufr4/schema/core/",
+    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "ldp" : "http://www.w3.org/ns/ldp#",
+    "time" : "http://www.w3.org/2006/time#",
+    "qudt-dimension" : "http://qudt.org/vocab/dimension#",
+    "vs" : "http://www.w3.org/2003/06/sw-vocab-status/ns#",
+    "dc" : "http://purl.org/dc/elements/1.1/",
+    "common-core" : "http://codes.wmo.int/common/schema/core/"
+  }
+}
