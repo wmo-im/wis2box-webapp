@@ -18,12 +18,13 @@
                     <v-card>
                         <v-card-title>
                             Please enter some initial information
+                            <v-btn icon="mdi-comment-question" variant="text" size="small"
+                                @click="openInitialHelpDialog = true" />
                         </v-card-title>
                         <v-card-text>
                             <v-autocomplete label="Country" :items="countryCodeList" item-title="name" item-value="alpha-3"
                                 v-model="model.poc.country" :rules="[rules.required]" variant="outlined"></v-autocomplete>
                             <v-text-field v-model="model.origin.centreID" label="Centre ID"
-                                hint="Agency acronym (in lower case), as specified by member" persistent-hint
                                 variant="outlined"></v-text-field>
                             <v-select v-model="datatype" :items="['synop', 'temp', 'other']" label="Data Type"
                                 variant="outlined"></v-select>
@@ -40,91 +41,103 @@
                 <v-row class="pa-5">
                     <p class="black--text ma-0">{{ message }}</p>
                 </v-row>
-
             </v-card>
 
             <v-card class="mt-3 pa-3">
                 <!-- Form which when filled and validated, can be exported or submitted -->
                 <v-form v-model="formFilled" v-if="metadataLoaded" validate-on="blur">
                     <!-- Identification section -->
-                    <v-card-title>Dataset Identification</v-card-title>
-                    <v-row dense>
+                    <v-card-title>
+                        Dataset Identification
+                        <v-btn icon="mdi-comment-question" variant="text" size="small"
+                            @click="openIdentificationHelpDialog = true" />
+                    </v-card-title>
+                    <v-row>
                         <v-col cols="6">
-                            <v-text-field label="Title" hint="Name of data" type="string"
-                                v-model="model.identification.title" :rules="[rules.required]" variant="outlined"
-                                clearable></v-text-field>
+                            <v-text-field label="Title" type="string" v-model="model.identification.title"
+                                :rules="[rules.required]" variant="outlined" clearable></v-text-field>
                         </v-col>
 
                         <v-col cols="6">
-                            <v-text-field label="Description" hint="Brief description of data" type="string"
-                                v-model="model.identification.description" :rules="[rules.required]" variant="outlined"
-                                clearable></v-text-field>
+                            <v-text-field label="Description" type="string" v-model="model.identification.description"
+                                :rules="[rules.required]" variant="outlined" clearable></v-text-field>
                         </v-col>
                     </v-row>
-                    <v-row dense>
+                    <v-row>
                         <v-col cols="3">
                             <v-autocomplete label="Language" v-model="model.identification.language"
                                 :items="languageCodeList" item-title="name" item-value="code" :rules="[rules.required]"
                                 variant="outlined"></v-autocomplete>
                         </v-col>
-                        <v-col cols="3">
-                            <v-text-field label="Keywords (3 minimum)" hint="Search keywords for data" type="array"
-                                v-model="keyword" @keyup.enter="addKeyword" variant="outlined" clearable></v-text-field>
-                        </v-col>
-                        <v-col cols="1">
-                            <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"
-                                :disabled="keyword == ''"></v-btn>
-                        </v-col>
-                        <v-col cols="5">
-                            <v-chip-group :rules="[rules.required, rules.keywords]">
-                                <v-chip v-for="keyword in model.identification.keywords" :key="keyword" closable label
-                                    @click:close="removeKeyword(keyword)">
-                                    {{ keyword }}
-                                </v-chip>
-                            </v-chip-group>
+                        <v-col cols="9">
+                            <v-row dense>
+                                <v-col cols="3">
+                                    <v-text-field label="Keywords (3 minimum)" type="array" v-model="keyword"
+                                        @keyup.enter="addKeyword" variant="outlined" clearable></v-text-field>
+                                </v-col>
+                                <v-col cols="1">
+                                    <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"
+                                        :disabled="keyword == ''"></v-btn>
+                                </v-col>
+                                <v-col cols="8">
+                                    <v-chip-group :rules="[rules.required, rules.keywords]">
+                                        <v-chip v-for="keyword in model.identification.keywords" :key="keyword" closable
+                                            label @click:close="removeKeyword(keyword)">
+                                            {{ keyword }}
+                                        </v-chip>
+                                    </v-chip-group>
+                                </v-col>
+                            </v-row>
                         </v-col>
                     </v-row>
 
                     <!-- Origin section -->
-                    <v-card-title>Dataset Origin</v-card-title>
-                    <v-row dense>
+                    <v-card-title>
+                        Dataset Origin
+                        <v-btn icon="mdi-comment-question" variant="text" size="small"
+                            @click="openOriginHelpDialog = true" />
+                    </v-card-title>
+                    <v-row>
                         <v-col cols="4">
                             <!-- The centre ID is left disabled as it was selected by the user earlier -->
-                            <v-text-field label="Centre ID" hint="Agency acronym (in lower case), as specified by member"
-                                type="string" v-model="model.origin.centreID" :rules="[rules.required, rules.centreID]"
-                                variant="outlined" clearable disabled></v-text-field>
+                            <v-text-field label="Centre ID" type="string" v-model="model.origin.centreID"
+                                :rules="[rules.required, rules.centreID]" variant="outlined" clearable
+                                disabled></v-text-field>
                         </v-col>
                         <v-col cols="2">
-                            <v-select label="WMO Data Policy" hint="Priority of data within WMO" type="string"
-                                :items="['core', 'recommended']" v-model="model.origin.wmoDataPolicy"
-                                :rules="[rules.required]" variant="outlined"></v-select>
+                            <v-select label="WMO Data Policy" type="string" :items="['core', 'recommended']"
+                                v-model="model.origin.wmoDataPolicy" :rules="[rules.required]"
+                                variant="outlined"></v-select>
                         </v-col>
-                        <v-col cols="3">
-                            <v-text-field label="Retention" hint="Minimum length of time data should be retained in WIS2"
-                                type="string" v-model="model.origin.retention" :rules="[rules.required]" variant="outlined"
-                                clearable></v-text-field>
+                        <v-col cols="2">
+                            <v-text-field label="Retention in Days" type="number" v-model="model.origin.retention"
+                                :rules="[rules.required]" variant="outlined"></v-text-field>
                         </v-col>
 
                     </v-row>
                     <!-- The identifier and topic hierarchy -->
                     <!-- Unless the user selects 'other' for the datatype,
                     these should remain disabled as they are autofilled -->
-                    <v-row dense>
+                    <v-row>
                         <v-col cols="6">
-                            <v-text-field label="Identifier" hint="Unique identifier for this data" type="string"
-                                v-model="model.origin.identifier" :rules="[rules.required, rules.identifier]"
-                                variant="outlined" clearable :disabled="datatype !== 'other'"></v-text-field>
+                            <v-text-field label="Identifier" type="string" v-model="model.origin.identifier"
+                                :rules="[rules.required]" variant="outlined" clearable
+                                :disabled="datatype !== 'other'"></v-text-field>
                         </v-col>
 
                         <v-col cols="6">
-                            <v-text-field label="Topic Hierarchy" hint="Unique hierarchy for this data" type="string"
-                                v-model="model.origin.topicHierarchy" :rules="[rules.required, rules.topicHierarchy]"
-                                variant="outlined" :disabled="datatype !== 'other'"></v-text-field>
+                            <v-text-field label="Topic Hierarchy" type="string" v-model="model.origin.topicHierarchy"
+                                :rules="[rules.required]" variant="outlined"
+                                :disabled="datatype !== 'other'"></v-text-field>
                         </v-col>
                     </v-row>
 
-                    <v-card-title>Temporal Properties</v-card-title>
-                    <v-row dense>
+                    <v-card-title>
+                        Temporal Properties
+                        <v-btn icon="mdi-comment-question" variant="text" size="small"
+                            @click="openTemporalHelpDialog = true" />
+                    </v-card-title>
+                    <v-row>
                         <v-col cols="3">
                             <VueDatePicker placeholder="Begin Date in UTC" v-model="model.origin.dateStarted"
                                 :teleport="true" :enable-time-picker="false" auto-apply required />
@@ -136,19 +149,31 @@
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label=" Time Resolution" hint="Frequency of data updates, e.g. 1h" type="string"
-                                v-model="model.origin.resolution" :rules="[rules.required]" variant="outlined"
-                                clearable></v-text-field>
+                            <v-row dense>
+                                <v-col cols="5">
+                                    <v-text-field label="Resolution" type="string" v-model="model.origin.resolution"
+                                        :rules="[rules.required]" variant="outlined" clearable></v-text-field>
+                                </v-col>
+                                <v-col cols="5">
+                                    <v-select label="Unit" :items="durations" item-title="name" item-value="code"
+                                        v-model="model.origin.resolutionUnit" :rules="[rules.required]"
+                                        variant="outlined"></v-select>
+                                </v-col>
+                            </v-row>
                         </v-col>
                     </v-row>
-                    <v-card-title>Spatial Properties</v-card-title>
+                    <v-card-title>
+                        Spatial Properties
+                        <v-btn icon="mdi-comment-question" variant="text" size="small"
+                            @click="openSpatialHelpDialog = true" />
+                    </v-card-title>
                     <v-row dense>
                         <v-col cols="4">
                             <!-- Allow the user to select a country different to that of the POC for the auto bbox -->
                             <v-autocomplete label="Choose another country bounding box (optional)" item-title="name"
                                 item-value="alpha-3" :items="filteredCountryCodeList" v-model="bboxCountry"
-                                @update:modelValue="getAutoBbox(bboxCountry)" 
-                                hint="Note: your country may not have an automatic bounding box" persistent-hint
+                                @update:modelValue="getAutoBbox(bboxCountry)"
+                                hint="Your country may not have an automatic bounding box" persistent-hint
                                 variant="outlined"></v-autocomplete>
                         </v-col>
                     </v-row>
@@ -160,39 +185,38 @@
                     </v-row>
                     <v-row>
                         <v-col cols="3">
-                            <v-text-field label="North Latitude" hint="Northmost latitude of data region" type="float"
-                                v-model="model.origin.northLatitude" :rules="[rules.required, rules.latitude]"
-                                variant="outlined" clearable></v-text-field>
+                            <v-text-field label="North Latitude" type="float" v-model="model.origin.northLatitude"
+                                :rules="[rules.required, rules.latitude]" variant="outlined" clearable></v-text-field>
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label="East Longitude" hint="Eastmost longitude of data region" type="float"
-                                v-model="model.origin.eastLongitude" :rules="[rules.required, rules.longitude]"
-                                variant="outlined" clearable></v-text-field>
+                            <v-text-field label="East Longitude" type="float" v-model="model.origin.eastLongitude"
+                                :rules="[rules.required, rules.longitude]" variant="outlined" clearable></v-text-field>
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label="South Latitude" hint="Southmost latitude of data region" type="float"
-                                v-model="model.origin.southLatitude" :rules="[rules.required, rules.latitude]"
-                                variant="outlined" clearable></v-text-field>
+                            <v-text-field label="South Latitude" type="float" v-model="model.origin.southLatitude"
+                                :rules="[rules.required, rules.latitude]" variant="outlined" clearable></v-text-field>
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label="West Longitude" hint="Westmost longitude of data region" type="float"
-                                v-model="model.origin.westLongitude" :rules="[rules.required, rules.longitude]"
-                                variant="outlined" clearable></v-text-field>
+                            <v-text-field label="West Longitude" type="float" v-model="model.origin.westLongitude"
+                                :rules="[rules.required, rules.longitude]" variant="outlined" clearable></v-text-field>
                         </v-col>
                     </v-row>
 
                     <!-- Contact (POC) section -->
-                    <v-card-title>Point of Contact Information</v-card-title>
-                    <v-row dense>
+                    <v-card-title>
+                        Point of Contact Information
+                        <v-btn icon="mdi-comment-question" variant="text" size="small" @click="openPocHelpDialog = true" />
+                    </v-card-title>
+                    <v-row>
                         <v-col cols="4">
                             <v-text-field label="Organization Name" type="string" v-model="model.poc.name"
                                 :rules="[rules.required]" variant="outlined" clearable></v-text-field>
                         </v-col>
                         <v-col cols="4">
-                            <v-text-field label="Email" hint="Contact email address" type="string" v-model="model.poc.email"
+                            <v-text-field label="Email" type="string" v-model="model.poc.email"
                                 :rules="[rules.required, rules.email]" variant="outlined" clearable></v-text-field>
                         </v-col>
                         <v-col cols="4">
@@ -204,7 +228,7 @@
                         </v-col>
                     </v-row>
                     <!-- The following contact fields may return later -->
-                    <!-- <v-row dense>
+                    <!-- <v-row>
                         <v-col cols="4">
                             <v-text-field label="Organization Name" type="string" v-model="model.poc.name"
                                 :rules="[rules.required]" variant="outlined" clearable></v-text-field>
@@ -220,7 +244,7 @@
                                 v-model="model.poc.positionName" variant="outlined" clearable></v-text-field>
                         </v-col>
                     </v-row>
-                    <v-row dense>
+                    <v-row>
                         <v-col cols="4">
                             <v-text-field label="URL" hint="Organization website" type="string" v-model="model.poc.url"
                                 :rules="[rules.url]" variant="outlined" clearable></v-text-field>
@@ -237,7 +261,7 @@
                                 :rules="[rules.required, rules.email]" variant="outlined" clearable></v-text-field>
                         </v-col>
                     </v-row>
-                    <v-row dense>
+                    <v-row>
                         <v-col cols="4">
                             <v-text-field label="Address" hint="Street address" type="string"
                                 v-model="model.poc.deliveryPoint" variant="outlined" clearable></v-text-field>
@@ -254,7 +278,7 @@
                                 clearable></v-text-field>
                         </v-col>
                     </v-row>
-                    <v-row dense>
+                    <v-row>
                         <v-col cols="3">
                             <v-text-field label="Postal Code" hint="Mailing postal code" type="string"
                                 v-model="model.poc.postalCode" variant="outlined" clearable></v-text-field>
@@ -272,7 +296,7 @@
                                 clearable></v-text-field>
                         </v-col>
                     </v-row>
-                    <v-row dense>
+                    <v-row>
                         <v-col cols="6">
                             <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
                                 v-model="model.poc.contactInstructions" variant="outlined" clearable></v-text-field>
@@ -280,21 +304,23 @@
                     </v-row> -->
 
                     <!-- Distributor section -->
-                    <v-row dense>
-                        <v-card-title>Distributor Information</v-card-title>
+                    <v-card-title>
+                        Distributor Information
+                        <v-btn icon="mdi-comment-question" variant="text" size="small"
+                            @click="openDistribHelpDialog = true" />
                         <v-switch label="Same As Contact Info?" v-model="model.distrib.duplicateFromContact"
                             color="#003DA5"></v-switch>
-                    </v-row>
-                    <v-row dense>
+                    </v-card-title>
+                    <v-row>
                         <v-col cols="4">
                             <v-text-field label="Organization Name" type="string" v-model="model.distrib.name"
                                 :rules="[rules.required]" variant="outlined" clearable
                                 :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
                         <v-col cols="4">
-                            <v-text-field label="Email" hint="Contact email address" type="string"
-                                v-model="model.distrib.email" :rules="[rules.required, rules.email]" variant="outlined"
-                                clearable :disabled="!distributorFieldsEnabled"></v-text-field>
+                            <v-text-field label="Email" type="string" v-model="model.distrib.email"
+                                :rules="[rules.required, rules.email]" variant="outlined" clearable
+                                :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
                         <v-col cols="4">
                             <v-autocomplete label="Country" :items="countryCodeList" item-title="name" item-value="alpha-3"
@@ -303,7 +329,7 @@
                         </v-col>
                     </v-row>
                     <!-- The following contact fields may return later -->
-                    <!-- <v-row dense>
+                    <!-- <v-row>
                         <v-col cols="4">
                             <v-text-field label="Individual" hint="Full name" type="string"
                                 v-model="model.distrib.individual" variant="outlined" clearable
@@ -322,7 +348,7 @@
                                 :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
                     </v-row>
-                    <v-row dense>
+                    <v-row>
                         <v-col cols="4">
                             <v-text-field label="URL" hint="Organization website" type="string" v-model="model.distrib.url"
                                 :rules="[rules.url]" variant="outlined" clearable
@@ -341,7 +367,7 @@
                                 clearable :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
                     </v-row>
-                    <v-row dense>
+                    <v-row>
                         <v-col cols="4">
                             <v-text-field label="Address" hint="Street address" type="string"
                                 v-model="model.distrib.deliveryPoint" variant="outlined" clearable
@@ -360,7 +386,7 @@
                                 clearable :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
                     </v-row>
-                    <v-row dense>
+                    <v-row>
                         <v-col cols="3">
                             <v-text-field label="Postal Code" hint="Mailing postal code" type="string"
                                 v-model="model.distrib.postalCode" variant="outlined" clearable
@@ -380,7 +406,7 @@
                                 clearable :disabled="!distributorFieldsEnabled"></v-text-field>
                         </v-col>
                     </v-row>
-                    <v-row dense>
+                    <v-row>
                         <v-col cols="6">
                             <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
                                 v-model="model.distrib.contactInstructions" variant="outlined" clearable
@@ -412,6 +438,186 @@
                     </v-btn>
                 </v-row>
             </v-card>
+
+            <!-- Help dialogs -->
+            <v-dialog v-model="openInitialHelpDialog" max-width="600px">
+                <v-card>
+                    <v-card-item>
+                        <v-card-title class="d-flex justify-space-between">
+                            Initial Information
+                            <v-btn icon="mdi-close" variant="text" size="small" @click="openInitialHelpDialog = false" />
+                        </v-card-title>
+                        <v-card-subtitle>
+                            What is this section for?
+                        </v-card-subtitle>
+                    </v-card-item>
+                    <v-card-text>
+                        <p>To begin creating a new dataset, we require some initial information in order to pre-fill the
+                            form.</p>
+                        <br>
+                        <p><b>Country:</b> The country of your point of contact.</p>
+                        <br>
+                        <p><b>Centre ID:</b> The agency acronym (in lower case), as specified by member.</p>
+                        <br>
+                        <p><b>Data Type:</b> The type of data you are creating metadata for. <i>If 'other' is selected, more
+                                fields will have to be manually filled.</i></p>
+                        <br>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+            <v-dialog v-model="openIdentificationHelpDialog" max-width="600px">
+                <v-card>
+                    <v-card-item>
+                        <v-card-title class="d-flex justify-space-between">
+                            Dataset Identification
+                            <v-btn icon="mdi-close" variant="text" size="small"
+                                @click="openIdentificationHelpDialog = false" />
+                        </v-card-title>
+                        <v-card-subtitle>
+                            How do I complete this section?
+                        </v-card-subtitle>
+                    </v-card-item>
+                    <v-card-text>
+                        <p><b>Title:</b> The name of the dataset.</p>
+                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled.</i></p>
+                        <br>
+                        <p><b>Description:</b> A brief abstract describing the dataset.</p>
+                        <br>
+                        <p><b>Language:</b> The language of the dataset.</p>
+                        <br>
+                        <p><b>Keywords:</b> At least three keywords to allow users to search for the data.</p>
+                        <br>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+            <v-dialog v-model="openOriginHelpDialog" max-width="600px">
+                <v-card>
+                    <v-card-item>
+                        <v-card-title class="d-flex justify-space-between">
+                            Dataset Origin
+                            <v-btn icon="mdi-close" variant="text" size="small" @click="openOriginHelpDialog = false" />
+                        </v-card-title>
+                        <v-card-subtitle>
+                            How do I complete this section?
+                        </v-card-subtitle>
+                    </v-card-item>
+                    <v-card-text>
+                        <p><b>Centre ID:</b> This was already filled earlier and <i>cannot be edited</i>.</p>
+                        <br>
+                        <p><b>WMO Data Policy:</b> Whether the dataset is core or recommended according to the WMO Unified
+                            Data Policy.</p>
+                        <br>
+                        <p><b>Retention Period in Days:</b> Minimum number of days the data should be retained in WIS2 (e.g. 30).</p>
+                        <br>
+                        <p><b>Identifier:</b> The unique identifier for the data.</p>
+                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot be
+                                edited.</i></p>
+                        <br>
+                        <p><b>Topic Hierarchy:</b> The unique hierarchy for this data.</p>
+                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot be
+                                edited.</i></p>
+                        <br>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+            <v-dialog v-model="openTemporalHelpDialog" max-width="600px">
+                <v-card>
+                    <v-card-item>
+                        <v-card-title class="d-flex justify-space-between">
+                            Temporal Properties
+                            <v-btn icon="mdi-close" variant="text" size="small" @click="openTemporalHelpDialog = false" />
+                        </v-card-title>
+                        <v-card-subtitle>
+                            How do I complete this section?
+                        </v-card-subtitle>
+                    </v-card-item>
+                    <v-card-text>
+                        <p><b>Begin Date:</b> The date in UTC when the dataset begins.</p>
+                        <br>
+                        <p><b>End Date:</b> The date in UTC when the dataset ends.</p>
+                        <br>
+                        <p><b>Time Resolution:</b> The smallest increment of time that is represented in the dataset.</p>
+                        <p>This is split into two parts, the <b>value</b> (e.g. 1) and the <b>unit</b> (e.g. 'hour(s)').</p>
+                        <br>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+            <v-dialog v-model="openSpatialHelpDialog" max-width="600px">
+                <v-card>
+                    <v-card-item>
+                        <v-card-title class="d-flex justify-space-between">
+                            Spatial Properties
+                            <v-btn icon="mdi-close" variant="text" size="small" @click="openSpatialHelpDialog = false" />
+                        </v-card-title>
+                        <v-card-subtitle>
+                            How do I complete this section?
+                        </v-card-subtitle>
+                    </v-card-item>
+                    <v-card-text>
+                        <p>This section describes the bounding box of the dataset. By default, the bounding box is
+                            automatically filled based on the country of the point of contact. However, this can be changed
+                            either:</p>
+                        <br>
+                        <p><b>Automatically:</b> By using the additional country dropdown (your country may not be found on
+                            this list).</p>
+                        <br>
+                        <p><b>Manually:</b> By the entering the northmost, eastmost, southmost, and westmost coordinates of
+                            the dataset.</p>
+                        <br>
+                        <p><i><b>Warning: The automatic bounding box created may be incorrect for the country, so please
+                                    verify it before proceeding!</b></i></p>
+                        <br>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+            <v-dialog v-model="openPocHelpDialog" max-width="600px">
+                <v-card>
+                    <v-card-item>
+                        <v-card-title class="d-flex justify-space-between">
+                            Point of Contact Information
+                            <v-btn icon="mdi-close" variant="text" size="small" @click="openPocHelpDialog = false" />
+                        </v-card-title>
+                        <v-card-subtitle>
+                            How do I complete this section?
+                        </v-card-subtitle>
+                    </v-card-item>
+                    <v-card-text>
+                        <p>This section provides details for the person that can be contacted for more information about the
+                            dataset.</p>
+                        <br>
+                        <p><b>Organization Name:</b> The name of the organization.</p>
+                        <br>
+                        <p><b>Email:</b> The email address of the point of contact.</p>
+                        <br>
+                        <p><b>Country:</b> This was already filled earlier and <i>cannot be edited</i>.</p>
+                        <br>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+            <v-dialog v-model="openDistribHelpDialog" max-width="600px">
+                <v-card>
+                    <v-card-item>
+                        <v-card-title class="d-flex justify-space-between">
+                            Distributor Information
+                            <v-btn icon="mdi-close" variant="text" size="small" @click="openDistribHelpDialog = false" />
+                        </v-card-title>
+                        <v-card-subtitle>
+                            How do I complete this section?
+                        </v-card-subtitle>
+                    </v-card-item>
+                    <v-card-text>
+                        <p>This section provides additional details if the distributor is not the same as the point of
+                            contact. <i>By default, this information is identical to that of the point of contact.</i></p>
+                        <br>
+                        <p><b>Organization Name:</b> The name of the distributing organization.</p>
+                        <br>
+                        <p><b>Email:</b> The email address of the distributor.</p>
+                        <br>
+                        <p><b>Country:</b> The country of the distributor.</p>
+                        <br>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
         </v-col>
     </v-row>
 </template>
@@ -461,6 +667,12 @@ export default defineComponent({
             }
         };
 
+        // Time durations for resolution
+        const durations = [
+            { name: 'hour(s)', code: 'H' },
+            { name: 'day(s)', code: 'D' },
+        ];
+
         // WCMP2 schema version
         const schemaVersion = "http://wis.wmo.int/spec/wcmp/2.0";
 
@@ -472,9 +684,6 @@ export default defineComponent({
             longitude: value => value >= -180 && value <= 180 || 'Longitude must be between -180 and 180.',
             url: value => value === '' || /^https?:\/\/[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(value) || 'Invalid URL format.',
             email: value => /^[a-z0-9._-]+@[a-z0-9-]+\.[a-z0-9.-]+$/.test(value) || 'Invalid email format.',
-            country: value => /^[A-Z]{3}$/.test(value) || 'Invalid country code. Must be 3 uppercase letters.',
-            identifier: value => /^urn:x-wmo:md:[a-z]{3}:[a-z0-9_-]+:[a-z0-9_-]+[a-z0-9:-]*$/.test(value) || 'Invalid identifier. Must start with \'urn:x-wmo:md:\'',
-            topicHierarchy: value => /^[a-z]{3}\/[_a-z-]+\/(data|metadata|reports)\/(core|recommended)\/[\\w]+\/[\\w-]+\/[\\w]*$/.test(value) || 'Invalid topic hierarchy. Follow the specified pattern.',
             keywords: value => Array.isArray(value) && value.length >= 3 || 'Keywords must be an array with at least 3 items.',
         };
 
@@ -521,6 +730,14 @@ export default defineComponent({
         const keyword = ref("");
         // Metadata form to be filled
         const model = ref({ 'identification': {}, 'origin': {}, 'poc': {}, 'distrib': {}, 'settings': {} });
+        // Help dialog windows
+        const openInitialHelpDialog = ref(false);
+        const openIdentificationHelpDialog = ref(false);
+        const openOriginHelpDialog = ref(false);
+        const openTemporalHelpDialog = ref(false);
+        const openSpatialHelpDialog = ref(false);
+        const openPocHelpDialog = ref(false);
+        const openDistribHelpDialog = ref(false);
 
         // Computed variables
 
@@ -597,8 +814,13 @@ export default defineComponent({
                 formModel.origin.dateStopped = schema.time.interval[1];
             }
             // Minimum time period resolvable in the dataset
+            // Sets the resolution to the number, and unit to D or H
             if (schema.time?.resolution) {
-                formModel.origin.resolution = schema.time.resolution.replace('P', '').toLowerCase();
+                const match = schema.time.resolution.match(/P(\d+)([DH])/i);
+                if (match) {
+                    formModel.origin.resolution = parseInt(match[1]);
+                    formModel.origin.resolutionUnit = match[2].toUpperCase();
+                }
             }
 
             // Geometry information
@@ -766,14 +988,20 @@ export default defineComponent({
             model.value.identification.title = template.title.replace('$CENTRE_ID', model.value.origin.centreID);
             model.value.identification.language = template.language;
             model.value.identification.keywords = template.keywords;
-            model.value.origin.resolution = template.resolution;
-            model.value.distrib.duplicateFromContact = template.duplicateFromContact;
-            // Remove the P and make lower case (P30D -> 30d)
-            model.value.origin.retention = template.retention.substring(1).toLowerCase();
+            // Extract value in days (P30D -> 30)
+            model.value.origin.retention = template.retention.substring(1, template.retention.length - 1);
             model.value.origin.identifier = template.identifier.replace('$CENTRE_ID', model.value.origin.centreID);
+            // Use centre ID and WMO data policy to create topic hierarchy
             model.value.origin.topicHierarchy = template.topicHierarchy
-                .replace('$CENTRE_ID', model.value.origin.centreID)
-                .replace('$DATA_POLICY', model.value.origin.wmoDataPolicy);
+            .replace('$CENTRE_ID', model.value.origin.centreID)
+            .replace('$DATA_POLICY', model.value.origin.wmoDataPolicy);
+            // Get resolution and resolution unit from template
+            const match = template.resolution.match(/P(\d+)([DH])/i);
+                if (match) {
+                    model.value.origin.resolution = parseInt(match[1]);
+                    model.value.origin.resolutionUnit = match[2].toUpperCase();
+                }
+            model.value.distrib.duplicateFromContact = template.duplicateFromContact;
 
             // Now update the bounding box values
             getAutoBbox(model.value.poc.country);
@@ -897,7 +1125,7 @@ export default defineComponent({
             // wis2box information
             // Note: This is an extension to the WCMP2 schema
             schemaModel.wis2box = {};
-            schemaModel.wis2box.retention = `P${form.origin.retention.toUpperCase()}`;
+            schemaModel.wis2box.retention = `P${form.origin.retention}D`;
             schemaModel.wis2box["topic_hierarchy"] = form.origin.topicHierarchy;
             schemaModel.wis2box.country = form.poc.country;
             schemaModel.wis2box["centre_id"] = form.origin.centreID;
@@ -908,7 +1136,7 @@ export default defineComponent({
             const startDate = getDateFrom(form.origin.dateStarted);
             const endDate = getDateFrom(form.origin.dateStopped);
             schemaModel.time.interval = [startDate, endDate];
-            schemaModel.time.resolution = `P${form.origin.resolution.toUpperCase()}`;
+            schemaModel.time.resolution = `P${form.origin.resolution}${form.origin.resolutionUnit}`;
 
             // Geometry information
             schemaModel.geometry = {
@@ -1112,7 +1340,6 @@ export default defineComponent({
             }
         };
 
-
         // Mounted
         onMounted(() => {
             loadList();
@@ -1164,6 +1391,7 @@ export default defineComponent({
 
         return {
             defaults,
+            durations,
             schemaVersion,
             rules,
             working,
@@ -1187,6 +1415,13 @@ export default defineComponent({
             isDistribPhoneValid,
             keyword,
             model,
+            openInitialHelpDialog,
+            openIdentificationHelpDialog,
+            openOriginHelpDialog,
+            openTemporalHelpDialog,
+            openSpatialHelpDialog,
+            openPocHelpDialog,
+            openDistribHelpDialog,
             formFilledAndValidated,
             distributorFieldsEnabled,
             loadList,
