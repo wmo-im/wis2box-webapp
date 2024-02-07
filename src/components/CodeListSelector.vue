@@ -12,11 +12,11 @@
       v-if="options !== null"
       :items="options"
       item-title="rdfs:label"
-      item-value="@id"
+      item-value="skos:notation"
       :label="props.label"
       v-model="selected"
       :rules="[value => !!value ? true : props.defaultHint]"
-      :hint="selected ? selected['dct:description']['@value'] : props.defaultHint"
+      :hint="selected ? (selected['dct:description'] ? selected['dct:description']['@value']: props.defaultHint) : props.defaultHint"
       :readonly="props.readonly"
       clearable
       persistent-hint
@@ -70,8 +70,8 @@
       };
 
       onBeforeMount( async () => {
-        fetchOptions();
-        selected.value = props.modelValue;
+        await fetchOptions();
+        selected.value = options.value && props.modelValue ? options.value.find( item => item['skos:notation'] === props.modelValue) : null;
       });
 
       watch( () => props.modelValue, (newValue) => {

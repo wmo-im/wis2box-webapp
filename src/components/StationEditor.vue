@@ -184,14 +184,14 @@
               name: station.value.properties.name,
               wigos_station_identifier: station.value.properties.wigos_station_identifier,  // WSI
               traditional_station_identifier: station.value.properties.traditional_station_identifier,
-              facility_type: station.value.properties.facility_type.id ?? null,
-              territory_name: station.value.properties.territory_name.id ?? null,
+              facility_type: station.value.properties.facility_type['skos:notation'] ?? null,
+              territory_name: station.value.properties.territory_name['skos:notation'] ?? null,
               barometer_height: parseFloat(station.value.properties.barometer_height),
-              wmo_region: station.value.properties.wmo_region.id ?? null,
+              wmo_region: station.value.properties.wmo_region['skos:notation'] ?? null,
               url: "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/" +
                       station.value.properties.wigos_station_identifier,
               topics: station.value.properties.topics.map( (topic) => (topic.id)),
-              status: station.value.properties.status.id ?? null,
+              status: station.value.properties.status['skos:notation'] ?? null,
               id: station.value.properties.wigos_station_identifier  // WSI
             }
           }
@@ -236,31 +236,7 @@
           }else{
             readonly.value = true;
           }
-          // fetch code lists
-          territoryOptions.value = await loadCodeList('territory');
-          facilityTypeOptions.value = await loadCodeList('facilityType');
-          operatingStatusOptions.value = await loadCodeList('operatingStatus');
-          WMORegionOptions.value = await loadCodeList('WMORegion');
         });
-
-        const loadCodeList = async (codeList) => {
-          try{
-            const clist = await fetch(`${import.meta.env.VITE_BASE_URL}/codelists/${codeList}.json`);
-            var data = null;
-            if( clist.ok ){
-              await clist.json().then( (d) => data = d);
-            }else{
-             errorMessage.value = "HTTP error fetching code list, please see console.";
-             console.error(clist);
-             showDialog.value = true;
-            }
-          }catch(error){
-            errorMessage.value = "HTTP error fetching code list, please see console.";
-            showDialog.value = true;
-            console.error(error);
-          };
-          return data;
-        };
 
 
         onMounted( async () => {
@@ -348,7 +324,7 @@
           }
         })
         return {station, topics, registerStation, showDialog, msg, rules, route, router,
-          operatingStatusOptions, WMORegionOptions, territoryOptions, readonly, errorMessage, token, formValid,
+          readonly, errorMessage, token, formValid,
           cancelEdit
 
         };

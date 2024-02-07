@@ -1,6 +1,6 @@
 <template>
     <div v-if="! errorMessage">
-      <v-autocomplete
+      <v-select
         v-if="(options !== null)"
         :items="options"
         item-title="name"
@@ -22,13 +22,13 @@
 
 <script>
 import { defineComponent, ref, onBeforeMount, watch, onErrorCaptured } from 'vue';
-import { VAutocomplete, VTextField } from 'vuetify/lib/components/index.mjs';
+import { VSelect, VTextField } from 'vuetify/lib/components/index.mjs';
 
 
 export default defineComponent({
   name: 'SelectTopicHierarchy',
   components: {
-    VAutocomplete, VTextField
+    VSelect, VTextField
   },
   props: {
     modelValue: {},
@@ -92,15 +92,27 @@ export default defineComponent({
 
 
     onBeforeMount(async () => {
+      var m = false;
       await fetchOptions();
       if (props.modelValue && props.modelValue.length) {
-        for (var topic in props.modelValue) {
-          selected.value.push(options.value.find(option => option.id === props.modelValue[topic]));
+        for (const topicId of props.modelValue) {
+          const option = options.value.find( option => option.id === topicId );
+          if (option){
+            m = true;
+            selected.value.push(option);
+          }
         }
+      }
+      if(m){
+        emit("update:modelValue", selected.value);
       }
     });
 
-    watch(selected, (newValue) => {
+    watch( () => props.modelValue, (newValue) => {
+      selected.value = newValue;
+    });
+
+    watch( () => selected.value, (newValue) => {
       if (selected.value) {
         emit("update:modelValue", newValue);
       }
