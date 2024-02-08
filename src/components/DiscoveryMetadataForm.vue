@@ -22,8 +22,6 @@
                                 @click="openInitialHelpDialog = true" />
                         </v-card-title>
                         <v-card-text>
-                            <v-autocomplete label="Country" :items="countryCodeList" item-title="name" item-value="alpha-3"
-                                v-model="model.poc.country" :rules="[rules.required]" variant="outlined"></v-autocomplete>
                             <v-text-field v-model="model.origin.centreID" label="Centre ID"
                                 variant="outlined"></v-text-field>
                             <v-select v-model="datatype" :items="['synop', 'temp', 'other']" label="Data Type"
@@ -59,16 +57,11 @@
                         </v-col>
 
                         <v-col cols="6">
-                            <v-text-field label="Description" type="string" v-model="model.identification.description"
-                                :rules="[rules.required]" variant="outlined" clearable></v-text-field>
+                            <v-textarea label="Description" type="string" v-model="model.identification.description"
+                                :rules="[rules.required]" variant="outlined" clearable></v-textarea>
                         </v-col>
                     </v-row>
                     <v-row>
-                        <v-col cols="3">
-                            <v-autocomplete label="Language" v-model="model.identification.language"
-                                :items="languageCodeList" item-title="name" item-value="code" :rules="[rules.required]"
-                                variant="outlined"></v-autocomplete>
-                        </v-col>
                         <v-col cols="9">
                             <v-row dense>
                                 <v-col cols="3">
@@ -170,7 +163,7 @@
                     <v-row dense>
                         <v-col cols="4">
                             <!-- Allow the user to select a country different to that of the POC for the auto bbox -->
-                            <v-autocomplete label="Choose another country bounding box (optional)" item-title="name"
+                            <v-autocomplete label="Choose an automatic bounding box (optional)" item-title="name"
                                 item-value="alpha-3" :items="filteredCountryCodeList" v-model="bboxCountry"
                                 @update:modelValue="getAutoBbox(bboxCountry)"
                                 hint="Your country may not have an automatic bounding box" persistent-hint
@@ -223,8 +216,7 @@
                             <!-- The POC country is disabled as it was selected
                             already in the dialog -->
                             <v-autocomplete label="Country" item-title="name" item-value="alpha-3" :items="countryCodeList"
-                                v-model="model.poc.country" :rules="[rules.required]" variant="outlined"
-                                disabled></v-autocomplete>
+                                v-model="model.poc.country" :rules="[rules.required]" variant="outlined"></v-autocomplete>
                         </v-col>
                     </v-row>
                     <!-- The following contact fields may return later -->
@@ -455,8 +447,6 @@
                         <p>To begin creating a new dataset, we require some initial information in order to pre-fill the
                             form.</p>
                         <br>
-                        <p><b>Country:</b> The country of your point of contact.</p>
-                        <br>
                         <p><b>Centre ID:</b> The agency acronym (in lower case), as specified by member.</p>
                         <br>
                         <p><b>Data Type:</b> The type of data you are creating metadata for. <i>If 'other' is selected, more
@@ -507,7 +497,8 @@
                         <p><b>WMO Data Policy:</b> Whether the dataset is core or recommended according to the WMO Unified
                             Data Policy.</p>
                         <br>
-                        <p><b>Retention Period in Days:</b> Minimum number of days the data should be retained in WIS2 (e.g. 30).</p>
+                        <p><b>Retention Period in Days:</b> Minimum number of days the data should be retained in WIS2 (e.g.
+                            30).</p>
                         <br>
                         <p><b>Identifier:</b> The unique identifier for the data.</p>
                         <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot be
@@ -554,11 +545,9 @@
                         </v-card-subtitle>
                     </v-card-item>
                     <v-card-text>
-                        <p>This section describes the bounding box of the dataset. By default, the bounding box is
-                            automatically filled based on the country of the point of contact. However, this can be changed
-                            either:</p>
+                        <p>This section describes the bounding box of the dataset. This can be created either:</p>
                         <br>
-                        <p><b>Automatically:</b> By using the additional country dropdown (your country may not be found on
+                        <p><b>Automatically:</b> By using the country dropdown (note that your country may not be found on
                             this list).</p>
                         <br>
                         <p><b>Manually:</b> By the entering the northmost, eastmost, southmost, and westmost coordinates of
@@ -589,7 +578,7 @@
                         <br>
                         <p><b>Email:</b> The email address of the point of contact.</p>
                         <br>
-                        <p><b>Country:</b> This was already filled earlier and <i>cannot be edited</i>.</p>
+                        <p><b>Country:</b> The country of the point of contact.</p>
                         <br>
                     </v-card-text>
                 </v-card>
@@ -743,16 +732,21 @@ export default defineComponent({
 
         // Has the user filled the dialog window?
         const dialogFilled = computed(() => {
-            return model.value.poc.country && model.value.origin.centreID && datatype.value !== "";
+            return model.value.origin.centreID && datatype.value !== "";
         });
 
         // Filter the country code list so that only the countries
         // which have an automatic bounding box are shown
         const filteredCountryCodeList = computed(() => {
-            return countryCodeList.value.filter(country => {
+            const filteredList = countryCodeList.value.filter(country => {
                 // Find out if the (lower case) alpha 2 code is in the bbox list
                 return country["alpha-2"].toLowerCase() in boundingBoxes.value;
             });
+            // Create a global option
+            const global = { "name": "Global", "alpha-2": "int", "alpha-3": "int" };
+            // Add this global option to the start of the list
+            filteredList.unshift(global);
+            return filteredList;
         });
 
         // Controls which parts of the page are displayed
@@ -948,14 +942,15 @@ export default defineComponent({
             } else if (datatype.value === 'temp') {
                 applyTemplate(tempTemplate);
             }
-            else {
-                // At a minimum, automatically find the bounding box
-                getAutoBbox(model.value.poc.country)
-            }
         }
 
         // Find the corresponding alpha-2 code to an alpha-3 code
         const getAlpha2Code = (alpha3Code) => {
+            // Check if the alpha-3 code is 'int' first
+            if (alpha3Code === 'int') {
+                return 'int';
+            }
+            // If it isn't 'int', find the corresponding alpha-2 code
             const country = countryCodeList.value.find(item => item["alpha-3"] === alpha3Code);
             // Return the code in lower case as we need it in this
             // form for founding the corresponding bbox
@@ -993,14 +988,14 @@ export default defineComponent({
             model.value.origin.identifier = template.identifier.replace('$CENTRE_ID', model.value.origin.centreID);
             // Use centre ID and WMO data policy to create topic hierarchy
             model.value.origin.topicHierarchy = template.topicHierarchy
-            .replace('$CENTRE_ID', model.value.origin.centreID)
-            .replace('$DATA_POLICY', model.value.origin.wmoDataPolicy);
+                .replace('$CENTRE_ID', model.value.origin.centreID)
+                .replace('$DATA_POLICY', model.value.origin.wmoDataPolicy);
             // Get resolution and resolution unit from template
             const match = template.resolution.match(/P(\d+)([DH])/i);
-                if (match) {
-                    model.value.origin.resolution = parseInt(match[1]);
-                    model.value.origin.resolutionUnit = match[2].toUpperCase();
-                }
+            if (match) {
+                model.value.origin.resolution = parseInt(match[1]);
+                model.value.origin.resolutionUnit = match[2].toUpperCase();
+            }
             model.value.distrib.duplicateFromContact = template.duplicateFromContact;
 
             // Now update the bounding box values
