@@ -6,5 +6,13 @@
     "retention": "P30D",
     "resolution": "P1H",
     "keywords": ["surface", "land", "observations"],
-    "duplicateFromContact": true
+    "duplicateFromContact": true,
+    "themes": [
+        {
+            "concepts": [
+                {"id": "weather", "display": "Weather"}
+            ],
+            "scheme": "https://github.com/wmo-im/wis2-topic-hierarchy/blob/main/topic-hierarchy/earth-system-discipline/index.csv"
+        }
+    ]
 }

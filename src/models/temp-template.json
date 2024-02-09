@@ -6,5 +6,13 @@
     "retention": "P30D",
     "resolution": "P12H",
     "keywords": ["upper air", "humidity", "wind", "observations"],
-    "duplicateFromContact": true
+    "duplicateFromContact": true,
+    "themes": [
+        {
+            "concepts": [
+                {"id": "weather", "display": "Weather"}
+            ],
+            "scheme": "https://github.com/wmo-im/wis2-topic-hierarchy/blob/main/topic-hierarchy/earth-system-discipline/index.csv"
+        }
+    ]
 }
