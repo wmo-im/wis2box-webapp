@@ -10,7 +10,7 @@
     "themes": [
         {
             "concepts": [
-                {"id": "weather", "display": "Weather"}
+                {"id": "weather", "label": "weather"}
             ],
             "scheme": "https://github.com/wmo-im/wis2-topic-hierarchy/blob/main/topic-hierarchy/earth-system-discipline/index.csv"
         }
