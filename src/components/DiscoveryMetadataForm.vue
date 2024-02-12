@@ -22,10 +22,10 @@
                                 @click="openInitialHelpDialog = true" />
                         </v-card-title>
                         <v-card-text>
-                            <v-text-field v-model="model.origin.centreID" label="Centre ID"
+                            <v-text-field v-model="model.identification.centreID" label="Centre ID"
                                 variant="outlined"></v-text-field>
-                            <v-select v-model="datatype" :items="['synop', 'temp', 'other']" label="Data Type"
-                                variant="outlined"></v-select>
+                            <v-select v-model="selectedTemplate" :items="templateFiles" item-title="label" return-object
+                                label="Data Type" variant="outlined"></v-select>
                         </v-card-text>
                         <v-card-actions>
                             <v-btn color="#009900" variant="flat" block @click="continueToForm"
@@ -52,19 +52,62 @@
                     </v-card-title>
                     <v-row>
                         <v-col cols="6">
-                            <v-text-field label="Title" type="string" v-model="model.identification.title"
-                                :rules="[rules.required]" variant="outlined" clearable></v-text-field>
+                            <v-row dense>
+                                <v-col cols="12">
+                                    <v-text-field label="Title" type="string" v-model="model.identification.title"
+                                        :rules="[rules.required]" variant="outlined" clearable></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row dense>
+                                <v-col cols="12">
+                                    <v-text-field label="Identifier" type="string" v-model="model.identification.identifier"
+                                        :rules="[rules.required]" variant="outlined" clearable
+                                        :disabled="selectedTemplate?.label !== 'other'"></v-text-field>
+                                </v-col>
+                            </v-row>
                         </v-col>
 
                         <v-col cols="6">
-                            <v-textarea label="Description" type="string" v-model="model.identification.description"
-                                :rules="[rules.required]" variant="outlined" clearable></v-textarea>
+                            <v-textarea label="Description" placeholder="Please enter a detailed description of the dataset"
+                                type="string" v-model="model.identification.description" :rules="[rules.required]"
+                                variant="outlined" clearable></v-textarea>
                         </v-col>
                     </v-row>
                     <v-row>
-                        <v-col cols="9">
+
+                    </v-row>
+                    <v-row>
+                        <v-col cols="2">
+                            <v-text-field label="Centre ID" type="string" v-model="model.identification.centreID"
+                                :rules="[rules.required, rules.centreID]" variant="outlined" clearable
+                                disabled></v-text-field>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-select label="WMO Data Policy" type="string" :items="['core', 'recommended']"
+                                v-model="model.identification.wmoDataPolicy" :rules="[rules.required]"
+                                variant="outlined"></v-select>
+                        </v-col>
+                        <v-col cols="2">
+                            <v-text-field label="Retention in Days" type="number" v-model="model.identification.retention"
+                                :rules="[rules.required]" variant="outlined"></v-text-field>
+                        </v-col>
+                        <!-- Unless the user selects 'other' for the datatype 
+                        label, the topic hierarchy should remain disabled as 
+                        it is autofilled -->
+                        <v-col cols="6">
+                            <v-text-field label="Topic Hierarchy" type="string" v-model="model.identification.topicHierarchy"
+                                :rules="[rules.required]" variant="outlined"
+                                :disabled="selectedTemplate?.label !== 'other'"></v-text-field>
+                        </v-col>
+
+                    </v-row>
+                    <v-row>
+                        <v-col cols="4">
+                            <v-select label="Themes" v-model="model.identification.themes" multiple variant="outlined"></v-select>
+                        </v-col>
+                        <v-col cols="8">
                             <v-row dense>
-                                <v-col cols="3">
+                                <v-col cols="4">
                                     <v-text-field label="Keywords (3 minimum)" type="array" v-model="keyword"
                                         @keyup.enter="addKeyword" variant="outlined" clearable></v-text-field>
                                 </v-col>
@@ -72,7 +115,7 @@
                                     <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"
                                         :disabled="keyword == ''"></v-btn>
                                 </v-col>
-                                <v-col cols="8">
+                                <v-col cols="7">
                                     <v-chip-group :rules="[rules.required, rules.keywords]">
                                         <v-chip v-for="keyword in model.identification.keywords" :key="keyword" closable
                                             label @click:close="removeKeyword(keyword)">
@@ -84,47 +127,6 @@
                         </v-col>
                     </v-row>
 
-                    <!-- Origin section -->
-                    <v-card-title>
-                        Dataset Origin
-                        <v-btn icon="mdi-comment-question" variant="text" size="small"
-                            @click="openOriginHelpDialog = true" />
-                    </v-card-title>
-                    <v-row>
-                        <v-col cols="4">
-                            <!-- The centre ID is left disabled as it was selected by the user earlier -->
-                            <v-text-field label="Centre ID" type="string" v-model="model.origin.centreID"
-                                :rules="[rules.required, rules.centreID]" variant="outlined" clearable
-                                disabled></v-text-field>
-                        </v-col>
-                        <v-col cols="2">
-                            <v-select label="WMO Data Policy" type="string" :items="['core', 'recommended']"
-                                v-model="model.origin.wmoDataPolicy" :rules="[rules.required]"
-                                variant="outlined"></v-select>
-                        </v-col>
-                        <v-col cols="2">
-                            <v-text-field label="Retention in Days" type="number" v-model="model.origin.retention"
-                                :rules="[rules.required]" variant="outlined"></v-text-field>
-                        </v-col>
-
-                    </v-row>
-                    <!-- The identifier and topic hierarchy -->
-                    <!-- Unless the user selects 'other' for the datatype,
-                    these should remain disabled as they are autofilled -->
-                    <v-row>
-                        <v-col cols="6">
-                            <v-text-field label="Identifier" type="string" v-model="model.origin.identifier"
-                                :rules="[rules.required]" variant="outlined" clearable
-                                :disabled="datatype !== 'other'"></v-text-field>
-                        </v-col>
-
-                        <v-col cols="6">
-                            <v-text-field label="Topic Hierarchy" type="string" v-model="model.origin.topicHierarchy"
-                                :rules="[rules.required]" variant="outlined"
-                                :disabled="datatype !== 'other'"></v-text-field>
-                        </v-col>
-                    </v-row>
-
                     <v-card-title>
                         Temporal Properties
                         <v-btn icon="mdi-comment-question" variant="text" size="small"
@@ -132,24 +134,24 @@
                     </v-card-title>
                     <v-row>
                         <v-col cols="3">
-                            <VueDatePicker placeholder="Begin Date in UTC" v-model="model.origin.dateStarted"
+                            <VueDatePicker placeholder="Begin Date in UTC" v-model="model.extents.dateStarted"
                                 :teleport="true" :enable-time-picker="false" auto-apply required />
                         </v-col>
 
                         <v-col cols="3">
-                            <VueDatePicker placeholder="End Date in UTC" v-model="model.origin.dateStopped" :teleport="true"
+                            <VueDatePicker placeholder="End Date in UTC" v-model="model.extents.dateStopped" :teleport="true"
                                 :enable-time-picker="false" auto-apply required />
                         </v-col>
 
                         <v-col cols="3">
                             <v-row dense>
                                 <v-col cols="5">
-                                    <v-text-field label="Resolution" type="string" v-model="model.origin.resolution"
+                                    <v-text-field label="Resolution" type="string" v-model="model.extents.resolution"
                                         :rules="[rules.required]" variant="outlined" clearable></v-text-field>
                                 </v-col>
                                 <v-col cols="5">
                                     <v-select label="Unit" :items="durations" item-title="name" item-value="code"
-                                        v-model="model.origin.resolutionUnit" :rules="[rules.required]"
+                                        v-model="model.extents.resolutionUnit" :rules="[rules.required]"
                                         variant="outlined"></v-select>
                                 </v-col>
                             </v-row>
@@ -178,22 +180,22 @@
                     </v-row>
                     <v-row>
                         <v-col cols="3">
-                            <v-text-field label="North Latitude" type="float" v-model="model.origin.northLatitude"
+                            <v-text-field label="North Latitude" type="float" v-model="model.extents.northLatitude"
                                 :rules="[rules.required, rules.latitude]" variant="outlined" clearable></v-text-field>
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label="East Longitude" type="float" v-model="model.origin.eastLongitude"
+                            <v-text-field label="East Longitude" type="float" v-model="model.extents.eastLongitude"
                                 :rules="[rules.required, rules.longitude]" variant="outlined" clearable></v-text-field>
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label="South Latitude" type="float" v-model="model.origin.southLatitude"
+                            <v-text-field label="South Latitude" type="float" v-model="model.extents.southLatitude"
                                 :rules="[rules.required, rules.latitude]" variant="outlined" clearable></v-text-field>
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label="West Longitude" type="float" v-model="model.origin.westLongitude"
+                            <v-text-field label="West Longitude" type="float" v-model="model.extents.westLongitude"
                                 :rules="[rules.required, rules.longitude]" variant="outlined" clearable></v-text-field>
                         </v-col>
                     </v-row>
@@ -473,25 +475,10 @@
                         <br>
                         <p><b>Description:</b> A brief abstract describing the dataset.</p>
                         <br>
-                        <p><b>Language:</b> The language of the dataset.</p>
+                        <p><b>Identifier:</b> The unique identifier for the data.</p>
+                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot be
+                                edited.</i></p>
                         <br>
-                        <p><b>Keywords:</b> At least three keywords to allow users to search for the data.</p>
-                        <br>
-                    </v-card-text>
-                </v-card>
-            </v-dialog>
-            <v-dialog v-model="openOriginHelpDialog" max-width="600px">
-                <v-card>
-                    <v-card-item>
-                        <v-card-title class="d-flex justify-space-between">
-                            Dataset Origin
-                            <v-btn icon="mdi-close" variant="text" size="small" @click="openOriginHelpDialog = false" />
-                        </v-card-title>
-                        <v-card-subtitle>
-                            How do I complete this section?
-                        </v-card-subtitle>
-                    </v-card-item>
-                    <v-card-text>
                         <p><b>Centre ID:</b> This was already filled earlier and <i>cannot be edited</i>.</p>
                         <br>
                         <p><b>WMO Data Policy:</b> Whether the dataset is core or recommended according to the WMO Unified
@@ -500,13 +487,13 @@
                         <p><b>Retention Period in Days:</b> Minimum number of days the data should be retained in WIS2 (e.g.
                             30).</p>
                         <br>
-                        <p><b>Identifier:</b> The unique identifier for the data.</p>
-                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot be
-                                edited.</i></p>
-                        <br>
                         <p><b>Topic Hierarchy:</b> The unique hierarchy for this data.</p>
                         <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot be
                                 edited.</i></p>
+                        <br>
+                        <p><b>Themes:</b> A list of concepts that are referenced to a vocabulary or knowledge organization system used to classify the resource.</p>
+                        <br>
+                        <p><b>Keywords:</b> A list of at least three keywords, tags or specific phrases associated with the resource, but are not referenced to a particular vocabulary or knowledge organization system.</p>
                         <br>
                     </v-card-text>
                 </v-card>
@@ -614,8 +601,6 @@
 <script>
 import BboxEditor from "@/components/BboxEditor.vue";
 import { clean } from "@/scripts/helpers.js";
-import synopTemplate from '@/models/synop-template.json';
-import tempTemplate from '@/models/temp-template.json';
 
 import { defineComponent, ref, computed, onMounted, watch, watchEffect } from 'vue';
 import { VCard, VForm, VBtn, VChipGroup, VChip } from 'vuetify/lib/components/index.mjs';
@@ -640,13 +625,11 @@ export default defineComponent({
         // Default value of the form, not an exhaustive list of all fields
         const defaults = {
             identification: {
-                keywords: []
-            },
-            origin: {
-                centreID: '',
-                wmoDataPolicy: 'core',
                 identifier: 'urn:x-wmo:md:',
+                keywords: [],
+                wmoDataPolicy: 'core',
             },
+            extents: {},
             poc: {
                 hoursOfService: "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
                 contactInstructions: 'Email'
@@ -658,8 +641,8 @@ export default defineComponent({
 
         // Time durations for resolution
         const durations = [
+            { name: 'minutes(s)', code: 'M' },
             { name: 'hour(s)', code: 'H' },
-            { name: 'day(s)', code: 'D' },
         ];
 
         // WCMP2 schema version
@@ -697,7 +680,8 @@ export default defineComponent({
         const items = ref([]);
         // Dialog window
         const showDialog = ref(false);
-        const datatype = ref("");
+        const templateFiles = ref([]);
+        const selectedTemplate = ref(null);
         // Identifier of the selected dataset, used to load metadata from OAPI
         const identifier = ref("");
         // List of languages and language codes
@@ -718,11 +702,10 @@ export default defineComponent({
         // Each keyword added by the user, before being added to the model
         const keyword = ref("");
         // Metadata form to be filled
-        const model = ref({ 'identification': {}, 'origin': {}, 'poc': {}, 'distrib': {}, 'settings': {} });
+        const model = ref({ 'identification': {}, 'extents': {}, 'poc': {}, 'distrib': {}, 'settings': {} });
         // Help dialog windows
         const openInitialHelpDialog = ref(false);
         const openIdentificationHelpDialog = ref(false);
-        const openOriginHelpDialog = ref(false);
         const openTemporalHelpDialog = ref(false);
         const openSpatialHelpDialog = ref(false);
         const openPocHelpDialog = ref(false);
@@ -732,7 +715,7 @@ export default defineComponent({
 
         // Has the user filled the dialog window?
         const dialogFilled = computed(() => {
-            return model.value.origin.centreID && datatype.value !== "";
+            return model.value.identification.centreID && selectedTemplate.value;
         });
 
         // Filter the country code list so that only the countries
@@ -785,6 +768,21 @@ export default defineComponent({
             items.value.push('Create New...');
         };
 
+        // Loads the data type templates
+        const loadTemplates = async () => {
+            // Load all JSON files in the models folder
+            const files = import.meta.glob('@/models/*.json');
+
+            // For each file, add the JSON data to the template list
+            for (const path in files) {
+                const file = await files[path]();
+                templateFiles.value.push(file.default);
+            }
+
+            // Also push the 'other' datatype label
+            templateFiles.value.push({ 'label': 'other' });
+        }
+
         // When the metadata is loaded, it must be transformed to the format of the form
         // (this is because the form has a different structure to the schema)
         // It is easier to understand the transformToSchema method first, because this
@@ -793,27 +791,27 @@ export default defineComponent({
             // Initialize form model
             let formModel = {
                 identification: {},
-                origin: {},
+                extents: {},
                 poc: {},
                 distrib: {},
                 settings: {}
             };
 
             // Retrieve the identifier from the schema
-            formModel.origin.identifier = schema.id;
+            formModel.identification.identifier = schema.id;
 
             // Time period information
             if (schema.time?.interval) {
-                formModel.origin.dateStarted = schema.time.interval[0];
-                formModel.origin.dateStopped = schema.time.interval[1];
+                formModel.extents.dateStarted = schema.time.interval[0];
+                formModel.extents.dateStopped = schema.time.interval[1];
             }
             // Minimum time period resolvable in the dataset
             // Sets the resolution to the number, and unit to D or H
             if (schema.time?.resolution) {
                 const match = schema.time.resolution.match(/P(\d+)([DH])/i);
                 if (match) {
-                    formModel.origin.resolution = parseInt(match[1]);
-                    formModel.origin.resolutionUnit = match[2].toUpperCase();
+                    formModel.extents.resolution = parseInt(match[1]);
+                    formModel.extents.resolutionUnit = match[2].toUpperCase();
                 }
             }
 
@@ -821,10 +819,10 @@ export default defineComponent({
             if (schema.geometry?.coordinates) {
                 const coordinates = schema.geometry.coordinates[0];
                 if (coordinates.length >= 4) {
-                    formModel.origin.westLongitude = coordinates[0][0];
-                    formModel.origin.northLatitude = coordinates[0][1];
-                    formModel.origin.eastLongitude = coordinates[2][0];
-                    formModel.origin.southLatitude = coordinates[2][1];
+                    formModel.extents.westLongitude = coordinates[0][0];
+                    formModel.extents.northLatitude = coordinates[0][1];
+                    formModel.extents.eastLongitude = coordinates[2][0];
+                    formModel.extents.southLatitude = coordinates[2][1];
                 }
             }
 
@@ -872,7 +870,7 @@ export default defineComponent({
 
                 // Additional settings information
                 if (schema.properties["wmo:dataPolicy"]) {
-                    formModel.origin.wmoDataPolicy = schema.properties["wmo:dataPolicy"];
+                    formModel.identification.wmoDataPolicy = schema.properties["wmo:dataPolicy"];
                 }
             });
             return formModel;
@@ -936,11 +934,10 @@ export default defineComponent({
             // Close the dialog
             showDialog.value = false;
 
-            // Autofill the form based on the input datatype
-            if (datatype.value === 'synop') {
-                applyTemplate(synopTemplate);
-            } else if (datatype.value === 'temp') {
-                applyTemplate(tempTemplate);
+            // Autofill the form based on the input datatype label
+            // (provided the datatype isn't 'other')
+            if (selectedTemplate.value.label !== 'other') {
+                applyTemplate(selectedTemplate.value);
             }
         }
 
@@ -967,10 +964,10 @@ export default defineComponent({
                 const boundingBox = boundingBoxes.value[alpha2Code]['bbox'];
 
                 // Now populate the form with the bounding box values
-                model.value.origin.northLatitude = boundingBox.maxy;
-                model.value.origin.eastLongitude = boundingBox.maxx;
-                model.value.origin.southLatitude = boundingBox.miny;
-                model.value.origin.westLongitude = boundingBox.minx;
+                model.value.extents.northLatitude = boundingBox.maxy;
+                model.value.extents.eastLongitude = boundingBox.maxx;
+                model.value.extents.southLatitude = boundingBox.miny;
+                model.value.extents.westLongitude = boundingBox.minx;
 
             } catch (error) {
                 console.error(error);
@@ -980,26 +977,25 @@ export default defineComponent({
 
         // Autofill form based on template
         const applyTemplate = (template) => {
-            model.value.identification.title = template.title.replace('$CENTRE_ID', model.value.origin.centreID);
-            model.value.identification.language = template.language;
+            model.value.identification.title = template.title.replace('$CENTRE_ID', model.value.identification.centreID);
+            model.value.identification.identifier = template.identifier.replace('$CENTRE_ID', model.value.identification.centreID);
+            // Converts the theme structure into a list of the theme labels
+            model.value.identification.themes = template.themes.flatMap(theme => theme.concepts.map(concept => concept.label));
+            model.value.identification.themeSchemes = template.themes.map(theme => theme.scheme);
             model.value.identification.keywords = template.keywords;
             // Extract value in days (P30D -> 30)
-            model.value.origin.retention = template.retention.substring(1, template.retention.length - 1);
-            model.value.origin.identifier = template.identifier.replace('$CENTRE_ID', model.value.origin.centreID);
+            model.value.identification.retention = template.retention.substring(1, template.retention.length - 1);
             // Use centre ID and WMO data policy to create topic hierarchy
-            model.value.origin.topicHierarchy = template.topicHierarchy
-                .replace('$CENTRE_ID', model.value.origin.centreID)
-                .replace('$DATA_POLICY', model.value.origin.wmoDataPolicy);
+            model.value.identification.topicHierarchy = template.topicHierarchy
+                .replace('$CENTRE_ID', model.value.identification.centreID)
+                .replace('$DATA_POLICY', model.value.identification.wmoDataPolicy);
             // Get resolution and resolution unit from template
             const match = template.resolution.match(/P(\d+)([DH])/i);
             if (match) {
-                model.value.origin.resolution = parseInt(match[1]);
-                model.value.origin.resolutionUnit = match[2].toUpperCase();
+                model.value.extents.resolution = parseInt(match[1]);
+                model.value.extents.resolutionUnit = match[2].toUpperCase();
             }
             model.value.distrib.duplicateFromContact = template.duplicateFromContact;
-
-            // Now update the bounding box values
-            getAutoBbox(model.value.poc.country);
         };
 
         // Load language/country codes from a JSON file
@@ -1043,13 +1039,25 @@ export default defineComponent({
             }
         };
 
+        // Create sensible defaults for the identifier and topic
+        // hierarchy when the user selects the 'other' datatype
+        const defaultIdentification = () => {
+            // If the template datatype label is not 'other', exit
+            if (selectedTemplate.value?.label !== 'other') {
+                return;
+            }
+
+            // Otherwise, create sensible defaults
+            model.value.identification.identifier = 'urn:x-wmo:md:' + model.value.identification.centreID + ':';
+        }
+
         // Update the rectangle in the map when the user changes the bounding box
         const updateBbox = () => {
             bounds.value = [
-                model.value.origin.northLatitude || 90,
-                model.value.origin.eastLongitude || -180,
-                model.value.origin.southLatitude || -90,
-                model.value.origin.westLongitude || 180
+                model.value.extents.northLatitude || 90,
+                model.value.extents.eastLongitude || -180,
+                model.value.extents.southLatitude || -90,
+                model.value.extents.westLongitude || 180
             ];
         };
 
@@ -1113,25 +1121,25 @@ export default defineComponent({
             let schemaModel = {};
 
             // Starting information
-            schemaModel.id = form.origin.identifier;
+            schemaModel.id = form.identification.identifier;
             schemaModel.conformsTo = [schemaVersion];
             schemaModel.type = "Feature";
 
             // wis2box information
             // Note: This is an extension to the WCMP2 schema
             schemaModel.wis2box = {};
-            schemaModel.wis2box.retention = `P${form.origin.retention}D`;
-            schemaModel.wis2box["topic_hierarchy"] = form.origin.topicHierarchy;
+            schemaModel.wis2box.retention = `P${form.identification.retention}D`;
+            schemaModel.wis2box["topic_hierarchy"] = form.identification.topicHierarchy;
             schemaModel.wis2box.country = form.poc.country;
-            schemaModel.wis2box["centre_id"] = form.origin.centreID;
+            schemaModel.wis2box["centre_id"] = form.identification.centreID;
 
             // Time period information
             schemaModel.time = {};
             // Get the start and end dates from the form
-            const startDate = getDateFrom(form.origin.dateStarted);
-            const endDate = getDateFrom(form.origin.dateStopped);
+            const startDate = getDateFrom(form.extents.dateStarted);
+            const endDate = getDateFrom(form.extents.dateStopped);
             schemaModel.time.interval = [startDate, endDate];
-            schemaModel.time.resolution = `P${form.origin.resolution}${form.origin.resolutionUnit}`;
+            schemaModel.time.resolution = `P${form.extents.resolution}${form.extents.resolutionUnit}`;
 
             // Geometry information
             schemaModel.geometry = {
@@ -1139,15 +1147,15 @@ export default defineComponent({
                 coordinates: [
                     [
                         // Top left corner
-                        [form.origin.westLongitude, form.origin.northLatitude],
+                        [form.extents.westLongitude, form.extents.northLatitude],
                         // Top right corner
-                        [form.origin.eastLongitude, form.origin.northLatitude],
+                        [form.extents.eastLongitude, form.extents.northLatitude],
                         // Bottom right corner
-                        [form.origin.eastLongitude, form.origin.southLatitude],
+                        [form.extents.eastLongitude, form.extents.southLatitude],
                         // Bottom left corner
-                        [form.origin.westLongitude, form.origin.southLatitude],
+                        [form.extents.westLongitude, form.extents.southLatitude],
                         // Back top top left corner to close the polygon
-                        [form.origin.westLongitude, form.origin.northLatitude]
+                        [form.extents.westLongitude, form.extents.northLatitude]
                     ]
                 ]
             };
@@ -1210,24 +1218,22 @@ export default defineComponent({
                 roles: ["distributor"]
             });
 
-            // Extra information
-            schemaModel.properties.language = form.identification.language;
             // How should we approach the creation date?
             schemaModel.properties.updated = new Date().toISOString();
-            schemaModel.properties["wmo:dataPolicy"] = form.origin.wmoDataPolicy;
+            schemaModel.properties["wmo:dataPolicy"] = form.identification.wmoDataPolicy;
 
 
             // Links information
             schemaModel.links = [];
             schemaModel.links.push({
                 rel: "collection",
-                href: `${form.poc.url}/oapi/collections/${form.origin.identifier}`,
-                title: form.origin.identifier
+                href: `${form.poc.url}/oapi/collections/${form.identification.identifier}`,
+                title: form.identification.identifier
             })
             schemaModel.links.push({
                 rel: "canonical",
-                href: `${form.poc.url}/oapi/collections/discovery-metadata/items/${form.origin.identifier}`,
-                title: form.origin.identifier
+                href: `${form.poc.url}/oapi/collections/discovery-metadata/items/${form.identification.identifier}`,
+                title: form.identification.identifier
             });
 
             return schemaModel;
@@ -1338,6 +1344,7 @@ export default defineComponent({
         // Mounted
         onMounted(() => {
             loadList();
+            loadTemplates();
             loadCodes();
         });
 
@@ -1345,11 +1352,14 @@ export default defineComponent({
 
         // If the user changes the data policy, update the topic hierarcy
         // using the template
-        watch(() => model.value.origin.wmoDataPolicy, () => {
-            if (datatype.value === 'synop') {
-                applyTemplate(synopTemplate);
-            } else if (datatype.value === 'temp') {
-                applyTemplate(tempTemplate);
+        watch(() => model.value.identification, () => {
+            if (selectedTemplate.value && selectedTemplate.value?.label !== 'other') {
+                applyTemplate(selectedTemplate.value);
+            }
+            // If the user selects 'other', use sensible defaults
+            // TO FINISH
+            else {
+                defaultIdentification();
             }
         });
 
@@ -1369,7 +1379,7 @@ export default defineComponent({
         });
 
         // Update the map when the user changes the bounding box
-        watch(() => deepClone(model.value.origin), () => {
+        watch(() => deepClone(model.value.extents), () => {
             updateBbox();
         });
 
@@ -1397,9 +1407,10 @@ export default defineComponent({
             message,
             items,
             showDialog,
+            templateFiles,
             dialogFilled,
             filteredCountryCodeList,
-            datatype,
+            selectedTemplate,
             identifier,
             languageCodeList,
             countryCodeList,
@@ -1412,7 +1423,6 @@ export default defineComponent({
             model,
             openInitialHelpDialog,
             openIdentificationHelpDialog,
-            openOriginHelpDialog,
             openTemporalHelpDialog,
             openSpatialHelpDialog,
             openPocHelpDialog,
