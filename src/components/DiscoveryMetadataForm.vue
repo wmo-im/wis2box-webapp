@@ -87,10 +87,6 @@
                                 v-model="model.identification.wmoDataPolicy" :rules="[rules.required]"
                                 variant="outlined"></v-select>
                         </v-col>
-                        <v-col cols="2">
-                            <v-text-field label="Retention in Days" type="number" v-model="model.identification.retention"
-                                :rules="[rules.required]" variant="outlined"></v-text-field>
-                        </v-col>
                         <!-- Unless the user selects 'other' for the datatype 
                         label, the topic hierarchy should remain disabled as 
                         it is autofilled -->
@@ -191,11 +187,13 @@
                             <v-row>
                                 <v-col cols="6">
                                     <v-text-field label="East Longitude" type="number" v-model="model.extents.eastLongitude"
-                                        :rules="[rules.required, rules.longitude]" variant="outlined" clearable></v-text-field>
+                                        :rules="[rules.required, rules.longitude]" variant="outlined"
+                                        clearable></v-text-field>
                                 </v-col>
                                 <v-col cols="6">
                                     <v-text-field label="West Longitude" type="number" v-model="model.extents.westLongitude"
-                                    :rules="[rules.required, rules.longitude]" variant="outlined" clearable></v-text-field>
+                                        :rules="[rules.required, rules.longitude]" variant="outlined"
+                                        clearable></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-col>
@@ -497,22 +495,19 @@
                         </v-card-subtitle>
                     </v-card-item>
                     <v-card-text>
-                        <p><b>Title:</b> The name of the dataset.</p>
+                        <p><b>Title:</b> A human-readable name of the dataset.</p>
                         <p><i>Note: Unless 'other' was selected initially, this field is pre-filled.</i></p>
                         <br>
-                        <p><b>Description:</b> A brief abstract describing the dataset.</p>
+                        <p><b>Description:</b> A free-text summary description of the dataset.</p>
                         <br>
-                        <p><b>Identifier:</b> The unique identifier for the data.</p>
+                        <p><b>Identifier:</b> The unique identifier for the dataset.</p>
                         <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot be
                                 edited.</i></p>
                         <br>
                         <p><b>Centre ID:</b> This was already filled earlier and <i>cannot be edited</i>.</p>
                         <br>
-                        <p><b>WMO Data Policy:</b> Whether the dataset is core or recommended according to the WMO Unified
-                            Data Policy.</p>
-                        <br>
-                        <p><b>Retention Period in Days:</b> Minimum number of days the data should be retained in WIS2 (e.g.
-                            30).</p>
+                        <p><b>WMO Data Policy:</b> Classification code of core or recommended based on the WMO Unified Data
+                            Policy.</p>
                         <br>
                         <p><b>Topic Hierarchy:</b> The unique hierarchy for this data.</p>
                         <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot be
@@ -544,7 +539,8 @@
                         <br>
                         <p><b>End Date:</b> The date in UTC when the dataset ends.</p>
                         <br>
-                        <p><b>Time Resolution:</b> The smallest increment of time that is represented in the dataset.</p>
+                        <p><b>Temporal Resolution:</b> The smallest increment of time that is represented in the dataset.
+                        </p>
                         <p>This is split into two parts, the <b>value</b> (e.g. 1) and the <b>unit</b> (e.g. 'hour(s)').</p>
                         <br>
                     </v-card-text>
@@ -562,7 +558,8 @@
                         </v-card-subtitle>
                     </v-card-item>
                     <v-card-text>
-                        <p>This section describes the bounding box of the dataset. This can be created either:</p>
+                        <p>This section describes the general bounding spatial extent of the dataset in the geographic
+                            coordinate system. This can be created either:</p>
                         <br>
                         <p><b>Automatically:</b> By using the country dropdown (note that your country may not be found on
                             this list).</p>
@@ -588,8 +585,8 @@
                         </v-card-subtitle>
                     </v-card-item>
                     <v-card-text>
-                        <p>This section provides details for the person that can be contacted for more information about the
-                            dataset.</p>
+                        <p>This section provides the information associated with one or more responsible parties of the
+                            resource.</p>
                         <br>
                         <p><b>Organization Name:</b> The name of the organization.</p>
                         <br>
@@ -612,7 +609,7 @@
                         </v-card-subtitle>
                     </v-card-item>
                     <v-card-text>
-                        <p>This section provides additional details if the distributor is not the same as the point of
+                        <p>This section provides additional information if the distributor is not the same as the point of
                             contact. <i>By default, this information is identical to that of the point of contact.</i></p>
                         <br>
                         <p><b>Organization Name:</b> The name of the distributing organization.</p>
@@ -862,6 +859,11 @@ export default defineComponent({
             formModel.identification.language = schema.properties.language;
             formModel.identification.keywords = schema.properties.keywords;
 
+            // Themes
+            const themes = schema.properties.themes.concepts.map(concept => concept.title);
+            formModel.identification.themes = themes;
+            formModel.identification.themeSchemes = schema.properties.themes.scheme;
+
             // Contacts information
             schema.properties.contacts.forEach(contact => {
                 if (contact.roles?.includes("pointOfContact")) {
@@ -965,9 +967,12 @@ export default defineComponent({
             showDialog.value = false;
 
             // Autofill the form based on the input datatype label
-            // (provided the datatype isn't 'other')
             if (selectedTemplate.value.label !== 'other') {
                 applyTemplate(selectedTemplate.value);
+            }
+            else {
+                // Apply sensible defaults for 'other' datatype
+                defaultIdentification();
             }
         }
 
@@ -1013,8 +1018,6 @@ export default defineComponent({
             model.value.identification.themes = template.themes.flatMap(theme => theme.concepts.map(concept => concept.label));
             model.value.identification.themeSchemes = template.themes.map(theme => theme.scheme);
             model.value.identification.keywords = template.keywords;
-            // Extract value in days (P30D -> 30)
-            model.value.identification.retention = template.retention.substring(1, template.retention.length - 1);
             // Use centre ID and WMO data policy to create topic hierarchy
             model.value.identification.topicHierarchy = template.topicHierarchy
                 .replace('$CENTRE_ID', model.value.identification.centreID)
@@ -1079,6 +1082,7 @@ export default defineComponent({
 
             // Otherwise, create sensible defaults
             model.value.identification.identifier = 'urn:x-wmo:md:' + model.value.identification.centreID + ':';
+            model.value.identification.topicHierarchy = model.value.identification.centreID + '.data.' + model.value.identification.wmoDataPolicy + '.';
         }
 
         // Update the rectangle in the map when the user changes the bounding box
@@ -1158,7 +1162,6 @@ export default defineComponent({
             // wis2box information
             // Note: This is an extension to the WCMP2 schema
             schemaModel.wis2box = {};
-            schemaModel.wis2box.retention = `P${form.identification.retention}D`;
             schemaModel.wis2box["topic_hierarchy"] = form.identification.topicHierarchy;
             schemaModel.wis2box.country = form.poc.country;
             schemaModel.wis2box["centre_id"] = form.identification.centreID;
@@ -1195,6 +1198,14 @@ export default defineComponent({
             schemaModel.properties.title = form.identification.title;
             schemaModel.properties.description = form.identification.description;
             schemaModel.properties.keywords = form.identification.keywords;
+            // Themes
+            const concepts = form.identification.themes.map(item => ({ title: item }));
+            schemaModel.properties.themes = [
+                {
+                    concepts: concepts,
+                    scheme: form.identification.themeSchemes
+                }
+            ]
             // Contacts information
             schemaModel.properties.contacts = [];
             // Point of contact
@@ -1382,14 +1393,9 @@ export default defineComponent({
 
         // If the user changes the data policy, update the topic hierarcy
         // using the template
-        watch(() => model.value.identification, () => {
+        watch(() => model.value.identification.wmoDataPolicy, () => {
             if (selectedTemplate.value && selectedTemplate.value?.label !== 'other') {
                 applyTemplate(selectedTemplate.value);
-            }
-            // If the user selects 'other', use sensible defaults
-            // TO FINISH
-            else {
-                defaultIdentification();
             }
         });
 

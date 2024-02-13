@@ -1,5 +1,5 @@
 <template>
-    <v-card>
+    <v-card variant="outlined" color="#757575">
         <v-card-item style="width: 100%; height: 100%; min-height: 300px" :id="id"></v-card-item>
     </v-card>
 </template>
