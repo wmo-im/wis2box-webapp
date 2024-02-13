@@ -4,7 +4,6 @@
     "identifier": "urn:x-wmo:md:$CENTRE_ID:surface-based-observations.synop",
     "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.surface-based-observations.synop",
     "language": "en",
-    "retention": "P30D",
     "resolution": "P1H",
     "keywords": ["surface", "land", "observations"],
     "duplicateFromContact": true,

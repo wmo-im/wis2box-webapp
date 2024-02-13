@@ -95,15 +95,16 @@
                         label, the topic hierarchy should remain disabled as 
                         it is autofilled -->
                         <v-col cols="6">
-                            <v-text-field label="Topic Hierarchy" type="string" v-model="model.identification.topicHierarchy"
-                                :rules="[rules.required]" variant="outlined"
+                            <v-text-field label="Topic Hierarchy" type="string"
+                                v-model="model.identification.topicHierarchy" :rules="[rules.required]" variant="outlined"
                                 :disabled="selectedTemplate?.label !== 'other'"></v-text-field>
                         </v-col>
 
                     </v-row>
                     <v-row>
                         <v-col cols="4">
-                            <v-select label="Themes" v-model="model.identification.themes" multiple variant="outlined"></v-select>
+                            <v-select label="Themes" v-model="model.identification.themes" multiple
+                                variant="outlined"></v-select>
                         </v-col>
                         <v-col cols="8">
                             <v-row dense>
@@ -139,8 +140,8 @@
                         </v-col>
 
                         <v-col cols="3">
-                            <VueDatePicker placeholder="End Date in UTC" v-model="model.extents.dateStopped" :teleport="true"
-                                :enable-time-picker="false" auto-apply required />
+                            <VueDatePicker placeholder="End Date in UTC" v-model="model.extents.dateStopped"
+                                :teleport="true" :enable-time-picker="false" auto-apply required />
                         </v-col>
 
                         <v-col cols="3">
@@ -164,39 +165,65 @@
                     </v-card-title>
                     <v-row dense>
                         <v-col cols="4">
-                            <!-- Allow the user to select a country different to that of the POC for the auto bbox -->
-                            <v-autocomplete label="Choose an automatic bounding box (optional)" item-title="name"
-                                item-value="alpha-3" :items="filteredCountryCodeList" v-model="bboxCountry"
-                                @update:modelValue="getAutoBbox(bboxCountry)"
-                                hint="Your country may not have an automatic bounding box" persistent-hint
-                                variant="outlined"></v-autocomplete>
+                            <v-row>
+                                <v-col cols="12">
+                                    <!-- Allow the user to select a country different to that of the POC for the auto bbox -->
+                                    <v-autocomplete label="Choose an automatic bounding box (optional)" item-title="name"
+                                        item-value="alpha-3" :items="filteredCountryCodeList" v-model="bboxCountry"
+                                        @update:modelValue="getAutoBbox(bboxCountry)"
+                                        hint="Your country may not have an automatic bounding box" persistent-hint
+                                        variant="outlined"></v-autocomplete>
+                                </v-col>
+                            </v-row>
+                            <v-row style="height: 50px;"></v-row>
+                            <v-row style="height: 70px;">
+                                <v-col cols="6">
+                                    <v-text-field label="North Latitude" type="number" v-model="model.extents.northLatitude"
+                                        :rules="[rules.required, rules.latitude]" variant="outlined"
+                                        clearable></v-text-field>
+                                </v-col>
+                                <v-col cols="6">
+                                    <v-text-field label="South Latitude" type="number" v-model="model.extents.southLatitude"
+                                        :rules="[rules.required, rules.latitude]" variant="outlined"
+                                        clearable></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="6">
+                                    <v-text-field label="East Longitude" type="number" v-model="model.extents.eastLongitude"
+                                        :rules="[rules.required, rules.longitude]" variant="outlined" clearable></v-text-field>
+                                </v-col>
+                                <v-col cols="6">
+                                    <v-text-field label="West Longitude" type="number" v-model="model.extents.westLongitude"
+                                    :rules="[rules.required, rules.longitude]" variant="outlined" clearable></v-text-field>
+                                </v-col>
+                            </v-row>
                         </v-col>
-                    </v-row>
-                    <v-row dense>
-                        <v-col cols="12">
+                        <v-col cols="8">
                             <!-- Bounding box editor -->
                             <bbox-editor :box-bounds="bounds"></bbox-editor>
                         </v-col>
                     </v-row>
+                    <v-row dense>
+                        <v-col cols="12">
+
+                        </v-col>
+                    </v-row>
                     <v-row>
                         <v-col cols="3">
-                            <v-text-field label="North Latitude" type="float" v-model="model.extents.northLatitude"
-                                :rules="[rules.required, rules.latitude]" variant="outlined" clearable></v-text-field>
+
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label="East Longitude" type="float" v-model="model.extents.eastLongitude"
-                                :rules="[rules.required, rules.longitude]" variant="outlined" clearable></v-text-field>
+
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label="South Latitude" type="float" v-model="model.extents.southLatitude"
-                                :rules="[rules.required, rules.latitude]" variant="outlined" clearable></v-text-field>
+
                         </v-col>
 
                         <v-col cols="3">
-                            <v-text-field label="West Longitude" type="float" v-model="model.extents.westLongitude"
-                                :rules="[rules.required, rules.longitude]" variant="outlined" clearable></v-text-field>
+
                         </v-col>
                     </v-row>
 
@@ -491,9 +518,12 @@
                         <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot be
                                 edited.</i></p>
                         <br>
-                        <p><b>Themes:</b> A list of concepts that are referenced to a vocabulary or knowledge organization system used to classify the resource.</p>
+                        <p><b>Themes:</b> A list of concepts that are referenced to a vocabulary or knowledge organization
+                            system used to classify the resource.</p>
                         <br>
-                        <p><b>Keywords:</b> A list of at least three keywords, tags or specific phrases associated with the resource, but are not referenced to a particular vocabulary or knowledge organization system.</p>
+                        <p><b>Keywords:</b> A list of at least three keywords, tags or specific phrases associated with the
+                            resource, but are not referenced to a particular vocabulary or knowledge organization system.
+                        </p>
                         <br>
                     </v-card-text>
                 </v-card>

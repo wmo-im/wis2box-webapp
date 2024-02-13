@@ -1,120 +1,72 @@
 <template>
-    <v-lazy>
-        <v-img>
-            <l-map ref="map" :zoom="zoom" :center="rectangle.center" @ready="loadMapObjects"
-                style="height: 300px; width: 100%"
-                :options="{ attributionControl: false }">
-                <l-control-layers position="bottomleft" :collapsed="true" :sort-layers="true" />
-                <l-tile-layer v-for="tileProvider in tileProviders" :key="tileProvider.name" :name="tileProvider.name"
-                    :visible="tileProvider.visible" :url="tileProvider.url" :attribution="tileProvider.attribution"
-                    layer-type="base" />
-                <l-feature-group>
-                    <l-rectangle v-if="rectangle.visible" :autoPan="true" :autofocus="true" :bounds="rectangle.bounds"
-                        :draggable="false"></l-rectangle>
-                </l-feature-group>
-            </l-map>
-        </v-img>
-    </v-lazy>
+    <v-card>
+        <v-card-item style="width: 100%; height: 100%; min-height: 300px" :id="id"></v-card-item>
+    </v-card>
 </template>
 
 <script>
-import { defineComponent, ref, watch } from 'vue';
-import { LMap, LTileLayer, LControlLayers, LRectangle, LFeatureGroup } from "@vue-leaflet/vue-leaflet";
-import { LatLng, LatLngBounds } from "leaflet";
+import { defineComponent, ref, computed, onMounted, watch } from 'vue';
+import { VCard } from 'vuetify/lib/components/index.mjs';
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 export default defineComponent({
     name: "BboxEditor",
     components: {
-        LMap,
-        LTileLayer,
-        LControlLayers,
-        LRectangle,
-        LFeatureGroup
+        VCard
     },
     props: {
         boxBounds: {},
     },
-    setup(props, { emit }) {
+    setup(props) {
 
         // Reactive variables
         const map = ref(null);
+        const id = ref('map');
+        const rectangle = ref(null);
         const zoom = ref(1.5);
-        const rectangle = ref({
-            visible: false,
-            center: [0, 0],
-            bounds: [[0, 0], [0, 0]]
+        const centre = ref([0, 0]);
+
+        // Computed property for bounds
+        const bounds = computed(() => {
+            if (props.boxBounds) {
+                return L.latLngBounds(
+                    L.latLng(props.boxBounds[0], props.boxBounds[1]),
+                    L.latLng(props.boxBounds[2], props.boxBounds[3])
+                );
+            }
+            return null;
         });
 
-        // Methods
+        onMounted(() => {
+            // Add 1 second delay to load map or Vue will call mounted before DOM is available
+            setTimeout(() => {
+                map.value = L.map(id.value).setView(centre.value, zoom.value);
+                map.value.attributionControl.setPrefix('');
+                L.tileLayer(`${import.meta.env.VITE_BASEMAP_URL}`, { attribution: `${import.meta.env.VITE_BASEMAP_ATTRIBUTION}` }).addTo(map.value);
+            }, 1)
+        });
 
-        const loadMapObjects = () => {
-            if (map.value.mapObject?.on) {
-                map.value.mapObject.on("draw:created", (event) => {
-                    console.log(event);
-                });
-            }
-            emit('loaded');
-        };
-
-        // Load the maps that can be chosen by the user
-        const loadBasemaps = () => {
-            return [
-                {
-                    name: 'OpenStreetMap',
-                    visible: true,
-                    attribution:
-                        '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-                    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                },
-                {
-                    name: 'OpenTopoMap',
-                    visible: false,
-                    url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-                    attribution:
-                        'Map data: &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
-                },
-                {
-                    name: 'ESRI World Imagery',
-                    visible: false,
-                    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-                    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        watch(bounds, (newBounds) => {
+            // If bounds added, add a rectangle to the map
+            if (newBounds) {
+                if (rectangle.value) {
+                    rectangle.value.remove();
                 }
-            ];
-        };
-
-        const tileProviders = loadBasemaps();
-
-        // Watchers
-        watch(() => props.boxBounds, () => {
-            if (props.boxBounds) {
-                // Use the four input coordinates to create the rectangle
-                const topLeft = new LatLng(props.boxBounds[0], props.boxBounds[1]);
-                const bottomRight = new LatLng(props.boxBounds[2], props.boxBounds[3]);
-                const bounds = new LatLngBounds(topLeft, bottomRight);
-                // Update the rectangle
-                rectangle.value.center = bounds.getCenter();
-                rectangle.value.bounds = [bounds.getNorthWest(), bounds.getSouthEast()];
-                rectangle.value.visible = true;
-            } else {
-                // Reset the rectangle
-                rectangle.value.center = [0, 0];
-                rectangle.value.bounds = [[0, 0], [0, 0]];
-                rectangle.value.visible = false;
+                rectangle.value = L.rectangle(newBounds, { color: "#003DA5", weight: 1 }).addTo(map.value);
+                map.value.fitBounds(newBounds);
+            }
+            // If bounds removed, remove the corresponding rectangle
+            else if (rectangle.value) {
+                rectangle.value.remove();
+                rectangle.value = null;
             }
         });
 
         return {
             map,
-            zoom,
-            rectangle,
-            tileProviders,
-            loadMapObjects
-        };
+            id
+        }
     }
 });
 </script>
-
-<style>
-@import "leaflet/dist/leaflet.css";
-</style>
