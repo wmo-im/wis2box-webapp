@@ -217,7 +217,6 @@
                         </v-col>
 
                         <v-col cols="3">
-
                         </v-col>
 
                         <v-col cols="3">
@@ -1108,7 +1107,7 @@ export default defineComponent({
         const addKeyword = () => {
             if (keyword.value !== "") {
                 // Add keyword to array
-                (model.value).settings.keywords.push(keyword.value);
+                model.value.identification.keywords.push(keyword.value);
                 keyword.value = "";
             }
         };
