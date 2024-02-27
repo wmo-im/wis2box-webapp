@@ -1,16 +1,207 @@
-[
-  {"name": "Air (fixed)", "id": "Air (fixed)", "description": "Airborne station/platform, at fixed position"},
-  {"name": "Air (mobile)", "id": "Air (mobile)", "description": "Airborne station/platform, moving around"},
-  {"name": "Lake/River (fixed)", "id": "Lake/River (fixed)", "description": "Station/platform at lake/river surface, at fixed position"},
-  {"name": "Lake/River (mobile)", "id": "Lake/River (mobile)", "description": "Station/platform at lake/river surface, moving around"},
-  {"name": "Land (fixed)", "id": "Land (fixed)", "description": "Station/platform on solid terrain, at fixed position"},
-  {"name": "Land (mobile)", "id": "Land (mobile)", "description": "Station/platform on solid terrain, moving around"},
-  {"name": "Land (on ice)", "id": "Land (on ice)", "description": "Station/platform on ice-covered ground, moving with the ice"},
-  {"name": "Sea (fixed)", "id": "Sea (fixed)", "description": "Station/platform at sea surface, at fixed position"},
-  {"name": "Sea (mobile)", "id": "Sea (mobile)", "description": "Station/platform at sea surface, moving around"},
-  {"name": "Sea (on ice)", "id": "Sea (on ice)", "description": "Station/platform on floating ice, moving with the ice"},
-  {"name": "Space-based", "id": "Space-based", "description": "Satellite platform in orbit"},
-  {"name": "Underwater (fixed)", "id": "Underwater (fixed)", "description": "Station/platform under water, at fixed horizontal position"},
-  {"name": "Underwater (mobile)", "id": "Underwater (mobile)", "description": "Station/platform under water, moving around also horizontally"},
-  {"name": "unknown", "id": "unknown", "description": "The station/platform type is unknown."}
-]
+{
+  "@graph" : [ {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType",
+    "@type" : [ "reg:Register", "skos:Collection", "ldp:Container" ],
+    "dct:description" : "Station/platform type",
+    "dct:modified" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-11-21T09:17:08.831Z"
+    },
+    "rdfs:label" : "Station/platform type",
+    "owl:versionInfo" : {
+      "@type" : "xsd:integer",
+      "@value" : "2"
+    },
+    "skos:member" : [ {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/underwaterMobile"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/lakeRiverFixed"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/lakeRiverMobile"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/seaOnIce"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/seaMobile"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/landFixed"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/landMobile"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/seaFixed"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/unknown"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/landOnIce"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/underwaterFixed"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/airFixed"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/airMobile"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/FacilityType/spaceBased"
+    } ],
+    "ldp:hasMemberRelation" : {
+      "@id" : "skos:member"
+    }
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/airFixed",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Airborne station/platform, at fixed position"
+    },
+    "rdfs:label" : "Air (fixed)",
+    "skos:notation" : "airFixed"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/airMobile",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Airborne station/platform, moving around"
+    },
+    "rdfs:label" : "Air (mobile)",
+    "skos:notation" : "airMobile"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/lakeRiverFixed",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Station/platform at lake/river surface, at fixed position"
+    },
+    "rdfs:label" : "Lake/River (fixed)",
+    "skos:notation" : "lakeRiverFixed"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/lakeRiverMobile",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "station/platform at lake/river surface, moving around"
+    },
+    "rdfs:label" : "Lake/River (mobile)",
+    "skos:notation" : "lakeRiverMobile"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/landFixed",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Station/platform on solid terrain, at fixed position"
+    },
+    "rdfs:label" : "Land (fixed)",
+    "skos:notation" : "landFixed"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/landMobile",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Station/platform on solid terrain, moving around"
+    },
+    "rdfs:label" : "Land (mobile)",
+    "skos:notation" : "landMobile"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/landOnIce",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Station/platform on ice-covered ground, moving with the ice"
+    },
+    "rdfs:label" : "Land (on ice)",
+    "skos:notation" : "landOnIce"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/seaFixed",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Station/platform at sea surface, at fixed position"
+    },
+    "rdfs:label" : "Sea (fixed)",
+    "skos:notation" : "seaFixed"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/seaMobile",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Station/platform at sea surface, moving around"
+    },
+    "rdfs:label" : "Sea (mobile)",
+    "skos:notation" : "seaMobile"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/seaOnIce",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Station/platform on floating ice, moving with the ice"
+    },
+    "rdfs:label" : "Sea (on ice)",
+    "skos:notation" : "seaOnIce"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/spaceBased",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Satellite platform in orbit"
+    },
+    "rdfs:label" : "Space-based",
+    "skos:notation" : "spaceBased"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/underwaterFixed",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Station/platform under water, at fixed horizontal position"
+    },
+    "rdfs:label" : "Underwater (fixed)",
+    "skos:notation" : "underwaterFixed"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/underwaterMobile",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Station/platform under water, moving around also horizontally"
+    },
+    "rdfs:label" : "Underwater (mobile)",
+    "skos:notation" : "underwaterMobile"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/FacilityType/unknown",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The station/platform type is unknown."
+    },
+    "rdfs:label" : "unknown",
+    "skos:notation" : "unknown"
+  } ],
+  "@context" : {
+    "qudt" : "http://qudt.org/schema/qudt#",
+    "ssd" : "http://www.w3.org/ns/sparql-service-description#",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "skos" : "http://www.w3.org/2004/02/skos/core#",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "qudt-unit" : "http://qudt.org/vocab/unit#",
+    "qb" : "http://purl.org/linked-data/cube#",
+    "dgu" : "http://reference.data.gov.uk/def/reference/",
+    "dct" : "http://purl.org/dc/terms/",
+    "ui" : "http://purl.org/linked-data/registry-ui#",
+    "reg" : "http://purl.org/linked-data/registry#",
+    "grib2-parameter" : "http://codes.wmo.int/grib2/schema/parameter/",
+    "qudt-quantity" : "http://qudt.org/vocab/quantity#",
+    "api" : "http://purl.org/linked-data/api/vocab#",
+    "vann" : "http://purl.org/vocab/vann/",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "cc" : "http://creativecommons.org/ns#",
+    "common-unit" : "http://codes.wmo.int/common/schema/unit/",
+    "grib2-core" : "http://codes.wmo.int/grib2/schema/core/",
+    "void" : "http://rdfs.org/ns/void#",
+    "version" : "http://purl.org/linked-data/version#",
+    "bufr4-core" : "http://codes.wmo.int/bufr4/schema/core/",
+    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "ldp" : "http://www.w3.org/ns/ldp#",
+    "time" : "http://www.w3.org/2006/time#",
+    "qudt-dimension" : "http://qudt.org/vocab/dimension#",
+    "vs" : "http://www.w3.org/2003/06/sw-vocab-status/ns#",
+    "dc" : "http://purl.org/dc/elements/1.1/",
+    "common-core" : "http://codes.wmo.int/common/schema/core/"
+  }
+}
