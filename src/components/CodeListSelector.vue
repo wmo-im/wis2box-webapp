@@ -11,12 +11,12 @@
     <v-autocomplete
       v-if="options !== null"
       :items="options"
-      item-title="name"
-      item-value="id"
+      item-title="rdfs:label"
+      item-value="skos:notation"
       :label="props.label"
       v-model="selected"
       :rules="[value => !!value ? true : props.defaultHint]"
-      :hint="selected ? selected.description : props.defaultHint"
+      :hint="selected ? (selected['dct:description'] ? selected['dct:description']['@value']: props.defaultHint) : props.defaultHint"
       :readonly="props.readonly"
       clearable
       persistent-hint
@@ -60,7 +60,8 @@
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
           const data = await response.json();
-          options.value = data; // Assuming the API response contains the options in the expected format
+          // extract only code list entries, we don't need the metadata
+          options.value = data['@graph'].filter(item => item['@type'] === "skos:Concept");
         } catch (error) {
           console.error('Error fetching ' + props.label + ' options:', error);
           showDialog.value = true;
@@ -69,8 +70,8 @@
       };
 
       onBeforeMount( async () => {
-        fetchOptions();
-        selected.value = props.modelValue;
+        await fetchOptions();
+        selected.value = options.value && props.modelValue ? options.value.find( item => item['skos:notation'] === props.modelValue) : null;
       });
 
       watch( () => props.modelValue, (newValue) => {
