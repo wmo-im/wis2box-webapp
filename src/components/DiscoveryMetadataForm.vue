@@ -7,7 +7,7 @@
                 <v-toolbar color="#003DA5">
                     <v-toolbar-title>Please choose a dataset</v-toolbar-title>
                     <v-select class="mt-11" label="Dataset" v-model="identifier" :items="items"
-                        @update:modelValue="loadMetadata" :disabled="datasetSpecified" variant="underlined"></v-select>
+                        @update:modelValue="loadMetadata" variant="underlined"></v-select>
                 </v-toolbar>
 
                 <!-- Until loaded, play a loading animation -->
@@ -224,192 +224,6 @@
                                 v-model="model.poc.country" :rules="[rules.required]" variant="outlined"></v-autocomplete>
                         </v-col>
                     </v-row>
-                    <!-- The following contact fields may return later -->
-                    <!-- <v-row>
-                        <v-col cols="4">
-                            <v-text-field label="Organization Name" type="string" v-model="model.poc.name"
-                                :rules="[rules.required]" variant="outlined" clearable></v-text-field>
-                        </v-col>
-
-                        <v-col cols="4">
-                            <v-text-field label="Individual" hint="Full name" type="string" v-model="model.poc.individual"
-                                variant="outlined" clearable></v-text-field>
-                        </v-col>
-
-                        <v-col cols="4">
-                            <v-text-field label="Position Name" hint="Position held" type="string"
-                                v-model="model.poc.positionName" variant="outlined" clearable></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col cols="4">
-                            <v-text-field label="URL" hint="Organization website" type="string" v-model="model.poc.url"
-                                :rules="[rules.url]" variant="outlined" clearable></v-text-field>
-                        </v-col>
-
-                        <v-col cols="4">
-                            <vue-tel-input v-model="model.poc.phone" @validate="onPocPhoneValidate"></vue-tel-input>
-                            <p v-if="(typeof isPocPhoneValid !== 'undefined') && !isPocPhoneValid"
-                                class="hint-text hint-invalid">Phone number is not valid</p>
-                        </v-col>
-
-                        <v-col cols="4">
-                            <v-text-field label="Email" hint="Contact email address" type="string" v-model="model.poc.email"
-                                :rules="[rules.required, rules.email]" variant="outlined" clearable></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col cols="4">
-                            <v-text-field label="Address" hint="Street address" type="string"
-                                v-model="model.poc.deliveryPoint" variant="outlined" clearable></v-text-field>
-                        </v-col>
-
-                        <v-col cols="4">
-                            <v-text-field label="City" hint="Mailing city" type="string" v-model="model.poc.city"
-                                :rules="[rules.required]" variant="outlined" clearable></v-text-field>
-                        </v-col>
-
-                        <v-col cols="4">
-                            <v-text-field label="State" hint="Mailing state or region" type="string"
-                                v-model="model.poc.administrativeArea" :rules="[rules.required]" variant="outlined"
-                                clearable></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col cols="3">
-                            <v-text-field label="Postal Code" hint="Mailing postal code" type="string"
-                                v-model="model.poc.postalCode" variant="outlined" clearable></v-text-field>
-                        </v-col>
-
-                        <v-col cols="3">
-                            <v-autocomplete label="Country" item-title="name" item-value="alpha-3" :items="countryCodeList"
-                                v-model="model.poc.country" :rules="[rules.required]" variant="outlined"
-                                disabled></v-autocomplete>
-                        </v-col>
-
-                        <v-col cols="6">
-                            <v-text-field label="Hours of Service" hint="Time period to be contacted"
-                                v-model="model.poc.hoursOfService" :rules="[rules.required]" variant="outlined"
-                                clearable></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col cols="6">
-                            <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
-                                v-model="model.poc.contactInstructions" variant="outlined" clearable></v-text-field>
-                        </v-col>
-                    </v-row> -->
-
-                    <!-- Distributor section -->
-                    <v-card-title>
-                        Distributor Information
-                        <v-btn icon="mdi-comment-question" variant="text" size="small"
-                            @click="openDistribHelpDialog = true" />
-                        <v-switch label="Same As Contact Info?" v-model="model.distrib.duplicateFromContact"
-                            color="#003DA5"></v-switch>
-                    </v-card-title>
-                    <v-row>
-                        <v-col cols="4">
-                            <v-text-field label="Organization Name" type="string" v-model="model.distrib.name"
-                                :rules="[rules.required]" variant="outlined" clearable
-                                :disabled="!distributorFieldsEnabled"></v-text-field>
-                        </v-col>
-                        <v-col cols="4">
-                            <v-text-field label="Email" type="string" v-model="model.distrib.email"
-                                :rules="[rules.required, rules.email]" variant="outlined" clearable
-                                :disabled="!distributorFieldsEnabled"></v-text-field>
-                        </v-col>
-                        <v-col cols="4">
-                            <v-autocomplete label="Country" :items="countryCodeList" item-title="name" item-value="alpha-3"
-                                v-model="model.distrib.country" :rules="[rules.required]"
-                                :disabled="!distributorFieldsEnabled" variant="outlined"></v-autocomplete>
-                        </v-col>
-                    </v-row>
-                    <!-- The following contact fields may return later -->
-                    <!-- <v-row>
-                        <v-col cols="4">
-                            <v-text-field label="Individual" hint="Full name" type="string"
-                                v-model="model.distrib.individual" variant="outlined" clearable
-                                :disabled="!distributorFieldsEnabled"></v-text-field>
-                        </v-col>
-
-                        <v-col cols="4">
-                            <v-text-field label="Position Name" hint="Position held" type="string"
-                                v-model="model.distrib.positionName" variant="outlined" clearable
-                                :disabled="!distributorFieldsEnabled"></v-text-field>
-                        </v-col>
-
-                        <v-col cols="4">
-                            <v-text-field label="Name" hint="Organization name" type="string" v-model="model.distrib.name"
-                                :rules="[rules.required]" variant="outlined" clearable
-                                :disabled="!distributorFieldsEnabled"></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col cols="4">
-                            <v-text-field label="URL" hint="Organization website" type="string" v-model="model.distrib.url"
-                                :rules="[rules.url]" variant="outlined" clearable
-                                :disabled="!distributorFieldsEnabled"></v-text-field>
-                        </v-col>
-                        <v-col cols="4" :disabled="!distributorFieldsEnabled">
-                            <vue-tel-input v-model="model.distrib.phone" :disabled="!distributorFieldsEnabled"
-                                @validate="onDistribPhoneValidate"></vue-tel-input>
-                            <p v-if="(typeof isDistribPhoneValid !== 'undefined') && !isPocPhoneValid"
-                                class="hint-text hint-invalid">Phone number is not valid</p>
-                        </v-col>
-
-                        <v-col cols="4">
-                            <v-text-field label="Email" hint="Contact email address" type="string"
-                                v-model="model.distrib.email" :rules="[rules.required, rules.email]" variant="outlined"
-                                clearable :disabled="!distributorFieldsEnabled"></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col cols="4">
-                            <v-text-field label="Address" hint="Street address" type="string"
-                                v-model="model.distrib.deliveryPoint" variant="outlined" clearable
-                                :disabled="!distributorFieldsEnabled"></v-text-field>
-                        </v-col>
-
-                        <v-col cols="4">
-                            <v-text-field label="City" hint="Mailing city" type="string" v-model="model.distrib.city"
-                                :rules="[rules.required]" variant="outlined" clearable
-                                :disabled="!distributorFieldsEnabled"></v-text-field>
-                        </v-col>
-
-                        <v-col cols="4">
-                            <v-text-field label="State" hint="Mailing state or region" type="string"
-                                v-model="model.distrib.administrativeArea" :rules="[rules.required]" variant="outlined"
-                                clearable :disabled="!distributorFieldsEnabled"></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col cols="3">
-                            <v-text-field label="Postal Code" hint="Mailing postal code" type="string"
-                                v-model="model.distrib.postalCode" variant="outlined" clearable
-                                :disabled="!distributorFieldsEnabled"></v-text-field>
-                        </v-col>
-
-                        <v-col cols="3">
-                            <v-autocomplete label="Country" hint="Upper case representation of ISO3166 3-letter code"
-                                persistent-hint :items="countryCodeList" item-title="name" item-value="alpha-3"
-                                v-model="model.distrib.country" :rules="[rules.required]"
-                                :disabled="!distributorFieldsEnabled" variant="outlined"></v-autocomplete>
-                        </v-col>
-
-                        <v-col cols="6">
-                            <v-text-field label="Hours of Service" hint="Time period to be contacted"
-                                v-model="model.distrib.hoursOfService" :rules="[rules.required]" variant="outlined"
-                                clearable :disabled="!distributorFieldsEnabled"></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col cols="6">
-                            <v-text-field label="Contact Instructions" hint="Preferred contact method" type="string"
-                                v-model="model.distrib.contactInstructions" variant="outlined" clearable
-                                :disabled="!distributorFieldsEnabled"></v-text-field>
-                        </v-col>
-                    </v-row> -->
                 </v-form>
 
                 <!-- Toolbar for user to reset, validate, export, or submit the metadata
@@ -575,30 +389,6 @@
                     </v-card-text>
                 </v-card>
             </v-dialog>
-            <v-dialog v-model="openDistribHelpDialog" max-width="600px">
-                <v-card>
-                    <v-card-item>
-                        <v-card-title class="d-flex justify-space-between">
-                            Distributor Information
-                            <v-btn icon="mdi-close" variant="text" size="small" @click="openDistribHelpDialog = false" />
-                        </v-card-title>
-                        <v-card-subtitle>
-                            How do I complete this section?
-                        </v-card-subtitle>
-                    </v-card-item>
-                    <v-card-text>
-                        <p>This section provides additional information if the distributor is not the same as the point of
-                            contact. <i>By default, this information is identical to that of the point of contact.</i></p>
-                        <br>
-                        <p><b>Organization Name:</b> The name of the distributing organization.</p>
-                        <br>
-                        <p><b>Email:</b> The email address of the distributor.</p>
-                        <br>
-                        <p><b>Country:</b> The country of the distributor.</p>
-                        <br>
-                    </v-card-text>
-                </v-card>
-            </v-dialog>
         </v-col>
     </v-row>
 </template>
@@ -743,10 +533,6 @@ export default defineComponent({
         const formFilledAndValidated = computed(() => {
             return formFilled.value && metadataValidated.value;
         });
-        // Whether or not the distributor fields should be enabled, based on whether the user checks the box to duplicate the contact info
-        const distributorFieldsEnabled = computed(() => {
-            return !model.value.distrib.duplicateFromContact;
-        });
 
         // Methods
 
@@ -851,22 +637,6 @@ export default defineComponent({
             schema.properties.contacts.forEach(contact => {
                 if (contact.roles?.includes("host")) {
                     formModel.poc = {
-                        individual: contact.name,
-                        positionName: contact.position,
-                        name: contact.organization,
-                        phone: contact.phones ? contact.phones[0].value : '',
-                        email: contact.emails ? contact.emails[0].value : '',
-                        deliveryPoint: contact.addresses ? contact.addresses[0].deliveryPoint : '',
-                        city: contact.addresses ? contact.addresses[0].city : '',
-                        administrativeArea: contact.addresses ? contact.addresses[0].administrativeArea : '',
-                        postalCode: contact.addresses ? contact.addresses[0].postalCode : '',
-                        country: contact.addresses ? contact.addresses[0].country : '',
-                        hoursOfService: contact.hoursOfService,
-                        contactInstructions: contact.contactInstructions,
-                        url: contact.links ? contact.links[0].href : ''
-                    };
-                } else if (contact.roles?.includes("distributor")) {
-                    formModel.distrib = {
                         individual: contact.name,
                         positionName: contact.position,
                         name: contact.organization,
@@ -1218,31 +988,6 @@ export default defineComponent({
                 contactInstructions: form.poc.contactInstructions,
                 roles: ["host"]
             });
-            // Distributor
-            schemaModel.properties.contacts.push({
-                name: form.distrib.individual,
-                position: form.distrib.positionName,
-                organization: form.distrib.name,
-                phones: [{
-                    value: form.distrib.phone
-                }],
-                emails: [{
-                    value: form.distrib.email
-                }],
-                addresses: [{
-                    deliveryPoint: form.distrib.deliveryPoint,
-                    city: form.distrib.city,
-                    administrativeArea: form.distrib.administrativeArea,
-                    postalCode: form.distrib.postalCode,
-                    country: form.distrib.country
-                }],
-                links: [{
-                    href: form.distrib.url
-                }],
-                hoursOfService: form.distrib.hoursOfService,
-                contactInstructions: form.distrib.contactInstructions,
-                roles: ["distributor"]
-            });
 
             // How should we approach the creation date?
             schemaModel.properties.updated = new Date().toISOString();
@@ -1292,7 +1037,8 @@ export default defineComponent({
                 if ("code" in responseData) {
                     // Display the error message to the user
                     message.value = `Discovery metadata not valid: ${responseData.message}`;
-                    metadataValidated.value = false;
+                    // Temporary set the validation state to true regardless
+                    metadataValidated.value = true;
                 }
                 else {
                     // Otherwise, the validation succeeded
@@ -1302,7 +1048,8 @@ export default defineComponent({
             } catch (error) {
                 console.error(error);
                 message.value = "Error validating discovery metadata.";
-                metadataValidated.value = false;
+                // Temporary set the validation state to true regardless
+                metadataValidated.value = true;
             }
         };
 
@@ -1404,17 +1151,6 @@ export default defineComponent({
             updateBbox();
         });
 
-        // Watch for the distributor checkbox to duplicate the contact info any time the POC information is changed
-        // Note that watchEffect is used here instead of watch, because it should re run whenever any reactive dependency changes
-        watchEffect(() => {
-            if (model.value.distrib.duplicateFromContact) {
-                // Copy the POC fields to the distributor fields
-                Object.keys(model.value.poc).forEach(key => {
-                    model.value.distrib[key] = model.value.poc[key];
-                });
-            }
-        });
-
         return {
             defaults,
             durations,
@@ -1449,7 +1185,6 @@ export default defineComponent({
             openPocHelpDialog,
             openDistribHelpDialog,
             formFilledAndValidated,
-            distributorFieldsEnabled,
             loadList,
             loadMetadata,
             continueToForm,
