@@ -858,8 +858,9 @@ export default defineComponent({
             formModel.identification.language = schema.properties.language;
             formModel.identification.keywords = schema.properties.keywords;
 
-            // Themes
-            const themes = schema.properties.themes.concepts.map(concept => concept.title);
+            // Themes - display the concept labels, but if they don't exist,
+            // display the concept IDs instead
+            const themes = schema.properties.themes.concepts.map(concept => concept.label || concept.id);
             formModel.identification.themes = themes;
             formModel.identification.themeSchemes = schema.properties.themes.scheme;
 
