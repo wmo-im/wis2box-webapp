@@ -1074,7 +1074,7 @@ export default defineComponent({
                 // If metadata is new, post the schema formatted version to the OAPI
                 if (isNew.value) {
                     const schemaModel = transformToSchema(model.value);
-                    response = await fetch(`${oapi.value}/collections/discovery-metadata/items`, {
+                    response = await fetch(`${oapi}/collections/discovery-metadata/items`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1085,7 +1085,7 @@ export default defineComponent({
                 // If updating existing metadata, put the schema formatted version to the OAPI
                 else {
                     const schemaModel = transformToSchema(model.value);
-                    response = await fetch(`${oapi.value}/collections/discovery-metadata/items/${identifier.value}`, {
+                    response = await fetch(`${oapi}/collections/discovery-metadata/items/${identifier.value}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
