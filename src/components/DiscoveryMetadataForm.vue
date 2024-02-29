@@ -99,8 +99,8 @@
                     </v-row>
                     <v-row>
                         <v-col cols="4">
-                            <v-select label="Themes" v-model="model.identification.themes" multiple
-                                variant="outlined"></v-select>
+                            <v-select label="Concepts" v-model="model.identification.concepts" multiple
+                                :items="['weather']" variant="outlined"></v-select>
                         </v-col>
                         <v-col cols="8">
                             <v-row dense>
@@ -200,27 +200,6 @@
                         <v-col cols="8">
                             <!-- Bounding box editor -->
                             <bbox-editor :box-bounds="bounds"></bbox-editor>
-                        </v-col>
-                    </v-row>
-                    <v-row dense>
-                        <v-col cols="12">
-
-                        </v-col>
-                    </v-row>
-                    <v-row>
-                        <v-col cols="3">
-
-                        </v-col>
-
-                        <v-col cols="3">
-
-                        </v-col>
-
-                        <v-col cols="3">
-                        </v-col>
-
-                        <v-col cols="3">
-
                         </v-col>
                     </v-row>
 
@@ -440,7 +419,7 @@
                         Reset
                     </v-btn>
                     <v-spacer />
-                    <v-btn color="#009900" class="ma-2" title="Validate" @click="validateMetadata" :disabled="!formFilled"
+                    <v-btn color="#009900" class="ma-2" title="Validate" @click="validateMetadata"
                         v-if="!metadataValidated" append-icon="mdi-check-bold">
                         Validate
                     </v-btn>
@@ -512,7 +491,7 @@
                         <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot be
                                 edited.</i></p>
                         <br>
-                        <p><b>Themes:</b> A list of concepts that are referenced to a vocabulary or knowledge organization
+                        <p><b>Concepts:</b> A list of concepts that are referenced to a vocabulary or knowledge organization
                             system used to classify the resource.</p>
                         <br>
                         <p><b>Keywords:</b> A list of at least three keywords, tags or specific phrases associated with the
@@ -654,6 +633,8 @@ export default defineComponent({
                 identifier: 'urn:x-wmo:md:',
                 keywords: [],
                 wmoDataPolicy: 'core',
+                concept: ['weather'],
+                conceptSchemes: ['https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline']
             },
             extents: {},
             poc: {
@@ -858,9 +839,9 @@ export default defineComponent({
             formModel.identification.language = schema.properties.language;
             formModel.identification.keywords = schema.properties.keywords;
 
-            // Themes - hard code for now
-            formModel.identification.themes = ["weather"];
-            formModel.identification.themeSchemes = ["https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline"];
+            // Themes - hardcoded for now
+            formModel.identification.concepts = ["weather"];
+            formModel.identification.conceptSchemes = ["https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline"];
 
             // Contacts information
             schema.properties.contacts.forEach(contact => {
@@ -1013,8 +994,8 @@ export default defineComponent({
             model.value.identification.title = template.title.replace('$CENTRE_ID', model.value.identification.centreID);
             model.value.identification.identifier = template.identifier.replace('$CENTRE_ID', model.value.identification.centreID);
             // Converts the theme structure into a list of the theme labels
-            model.value.identification.themes = template.themes.flatMap(theme => theme.concepts.map(concept => concept.label));
-            model.value.identification.themeSchemes = template.themes.map(theme => theme.scheme);
+            model.value.identification.concepts = template.themes.flatMap(theme => theme.concepts.map(concept => concept.label));
+            model.value.identification.conceptSchemes = template.themes.map(theme => theme.scheme);
             model.value.identification.keywords = template.keywords;
             // Use centre ID and WMO data policy to create topic hierarchy
             model.value.identification.topicHierarchy = template.topicHierarchy
@@ -1197,11 +1178,11 @@ export default defineComponent({
             schemaModel.properties.description = form.identification.description;
             schemaModel.properties.keywords = form.identification.keywords;
             // Themes
-            const concepts = form.identification.themes.map(item => ({ title: item }));
+            const concepts = form.identification.concepts.map(item => ({ title: item }));
             schemaModel.properties.themes = [
                 {
                     concepts: concepts,
-                    scheme: form.identification.themeSchemes
+                    scheme: form.identification.conceptSchemes
                 }
             ]
             // Contacts information
