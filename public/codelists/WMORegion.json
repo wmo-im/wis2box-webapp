@@ -1,8 +1,152 @@
-[
-  {"name": "Africa", "id": "I", "description": "Region I - Africa"},
-  {"name": "Asia", "id": "II", "description": "Region II - Asia"},
-  {"name": "South America", "id": "III", "description": "Region III - South America"},
-  {"name": "North America, Central America and the Caribbean", "id": "IV", "description": "Region IV - North America, Central America and the Caribbean"},
-  {"name": "South-West Pacific", "id": "V", "description": "South-West Pacific"},
-  {"name": "Europe", "id": "VI", "description": "Europe"}
-]
+{
+  "@graph" : [ {
+    "@id" : "http://codes.wmo.int/wmdr/WMORegion",
+    "@type" : [ "ldp:Container", "reg:Register", "skos:Collection" ],
+    "dct:description" : "Region of origin of data",
+    "dct:modified" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-11-21T09:14:47.684Z"
+    },
+    "rdfs:label" : "Region of origin of data",
+    "owl:versionInfo" : {
+      "@type" : "xsd:integer",
+      "@value" : "2"
+    },
+    "skos:member" : [ {
+      "@id" : "http://codes.wmo.int/wmdr/WMORegion/northCentralAmericaCaribbean"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/WMORegion/southAmerica"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/WMORegion/unknown"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/WMORegion/inapplicable"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/WMORegion/asia"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/WMORegion/antarctica"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/WMORegion/africa"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/WMORegion/southWestPacific"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/WMORegion/europe"
+    } ],
+    "ldp:hasMemberRelation" : {
+      "@id" : "skos:member"
+    }
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/WMORegion/africa",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Africa"
+    },
+    "rdfs:label" : "Africa",
+    "skos:notation" : "africa"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/WMORegion/antarctica",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Antarctica"
+    },
+    "rdfs:label" : "Antarctica",
+    "skos:notation" : "antarctica"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/WMORegion/asia",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Asia"
+    },
+    "rdfs:label" : "Asia",
+    "skos:notation" : "asia"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/WMORegion/europe",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "Europe"
+    },
+    "rdfs:label" : "Europe",
+    "skos:notation" : "europe"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/WMORegion/inapplicable",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "inapplicable"
+    },
+    "rdfs:label" : "inapplicable",
+    "skos:notation" : "inapplicable"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/WMORegion/northCentralAmericaCaribbean",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "North America, Central America and the Caribbean"
+    },
+    "rdfs:label" : "North America, Central America and the Caribbean",
+    "skos:notation" : "northCentralAmericaCaribbean"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/WMORegion/southAmerica",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "South America"
+    },
+    "rdfs:label" : "South America",
+    "skos:notation" : "southAmerica"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/WMORegion/southWestPacific",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "South-West Pacific"
+    },
+    "rdfs:label" : "South-West Pacific",
+    "skos:notation" : "southWestPacific"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/WMORegion/unknown",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "unknown"
+    },
+    "rdfs:label" : "unknown",
+    "skos:notation" : "unknown"
+  } ],
+  "@context" : {
+    "qudt" : "http://qudt.org/schema/qudt#",
+    "ssd" : "http://www.w3.org/ns/sparql-service-description#",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "skos" : "http://www.w3.org/2004/02/skos/core#",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "qudt-unit" : "http://qudt.org/vocab/unit#",
+    "qb" : "http://purl.org/linked-data/cube#",
+    "dgu" : "http://reference.data.gov.uk/def/reference/",
+    "dct" : "http://purl.org/dc/terms/",
+    "ui" : "http://purl.org/linked-data/registry-ui#",
+    "reg" : "http://purl.org/linked-data/registry#",
+    "grib2-parameter" : "http://codes.wmo.int/grib2/schema/parameter/",
+    "qudt-quantity" : "http://qudt.org/vocab/quantity#",
+    "api" : "http://purl.org/linked-data/api/vocab#",
+    "vann" : "http://purl.org/vocab/vann/",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "cc" : "http://creativecommons.org/ns#",
+    "common-unit" : "http://codes.wmo.int/common/schema/unit/",
+    "grib2-core" : "http://codes.wmo.int/grib2/schema/core/",
+    "void" : "http://rdfs.org/ns/void#",
+    "version" : "http://purl.org/linked-data/version#",
+    "bufr4-core" : "http://codes.wmo.int/bufr4/schema/core/",
+    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "ldp" : "http://www.w3.org/ns/ldp#",
+    "time" : "http://www.w3.org/2006/time#",
+    "qudt-dimension" : "http://qudt.org/vocab/dimension#",
+    "vs" : "http://www.w3.org/2003/06/sw-vocab-status/ns#",
+    "dc" : "http://purl.org/dc/elements/1.1/",
+    "common-core" : "http://codes.wmo.int/common/schema/core/"
+  }
+}

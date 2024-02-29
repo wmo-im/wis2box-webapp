@@ -1,10 +1,602 @@
-[
-  {"description": "The station has been declared as closed by the responsible supervising organization.","name": "Closed", "id": "closed"},
-  {"description": "The station is considered non-operational/non-reporting temporarily, but is expected to resume its operations/reporting after the temporary suspension.","name": "Non-reporting", "id": "nonReporting"},
-  {"description": "The station fully complies with the reporting obligations of the observation programme/network concerned.","name": "Operational", "id": "operational"},
-  {"description": "The station partially complies with the reporting obligations of the observation programme/network concerned.","name": "Partly operational", "id": "partlyOperational"},
-  {"description": "The station is planned to be deployed sometime in the future, and all information provided is indicative only. No observations are taken.","name": "Planned", "id": "planned"},
-  {"description": "The station is deployed and producing data but still not fully ready to start reporting operationally.","name": "Pre-operational", "id": "preOperational"},
-  {"description": "NA","name": "Stand-by", "id": "standBy"},
-  {"description": "The declared operating status of this particular station/platform is unknown.","name": "unknown", "id": "unknown"}
-]
+{
+  "@graph" : [ {
+    "@id" : "_:b0",
+    "reg:entity" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/unknown"
+    },
+    "reg:sourceGraph" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_unknown:1#graph"
+    }
+  }, {
+    "@id" : "_:b1",
+    "foaf:accountName" : "https://api.github.com/users/kurt-hectic",
+    "foaf:name" : "kurt-hectic"
+  }, {
+    "@id" : "_:b10",
+    "reg:entity" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/preOperational"
+    },
+    "reg:sourceGraph" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_preOperational:1#graph"
+    }
+  }, {
+    "@id" : "_:b11",
+    "reg:entity" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/nonReporting"
+    },
+    "reg:sourceGraph" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_nonReporting:1#graph"
+    }
+  }, {
+    "@id" : "_:b12",
+    "foaf:accountName" : "https://api.github.com/users/kurt-hectic",
+    "foaf:name" : "kurt-hectic"
+  }, {
+    "@id" : "_:b13",
+    "foaf:accountName" : "https://api.github.com/users/kurt-hectic",
+    "foaf:name" : "kurt-hectic"
+  }, {
+    "@id" : "_:b14",
+    "foaf:accountName" : "https://api.github.com/users/kurt-hectic",
+    "foaf:name" : "kurt-hectic"
+  }, {
+    "@id" : "_:b15",
+    "reg:entity" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/partlyOperational"
+    },
+    "reg:sourceGraph" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_partlyOperational:1#graph"
+    }
+  }, {
+    "@id" : "_:b16",
+    "reg:entity" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus"
+    },
+    "reg:entityVersion" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus:2"
+    }
+  }, {
+    "@id" : "_:b17",
+    "reg:entity" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/closed"
+    },
+    "reg:sourceGraph" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_closed:1#graph"
+    }
+  }, {
+    "@id" : "_:b2",
+    "foaf:accountName" : "https://api.github.com/users/kurt-hectic",
+    "foaf:name" : "kurt-hectic"
+  }, {
+    "@id" : "_:b3",
+    "reg:entity" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/standBy"
+    },
+    "reg:sourceGraph" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_standBy:1#graph"
+    }
+  }, {
+    "@id" : "_:b4",
+    "foaf:accountName" : "https://api.github.com/users/kurt-hectic",
+    "foaf:name" : "kurt-hectic"
+  }, {
+    "@id" : "_:b5",
+    "reg:entity" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/planned"
+    },
+    "reg:sourceGraph" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_planned:1#graph"
+    }
+  }, {
+    "@id" : "_:b6",
+    "foaf:accountName" : "https://api.github.com/users/kurt-hectic",
+    "foaf:name" : "kurt-hectic"
+  }, {
+    "@id" : "_:b7",
+    "reg:entity" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/operational"
+    },
+    "reg:sourceGraph" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_operational:1#graph"
+    }
+  }, {
+    "@id" : "_:b8",
+    "foaf:accountName" : "https://api.github.com/users/kurt-hectic",
+    "foaf:name" : "kurt-hectic"
+  }, {
+    "@id" : "_:b9",
+    "foaf:accountName" : "https://api.github.com/users/kurt-hectic",
+    "foaf:name" : "kurt-hectic"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus",
+    "@type" : [ "reg:Register", "ldp:Container", "skos:Collection" ],
+    "dct:description" : "Station/Platform operating status",
+    "dct:modified" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-11-21T09:16:51.483Z"
+    },
+    "rdfs:label" : "Station/Platform operating status",
+    "owl:versionInfo" : {
+      "@type" : "xsd:integer",
+      "@value" : "2"
+    },
+    "skos:member" : [ {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/unknown"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/planned"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/standBy"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/partlyOperational"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/preOperational"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/closed"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/operational"
+    }, {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/nonReporting"
+    } ],
+    "ldp:hasMemberRelation" : {
+      "@id" : "skos:member"
+    }
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_closed",
+    "@type" : "reg:RegisterItem",
+    "dct:dateAccepted" : [ {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:25:40.657Z"
+    }, {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:26:19.242Z"
+    } ],
+    "dct:dateSubmitted" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-10-14T16:36:34.599Z"
+    },
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The station has been declared as closed by the responsible supervising organization."
+    },
+    "reg:definition" : {
+      "@id" : "_:b17"
+    },
+    "reg:itemClass" : {
+      "@id" : "skos:Concept"
+    },
+    "reg:notation" : "closed",
+    "reg:register" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus"
+    },
+    "reg:status" : {
+      "@id" : "reg:statusStable"
+    },
+    "reg:submitter" : {
+      "@id" : "_:b12"
+    },
+    "rdfs:label" : "Closed",
+    "owl:versionInfo" : {
+      "@type" : "xsd:integer",
+      "@value" : "3"
+    }
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_nonReporting",
+    "@type" : "reg:RegisterItem",
+    "dct:dateAccepted" : [ {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:25:40.658Z"
+    }, {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:26:19.244Z"
+    } ],
+    "dct:dateSubmitted" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-10-14T16:36:34.601Z"
+    },
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The station is considered non-operational/non-reporting temporarily, but is expected to resume its operations/reporting after the temporary suspension."
+    },
+    "reg:definition" : {
+      "@id" : "_:b11"
+    },
+    "reg:itemClass" : {
+      "@id" : "skos:Concept"
+    },
+    "reg:notation" : "nonReporting",
+    "reg:register" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus"
+    },
+    "reg:status" : {
+      "@id" : "reg:statusStable"
+    },
+    "reg:submitter" : {
+      "@id" : "_:b9"
+    },
+    "rdfs:label" : "Non-reporting",
+    "owl:versionInfo" : {
+      "@type" : "xsd:integer",
+      "@value" : "3"
+    }
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_operational",
+    "@type" : "reg:RegisterItem",
+    "dct:dateAccepted" : [ {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:25:40.659Z"
+    }, {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:26:19.245Z"
+    } ],
+    "dct:dateSubmitted" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-10-14T16:36:34.6Z"
+    },
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The station fully complies with the reporting obligations of the observation programme/network concerned."
+    },
+    "reg:definition" : {
+      "@id" : "_:b7"
+    },
+    "reg:itemClass" : {
+      "@id" : "skos:Concept"
+    },
+    "reg:notation" : "operational",
+    "reg:register" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus"
+    },
+    "reg:status" : {
+      "@id" : "reg:statusStable"
+    },
+    "reg:submitter" : {
+      "@id" : "_:b6"
+    },
+    "rdfs:label" : "Operational",
+    "owl:versionInfo" : {
+      "@type" : "xsd:integer",
+      "@value" : "3"
+    }
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_partlyOperational",
+    "@type" : "reg:RegisterItem",
+    "dct:dateAccepted" : [ {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:26:19.246Z"
+    }, {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:25:40.66Z"
+    } ],
+    "dct:dateSubmitted" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-10-14T16:36:34.597Z"
+    },
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The station partially complies with the reporting obligations of the observation programme/network concerned."
+    },
+    "reg:definition" : {
+      "@id" : "_:b15"
+    },
+    "reg:itemClass" : {
+      "@id" : "skos:Concept"
+    },
+    "reg:notation" : "partlyOperational",
+    "reg:register" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus"
+    },
+    "reg:status" : {
+      "@id" : "reg:statusStable"
+    },
+    "reg:submitter" : {
+      "@id" : "_:b2"
+    },
+    "rdfs:label" : "Partly operational",
+    "owl:versionInfo" : {
+      "@type" : "xsd:integer",
+      "@value" : "3"
+    }
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_planned",
+    "@type" : "reg:RegisterItem",
+    "dct:dateAccepted" : [ {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:25:40.661Z"
+    }, {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:26:19.247Z"
+    } ],
+    "dct:dateSubmitted" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-10-14T16:36:34.594Z"
+    },
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The station is planned to be deployed sometime in the future, and all information provided is indicative only. No observations are taken."
+    },
+    "reg:definition" : {
+      "@id" : "_:b5"
+    },
+    "reg:itemClass" : {
+      "@id" : "skos:Concept"
+    },
+    "reg:notation" : "planned",
+    "reg:register" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus"
+    },
+    "reg:status" : {
+      "@id" : "reg:statusStable"
+    },
+    "reg:submitter" : {
+      "@id" : "_:b14"
+    },
+    "rdfs:label" : "Planned",
+    "owl:versionInfo" : {
+      "@type" : "xsd:integer",
+      "@value" : "3"
+    }
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_preOperational",
+    "@type" : "reg:RegisterItem",
+    "dct:dateAccepted" : [ {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:25:40.662Z"
+    }, {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:26:19.247Z"
+    } ],
+    "dct:dateSubmitted" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-10-14T16:36:34.598Z"
+    },
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The station is deployed and producing data but still not fully ready to start reporting operationally."
+    },
+    "reg:definition" : {
+      "@id" : "_:b10"
+    },
+    "reg:itemClass" : {
+      "@id" : "skos:Concept"
+    },
+    "reg:notation" : "preOperational",
+    "reg:register" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus"
+    },
+    "reg:status" : {
+      "@id" : "reg:statusStable"
+    },
+    "reg:submitter" : {
+      "@id" : "_:b13"
+    },
+    "rdfs:label" : "Pre-operational",
+    "owl:versionInfo" : {
+      "@type" : "xsd:integer",
+      "@value" : "3"
+    }
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_standBy",
+    "@type" : "reg:RegisterItem",
+    "dct:dateAccepted" : [ {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:26:19.248Z"
+    }, {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:25:40.663Z"
+    } ],
+    "dct:dateSubmitted" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-10-14T16:36:34.595Z"
+    },
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "NA"
+    },
+    "reg:definition" : {
+      "@id" : "_:b3"
+    },
+    "reg:itemClass" : {
+      "@id" : "skos:Concept"
+    },
+    "reg:notation" : "standBy",
+    "reg:register" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus"
+    },
+    "reg:status" : {
+      "@id" : "reg:statusStable"
+    },
+    "reg:submitter" : {
+      "@id" : "_:b4"
+    },
+    "rdfs:label" : "Stand-by",
+    "owl:versionInfo" : {
+      "@type" : "xsd:integer",
+      "@value" : "3"
+    }
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/_unknown",
+    "@type" : "reg:RegisterItem",
+    "dct:dateAccepted" : [ {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:26:19.249Z"
+    }, {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:25:40.663Z"
+    } ],
+    "dct:dateSubmitted" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-10-14T16:36:34.593Z"
+    },
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The declared operating status of this particular station/platform is unknown."
+    },
+    "reg:definition" : {
+      "@id" : "_:b0"
+    },
+    "reg:itemClass" : {
+      "@id" : "skos:Concept"
+    },
+    "reg:notation" : "unknown",
+    "reg:register" : {
+      "@id" : "http://codes.wmo.int/wmdr/ReportingStatus"
+    },
+    "reg:status" : {
+      "@id" : "reg:statusStable"
+    },
+    "reg:submitter" : {
+      "@id" : "_:b1"
+    },
+    "rdfs:label" : "unknown",
+    "owl:versionInfo" : {
+      "@type" : "xsd:integer",
+      "@value" : "3"
+    }
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/closed",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The station has been declared as closed by the responsible supervising organization."
+    },
+    "rdfs:label" : "Closed",
+    "skos:notation" : "closed"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/nonReporting",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The station is considered non-operational/non-reporting temporarily, but is expected to resume its operations/reporting after the temporary suspension."
+    },
+    "rdfs:label" : "Non-reporting",
+    "skos:notation" : "nonReporting"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/operational",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The station fully complies with the reporting obligations of the observation programme/network concerned."
+    },
+    "rdfs:label" : "Operational",
+    "skos:notation" : "operational"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/partlyOperational",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The station partially complies with the reporting obligations of the observation programme/network concerned."
+    },
+    "rdfs:label" : "Partly operational",
+    "skos:notation" : "partlyOperational"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/planned",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The station is planned to be deployed sometime in the future, and all information provided is indicative only. No observations are taken."
+    },
+    "rdfs:label" : "Planned",
+    "skos:notation" : "planned"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/preOperational",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The station is deployed and producing data but still not fully ready to start reporting operationally."
+    },
+    "rdfs:label" : "Pre-operational",
+    "skos:notation" : "preOperational"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/standBy",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "NA"
+    },
+    "rdfs:label" : "Stand-by",
+    "skos:notation" : "standBy"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/ReportingStatus/unknown",
+    "@type" : "skos:Concept",
+    "dct:description" : {
+      "@language" : "en",
+      "@value" : "The declared operating status of this particular station/platform is unknown."
+    },
+    "rdfs:label" : "unknown",
+    "skos:notation" : "unknown"
+  }, {
+    "@id" : "http://codes.wmo.int/wmdr/_ReportingStatus",
+    "@type" : "reg:RegisterItem",
+    "dct:dateAccepted" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2020-04-29T14:36:15.137Z"
+    },
+    "dct:dateSubmitted" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-10-14T16:36:34.589Z"
+    },
+    "dct:description" : "Station/Platform operating status",
+    "dct:modified" : {
+      "@type" : "xsd:dateTime",
+      "@value" : "2019-11-21T09:16:51.483Z"
+    },
+    "reg:definition" : {
+      "@id" : "_:b16"
+    },
+    "reg:itemClass" : [ {
+      "@id" : "skos:Collection"
+    }, {
+      "@id" : "reg:Register"
+    }, {
+      "@id" : "ldp:Container"
+    } ],
+    "reg:notation" : "ReportingStatus",
+    "reg:register" : {
+      "@id" : "http://codes.wmo.int/wmdr"
+    },
+    "reg:status" : {
+      "@id" : "reg:statusStable"
+    },
+    "reg:submitter" : {
+      "@id" : "_:b8"
+    },
+    "rdfs:label" : "Station/Platform operating status",
+    "owl:versionInfo" : {
+      "@type" : "xsd:integer",
+      "@value" : "3"
+    }
+  } ],
+  "@context" : {
+    "qudt" : "http://qudt.org/schema/qudt#",
+    "ssd" : "http://www.w3.org/ns/sparql-service-description#",
+    "owl" : "http://www.w3.org/2002/07/owl#",
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "skos" : "http://www.w3.org/2004/02/skos/core#",
+    "rdfs" : "http://www.w3.org/2000/01/rdf-schema#",
+    "qudt-unit" : "http://qudt.org/vocab/unit#",
+    "qb" : "http://purl.org/linked-data/cube#",
+    "dgu" : "http://reference.data.gov.uk/def/reference/",
+    "dct" : "http://purl.org/dc/terms/",
+    "ui" : "http://purl.org/linked-data/registry-ui#",
+    "reg" : "http://purl.org/linked-data/registry#",
+    "grib2-parameter" : "http://codes.wmo.int/grib2/schema/parameter/",
+    "qudt-quantity" : "http://qudt.org/vocab/quantity#",
+    "api" : "http://purl.org/linked-data/api/vocab#",
+    "vann" : "http://purl.org/vocab/vann/",
+    "prov" : "http://www.w3.org/ns/prov#",
+    "foaf" : "http://xmlns.com/foaf/0.1/",
+    "cc" : "http://creativecommons.org/ns#",
+    "common-unit" : "http://codes.wmo.int/common/schema/unit/",
+    "grib2-core" : "http://codes.wmo.int/grib2/schema/core/",
+    "void" : "http://rdfs.org/ns/void#",
+    "version" : "http://purl.org/linked-data/version#",
+    "bufr4-core" : "http://codes.wmo.int/bufr4/schema/core/",
+    "rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "ldp" : "http://www.w3.org/ns/ldp#",
+    "time" : "http://www.w3.org/2006/time#",
+    "qudt-dimension" : "http://qudt.org/vocab/dimension#",
+    "vs" : "http://www.w3.org/2003/06/sw-vocab-status/ns#",
+    "dc" : "http://purl.org/dc/elements/1.1/",
+    "common-core" : "http://codes.wmo.int/common/schema/core/"
+  }
+}
