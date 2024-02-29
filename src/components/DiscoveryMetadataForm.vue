@@ -199,13 +199,13 @@
                         </v-col>
                         <v-col cols="8">
                             <!-- Bounding box editor -->
-                            <bbox-editor :box-bounds="bounds"></bbox-editor>
+                            <bbox-editor :box-bounds="bounds" id="bbox-editor"></bbox-editor>
                         </v-col>
                     </v-row>
 
                     <!-- Contact (POC) section -->
                     <v-card-title>
-                        Point of Contact Information
+                        Host Contact Information
                         <v-btn icon="mdi-comment-question" variant="text" size="small" @click="openPocHelpDialog = true" />
                     </v-card-title>
                     <v-row>
@@ -807,6 +807,10 @@ export default defineComponent({
             // Retrieve the identifier from the schema
             formModel.identification.identifier = schema.id;
 
+            // Centre ID and topic hierarchy from wis2box section
+            formModel.identification.centreID = schema.wis2box['centre_id'];
+            formModel.identification.topicHierarchy = schema.wis2box['topic_hierarchy'];
+
             // Time period information
             if (schema.time?.interval) {
                 formModel.extents.dateStarted = schema.time.interval[0];
@@ -845,7 +849,7 @@ export default defineComponent({
 
             // Contacts information
             schema.properties.contacts.forEach(contact => {
-                if (contact.roles?.includes("pointOfContact")) {
+                if (contact.roles?.includes("host")) {
                     formModel.poc = {
                         individual: contact.name,
                         positionName: contact.position,
@@ -918,11 +922,13 @@ export default defineComponent({
                     const formModel = transformToForm(responseData);
                     // Update the form (model) with the loaded values
                     model.value = formModel;
-                    // As form was loaded, it must be already validated
-                    // Note: Set time delay to prevent watcher from firing too early
+                    // Note: Set time delay to prevent watchers from firing too early
                     setTimeout(() => {
+                        // Force bounding box map to update
+                        updateBbox();
+                        // As form was loaded, it must be already validated
                         metadataValidated.value = true;
-                    }, 1000); // Delay of 1 second
+                    }, 500); // Delay of 0.5 seconds
                 } catch (error) {
                     console.log(error);
                     message.value = "Error loading selected discovery metadata file.";
@@ -1210,7 +1216,7 @@ export default defineComponent({
                 }],
                 hoursOfService: form.poc.hoursOfService,
                 contactInstructions: form.poc.contactInstructions,
-                roles: ["pointOfContact"]
+                roles: ["host"]
             });
             // Distributor
             schemaModel.properties.contacts.push({
