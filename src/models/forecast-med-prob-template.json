@@ -1,0 +1,19 @@
+{
+    "label": "weater/forecast/medium-range/probabilistic",
+    "title": "Global medium-range probabilistic weather forecast data GRIB2",
+    "identifier": "urn:wmo:md:$CENTRE_ID:forecast.medium-range.probabilistic.global",
+    "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.forecast.medium-range.probabilistic.global",
+    "language": "en",
+    "retention": "P30D",
+    "resolution": "P1H",
+    "keywords": ["weather", "forecast", "medium-range", "probabilistic", "GRIB2"],
+    "duplicateFromContact": true,
+    "themes": [
+        {
+            "concepts": [
+                {"id": "Vertical velocity (pressure)", "label": "Vertical velocity (pressure)"}
+            ],
+            "scheme": "https://codes.wmo.int/grib2/codeflag/_4.2"
+        }
+    ]
+}

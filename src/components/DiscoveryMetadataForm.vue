@@ -14,7 +14,7 @@
                 <v-progress-linear indeterminate color="primary" :active="working" />
 
                 <!-- Dialog window -->
-                <v-dialog v-model="showDialog" max-width="600px" persistent>
+                <v-dialog v-model="showInitialDialog" max-width="600px" persistent>
                     <v-card>
                         <v-card-title>
                             Please enter some initial information
@@ -99,8 +99,8 @@
                     </v-row>
                     <v-row>
                         <v-col cols="4">
-                            <v-select label="Concepts" v-model="model.identification.concepts" multiple
-                                :items="['weather']" variant="outlined"></v-select>
+                            <v-select label="Earth System Disciplines" v-model="model.identification.concepts" multiple
+                                :items="earthSystemDisciplines" variant="outlined"></v-select>
                         </v-col>
                         <v-col cols="8">
                             <v-row dense>
@@ -132,14 +132,19 @@
                     <v-row>
                         <v-col cols="3">
                             <VueDatePicker placeholder="Begin Date in UTC" v-model="model.extents.dateStarted"
-                                :teleport="true" :enable-time-picker="false" auto-apply required />
+                                :teleport="true" :enable-time-picker="false"
+                                format="yyyy/MM/dd"
+                                auto-apply required />
                         </v-col>
-
                         <v-col cols="3">
                             <VueDatePicker placeholder="End Date in UTC" v-model="model.extents.dateStopped"
-                                :teleport="true" :enable-time-picker="false" auto-apply required />
+                                :teleport="true" :enable-time-picker="false"
+                                format="yyyy/MM/dd"
+                                :disabled="isEndDateDisabled" auto-apply required />
                         </v-col>
-
+                        <v-col cols="2">
+                            <v-switch v-model="isEndDateDisabled" label="Dataset ongoing" color="#003DA5"></v-switch>
+                        </v-col>
                         <v-col cols="3">
                             <v-row dense>
                                 <v-col cols="5">
@@ -214,14 +219,25 @@
                                 :rules="[rules.required]" variant="outlined" clearable></v-text-field>
                         </v-col>
                         <v-col cols="4">
-                            <v-text-field label="Email" type="string" v-model="model.poc.email"
-                                :rules="[rules.required, rules.email]" variant="outlined" clearable></v-text-field>
+                            <v-text-field label="URL" hint="Organization website" type="string" v-model="model.poc.url"
+                                :rules="[rules.url]" variant="outlined" clearable></v-text-field>
                         </v-col>
                         <v-col cols="4">
                             <!-- The POC country is disabled as it was selected
                             already in the dialog -->
                             <v-autocomplete label="Country" item-title="name" item-value="alpha-3" :items="countryCodeList"
                                 v-model="model.poc.country" :rules="[rules.required]" variant="outlined"></v-autocomplete>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="4">
+                            <v-text-field label="Email" type="string" v-model="model.poc.email"
+                                :rules="[rules.required, rules.email]" variant="outlined" clearable></v-text-field>
+                        </v-col>
+                        <v-col cols="4">
+                            <vue-tel-input v-model="model.poc.phone" @validate="onPocPhoneValidate"></vue-tel-input>
+                            <p v-if="(typeof isPocPhoneValid !== 'undefined') && !isPocPhoneValid"
+                                class="hint-text hint-invalid">Phone number is not valid</p>
                         </v-col>
                     </v-row>
                 </v-form>
@@ -233,8 +249,8 @@
                         Reset
                     </v-btn>
                     <v-spacer />
-                    <v-btn color="#009900" class="ma-2" title="Validate" @click="validateMetadata"
-                        v-if="!metadataValidated" append-icon="mdi-check-bold">
+                    <v-btn color="#009900" class="ma-2" title="Validate" @click="validateMetadata" v-if="!metadataValidated"
+                        append-icon="mdi-check-bold">
                         Validate
                     </v-btn>
 
@@ -276,16 +292,12 @@
             </v-dialog>
             <v-dialog v-model="openIdentificationHelpDialog" max-width="600px">
                 <v-card>
-                    <v-card-item>
-                        <v-card-title class="d-flex justify-space-between">
-                            Dataset Identification
-                            <v-btn icon="mdi-close" variant="text" size="small"
-                                @click="openIdentificationHelpDialog = false" />
-                        </v-card-title>
-                        <v-card-subtitle>
-                            How do I complete this section?
-                        </v-card-subtitle>
-                    </v-card-item>
+                    <v-toolbar title="Dataset Identification" color="#003DA5">
+                        <v-btn icon="mdi-close" variant="text" size="small" @click="openIdentificationHelpDialog = false" />
+                    </v-toolbar>
+                    <v-card-subtitle>
+                        How do I complete this section?
+                    </v-card-subtitle>
                     <v-card-text>
                         <p><b>Title:</b> A human-readable name of the dataset.</p>
                         <p><i>Note: Unless 'other' was selected initially, this field is pre-filled.</i></p>
@@ -305,7 +317,8 @@
                         <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot be
                                 edited.</i></p>
                         <br>
-                        <p><b>Concepts:</b> A list of concepts that are referenced to a vocabulary or knowledge organization
+                        <p><b>Earth System Disciplines:</b> A list of concepts that are referenced to a vocabulary or
+                            knowledge organization
                             system used to classify the resource.</p>
                         <br>
                         <p><b>Keywords:</b> A list of at least three keywords, tags or specific phrases associated with the
@@ -317,15 +330,12 @@
             </v-dialog>
             <v-dialog v-model="openTemporalHelpDialog" max-width="600px">
                 <v-card>
-                    <v-card-item>
-                        <v-card-title class="d-flex justify-space-between">
-                            Temporal Properties
-                            <v-btn icon="mdi-close" variant="text" size="small" @click="openTemporalHelpDialog = false" />
-                        </v-card-title>
-                        <v-card-subtitle>
-                            How do I complete this section?
-                        </v-card-subtitle>
-                    </v-card-item>
+                    <v-toolbar title="Temporal Properties" color="#003DA5">
+                        <v-btn icon="mdi-close" variant="text" size="small" @click="openTemporalHelpDialog = false" />
+                    </v-toolbar>
+                    <v-card-subtitle>
+                        How do I complete this section?
+                    </v-card-subtitle>
                     <v-card-text>
                         <p><b>Begin Date:</b> The date in UTC when the dataset begins.</p>
                         <br>
@@ -340,15 +350,12 @@
             </v-dialog>
             <v-dialog v-model="openSpatialHelpDialog" max-width="600px">
                 <v-card>
-                    <v-card-item>
-                        <v-card-title class="d-flex justify-space-between">
-                            Spatial Properties
-                            <v-btn icon="mdi-close" variant="text" size="small" @click="openSpatialHelpDialog = false" />
-                        </v-card-title>
-                        <v-card-subtitle>
-                            How do I complete this section?
-                        </v-card-subtitle>
-                    </v-card-item>
+                    <v-toolbar title="Spatial Properties" color="#003DA5">
+                        <v-btn icon="mdi-close" variant="text" size="small" @click="openSpatialHelpDialog = false" />
+                    </v-toolbar>
+                    <v-card-subtitle>
+                        How do I complete this section?
+                    </v-card-subtitle>
                     <v-card-text>
                         <p>This section describes the general bounding spatial extent of the dataset in the geographic
                             coordinate system. This can be created either:</p>
@@ -367,25 +374,37 @@
             </v-dialog>
             <v-dialog v-model="openPocHelpDialog" max-width="600px">
                 <v-card>
-                    <v-card-item>
-                        <v-card-title class="d-flex justify-space-between">
-                            Point of Contact Information
-                            <v-btn icon="mdi-close" variant="text" size="small" @click="openPocHelpDialog = false" />
-                        </v-card-title>
-                        <v-card-subtitle>
-                            How do I complete this section?
-                        </v-card-subtitle>
-                    </v-card-item>
+                    <v-toolbar title="Host Contact Information" color="#003DA5">
+                        <v-btn icon="mdi-close" variant="text" size="small" @click="openPocHelpDialog = false" />
+                    </v-toolbar>
+                    <v-card-subtitle>
+                        How do I complete this section?
+                    </v-card-subtitle>
                     <v-card-text>
                         <p>This section provides the information associated with one or more responsible parties of the
                             resource.</p>
                         <br>
                         <p><b>Organization Name:</b> The name of the organization.</p>
                         <br>
-                        <p><b>Email:</b> The email address of the point of contact.</p>
+                        <p><b>URL:</b> The URL to the organization homepage.</p>
                         <br>
                         <p><b>Country:</b> The country of the point of contact.</p>
                         <br>
+                        <p><b>Email:</b> The email address of the point of contact.</p>
+                        <br>
+                        <p><b>Phone Number:</b> The phone number of the point of contact, written in international format (+).</p>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+
+            <!-- Dialog to display validation and submission messages -->
+            <v-dialog v-model="openMessageDialog" max-width="600px">
+                <v-card>
+                    <v-toolbar title="Result" color="#003DA5">
+                        <v-btn icon="mdi-close" variant="text" size="small" @click="openMessageDialog = false" />
+                    </v-toolbar>
+                    <v-card-text>
+                        {{ message }}
                     </v-card-text>
                 </v-card>
             </v-dialog>
@@ -395,9 +414,8 @@
 
 <script>
 import BboxEditor from "@/components/BboxEditor.vue";
-import { clean } from "@/scripts/helpers.js";
 
-import { defineComponent, ref, computed, onMounted, watch, watchEffect } from 'vue';
+import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { VCard, VForm, VBtn, VChipGroup, VChip } from 'vuetify/lib/components/index.mjs';
 
 const oapi = import.meta.env.VITE_API_URL;
@@ -415,6 +433,11 @@ export default defineComponent({
         VChip
     },
     setup() {
+        // Deep clone function to avoid reference issues between model and default model
+        function deepClone(obj) {
+            return JSON.parse(JSON.stringify(obj));
+        }
+
         // Static variables
 
         // Default value of the form, not an exhaustive list of all fields
@@ -426,7 +449,10 @@ export default defineComponent({
                 concept: ['weather'],
                 conceptSchemes: ['https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline']
             },
-            extents: {},
+            extents: {
+                // Default to the current date
+                dateStarted: new Date().toISOString().split('T')[0],
+            },
             poc: {
                 hoursOfService: "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
                 contactInstructions: 'Email'
@@ -436,6 +462,18 @@ export default defineComponent({
             }
         };
 
+        // Fixed list of concepts from the Earth
+        // system discipline
+        const earthSystemDisciplines = [
+            'weather',
+            'climate',
+            'hydrology',
+            'atmospheric-composition',
+            'cryosphere',
+            'ocean',
+            'space-weather'
+        ];
+
         // Time durations for resolution
         const durations = [
             { name: 'minutes(s)', code: 'M' },
@@ -443,7 +481,7 @@ export default defineComponent({
         ];
 
         // WCMP2 schema version
-        const schemaVersion = "http://wis.wmo.int/spec/wcmp/2.0";
+        const schemaVersion = "http://wis.wmo.int/spec/wcmp/2/conf/core";
 
         // Validation patterns for form fields
         const rules = {
@@ -455,11 +493,6 @@ export default defineComponent({
             email: value => /^[a-z0-9._-]+@[a-z0-9-]+\.[a-z0-9.-]+$/.test(value) || 'Invalid email format.',
             keywords: value => Array.isArray(value) && value.length >= 3 || 'Keywords must be an array with at least 3 items.',
         };
-
-        // Deep clone function to avoid reference issues between model and default model
-        function deepClone(obj) {
-            return JSON.parse(JSON.stringify(obj));
-        }
 
         // Reactive variables
 
@@ -476,7 +509,7 @@ export default defineComponent({
         // List of datasets to select from, if any
         const items = ref([]);
         // Dialog window
-        const showDialog = ref(false);
+        const showInitialDialog = ref(false);
         const templateFiles = ref([]);
         const selectedTemplate = ref(null);
         // Identifier of the selected dataset, used to load metadata from OAPI
@@ -489,6 +522,8 @@ export default defineComponent({
         const boundingBoxes = ref({});
         // Whether or not the metadata is new or existing
         const isNew = ref(false);
+        // Switch for whether end date is enabled
+        const isEndDateDisabled = ref(true);
         // Geometry bounds
         const bounds = ref([[0, 0], [0, 0]]);
         // Country for the bbox - defaults to the POC country
@@ -507,6 +542,9 @@ export default defineComponent({
         const openSpatialHelpDialog = ref(false);
         const openPocHelpDialog = ref(false);
         const openDistribHelpDialog = ref(false);
+
+        // Message dialog window
+        const openMessageDialog = ref(false);
 
         // Computed variables
 
@@ -677,7 +715,7 @@ export default defineComponent({
                 model.value = deepClone(defaults);
                 metadataValidated.value = false;
                 // Open the dialog window
-                showDialog.value = true;
+                showInitialDialog.value = true;
             }
             // Otherwise, populate the form with the loaded values
             else {
@@ -719,7 +757,7 @@ export default defineComponent({
         // Dialog window for autofilling form
         const continueToForm = () => {
             // Close the dialog
-            showDialog.value = false;
+            showInitialDialog.value = false;
 
             // Autofill the form based on the input datatype label
             if (selectedTemplate.value.label !== 'other') {
@@ -925,7 +963,11 @@ export default defineComponent({
             schemaModel.time = {};
             // Get the start and end dates from the form
             const startDate = getDateFrom(form.extents.dateStarted);
-            const endDate = getDateFrom(form.extents.dateStopped);
+            // Note: the end date defaults to ".." if the dataset is ongoing
+            let endDate = "..";
+            if (form.extents.dateStopped) {
+                endDate = getDateFrom(form.extents.dateStopped);
+            }
             schemaModel.time.interval = [startDate, endDate];
             schemaModel.time.resolution = `P${form.extents.resolution}${form.extents.resolutionUnit}`;
 
@@ -950,6 +992,7 @@ export default defineComponent({
 
             // Properties information
             schemaModel.properties = {};
+            schemaModel.properties.type = "dataset";
             schemaModel.properties.title = form.identification.title;
             schemaModel.properties.description = form.identification.description;
             schemaModel.properties.keywords = form.identification.keywords;
@@ -982,7 +1025,9 @@ export default defineComponent({
                     country: form.poc.country
                 }],
                 links: [{
-                    href: form.poc.url
+                    rel: "about",
+                    href: form.poc.url,
+                    type: "text/html"
                 }],
                 hoursOfService: form.poc.hoursOfService,
                 contactInstructions: form.poc.contactInstructions,
@@ -995,16 +1040,18 @@ export default defineComponent({
 
 
             // Links information
+            // Note: the only link should be the MQTT link (items).
+            // This is to avoid exposing the API endpoint to the user
+            // (please correct if I have misunderstood)
             schemaModel.links = [];
+            // The title is the form topic hierarchy with dots instead of slashes
+            const itemTitle = form.identification.topicHierarchy.replace(/\//g, '.');
             schemaModel.links.push({
-                rel: "collection",
-                href: `${form.poc.url}/oapi/collections/${form.identification.identifier}`,
-                title: form.identification.identifier
-            })
-            schemaModel.links.push({
-                rel: "canonical",
-                href: `${form.poc.url}/oapi/collections/discovery-metadata/items/${form.identification.identifier}`,
-                title: form.identification.identifier
+                rel: "items",
+                type: "application/json",
+                href: "mqtt://everyone:everyone@mosquitto:1883",
+                title: itemTitle,
+                channel: `origin/a/wis2/${form.identification.topicHierarchy}`
             });
 
             return schemaModel;
@@ -1045,6 +1092,8 @@ export default defineComponent({
                     message.value = "Discovery metadata validated successfully.";
                     metadataValidated.value = true;
                 }
+                // Open a dialog window to show this message clearly
+                openMessageDialog.value = true;
             } catch (error) {
                 console.error(error);
                 message.value = "Error validating discovery metadata.";
@@ -1106,6 +1155,8 @@ export default defineComponent({
                 else {
                     const responseData = await response.json()
                     message.value = responseData.description;
+                    // Open a dialog window to show this message clearly
+                    openMessageDialog.value = true;
                 }
             } catch (error) {
                 console.error(error);
@@ -1153,6 +1204,7 @@ export default defineComponent({
 
         return {
             defaults,
+            earthSystemDisciplines,
             durations,
             schemaVersion,
             rules,
@@ -1163,7 +1215,7 @@ export default defineComponent({
             datasetSpecified,
             message,
             items,
-            showDialog,
+            showInitialDialog,
             templateFiles,
             dialogFilled,
             filteredCountryCodeList,
@@ -1172,6 +1224,7 @@ export default defineComponent({
             languageCodeList,
             countryCodeList,
             isNew,
+            isEndDateDisabled,
             bounds,
             bboxCountry,
             isPocPhoneValid,
@@ -1184,6 +1237,7 @@ export default defineComponent({
             openSpatialHelpDialog,
             openPocHelpDialog,
             openDistribHelpDialog,
+            openMessageDialog,
             formFilledAndValidated,
             loadList,
             loadMetadata,

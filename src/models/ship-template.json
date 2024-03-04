@@ -1,0 +1,19 @@
+{
+    "label": "weather/surface-based-observations/ship",
+    "title": "SHIP DATA",
+    "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.ship",
+    "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.surface-based-observations.ship",
+    "language": "en",
+    "retention": "P30D",
+    "resolution": "P1H",
+    "keywords": ["ship", "weather", "observations"],
+    "duplicateFromContact": true,
+    "themes": [
+        {
+            "concepts": [
+                {"id": "weather", "label": "weather"}
+            ],
+            "scheme": "https://github.com/wmo-im/wis2-topic-hierarchy/blob/main/topic-hierarchy/earth-system-discipline/index.csv"
+        }
+    ]
+}
