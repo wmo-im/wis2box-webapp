@@ -1,8 +1,8 @@
 {
-    "label": "weater/forecast/medium-range/probabilistic",
+    "label": "weather/forecast/medium-range/deterministic",
     "title": "Global medium-range deterministic weather forecast data GRIB2",
-    "identifier": "urn:x-wmo:md:$CENTRE_ID:forecast.medium-range.deterministic.global",
-    "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.forecast.medium-range.deterministic.global",
+    "identifier": "urn:wmo:md:$CENTRE_ID:forecast.medium-range.deterministic.global",
+    "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.prediction.forecast.medium-range.deterministic.global",
     "language": "en",
     "retention": "P30D",
     "resolution": "P1H",

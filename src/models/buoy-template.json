@@ -1,7 +1,7 @@
-{
+{   "reviewComments": "BUFR data, surface data - sea (Table A), pressure, temperature/air temperature,dewpoint temperature,humidity,wind,sst",
     "label": "weather/surface-based-observations/buoy",
     "title": "BUOY DATA",
-    "identifier": "urn:x-wmo:md:$CENTRE_ID:surface-based-observations.buoy",
+    "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.buoy",
     "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.surface-based-observations.buoy",
     "language": "en",
     "retention": "P30D",
@@ -11,7 +11,8 @@
     "themes": [
         {
             "concepts": [
-                {"id": "weather", "label": "weather"}
+                {"id": "weather", "label": "Weather"},
+                {"id": "ocean", "label": "Ocean"}
             ],
             "scheme": "https://github.com/wmo-im/wis2-topic-hierarchy/blob/main/topic-hierarchy/earth-system-discipline/index.csv"
         }

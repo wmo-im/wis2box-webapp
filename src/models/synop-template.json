@@ -1,7 +1,7 @@
 {
     "label": "weather/surface-based-observations/synop",
     "title": "Hourly synoptic observations from fixed-land stations (SYNOP) ($CENTRE_ID)",
-    "identifier": "urn:x-wmo:md:$CENTRE_ID:surface-based-observations.synop",
+    "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.synop",
     "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.surface-based-observations.synop",
     "language": "en",
     "retention": "P30D",
@@ -11,7 +11,7 @@
     "themes": [
         {
             "concepts": [
-                {"id": "weather", "label": "weather"}
+                {"id": "weather", "label": "Weather"}
             ],
             "scheme": "https://github.com/wmo-im/wis2-topic-hierarchy/blob/main/topic-hierarchy/earth-system-discipline/index.csv"
         }

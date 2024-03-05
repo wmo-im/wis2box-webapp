@@ -1,8 +1,8 @@
 {
     "label": "weater/forecast/medium-range/probabilistic",
     "title": "Global medium-range probabilistic weather forecast data GRIB2",
-    "identifier": "urn:x-wmo:md:$CENTRE_ID:forecast.medium-range.probabilistic.global",
-    "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.forecast.medium-range.probabilistic.global",
+    "identifier": "urn:wmo:md:$CENTRE_ID:forecast.medium-range.probabilistic.global",
+    "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.prediction.forecast.medium-range.probabilistic.global",
     "language": "en",
     "retention": "P30D",
     "resolution": "P1H",

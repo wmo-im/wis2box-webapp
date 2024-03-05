@@ -1,7 +1,7 @@
 {
     "label": "weather/advisories-warnings",
     "title": "Advisories and Warnings using CAP XML format",
-    "identifier": "urn:x-wmo:md:$CENTRE_ID:advisories-warnings",
+    "identifier": "urn:wmo:md:$CENTRE_ID:advisories-warnings",
     "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.advisories-warnings",
     "language": "en",
     "retention": "P30D",
