@@ -491,7 +491,7 @@ export default defineComponent({
         // Default value of the form, not an exhaustive list of all fields
         const defaults = {
             identification: {
-                identifier: 'urn:x-wmo:md:',
+                identifier: 'urn:wmo:md:',
                 keywords: [],
                 wmoDataPolicy: 'core',
                 concept: ['weather'],
@@ -1184,10 +1184,6 @@ export default defineComponent({
         // Submits the metadata to the wis2box OAPI endpoint
         const submitMetadata = async () => {
             try {
-                // The method will be post or put depending on whether we
-                // are submitting new metadata or updating existing 
-                // metadata respectively.
-                const method = isNew.value ? 'POST' : 'PUT';
                 // Add authentication token to the headers
                 const headers = {
                     'Content-Type': 'application/json',
@@ -1196,8 +1192,8 @@ export default defineComponent({
                 // Convert the form data to an object adhering to the WCMP2 schema
                 const schemaModel = transformToSchema(model.value);
                 // Send the data to the OAPI endpoint
-                const response = await fetch(`${oapi}/collections/discovery-metadata/items`, {
-                    method: method,
+                const response = await fetch(`${oapi}/collections/discovery-metadata/items/${model.value.identification.identifier}`, {
+                    method: 'POST',
                     headers: headers,
                     body: JSON.stringify(schemaModel)
                 });
