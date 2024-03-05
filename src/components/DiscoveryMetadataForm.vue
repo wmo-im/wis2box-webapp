@@ -22,8 +22,22 @@
                                 @click="openInitialHelpDialog = true" />
                         </v-card-title>
                         <v-card-text>
-                            <v-text-field v-model="model.identification.centreID" label="Centre ID"
-                                variant="outlined"></v-text-field>
+                            <v-row>
+                                <v-col cols="8">
+                                    <!-- If centre registered, show official list -->
+                                    <v-autocomplete v-if="!unregisteredCentre"
+                                    v-model="model.identification.centreID" :items="officialCentres"
+                                        label="Centre ID" variant="outlined"></v-autocomplete>
+                                    <!-- Otherwise, allow user to enter freetext
+                                    but enforce a 'test-' prefix -->
+                                    <v-text-field v-if="unregisteredCentre"
+                                    v-model="model.identification.centreID" label="Centre ID"
+                                        variant="outlined"></v-text-field>
+                                </v-col>
+                                <v-col cols="4">
+                                    <v-checkbox label="Unregistered" v-model="unregisteredCentre" color="#003DA5"/>
+                                </v-col>
+                            </v-row>
                             <v-select v-model="selectedTemplate" :items="templateFiles" item-title="label" return-object
                                 label="Data Type" variant="outlined"></v-select>
                         </v-card-text>
@@ -145,7 +159,7 @@
                             </p>
                         </v-col>
                         <v-col cols="2">
-                            <v-switch v-model="isEndDateDisabled" label="Dataset ongoing" color="#003DA5"></v-switch>
+                            <v-checkbox v-model="isEndDateDisabled" label="Dataset ongoing" color="#003DA5"/>
                         </v-col>
                         <v-col cols="3">
                             <v-row dense>
@@ -252,8 +266,8 @@
                     </v-card-title>
                     <v-row>
                         <v-col cols="12">
-                            <v-text-field label="wis2box auth token for 'collections/discovery-metadata'" v-model="token" rows="1"
-                                :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'"
+                            <v-text-field label="wis2box auth token for 'collections/discovery-metadata'"
+                                v-model="token" rows="1" :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'"
                                 :type="showToken ? 'text' : 'password'" @click:append="showToken = !showToken"
                                 variant="outlined">
                             </v-text-field>
@@ -268,10 +282,6 @@
                         Reset
                     </v-btn>
                     <v-spacer />
-                    <v-btn color="#009900" class="ma-2" title="Validate" @click="validateMetadata"
-                        v-if="!metadataValidated" append-icon="mdi-check-bold">
-                        Validate
-                    </v-btn>
 
                     <v-btn color="#E09D00" class="ma-2" title="Export" @click="downloadMetadata"
                         append-icon="mdi-arrow-down-bold-box-outline">
@@ -279,7 +289,7 @@
                     </v-btn>
 
                     <v-btn color="#64BF40" class="ma-2" title="Submit" @click="submitMetadata"
-                        :disabled="!formFilledAndValidated" v-if="metadataValidated" append-icon="mdi-cloud-upload">
+                        :disabled="!formFilledUpdatedAndAuthenticated" append-icon="mdi-cloud-upload">
                         Submit
                     </v-btn>
                 </v-row>
@@ -302,7 +312,8 @@
                         <p>To begin creating a new dataset, we require some initial information in order to pre-fill the
                             form.</p>
                         <br>
-                        <p><b>Centre ID:</b> The agency acronym (in lower case), as specified by member.</p>
+                        <p><b>Centre ID:</b> The agency acronym (in lower case), as specified by member. This is ideally chosen from the official list. However, if the centre is unregistered you may enter
+                        any centre ID, provided it begins with 'test-'.</p>
                         <br>
                         <p><b>Data Type:</b> The type of data you are creating metadata for. <i>If 'other' is selected,
                                 more
@@ -431,15 +442,15 @@
                     <v-card-item>
                         <v-card-title class="d-flex justify-space-between">
                             Authentication Token
-                            <v-btn icon="mdi-close" variant="text" size="small"
-                                @click="openTokenHelpDialog = false" />
+                            <v-btn icon="mdi-close" variant="text" size="small" @click="openTokenHelpDialog = false" />
                         </v-card-title>
                         <v-card-subtitle>
                             What is this section for?
                         </v-card-subtitle>
                     </v-card-item>
                     <v-card-text>
-                        <p>In order to submit this data to the wis2box, you must provide a valid authentication token for the collections/discovery-metadata path.</p>
+                        <p>In order to submit this data to the wis2box, you must provide a valid authentication token
+                            for the collections/discovery-metadata path.</p>
                         <br>
                     </v-card-text>
                 </v-card>
@@ -465,6 +476,7 @@ import BboxEditor from "@/components/BboxEditor.vue";
 
 import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { VCard, VForm, VBtn, VChipGroup, VChip } from 'vuetify/lib/components/index.mjs';
+import Papa from 'papaparse';
 
 const oapi = import.meta.env.VITE_API_URL;
 
@@ -550,6 +562,7 @@ export default defineComponent({
         const metadataLoaded = ref(false);
         const metadataValidated = ref(false);
         const formFilled = ref(true);
+        const formUpdated = ref(false);
         // If no datasets can be found and the user must create a new one, disable the dataset selection
         const datasetSpecified = ref(false);
         // Messages to display to user (this changes overtime)
@@ -558,6 +571,8 @@ export default defineComponent({
         const items = ref([]);
         // Dialog window
         const showInitialDialog = ref(false);
+        const unregisteredCentre = ref(false);
+        const officialCentres = ref([]);
         const templateFiles = ref([]);
         const selectedTemplate = ref(null);
         // Identifier of the selected dataset, used to load metadata from OAPI
@@ -632,9 +647,10 @@ export default defineComponent({
             return null;
         });
 
-        // Controls which parts of the page are displayed
-        const formFilledAndValidated = computed(() => {
-            return formFilled.value && metadataValidated.value;
+        // Controls which parts of the page are enabled,
+        // in particular the submit button
+        const formFilledUpdatedAndAuthenticated = computed(() => {
+            return formFilled.value && formUpdated.value && token.value;
         });
 
         // Methods
@@ -662,6 +678,27 @@ export default defineComponent({
             // Now add the option to create a new dataset, regardless of whether
             // the list could be loaded or not
             items.value.push('Create New...');
+        };
+
+        // Fetches a list of official centres from the OAPI and updates the list
+        const loadCentres = async () => {
+            try {
+                // Get list of official centres from wis2box
+                const response = await fetch("https://raw.githubusercontent.com/wmo-im/wis2-topic-hierarchy/main/topic-hierarchy/centre-id.csv");
+                if (!response.ok) {
+                    throw new Error('Network response was not okay, failed to load official centres list.');
+                }
+                // Get CSV response and parse it into an object
+                const responseData = await response.text();
+                const parsed = Papa.parse(responseData, { header: true });
+                officialCentres.value = parsed.data.map(item => item.Name);
+                // Remove any empty strings from the list
+                officialCentres.value = officialCentres.value.filter(item => item);
+            } catch (error) {
+                console.error(error);
+                // Display error message to the user
+                message.value = 'Error loading official centres list.';
+            }
         };
 
         // Loads the data type templates
@@ -801,6 +838,8 @@ export default defineComponent({
                         updateBbox();
                         // As form was loaded, it must be already validated
                         metadataValidated.value = true;
+                        // ...But it hasn't been updated yet
+                        formUpdated.value = false;
                     }, 500); // Delay of 0.5 seconds
                 } catch (error) {
                     console.log(error);
@@ -1030,7 +1069,7 @@ export default defineComponent({
             const startDate = getDateFrom(form.extents.dateStarted);
             // Note: the end date defaults to ".." if the dataset is ongoing
             let endDate = "..";
-            if (form.extents.dateStopped) {
+            if (form.extents.dateStopped !== "NaN-NaN-NaN") {
                 endDate = getDateFrom(form.extents.dateStopped);
             }
             schemaModel.time.interval = [startDate, endDate];
@@ -1058,6 +1097,7 @@ export default defineComponent({
             // Properties information
             schemaModel.properties = {};
             schemaModel.properties.type = "dataset";
+            schemaModel.properties.language = null;
             schemaModel.properties.title = form.identification.title;
             schemaModel.properties.description = form.identification.description;
             schemaModel.properties.keywords = form.identification.keywords;
@@ -1099,9 +1139,11 @@ export default defineComponent({
                 roles: ["host"]
             });
 
-            // How should we approach the creation date?
             schemaModel.properties.updated = new Date().toISOString();
             schemaModel.properties["wmo:dataPolicy"] = form.identification.wmoDataPolicy;
+            schemaModel.properties["wmo:topicHierarchy"] = form.identification.topicHierarchy;
+            schemaModel.properties.id = form.identification.identifier;
+
 
 
             // Links information
@@ -1123,49 +1165,50 @@ export default defineComponent({
         };
 
         // Validate the metadata generated by the format against the WCMP2 schema
-        const validateMetadata = async () => {
-            // Push the form data transformed to the schema format
-            try {
-                const schemaModel = transformToSchema(model.value);
-                const response = await fetch(`${oapi}/processes/pywcmp-wis2-wcmp2-ets/execution`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "inputs": {
-                            "record": schemaModel
-                        }
-                    })
-                })
+        // NOTE: This shall be commented out indefinitely
+        // const validateMetadata = async () => {
+        //     // Push the form data transformed to the schema format
+        //     try {
+        //         const schemaModel = transformToSchema(model.value);
+        //         const response = await fetch(`${oapi}/processes/pywcmp-wis2-wcmp2-ets/execution`, {
+        //             method: 'POST',
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify({
+        //                 "inputs": {
+        //                     "record": schemaModel
+        //                 }
+        //             })
+        //         })
 
-                if (!response.ok) {
-                    throw new Error('Network response was not okay, failed to validate discovery metadata.');
-                }
+        //         if (!response.ok) {
+        //             throw new Error('Network response was not okay, failed to validate discovery metadata.');
+        //         }
 
-                const responseData = await response.json();
+        //         const responseData = await response.json();
 
-                // If there is a code in the response, then the validation failed
-                if ("code" in responseData) {
-                    // Display the error message to the user
-                    message.value = `Discovery metadata not valid: ${responseData.message}`;
-                    // Temporary set the validation state to true regardless
-                    metadataValidated.value = true;
-                }
-                else {
-                    // Otherwise, the validation succeeded
-                    message.value = "Discovery metadata validated successfully.";
-                    metadataValidated.value = true;
-                }
-                // Open a dialog window to show this message clearly
-                openMessageDialog.value = true;
-            } catch (error) {
-                console.error(error);
-                message.value = "Error validating discovery metadata.";
-                // Temporary set the validation state to true regardless
-                metadataValidated.value = true;
-            }
-        };
+        //         // If there is a code in the response, then the validation failed
+        //         if ("code" in responseData) {
+        //             // Display the error message to the user
+        //             message.value = `Discovery metadata not valid: ${responseData.message}`;
+        //             // Temporary set the validation state to true regardless
+        //             metadataValidated.value = true;
+        //         }
+        //         else {
+        //             // Otherwise, the validation succeeded
+        //             message.value = "Discovery metadata validated successfully.";
+        //             metadataValidated.value = true;
+        //         }
+        //         // Open a dialog window to show this message clearly
+        //         openMessageDialog.value = true;
+        //     } catch (error) {
+        //         console.error(error);
+        //         message.value = "Error validating discovery metadata.";
+        //         // Temporary set the validation state to true regardless
+        //         metadataValidated.value = true;
+        //     }
+        // };
 
         // Generates a downloadable JSON file from the filled and validated form, which follows the WCMP2 schema
         const downloadMetadata = () => {
@@ -1191,9 +1234,9 @@ export default defineComponent({
                 };
                 // Convert the form data to an object adhering to the WCMP2 schema
                 const schemaModel = transformToSchema(model.value);
-                // Send the data to the OAPI endpoint
+                // Send the data to the OAPI endpoint using PUT
                 const response = await fetch(`${oapi}/collections/discovery-metadata/items/${model.value.identification.identifier}`, {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: headers,
                     body: JSON.stringify(schemaModel)
                 });
@@ -1202,10 +1245,10 @@ export default defineComponent({
                     throw new Error('Network response was not okay, failed to submit discovery metadata.');
                 }
 
-                const SUCCESSFUL_SUBMISSION = 201;
-                const SUCCESSFUL_UPDATE = 204;
-                // If post/put successful, redirect user to home page
-                if ((isNew.value && response.status == SUCCESSFUL_SUBMISSION) || (!isNew.value && response.status === SUCCESSFUL_UPDATE)) {
+                const NO_CONTENT = 204;
+                // If no content is returned from the fetch, then the put request is successful.
+                // In this case, redirect the user to the home page
+                if (response.status == NO_CONTENT) {
                     window.location.href = "/"
                 }
                 // Otherwise, show a message with the description of the response
@@ -1225,11 +1268,23 @@ export default defineComponent({
         // Mounted
         onMounted(() => {
             loadList();
+            loadCentres();
             loadTemplates();
             loadCodes();
         });
 
         // Watched
+
+        // If user states that the centre is unregistered, begin the centre ID
+        // with 'test-'. If the user changes their mind, remove this prefix
+        watch(() => unregisteredCentre.value, () => {
+            if (unregisteredCentre.value) {
+                model.value.identification.centreID = "test-";
+            }
+            else {
+                model.value.identification.centreID = model.value.identification.centreID.replace("test-", "");
+            }
+        });
 
         // If the user changes the data policy, update the topic hierarcy
         // using the template
@@ -1239,10 +1294,10 @@ export default defineComponent({
             }
         });
 
-        // Set the validation state to false when the user makes a change to the form
+        // Disable the submit button until a change is made to the form
         watch(() => deepClone(model.value), (oldVal, newVal) => {
             if (oldVal !== newVal) {
-                metadataValidated.value = false;
+                formUpdated.value = true;
             }
         });
 
@@ -1269,10 +1324,13 @@ export default defineComponent({
             metadataLoaded,
             metadataValidated,
             formFilled,
+            formUpdated,
             datasetSpecified,
             message,
             items,
             showInitialDialog,
+            unregisteredCentre,
+            officialCentres,
             templateFiles,
             dialogFilled,
             filteredCountryCodeList,
@@ -1299,7 +1357,7 @@ export default defineComponent({
             openDistribHelpDialog,
             openTokenHelpDialog,
             openMessageDialog,
-            formFilledAndValidated,
+            formFilledUpdatedAndAuthenticated,
             loadList,
             loadMetadata,
             continueToForm,
@@ -1309,7 +1367,6 @@ export default defineComponent({
             addKeyword,
             removeKeyword,
             resetMetadata,
-            validateMetadata,
             downloadMetadata,
             submitMetadata
         }
