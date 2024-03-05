@@ -60,17 +60,19 @@
                             </v-row>
                             <v-row dense>
                                 <v-col cols="12">
-                                    <v-text-field label="Identifier" type="string" v-model="model.identification.identifier"
-                                        :rules="[rules.required]" variant="outlined" clearable
+                                    <v-text-field label="Identifier" type="string"
+                                        v-model="model.identification.identifier" :rules="[rules.required]"
+                                        variant="outlined" clearable
                                         :disabled="selectedTemplate?.label !== 'other'"></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-col>
 
                         <v-col cols="6">
-                            <v-textarea label="Description" placeholder="Please enter a detailed description of the dataset"
-                                type="string" v-model="model.identification.description" :rules="[rules.required]"
-                                variant="outlined" clearable></v-textarea>
+                            <v-textarea label="Description"
+                                placeholder="Please enter a detailed description of the dataset" type="string"
+                                v-model="model.identification.description" :rules="[rules.required]" variant="outlined"
+                                clearable></v-textarea>
                         </v-col>
                     </v-row>
                     <v-row>
@@ -92,8 +94,8 @@
                         it is autofilled -->
                         <v-col cols="6">
                             <v-text-field label="Topic Hierarchy" type="string"
-                                v-model="model.identification.topicHierarchy" :rules="[rules.required]" variant="outlined"
-                                :disabled="selectedTemplate?.label !== 'other'"></v-text-field>
+                                v-model="model.identification.topicHierarchy" :rules="[rules.required]"
+                                variant="outlined" :disabled="selectedTemplate?.label !== 'other'"></v-text-field>
                         </v-col>
 
                     </v-row>
@@ -109,8 +111,8 @@
                                         @keyup.enter="addKeyword" variant="outlined" clearable></v-text-field>
                                 </v-col>
                                 <v-col cols="1">
-                                    <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large" @click="addKeyword"
-                                        :disabled="keyword == ''"></v-btn>
+                                    <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large"
+                                        @click="addKeyword" :disabled="keyword == ''"></v-btn>
                                 </v-col>
                                 <v-col cols="7">
                                     <v-chip-group :rules="[rules.required, rules.keywords]">
@@ -132,15 +134,15 @@
                     <v-row>
                         <v-col cols="3">
                             <VueDatePicker placeholder="Begin Date in UTC" v-model="model.extents.dateStarted"
-                                :teleport="true" :enable-time-picker="false"
-                                format="yyyy/MM/dd"
-                                auto-apply required />
+                                :teleport="true" :enable-time-picker="false" format="yyyy-MM-dd" auto-apply required />
                         </v-col>
                         <v-col cols="3">
                             <VueDatePicker placeholder="End Date in UTC" v-model="model.extents.dateStopped"
-                                :teleport="true" :enable-time-picker="false"
-                                format="yyyy/MM/dd"
-                                :disabled="isEndDateDisabled" auto-apply required />
+                                :teleport="true" :enable-time-picker="false" format="yyyy-MM-dd"
+                                :disabled="isEndDateDisabled" :state="endDatePossible" auto-apply required />
+                            <p v-if="endDatePossible === false" class="hint-text hint-invalid">End date cannot be before
+                                the start date!
+                            </p>
                         </v-col>
                         <v-col cols="2">
                             <v-switch v-model="isEndDateDisabled" label="Dataset ongoing" color="#003DA5"></v-switch>
@@ -169,9 +171,9 @@
                             <v-row>
                                 <v-col cols="12">
                                     <!-- Allow the user to select a country different to that of the POC for the auto bbox -->
-                                    <v-autocomplete label="Choose an automatic bounding box (optional)" item-title="name"
-                                        item-value="alpha-3" :items="filteredCountryCodeList" v-model="bboxCountry"
-                                        @update:modelValue="getAutoBbox(bboxCountry)"
+                                    <v-autocomplete label="Choose an automatic bounding box (optional)"
+                                        item-title="name" item-value="alpha-3" :items="filteredCountryCodeList"
+                                        v-model="bboxCountry" @update:modelValue="getAutoBbox(bboxCountry)"
                                         hint="Your country may not have an automatic bounding box" persistent-hint
                                         variant="outlined"></v-autocomplete>
                                 </v-col>
@@ -179,26 +181,26 @@
                             <v-row style="height: 50px;"></v-row>
                             <v-row style="height: 70px;">
                                 <v-col cols="6">
-                                    <v-text-field label="North Latitude" type="number" v-model="model.extents.northLatitude"
-                                        :rules="[rules.required, rules.latitude]" variant="outlined"
-                                        clearable></v-text-field>
+                                    <v-text-field label="North Latitude" type="number"
+                                        v-model="model.extents.northLatitude" :rules="[rules.required, rules.latitude]"
+                                        variant="outlined" clearable></v-text-field>
                                 </v-col>
                                 <v-col cols="6">
-                                    <v-text-field label="South Latitude" type="number" v-model="model.extents.southLatitude"
-                                        :rules="[rules.required, rules.latitude]" variant="outlined"
-                                        clearable></v-text-field>
+                                    <v-text-field label="South Latitude" type="number"
+                                        v-model="model.extents.southLatitude" :rules="[rules.required, rules.latitude]"
+                                        variant="outlined" clearable></v-text-field>
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col cols="6">
-                                    <v-text-field label="East Longitude" type="number" v-model="model.extents.eastLongitude"
-                                        :rules="[rules.required, rules.longitude]" variant="outlined"
-                                        clearable></v-text-field>
+                                    <v-text-field label="East Longitude" type="number"
+                                        v-model="model.extents.eastLongitude" :rules="[rules.required, rules.longitude]"
+                                        variant="outlined" clearable></v-text-field>
                                 </v-col>
                                 <v-col cols="6">
-                                    <v-text-field label="West Longitude" type="number" v-model="model.extents.westLongitude"
-                                        :rules="[rules.required, rules.longitude]" variant="outlined"
-                                        clearable></v-text-field>
+                                    <v-text-field label="West Longitude" type="number"
+                                        v-model="model.extents.westLongitude" :rules="[rules.required, rules.longitude]"
+                                        variant="outlined" clearable></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-col>
@@ -211,7 +213,8 @@
                     <!-- Contact (POC) section -->
                     <v-card-title>
                         Host Contact Information
-                        <v-btn icon="mdi-comment-question" variant="text" size="small" @click="openPocHelpDialog = true" />
+                        <v-btn icon="mdi-comment-question" variant="text" size="small"
+                            @click="openPocHelpDialog = true" />
                     </v-card-title>
                     <v-row>
                         <v-col cols="4">
@@ -225,8 +228,9 @@
                         <v-col cols="4">
                             <!-- The POC country is disabled as it was selected
                             already in the dialog -->
-                            <v-autocomplete label="Country" item-title="name" item-value="alpha-3" :items="countryCodeList"
-                                v-model="model.poc.country" :rules="[rules.required]" variant="outlined"></v-autocomplete>
+                            <v-autocomplete label="Country" item-title="name" item-value="alpha-3"
+                                :items="countryCodeList" v-model="model.poc.country" :rules="[rules.required]"
+                                variant="outlined"></v-autocomplete>
                         </v-col>
                     </v-row>
                     <v-row>
@@ -240,6 +244,21 @@
                                 class="hint-text hint-invalid">Phone number is not valid</p>
                         </v-col>
                     </v-row>
+
+                    <!-- Authentication token section -->
+                    <v-card-title>Authentication Token
+                        <v-btn icon="mdi-comment-question" variant="text" size="small"
+                            @click="openTokenHelpDialog = true" />
+                    </v-card-title>
+                    <v-row>
+                        <v-col cols="12">
+                            <v-text-field label="wis2box auth token for 'collections/discovery-metadata'" v-model="token" rows="1"
+                                :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'"
+                                :type="showToken ? 'text' : 'password'" @click:append="showToken = !showToken"
+                                variant="outlined">
+                            </v-text-field>
+                        </v-col>
+                    </v-row>
                 </v-form>
 
                 <!-- Toolbar for user to reset, validate, export, or submit the metadata
@@ -249,8 +268,8 @@
                         Reset
                     </v-btn>
                     <v-spacer />
-                    <v-btn color="#009900" class="ma-2" title="Validate" @click="validateMetadata" v-if="!metadataValidated"
-                        append-icon="mdi-check-bold">
+                    <v-btn color="#009900" class="ma-2" title="Validate" @click="validateMetadata"
+                        v-if="!metadataValidated" append-icon="mdi-check-bold">
                         Validate
                     </v-btn>
 
@@ -272,7 +291,8 @@
                     <v-card-item>
                         <v-card-title class="d-flex justify-space-between">
                             Initial Information
-                            <v-btn icon="mdi-close" variant="text" size="small" @click="openInitialHelpDialog = false" />
+                            <v-btn icon="mdi-close" variant="text" size="small"
+                                @click="openInitialHelpDialog = false" />
                         </v-card-title>
                         <v-card-subtitle>
                             What is this section for?
@@ -284,7 +304,8 @@
                         <br>
                         <p><b>Centre ID:</b> The agency acronym (in lower case), as specified by member.</p>
                         <br>
-                        <p><b>Data Type:</b> The type of data you are creating metadata for. <i>If 'other' is selected, more
+                        <p><b>Data Type:</b> The type of data you are creating metadata for. <i>If 'other' is selected,
+                                more
                                 fields will have to be manually filled.</i></p>
                         <br>
                     </v-card-text>
@@ -293,7 +314,8 @@
             <v-dialog v-model="openIdentificationHelpDialog" max-width="600px">
                 <v-card>
                     <v-toolbar title="Dataset Identification" color="#003DA5">
-                        <v-btn icon="mdi-close" variant="text" size="small" @click="openIdentificationHelpDialog = false" />
+                        <v-btn icon="mdi-close" variant="text" size="small"
+                            @click="openIdentificationHelpDialog = false" />
                     </v-toolbar>
                     <v-card-subtitle>
                         How do I complete this section?
@@ -310,7 +332,8 @@
                         <br>
                         <p><b>Centre ID:</b> This was already filled earlier and <i>cannot be edited</i>.</p>
                         <br>
-                        <p><b>WMO Data Policy:</b> Classification code of core or recommended based on the WMO Unified Data
+                        <p><b>WMO Data Policy:</b> Classification code of core or recommended based on the WMO Unified
+                            Data
                             Policy.</p>
                         <br>
                         <p><b>Topic Hierarchy:</b> The unique hierarchy for this data.</p>
@@ -321,8 +344,10 @@
                             knowledge organization
                             system used to classify the resource.</p>
                         <br>
-                        <p><b>Keywords:</b> A list of at least three keywords, tags or specific phrases associated with the
-                            resource, but are not referenced to a particular vocabulary or knowledge organization system.
+                        <p><b>Keywords:</b> A list of at least three keywords, tags or specific phrases associated with
+                            the
+                            resource, but are not referenced to a particular vocabulary or knowledge organization
+                            system.
                         </p>
                         <br>
                     </v-card-text>
@@ -341,9 +366,11 @@
                         <br>
                         <p><b>End Date:</b> The date in UTC when the dataset ends.</p>
                         <br>
-                        <p><b>Temporal Resolution:</b> The smallest increment of time that is represented in the dataset.
+                        <p><b>Temporal Resolution:</b> The smallest increment of time that is represented in the
+                            dataset.
                         </p>
-                        <p>This is split into two parts, the <b>value</b> (e.g. 1) and the <b>unit</b> (e.g. 'hour(s)').</p>
+                        <p>This is split into two parts, the <b>value</b> (e.g. 1) and the <b>unit</b> (e.g. 'hour(s)').
+                        </p>
                         <br>
                     </v-card-text>
                 </v-card>
@@ -360,10 +387,12 @@
                         <p>This section describes the general bounding spatial extent of the dataset in the geographic
                             coordinate system. This can be created either:</p>
                         <br>
-                        <p><b>Automatically:</b> By using the country dropdown (note that your country may not be found on
+                        <p><b>Automatically:</b> By using the country dropdown (note that your country may not be found
+                            on
                             this list).</p>
                         <br>
-                        <p><b>Manually:</b> By the entering the northmost, eastmost, southmost, and westmost coordinates of
+                        <p><b>Manually:</b> By the entering the northmost, eastmost, southmost, and westmost coordinates
+                            of
                             the dataset.</p>
                         <br>
                         <p><i><b>Warning: The automatic bounding box created may be incorrect for the country, so please
@@ -392,7 +421,26 @@
                         <br>
                         <p><b>Email:</b> The email address of the point of contact.</p>
                         <br>
-                        <p><b>Phone Number:</b> The phone number of the point of contact, written in international format (+).</p>
+                        <p><b>Phone Number:</b> The phone number of the point of contact, written in international
+                            format (+).</p>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+            <v-dialog v-model="openTokenHelpDialog" max-width="600px">
+                <v-card>
+                    <v-card-item>
+                        <v-card-title class="d-flex justify-space-between">
+                            Authentication Token
+                            <v-btn icon="mdi-close" variant="text" size="small"
+                                @click="openTokenHelpDialog = false" />
+                        </v-card-title>
+                        <v-card-subtitle>
+                            What is this section for?
+                        </v-card-subtitle>
+                    </v-card-item>
+                    <v-card-text>
+                        <p>In order to submit this data to the wis2box, you must provide a valid authentication token for the collections/discovery-metadata path.</p>
+                        <br>
                     </v-card-text>
                 </v-card>
             </v-dialog>
@@ -535,6 +583,10 @@ export default defineComponent({
         const keyword = ref("");
         // Metadata form to be filled
         const model = ref({ 'identification': {}, 'extents': {}, 'poc': {}, 'distrib': {}, 'settings': {} });
+        // Execution token to be entered by user
+        const token = ref(null);
+        // Variable to control whether token is seen or not
+        const showToken = ref(false);
         // Help dialog windows
         const openInitialHelpDialog = ref(false);
         const openIdentificationHelpDialog = ref(false);
@@ -542,6 +594,7 @@ export default defineComponent({
         const openSpatialHelpDialog = ref(false);
         const openPocHelpDialog = ref(false);
         const openDistribHelpDialog = ref(false);
+        const openTokenHelpDialog = ref(false);
 
         // Message dialog window
         const openMessageDialog = ref(false);
@@ -565,6 +618,18 @@ export default defineComponent({
             // Add this global option to the start of the list
             filteredList.unshift(global);
             return filteredList;
+        });
+
+        // If the end date is specified, is it after the start date
+        // Note: The nested if statements are written this way to avoid this boolean ever being true
+        // (this makes the datepicker component show a green border which is not desired)
+        const endDatePossible = computed(() => {
+            if (model.value.extents.dateStopped) {
+                if (new Date(model.value.extents.dateStopped) <= new Date(model.value.extents.dateStarted)) {
+                    return false;
+                }
+            }
+            return null;
         });
 
         // Controls which parts of the page are displayed
@@ -1119,36 +1184,32 @@ export default defineComponent({
         // Submits the metadata to the wis2box OAPI endpoint
         const submitMetadata = async () => {
             try {
-                let response;
-                // If metadata is new, post the schema formatted version to the OAPI
-                if (isNew.value) {
-                    const schemaModel = transformToSchema(model.value);
-                    response = await fetch(`${oapi}/collections/discovery-metadata/items`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(schemaModel)
-                    })
-                }
-                // If updating existing metadata, put the schema formatted version to the OAPI
-                else {
-                    const schemaModel = transformToSchema(model.value);
-                    response = await fetch(`${oapi}/collections/discovery-metadata/items/${identifier.value}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(schemaModel)
-                    })
-                }
+                // The method will be post or put depending on whether we
+                // are submitting new metadata or updating existing 
+                // metadata respectively.
+                const method = isNew.value ? 'POST' : 'PUT';
+                // Add authentication token to the headers
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'authorization': 'Bearer ' + token.value
+                };
+                // Convert the form data to an object adhering to the WCMP2 schema
+                const schemaModel = transformToSchema(model.value);
+                // Send the data to the OAPI endpoint
+                const response = await fetch(`${oapi}/collections/discovery-metadata/items`, {
+                    method: method,
+                    headers: headers,
+                    body: JSON.stringify(schemaModel)
+                });
                 // Check response from OAPI
                 if (!response.ok) {
                     throw new Error('Network response was not okay, failed to submit discovery metadata.');
                 }
 
+                const SUCCESSFUL_SUBMISSION = 201;
+                const SUCCESSFUL_UPDATE = 204;
                 // If post/put successful, redirect user to home page
-                if ((isNew.value && response.status === 201) || (!isNew.value && response.status === 204)) {
+                if ((isNew.value && response.status == SUCCESSFUL_SUBMISSION) || (!isNew.value && response.status === SUCCESSFUL_UPDATE)) {
                     window.location.href = "/"
                 }
                 // Otherwise, show a message with the description of the response
@@ -1225,18 +1286,22 @@ export default defineComponent({
             countryCodeList,
             isNew,
             isEndDateDisabled,
+            endDatePossible,
             bounds,
             bboxCountry,
             isPocPhoneValid,
             isDistribPhoneValid,
             keyword,
             model,
+            token,
+            showToken,
             openInitialHelpDialog,
             openIdentificationHelpDialog,
             openTemporalHelpDialog,
             openSpatialHelpDialog,
             openPocHelpDialog,
             openDistribHelpDialog,
+            openTokenHelpDialog,
             openMessageDialog,
             formFilledAndValidated,
             loadList,

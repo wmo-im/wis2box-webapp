@@ -117,12 +117,6 @@ export default defineComponent({
                 // Shows a marker as a size 1 cluster
                 singleMarkerMode: true
             });
-            // clusters.on('clusterclick', function (a) {
-            //     var markers = a.layer.getAllChildMarkers();
-            //     var id = markers[0].id;
-            //     var title = '<a>' + `${import.meta.env.VITE_API_URL}/collections/messages/items/${id}` + '</a>';
-            //     map.value.openPopup(title, a.layer.getLatLng());
-            // });
             clusters.addTo(map.value);
             stationLayer.value = clusters;
             // Update markers then cluster
