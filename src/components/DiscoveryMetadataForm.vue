@@ -57,7 +57,7 @@
 
             <v-card class="mt-3 pa-3">
                 <!-- Form which when filled and validated, can be exported or submitted -->
-                <v-form v-model="formFilled" v-if="metadataLoaded" validate-on="blur">
+                <v-form v-model="formFilled" v-if="metadataLoaded" validate-on="input">
                     <!-- Identification section -->
                     <v-card-title>
                         Dataset Identification
@@ -469,6 +469,9 @@
             </v-dialog>
         </v-col>
     </v-row>
+    <p>Filled? {{ formFilled }}</p>
+    <p>Updated? {{ formUpdated }}</p>
+    <p>Token: {{ token }}</p>
 </template>
 
 <script>
