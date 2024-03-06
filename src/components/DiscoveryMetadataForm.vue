@@ -426,7 +426,7 @@
                         <br>
                         <p><b>Organization Name:</b> The name of the organization.</p>
                         <br>
-                        <p><b>URL:</b> The URL to the organization homepage.</p>
+                        <p><b>URL:</b> The URL to the organization homepage, including the <i>http</i> or <i>https</i> prefix.</p>
                         <br>
                         <p><b>Country:</b> The country of the point of contact.</p>
                         <br>
@@ -469,9 +469,6 @@
             </v-dialog>
         </v-col>
     </v-row>
-    <p>Filled? {{ formFilled }}</p>
-    <p>Updated? {{ formUpdated }}</p>
-    <p>Token: {{ token }}</p>
 </template>
 
 <script>
