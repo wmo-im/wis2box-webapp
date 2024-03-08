@@ -24,18 +24,15 @@
                         <v-card-text>
                             <v-row>
                                 <v-col cols="8">
+                                    <!-- Allow user to enter free text -->
+                                    <v-text-field v-if="!registeredCentre" v-model="model.identification.centreID"
+                                        label="Centre ID" variant="outlined"></v-text-field>
                                     <!-- If centre registered, show official list -->
-                                    <v-autocomplete v-if="!unregisteredCentre"
-                                    v-model="model.identification.centreID" :items="officialCentres"
-                                        label="Centre ID" variant="outlined"></v-autocomplete>
-                                    <!-- Otherwise, allow user to enter freetext
-                                    but enforce a 'test-' prefix -->
-                                    <v-text-field v-if="unregisteredCentre"
-                                    v-model="model.identification.centreID" label="Centre ID"
-                                        variant="outlined"></v-text-field>
+                                    <v-autocomplete v-if="registeredCentre" v-model="model.identification.centreID"
+                                        :items="officialCentres" label="Centre ID" variant="outlined"></v-autocomplete>
                                 </v-col>
                                 <v-col cols="4">
-                                    <v-checkbox label="Unregistered" v-model="unregisteredCentre" color="#003DA5"/>
+                                    <v-checkbox label="Registered" v-model="registeredCentre" color="#003DA5" />
                                 </v-col>
                             </v-row>
                             <v-select v-model="selectedTemplate" :items="templateFiles" item-title="label" return-object
@@ -116,7 +113,8 @@
                     <v-row>
                         <v-col cols="4">
                             <v-select label="Earth System Disciplines" v-model="model.identification.concepts" multiple
-                                :items="earthSystemDisciplines" variant="outlined"></v-select>
+                                :items="earthSystemDisciplines" item-title="description" item-value="name"
+                                variant="outlined"></v-select>
                         </v-col>
                         <v-col cols="8">
                             <v-row dense>
@@ -159,7 +157,7 @@
                             </p>
                         </v-col>
                         <v-col cols="2">
-                            <v-checkbox v-model="isEndDateDisabled" label="Dataset ongoing" color="#003DA5"/>
+                            <v-checkbox v-model="isEndDateDisabled" label="Dataset ongoing" color="#003DA5" />
                         </v-col>
                         <v-col cols="3">
                             <v-row dense>
@@ -312,8 +310,8 @@
                         <p>To begin creating a new dataset, we require some initial information in order to pre-fill the
                             form.</p>
                         <br>
-                        <p><b>Centre ID:</b> The agency acronym (in lower case), as specified by member. This is ideally chosen from the official list. However, if the centre is unregistered you may enter
-                        any centre ID, provided it begins with 'test-'.</p>
+                        <p><b>Centre ID:</b> The agency acronym (in lower case and no spaces), as specified by member.
+                            Optionally, you can select your centre ID from a list by selecting 'Registered'.</p>
                         <br>
                         <p><b>Data Type:</b> The type of data you are creating metadata for. <i>If 'other' is selected,
                                 more
@@ -426,7 +424,8 @@
                         <br>
                         <p><b>Organization Name:</b> The name of the organization.</p>
                         <br>
-                        <p><b>URL:</b> The URL to the organization homepage, including the <i>http</i> or <i>https</i> prefix.</p>
+                        <p><b>URL:</b> The URL to the organization homepage, including the <i>http</i> or <i>https</i>
+                            prefix.</p>
                         <br>
                         <p><b>Country:</b> The country of the point of contact.</p>
                         <br>
@@ -522,18 +521,6 @@ export default defineComponent({
             }
         };
 
-        // Fixed list of concepts from the Earth
-        // system discipline
-        const earthSystemDisciplines = [
-            'weather',
-            'climate',
-            'hydrology',
-            'atmospheric-composition',
-            'cryosphere',
-            'ocean',
-            'space-weather'
-        ];
-
         // Time durations for resolution
         const durations = [
             { name: 'minutes(s)', code: 'M' },
@@ -571,7 +558,7 @@ export default defineComponent({
         const items = ref([]);
         // Dialog window
         const showInitialDialog = ref(false);
-        const unregisteredCentre = ref(false);
+        const registeredCentre = ref(false);
         const officialCentres = ref([]);
         const templateFiles = ref([]);
         const selectedTemplate = ref(null);
@@ -581,6 +568,8 @@ export default defineComponent({
         const languageCodeList = ref([]);
         // List of country names, alph-2 codes, and alpha-3 codes
         const countryCodeList = ref([]);
+        // List of earth system disciplines
+        const earthSystemDisciplines = ref([]);
         // Object of country alpha-2 codes with bounding boxes
         const boundingBoxes = ref({});
         // Whether or not the metadata is new or existing
@@ -680,10 +669,11 @@ export default defineComponent({
             items.value.push('Create New...');
         };
 
-        // Fetches a list of official centres from the OAPI and updates the list
+        // Fetches a list of official centres from the topic hierarchy repository
+        // and updates the list
         const loadCentres = async () => {
             try {
-                // Get list of official centres from wis2box
+                // Get list of official centres from raw GitHub link
                 const response = await fetch("https://raw.githubusercontent.com/wmo-im/wis2-topic-hierarchy/main/topic-hierarchy/centre-id.csv");
                 if (!response.ok) {
                     throw new Error('Network response was not okay, failed to load official centres list.');
@@ -691,13 +681,39 @@ export default defineComponent({
                 // Get CSV response and parse it into an object
                 const responseData = await response.text();
                 const parsed = Papa.parse(responseData, { header: true });
-                officialCentres.value = parsed.data.map(item => item.Name);
+                const list = parsed.data.map(item => item.Name);
                 // Remove any empty strings from the list
-                officialCentres.value = officialCentres.value.filter(item => item);
+                officialCentres.value = list.filter(item => item);
             } catch (error) {
                 console.error(error);
                 // Display error message to the user
                 message.value = 'Error loading official centres list.';
+            }
+        };
+
+        // Fetches a list of earth system disciplines from the topic hierarchy
+        // repository and updates the list
+        const loadDisciplines = async () => {
+            try {
+                // Get earth system disciplines from raw GitHub link
+                const response = await fetch("https://raw.githubusercontent.com/wmo-im/wis2-topic-hierarchy/main/topic-hierarchy/earth-system-discipline/index.csv");
+                if (!response.ok) {
+                    throw new Error('Network response was not okay, failed to load earth system disciplines.');
+                }
+                // Get CSV response and parse it into an object
+                const responseData = await response.text();
+                const parsed = Papa.parse(responseData, { header: true });
+                console.log(parsed.data)
+                // Filter out any empty data (the final row of the CSV)
+                const filteredData = parsed.data.filter(item => item.Name && item.Description);
+                // Map this data into the correct format for the v-select component
+                earthSystemDisciplines.value = filteredData.map(item => ({
+                    name: item.Name, description: item.Description
+                }));
+            } catch (error) {
+                console.error(error);
+                // Display error message to the user
+                message.value = 'Error loading earth system disciplines list.';
             }
         };
 
@@ -714,7 +730,7 @@ export default defineComponent({
 
             // Also push the 'other' datatype label
             templateFiles.value.push({ 'label': 'other' });
-        }
+        };
 
         // When the metadata is loaded, it must be transformed to the format of the form
         // (this is because the form has a different structure to the schema)
@@ -1276,22 +1292,12 @@ export default defineComponent({
         onMounted(() => {
             loadList();
             loadCentres();
+            loadDisciplines();
             loadTemplates();
             loadCodes();
         });
 
         // Watched
-
-        // If user states that the centre is unregistered, begin the centre ID
-        // with 'test-'. If the user changes their mind, remove this prefix
-        watch(() => unregisteredCentre.value, () => {
-            if (unregisteredCentre.value) {
-                model.value.identification.centreID = "test-";
-            }
-            else {
-                model.value.identification.centreID = model.value.identification.centreID.replace("test-", "");
-            }
-        });
 
         // If the user changes the data policy, update the topic hierarcy
         // using the template
@@ -1336,7 +1342,7 @@ export default defineComponent({
             message,
             items,
             showInitialDialog,
-            unregisteredCentre,
+            registeredCentre,
             officialCentres,
             templateFiles,
             dialogFilled,
