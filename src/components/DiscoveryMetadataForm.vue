@@ -1250,7 +1250,13 @@ export default defineComponent({
                 // If no content is returned from the fetch, then the put request is successful.
                 // In this case, redirect the user to the home page
                 if (response.status == NO_CONTENT) {
-                    window.location.href = "/"
+                    message.value = isNew.value ? "Discovery metadata added successfully." : "Discovery metadata updated successfully.";
+                    // Open a dialog window to show this message clearly
+                    openMessageDialog.value = true;
+                    // Display this for 2 seconds then redirect
+                    setTimeout(() => {
+                        window.location.href = "/wis2box-webapp/metadata-form";
+                    }, 2000);
                 }
                 // Otherwise, show a message with the description of the response
                 else {
