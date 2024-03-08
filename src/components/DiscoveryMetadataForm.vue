@@ -1097,9 +1097,10 @@ export default defineComponent({
             // Properties information
             schemaModel.properties = {};
             schemaModel.properties.type = "dataset";
-            schemaModel.properties.language = null;
+            schemaModel.properties.identifier = form.identification.identifier;
             schemaModel.properties.title = form.identification.title;
             schemaModel.properties.description = form.identification.description;
+            schemaModel.properties.language = null;
             schemaModel.properties.keywords = form.identification.keywords;
             // Themes
             const concepts = form.identification.concepts.map(item => ({ title: item }));
