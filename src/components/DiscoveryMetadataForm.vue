@@ -182,7 +182,7 @@
                         <v-col cols="4">
                             <v-row>
                                 <v-col cols="12">
-                                    <!-- Allow the user to select a country different to that of the POC for the auto bbox -->
+                                    <!-- Allow the user to select a country different to that of the host for the auto bbox -->
                                     <v-autocomplete label="Choose an automatic bounding box (optional)"
                                         item-title="name" item-value="alpha-3" :items="filteredCountryCodeList"
                                         v-model="bboxCountry" @update:modelValue="getAutoBbox(bboxCountry)"
@@ -190,30 +190,37 @@
                                         variant="outlined"></v-autocomplete>
                                 </v-col>
                             </v-row>
-                            <v-row style="height: 50px;"></v-row>
-                            <v-row style="height: 70px;">
-                                <v-col cols="6">
+                            <v-row class="row-spacer"/>
+                            <v-row class="coordinate-rows">
+                                <v-col cols="4"/>
+                                <v-col cols="4">
                                     <v-text-field label="North Latitude" type="number"
                                         v-model="model.extents.northLatitude" :rules="[rules.required, rules.latitude]"
                                         variant="outlined" clearable></v-text-field>
                                 </v-col>
-                                <v-col cols="6">
-                                    <v-text-field label="South Latitude" type="number"
-                                        v-model="model.extents.southLatitude" :rules="[rules.required, rules.latitude]"
-                                        variant="outlined" clearable></v-text-field>
-                                </v-col>
+                                <v-col cols="4"/>
                             </v-row>
-                            <v-row>
-                                <v-col cols="6">
-                                    <v-text-field label="East Longitude" type="number"
-                                        v-model="model.extents.eastLongitude" :rules="[rules.required, rules.longitude]"
-                                        variant="outlined" clearable></v-text-field>
-                                </v-col>
-                                <v-col cols="6">
+                            <v-row class="coordinate-rows">
+                                <v-col cols="4">
                                     <v-text-field label="West Longitude" type="number"
                                         v-model="model.extents.westLongitude" :rules="[rules.required, rules.longitude]"
                                         variant="outlined" clearable></v-text-field>
                                 </v-col>
+                                <v-col cols="4"/>
+                                <v-col cols="4">
+                                    <v-text-field label="East Longitude" type="number"
+                                        v-model="model.extents.eastLongitude" :rules="[rules.required, rules.longitude]"
+                                        variant="outlined" clearable></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="4"/>
+                                <v-col cols="4">
+                                    <v-text-field label="South Latitude" type="number"
+                                        v-model="model.extents.southLatitude" :rules="[rules.required, rules.latitude]"
+                                        variant="outlined" clearable></v-text-field>
+                                </v-col>
+                                <v-col cols="4"/>
                             </v-row>
                         </v-col>
                         <v-col cols="8">
@@ -222,37 +229,37 @@
                         </v-col>
                     </v-row>
 
-                    <!-- Contact (POC) section -->
+                    <!-- Contact (host) section -->
                     <v-card-title>
                         Host Contact Information
                         <v-btn icon="mdi-comment-question" variant="text" size="small"
-                            @click="openPocHelpDialog = true" />
+                            @click="openHostHelpDialog = true" />
                     </v-card-title>
                     <v-row>
                         <v-col cols="4">
-                            <v-text-field label="Organization Name" type="string" v-model="model.poc.name"
+                            <v-text-field label="Organization Name" type="string" v-model="model.host.name"
                                 :rules="[rules.required]" variant="outlined" clearable></v-text-field>
                         </v-col>
                         <v-col cols="4">
-                            <v-text-field label="URL" hint="Organization website" type="string" v-model="model.poc.url"
+                            <v-text-field label="URL" hint="Organization website" type="string" v-model="model.host.url"
                                 :rules="[rules.url]" variant="outlined" clearable></v-text-field>
                         </v-col>
                         <v-col cols="4">
-                            <!-- The POC country is disabled as it was selected
+                            <!-- The host country is disabled as it was selected
                             already in the dialog -->
                             <v-autocomplete label="Country" item-title="name" item-value="alpha-3"
-                                :items="countryCodeList" v-model="model.poc.country" :rules="[rules.required]"
+                                :items="countryCodeList" v-model="model.host.country" :rules="[rules.required]"
                                 variant="outlined"></v-autocomplete>
                         </v-col>
                     </v-row>
                     <v-row>
                         <v-col cols="4">
-                            <v-text-field label="Email" type="string" v-model="model.poc.email"
+                            <v-text-field label="Email" type="string" v-model="model.host.email"
                                 :rules="[rules.required, rules.email]" variant="outlined" clearable></v-text-field>
                         </v-col>
                         <v-col cols="4">
-                            <vue-tel-input v-model="model.poc.phone" @validate="onPocPhoneValidate"></vue-tel-input>
-                            <p v-if="(typeof isPocPhoneValid !== 'undefined') && !isPocPhoneValid"
+                            <vue-tel-input v-model="model.host.phone" @validate="onHostPhoneValidate" required></vue-tel-input>
+                            <p v-if="(typeof isHostPhoneValid !== 'undefined') && !isHostPhoneValid"
                                 class="hint-text hint-invalid">Phone number is not valid</p>
                         </v-col>
                     </v-row>
@@ -410,10 +417,10 @@
                     </v-card-text>
                 </v-card>
             </v-dialog>
-            <v-dialog v-model="openPocHelpDialog" max-width="600px">
+            <v-dialog v-model="openHostHelpDialog" max-width="600px">
                 <v-card>
                     <v-toolbar title="Host Contact Information" color="#003DA5">
-                        <v-btn icon="mdi-close" variant="text" size="small" @click="openPocHelpDialog = false" />
+                        <v-btn icon="mdi-close" variant="text" size="small" @click="openHostHelpDialog = false" />
                     </v-toolbar>
                     <v-card-subtitle>
                         How do I complete this section?
@@ -510,9 +517,9 @@ export default defineComponent({
             },
             extents: {
                 // Default to the current date
-                dateStarted: new Date().toISOString().split('T')[0],
+                dateStarted: new Date().toISOString(),
             },
-            poc: {
+            host: {
                 hoursOfService: "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
                 contactInstructions: 'Email'
             },
@@ -578,15 +585,15 @@ export default defineComponent({
         const isEndDateDisabled = ref(true);
         // Geometry bounds
         const bounds = ref([[0, 0], [0, 0]]);
-        // Country for the bbox - defaults to the POC country
+        // Country for the bbox - defaults to the host country
         const bboxCountry = ref(null);
         // Phone number validation for each field
-        const isPocPhoneValid = ref(null);
+        const isHostPhoneValid = ref(null);
         const isDistribPhoneValid = ref(null);
         // Each keyword added by the user, before being added to the model
         const keyword = ref("");
         // Metadata form to be filled
-        const model = ref({ 'identification': {}, 'extents': {}, 'poc': {}, 'distrib': {}, 'settings': {} });
+        const model = ref({ 'identification': {}, 'extents': {}, 'host': {}, 'distrib': {}, 'settings': {} });
         // Execution token to be entered by user
         const token = ref(null);
         // Variable to control whether token is seen or not
@@ -596,7 +603,7 @@ export default defineComponent({
         const openIdentificationHelpDialog = ref(false);
         const openTemporalHelpDialog = ref(false);
         const openSpatialHelpDialog = ref(false);
-        const openPocHelpDialog = ref(false);
+        const openHostHelpDialog = ref(false);
         const openDistribHelpDialog = ref(false);
         const openTokenHelpDialog = ref(false);
 
@@ -741,7 +748,7 @@ export default defineComponent({
             let formModel = {
                 identification: {},
                 extents: {},
-                poc: {},
+                host: {},
                 distrib: {},
                 settings: {}
             };
@@ -792,7 +799,7 @@ export default defineComponent({
             // Contacts information
             schema.properties.contacts.forEach(contact => {
                 if (contact.roles?.includes("host")) {
-                    formModel.poc = {
+                    formModel.host = {
                         individual: contact.name,
                         positionName: contact.position,
                         name: contact.organization,
@@ -812,6 +819,9 @@ export default defineComponent({
                 // Additional settings information
                 if (schema.properties["wmo:dataPolicy"]) {
                     formModel.identification.wmoDataPolicy = schema.properties["wmo:dataPolicy"];
+                }
+                if (schema.properties.created) {
+                    formModel.extents.dateCreated = schema.properties.created;
                 }
             });
             return formModel;
@@ -1009,8 +1019,8 @@ export default defineComponent({
         };
 
         // Validates the phone numbers entered by the user
-        const onPocPhoneValidate = (output) => {
-            isPocPhoneValid.value = output.valid;
+        const onHostPhoneValidate = (output) => {
+            isHostPhoneValid.value = output.valid;
         };
 
         const onDistribPhoneValidate = (output) => {
@@ -1054,13 +1064,25 @@ export default defineComponent({
             let date = new Date(datetime);
             let year = date.getFullYear();
             // getMonth() returns 0-11, so we add 1
-            let month = date.getMonth() + 1;
-            let day = date.getDate();
+            // Both the month and day must be padded with a 0 if they are less than 10
+            let month = String(date.getMonth() + 1).padStart(2, '0');
+            let day = String(date.getDate()).padStart(2, '0');
 
             // Format the date as YYYY-MM-DD
             let dateString = `${year}-${month}-${day}`;
             return dateString;
-        }
+        };
+
+        // Method to get the corresponding title from a earth system discipline concept
+        const getTitleOf = (concept) => {
+            const match = earthSystemDisciplines.value.find(item => item.name === concept);
+            return match ? match.description : null;
+        };
+
+        // Method to remove spaces from formatted phone number
+        const removeSpacesFrom = (phone) => {
+            return phone.replace(/\s/g, '');
+        };
 
         // Transforms the form data to the WCMP2 schema format
         const transformToSchema = (form) => {
@@ -1076,12 +1098,12 @@ export default defineComponent({
             // Note: This is an extension to the WCMP2 schema
             schemaModel.wis2box = {};
             schemaModel.wis2box["topic_hierarchy"] = form.identification.topicHierarchy;
-            schemaModel.wis2box.country = form.poc.country;
+            schemaModel.wis2box.country = form.host.country;
             schemaModel.wis2box["centre_id"] = form.identification.centreID;
 
             // Time period information
             schemaModel.time = {};
-            // Get the start and end dates from the form
+            // Get the start and end dates from the form (removing the time part of the string)
             const startDate = getDateFrom(form.extents.dateStarted);
             // Note: the end date defaults to ".." if the dataset is ongoing
             let endDate = "..";
@@ -1119,7 +1141,7 @@ export default defineComponent({
             schemaModel.properties.language = null;
             schemaModel.properties.keywords = form.identification.keywords;
             // Themes
-            const concepts = form.identification.concepts.map(item => ({ title: item }));
+            const concepts = form.identification.concepts.map(item => ({ id: item, title: getTitleOf(item) }));
             schemaModel.properties.themes = [
                 {
                     concepts: concepts,
@@ -1130,32 +1152,34 @@ export default defineComponent({
             schemaModel.properties.contacts = [];
             // Point of contact
             schemaModel.properties.contacts.push({
-                name: form.poc.individual,
-                position: form.poc.positionName,
-                organization: form.poc.name,
+                name: form.host.individual,
+                position: form.host.positionName,
+                organization: form.host.name,
                 phones: [{
-                    value: form.poc.phone
+                    value: removeSpacesFrom(form.host.phone)
                 }],
                 emails: [{
-                    value: form.poc.email
+                    value: form.host.email
                 }],
                 addresses: [{
-                    deliveryPoint: form.poc.deliveryPoint,
-                    city: form.poc.city,
-                    administrativeArea: form.poc.administrativeArea,
-                    postalCode: form.poc.postalCode,
-                    country: form.poc.country
+                    deliveryPoint: form.host.deliveryPoint,
+                    city: form.host.city,
+                    administrativeArea: form.host.administrativeArea,
+                    postalCode: form.host.postalCode,
+                    country: form.host.country
                 }],
                 links: [{
                     rel: "about",
-                    href: form.poc.url,
+                    href: form.host.url,
                     type: "text/html"
                 }],
-                hoursOfService: form.poc.hoursOfService,
-                contactInstructions: form.poc.contactInstructions,
+                hoursOfService: form.host.hoursOfService,
+                contactInstructions: form.host.contactInstructions,
                 roles: ["host"]
             });
 
+            // If the metadata has been loaded, use the original creation date. Otherwise use today
+            schemaModel.properties.created = form.extents.dateCreated || new Date().toISOString();
             schemaModel.properties.updated = new Date().toISOString();
             schemaModel.properties["wmo:dataPolicy"] = form.identification.wmoDataPolicy;
             schemaModel.properties["wmo:topicHierarchy"] = form.identification.topicHierarchy;
@@ -1356,7 +1380,7 @@ export default defineComponent({
             endDatePossible,
             bounds,
             bboxCountry,
-            isPocPhoneValid,
+            isHostPhoneValid,
             isDistribPhoneValid,
             keyword,
             model,
@@ -1366,7 +1390,7 @@ export default defineComponent({
             openIdentificationHelpDialog,
             openTemporalHelpDialog,
             openSpatialHelpDialog,
-            openPocHelpDialog,
+            openHostHelpDialog,
             openDistribHelpDialog,
             openTokenHelpDialog,
             openMessageDialog,
@@ -1375,7 +1399,7 @@ export default defineComponent({
             loadMetadata,
             continueToForm,
             getAutoBbox,
-            onPocPhoneValidate,
+            onHostPhoneValidate,
             onDistribPhoneValidate,
             addKeyword,
             removeKeyword,
@@ -1387,3 +1411,12 @@ export default defineComponent({
 });
 
 </script>
+<style scoped>
+.row-spacer {
+    height: 1rem;
+}
+
+.coordinate-rows {
+    height: 4rem;
+}
+</style>
