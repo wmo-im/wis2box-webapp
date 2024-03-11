@@ -29,10 +29,10 @@ const routes = [
         meta: {title: 'wis2box - Monitoring'}
       },
       {
-        path: 'metadata_form',
-        name: 'DiscoveryMetadataForm',
-        component: () => import('@/views/DiscoveryMetadataForm.vue'),
-        meta: {title: 'wis2box - Discovery Metadata Form'}
+        path: 'dataset_editor_form',
+        name: 'DatasetEditorForm',
+        component: () => import('@/views/DatasetEditorForm.vue'),
+        meta: {title: 'wis2box - Dataset Editor Form'}
       },
       {
         path: '/import-station',

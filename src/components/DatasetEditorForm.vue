@@ -1,7 +1,7 @@
 <template>
     <v-row class="justify-center">
         <v-col cols="12" class="max-dashboard-width">
-            <v-card-title class="big-title">Metadata Editor Form</v-card-title>
+            <v-card-title class="big-title">Dataset Editor Form</v-card-title>
             <v-card>
                 <!-- Toolbar for user to select a dataset -->
                 <v-toolbar color="#003DA5">
@@ -52,9 +52,11 @@
                 </v-row>
             </v-card>
 
-            <v-card class="mt-3 pa-3">
+            <!-- Metadata Editor -->
+            <v-card v-if="metadataLoaded" class="mt-3 pa-3">
+                <v-card-title class="big-title">Metadata Editor</v-card-title>
                 <!-- Form which when filled and validated, can be exported or submitted -->
-                <v-form v-model="formFilled" v-if="metadataLoaded" validate-on="input">
+                <v-form v-model="formFilled" validate-on="input">
                     <!-- Identification section -->
                     <v-card-title>
                         Dataset Identification
@@ -190,15 +192,15 @@
                                         variant="outlined"></v-autocomplete>
                                 </v-col>
                             </v-row>
-                            <v-row class="row-spacer"/>
+                            <v-row class="row-spacer" />
                             <v-row class="coordinate-rows">
-                                <v-col cols="4"/>
+                                <v-col cols="4" />
                                 <v-col cols="4">
                                     <v-text-field label="North Latitude" type="number"
                                         v-model="model.extents.northLatitude" :rules="[rules.required, rules.latitude]"
                                         variant="outlined" clearable></v-text-field>
                                 </v-col>
-                                <v-col cols="4"/>
+                                <v-col cols="4" />
                             </v-row>
                             <v-row class="coordinate-rows">
                                 <v-col cols="4">
@@ -206,7 +208,7 @@
                                         v-model="model.extents.westLongitude" :rules="[rules.required, rules.longitude]"
                                         variant="outlined" clearable></v-text-field>
                                 </v-col>
-                                <v-col cols="4"/>
+                                <v-col cols="4" />
                                 <v-col cols="4">
                                     <v-text-field label="East Longitude" type="number"
                                         v-model="model.extents.eastLongitude" :rules="[rules.required, rules.longitude]"
@@ -214,13 +216,13 @@
                                 </v-col>
                             </v-row>
                             <v-row>
-                                <v-col cols="4"/>
+                                <v-col cols="4" />
                                 <v-col cols="4">
                                     <v-text-field label="South Latitude" type="number"
                                         v-model="model.extents.southLatitude" :rules="[rules.required, rules.latitude]"
                                         variant="outlined" clearable></v-text-field>
                                 </v-col>
-                                <v-col cols="4"/>
+                                <v-col cols="4" />
                             </v-row>
                         </v-col>
                         <v-col cols="8">
@@ -258,7 +260,8 @@
                                 :rules="[rules.required, rules.email]" variant="outlined" clearable></v-text-field>
                         </v-col>
                         <v-col cols="4">
-                            <vue-tel-input v-model="model.host.phone" @validate="onHostPhoneValidate" required></vue-tel-input>
+                            <vue-tel-input v-model="model.host.phone" @validate="onHostPhoneValidate"
+                                required></vue-tel-input>
                             <p v-if="(typeof isHostPhoneValid !== 'undefined') && !isHostPhoneValid"
                                 class="hint-text hint-invalid">Phone number is not valid</p>
                         </v-col>
@@ -279,9 +282,40 @@
                         </v-col>
                     </v-row>
                 </v-form>
+            </v-card>
 
-                <!-- Toolbar for user to reset, validate, export, or submit the metadata
-                from the above form -->
+            <!-- Dataset Mappings Editor -->
+            <v-card v-if="metadataLoaded" class="mt-3 pa-3">
+                <v-card-title class="big-title">Dataset Mappings Editor</v-card-title>
+
+                <v-table v-if="canShowPluginTable" :hover="true">
+                    <thead>
+                        <tr>
+                            <th scope="row" class="text-left">
+                                <p v-if="model.plugins.length > 0">Plugins in use:</p>
+                                <p v-else>No plugins are currently associated with this dataset</p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="plugin in model.plugins" :key="plugin.name" @click="configurePlugin(plugin)"
+                            class="clickable-row">
+                            <td class="medium-title">
+                                {{ plugin.name }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </v-table>
+                <v-row justify="center" class="mt-1">
+                    <v-col cols="8">
+                        <v-btn @click="configurePlugin()" append-icon="mdi-plus" color="#003DA5" block>Add Plugin</v-btn>
+                    </v-col>
+                </v-row>
+            </v-card>
+
+            <!-- Toolbar for user to reset, validate, export, or submit the data
+            from the above forms -->
+            <v-col cols="12">
                 <v-row class="pt-5" v-if="metadataLoaded">
                     <v-btn color="red" class="ma-2" title="Reset" @click="resetMetadata" append-icon="mdi-sync">
                         Reset
@@ -298,29 +332,28 @@
                         Submit
                     </v-btn>
                 </v-row>
-            </v-card>
+            </v-col>
 
             <!-- Help dialogs -->
             <v-dialog v-model="openInitialHelpDialog" max-width="600px">
                 <v-card>
-                    <v-card-item>
-                        <v-card-title class="d-flex justify-space-between">
-                            Initial Information
-                            <v-btn icon="mdi-close" variant="text" size="small"
-                                @click="openInitialHelpDialog = false" />
-                        </v-card-title>
-                        <v-card-subtitle>
-                            What is this section for?
-                        </v-card-subtitle>
-                    </v-card-item>
+                    <v-toolbar title="Initial Information" color="#003DA5">
+                        <v-btn icon="mdi-close" variant="text" size="small" @click="openInitialHelpDialog = false" />
+                    </v-toolbar>
+                    <v-card-subtitle>
+                        What is this section for?
+                    </v-card-subtitle>
                     <v-card-text>
-                        <p>To begin creating a new dataset, we require some initial information in order to pre-fill the
+                        <p>To begin creating a new dataset, we require some initial information in order to
+                            pre-fill the
                             form.</p>
                         <br>
-                        <p><b>Centre ID:</b> The agency acronym (in lower case and no spaces), as specified by member.
+                        <p><b>Centre ID:</b> The agency acronym (in lower case and no spaces), as specified by
+                            member.
                             Optionally, you can select your centre ID from a list by selecting 'Registered'.</p>
                         <br>
-                        <p><b>Data Type:</b> The type of data you are creating metadata for. <i>If 'other' is selected,
+                        <p><b>Data Type:</b> The type of data you are creating metadata for. <i>If 'other' is
+                                selected,
                                 more
                                 fields will have to be manually filled.</i></p>
                         <br>
@@ -343,26 +376,32 @@
                         <p><b>Description:</b> A free-text summary description of the dataset.</p>
                         <br>
                         <p><b>Identifier:</b> The unique identifier for the dataset.</p>
-                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot be
+                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot
+                                be
                                 edited.</i></p>
                         <br>
                         <p><b>Centre ID:</b> This was already filled earlier and <i>cannot be edited</i>.</p>
                         <br>
-                        <p><b>WMO Data Policy:</b> Classification code of core or recommended based on the WMO Unified
+                        <p><b>WMO Data Policy:</b> Classification code of core or recommended based on the WMO
+                            Unified
                             Data
                             Policy.</p>
                         <br>
                         <p><b>Topic Hierarchy:</b> The unique hierarchy for this data.</p>
-                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot be
+                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot
+                                be
                                 edited.</i></p>
                         <br>
-                        <p><b>Earth System Disciplines:</b> A list of concepts that are referenced to a vocabulary or
+                        <p><b>Earth System Disciplines:</b> A list of concepts that are referenced to a
+                            vocabulary or
                             knowledge organization
                             system used to classify the resource.</p>
                         <br>
-                        <p><b>Keywords:</b> A list of at least three keywords, tags or specific phrases associated with
+                        <p><b>Keywords:</b> A list of at least three keywords, tags or specific phrases
+                            associated with
                             the
-                            resource, but are not referenced to a particular vocabulary or knowledge organization
+                            resource, but are not referenced to a particular vocabulary or knowledge
+                            organization
                             system.
                         </p>
                         <br>
@@ -385,7 +424,8 @@
                         <p><b>Temporal Resolution:</b> The smallest increment of time that is represented in the
                             dataset.
                         </p>
-                        <p>This is split into two parts, the <b>value</b> (e.g. 1) and the <b>unit</b> (e.g. 'hour(s)').
+                        <p>This is split into two parts, the <b>value</b> (e.g. 1) and the <b>unit</b> (e.g.
+                            'hour(s)').
                         </p>
                         <br>
                     </v-card-text>
@@ -400,18 +440,22 @@
                         How do I complete this section?
                     </v-card-subtitle>
                     <v-card-text>
-                        <p>This section describes the general bounding spatial extent of the dataset in the geographic
+                        <p>This section describes the general bounding spatial extent of the dataset in the
+                            geographic
                             coordinate system. This can be created either:</p>
                         <br>
-                        <p><b>Automatically:</b> By using the country dropdown (note that your country may not be found
+                        <p><b>Automatically:</b> By using the country dropdown (note that your country may not
+                            be found
                             on
                             this list).</p>
                         <br>
-                        <p><b>Manually:</b> By the entering the northmost, eastmost, southmost, and westmost coordinates
+                        <p><b>Manually:</b> By the entering the northmost, eastmost, southmost, and westmost
+                            coordinates
                             of
                             the dataset.</p>
                         <br>
-                        <p><i><b>Warning: The automatic bounding box created may be incorrect for the country, so please
+                        <p><i><b>Warning: The automatic bounding box created may be incorrect for the country,
+                                    so please
                                     verify it before proceeding!</b></i></p>
                         <br>
                     </v-card-text>
@@ -426,19 +470,23 @@
                         How do I complete this section?
                     </v-card-subtitle>
                     <v-card-text>
-                        <p>This section provides the information associated with one or more responsible parties of the
+                        <p>This section provides the information associated with one or more responsible parties
+                            of the
                             resource.</p>
                         <br>
                         <p><b>Organization Name:</b> The name of the organization.</p>
                         <br>
-                        <p><b>URL:</b> The URL to the organization homepage, including the <i>http</i> or <i>https</i>
-                            prefix.</p>
+                        <p><b>URL:</b> The URL to the organization homepage, including the <i>http</i> or
+                            <i>https</i>
+                            prefix.
+                        </p>
                         <br>
                         <p><b>Country:</b> The country of the point of contact.</p>
                         <br>
                         <p><b>Email:</b> The email address of the point of contact.</p>
                         <br>
-                        <p><b>Phone Number:</b> The phone number of the point of contact, written in international
+                        <p><b>Phone Number:</b> The phone number of the point of contact, written in
+                            international
                             format (+).</p>
                     </v-card-text>
                 </v-card>
@@ -455,7 +503,8 @@
                         </v-card-subtitle>
                     </v-card-item>
                     <v-card-text>
-                        <p>In order to submit this data to the wis2box, you must provide a valid authentication token
+                        <p>In order to submit this data to the wis2box, you must provide a valid authentication
+                            token
                             for the collections/discovery-metadata path.</p>
                         <br>
                     </v-card-text>
@@ -473,6 +522,57 @@
                     </v-card-text>
                 </v-card>
             </v-dialog>
+
+            <!-- Dialog for the user to configure plugins -->
+            <v-dialog v-model="openPluginDialog" max-width="750px">
+                <v-card>
+                    <v-toolbar title="Plugin Configuration" color="#003DA5">
+                        <v-btn icon="mdi-close" variant="text" size="small" @click="openPluginDialog = false" />
+                    </v-toolbar>
+                    <v-container>
+                        <v-col cols="12">
+                            <v-row>
+                                <v-col cols="5">
+                                    <v-text-field label="Filetype" v-model="pluginFileType"
+                                        variant="outlined"></v-text-field>
+                                </v-col>
+                                <v-col cols="7">
+                                    <v-select label="Plugin Name" v-model="pluginName" :items="pluginList"
+                                        variant="outlined"></v-select>
+                                </v-col>
+                            </v-row>
+
+                            <v-row>
+                                <v-col cols="5">
+                                    <v-select label="Template" v-model="pluginTemplate" :items="templateList"
+                                        variant="outlined"></v-select>
+                                </v-col>
+                                <v-col cols="7">
+                                    <v-select label="WIS2 Buckets" v-model="pluginBuckets" :items="bucketList" multiple
+                                        variant="outlined"></v-select>
+                                </v-col>
+                            </v-row>
+
+                            <v-row>
+                                <v-col cols="10">
+                                    <v-text-field label="File Pattern" v-model="pluginFilePattern"
+                                        variant="outlined"></v-text-field>
+                                </v-col>
+                                <v-col cols="2">
+                                    <v-switch v-model="pluginNotifyBoolean" label="Notify
+                                    " color="#003DA5"></v-switch>
+                                </v-col>
+                            </v-row>
+
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-btn color="#009900" variant="flat" block @click="addPlugin">Add Plugin</v-btn>
+                                </v-col>
+                            </v-row>
+                        </v-col>
+                    </v-container>
+                </v-card>
+            </v-dialog>
         </v-col>
     </v-row>
 </template>
@@ -487,8 +587,8 @@ import Papa from 'papaparse';
 const oapi = import.meta.env.VITE_API_URL;
 
 export default defineComponent({
-    name: "DiscoveryMetadataForm",
-    template: "#discovery-metadata-form",
+    name: "DatasetEditorForm",
+    template: "#dataset-editor-form",
     props: ["topic"],
     components: {
         BboxEditor,
@@ -520,18 +620,38 @@ export default defineComponent({
                 dateStarted: new Date().toISOString(),
             },
             host: {
-                hoursOfService: "Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm",
+                hoursOfService: 'Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm',
                 contactInstructions: 'Email'
             },
             distrib: {
                 duplicateFromContact: true
-            }
+            },
+            plugins: []
         };
 
         // Time durations for resolution
         const durations = [
             { name: 'minutes(s)', code: 'M' },
             { name: 'hour(s)', code: 'H' },
+        ];
+
+        // Possible plugins and templates to select from
+        const pluginList = [
+            'universal.UniversalData',
+            'bufr4.ObservationDataBUFR',
+            'synop2bufr.ObservationDataSYNOP2BUFR',
+            'csv2bufr.ObservationDataCSV2BUFR'
+        ];
+
+        const templateList = [
+            'CampbellAfrica-v1-template',
+            'daycli-template',
+            'aws-template'
+        ];
+
+        const bucketList = [
+            'Incoming',
+            'Public'
         ];
 
         // WCMP2 schema version
@@ -592,8 +712,16 @@ export default defineComponent({
         const isDistribPhoneValid = ref(null);
         // Each keyword added by the user, before being added to the model
         const keyword = ref("");
+        // Information for creating/configuring a dataset plugin
+        const pluginIsNew = ref(true);
+        const pluginFileType = ref(null);
+        const pluginName = ref(null);
+        const pluginTemplate = ref(null);
+        const pluginNotifyBoolean = ref(null);
+        const pluginBuckets = ref(null);
+        const pluginFilePattern = ref(null);
         // Metadata form to be filled
-        const model = ref({ 'identification': {}, 'extents': {}, 'host': {}, 'distrib': {}, 'settings': {} });
+        const model = ref({ 'identification': {}, 'extents': {}, 'host': {}, 'plugins': [] });
         // Execution token to be entered by user
         const token = ref(null);
         // Variable to control whether token is seen or not
@@ -609,6 +737,9 @@ export default defineComponent({
 
         // Message dialog window
         const openMessageDialog = ref(false);
+
+        // Plugin configuration dialog window
+        const openPluginDialog = ref(false);
 
         // Computed variables
 
@@ -636,17 +767,22 @@ export default defineComponent({
         // (this makes the datepicker component show a green border which is not desired)
         const endDatePossible = computed(() => {
             if (model.value.extents.dateStopped) {
-                if (new Date(model.value.extents.dateStopped) <= new Date(model.value.extents.dateStarted)) {
+                if (new Date(model.value.extents.dateStopped) < new Date(model.value.extents.dateStarted)) {
                     return false;
                 }
             }
             return null;
         });
 
+        // Controls whether the plugin table should be showed
+        const canShowPluginTable = computed(() => {
+            return metadataLoaded.value
+        });
+
         // Controls which parts of the page are enabled,
         // in particular the submit button
         const formFilledUpdatedAndAuthenticated = computed(() => {
-            return formFilled.value && formUpdated.value && token.value;
+            return formFilled.value && formUpdated.value && model.value.plugins.length > 0 && token.value;
         });
 
         // Methods
@@ -726,8 +862,8 @@ export default defineComponent({
 
         // Loads the data type templates
         const loadTemplates = async () => {
-            // Load all JSON files in the models folder
-            const files = import.meta.glob('@/models/*.json');
+            // Load all JSON files in the templates folder
+            const files = import.meta.glob('@/templates/*.json');
 
             // For each file, add the JSON data to the template list
             for (const path in files) {
@@ -765,6 +901,12 @@ export default defineComponent({
                 formModel.extents.dateStarted = schema.time.interval[0];
                 formModel.extents.dateStopped = schema.time.interval[1];
             }
+
+            // Disable 'Dataset ongoing' checkbox if the end date is specified
+            if (schema.time?.interval[1] !== "..") {
+                isEndDateDisabled.value = false;
+            }
+
             // Minimum time period resolvable in the dataset
             // Sets the resolution to the number, and unit to D or H
             if (schema.time?.resolution) {
@@ -884,7 +1026,7 @@ export default defineComponent({
             working.value = false;
         };
 
-        // Dialog window for autofilling form
+        // Dialog window for auto-filling form
         const continueToForm = () => {
             // Close the dialog
             showInitialDialog.value = false;
@@ -933,8 +1075,48 @@ export default defineComponent({
             }
         }
 
+        // Method to flatten the plugins array so it is easier to work with
+        const tidyPlugins = (plugins) => {
+
+            const tidyName = (name) => {
+                return name.replace('wis2box.data.', '');
+            }
+
+            const tidyBuckets = (buckets) => {
+                if (!buckets) {
+                    return;
+                }
+                return buckets.map(bucket => {
+                    let lowercase = bucket.replace('wis2box-', '');
+                    let firstLetterCapital = lowercase.charAt(0).toUpperCase() + lowercase.slice(1);
+                    return firstLetterCapital;
+                });
+            }
+
+            let result = [];
+
+            for (const [filetype, entries] of Object.entries(plugins)) {
+                entries.forEach(entry => {
+                    const singlePlugin = {
+                        fileType: filetype,
+                        // Name of plugin should be without 'wis2box.data' prefix
+                        name: tidyName(entry.plugin),
+                        template: entry.template || undefined,
+                        notify: entry.notify || undefined,
+                        // Bucket names should be without 'wis2box-' prefix
+                        buckets: tidyBuckets(entry.buckets) || undefined,
+                        filePattern: entry['file-pattern']
+                    };
+                    result.push(singlePlugin);
+                })
+            }
+
+            return result;
+        }
+
         // Autofill form based on template
         const applyTemplate = (template) => {
+            // Metadata Editor parts
             model.value.identification.title = template.title.replace('$CENTRE_ID', model.value.identification.centreID);
             model.value.identification.identifier = template.identifier.replace('$CENTRE_ID', model.value.identification.centreID);
             // Converts the theme structure into a list of the theme labels
@@ -952,6 +1134,9 @@ export default defineComponent({
                 model.value.extents.resolutionUnit = match[2].toUpperCase();
             }
             model.value.distrib.duplicateFromContact = template.duplicateFromContact;
+
+            // Data Mappings Editor parts
+            model.value.plugins = tidyPlugins(template.wis2box['data_mappings']['plugins']);
         };
 
         // Load language/country codes from a JSON file
@@ -1049,6 +1234,67 @@ export default defineComponent({
                 // Reassign the model's keywords to the updated array
                 model.value.identification.keywords = updatedKeywords;
             }
+        };
+
+        // Allows the user to configure a new or existing plugin, by automatically populating the fields
+        const configurePlugin = (plugin) => {
+            // Open the dialog
+            openPluginDialog.value = true;
+
+            // If plugin exists, populate the fields
+            if (plugin) {
+                pluginIsNew.value = false;
+                pluginFileType.value = plugin.fileType;
+                pluginName.value = plugin.name;
+                pluginTemplate.value = plugin.template;
+                pluginNotifyBoolean.value = plugin.notify;
+                pluginBuckets.value = plugin.buckets;
+                pluginFilePattern.value = plugin.filePattern;
+            }
+            // Otherwise ensure the fields are empty
+            else {
+                pluginIsNew.value = true;
+                pluginFileType.value = null;
+                pluginName.value = null;
+                pluginTemplate.value = null;
+                pluginNotifyBoolean.value = null;
+                pluginBuckets.value = null;
+                pluginFilePattern.value = null;
+            }
+        };
+
+        // Adds or updates the plugin in the model
+        const savePlugin = () => {
+            // If the plugin is new, add it to the model
+            if (pluginIsNew.value) {
+                // Create a new plugin object
+                const newPlugin = {
+                    fileType: pluginFileType.value,
+                    plugin: pluginName.value,
+                    template: pluginTemplate.value,
+                    notify: pluginNotifyBoolean.value,
+                    buckets: pluginBuckets.value,
+                    filePattern: pluginFilePattern.value
+                };
+                // Add the plugin to the model
+                model.value.plugins.push(newPlugin);
+            }
+            // Otherwise, update the existing plugin
+            else {
+                // Find the index of the plugin in the model
+                const index = model.value.plugins.findIndex(item => item.fileType === pluginFileType.value && item.name === pluginName.value);
+                // Update the plugin in the model
+                model.value.plugins[index] = {
+                    fileType: pluginFileType.value,
+                    plugin: pluginName.value,
+                    template: pluginTemplate.value,
+                    notify: pluginNotifyBoolean.value,
+                    buckets: pluginBuckets.value,
+                    filePattern: pluginFilePattern.value
+                };
+            }
+            // Close the dialog
+            openPluginDialog.value = false;
         };
 
         // Resets the metadata form to the default state
@@ -1355,10 +1601,14 @@ export default defineComponent({
             defaults,
             earthSystemDisciplines,
             durations,
+            pluginList,
+            templateList,
+            bucketList,
             schemaVersion,
             rules,
             working,
             metadataLoaded,
+            canShowPluginTable,
             metadataValidated,
             formFilled,
             formUpdated,
@@ -1383,6 +1633,13 @@ export default defineComponent({
             isHostPhoneValid,
             isDistribPhoneValid,
             keyword,
+            pluginIsNew,
+            pluginFileType,
+            pluginName,
+            pluginTemplate,
+            pluginNotifyBoolean,
+            pluginBuckets,
+            pluginFilePattern,
             model,
             token,
             showToken,
@@ -1394,6 +1651,7 @@ export default defineComponent({
             openDistribHelpDialog,
             openTokenHelpDialog,
             openMessageDialog,
+            openPluginDialog,
             formFilledUpdatedAndAuthenticated,
             loadList,
             loadMetadata,
@@ -1403,6 +1661,8 @@ export default defineComponent({
             onDistribPhoneValidate,
             addKeyword,
             removeKeyword,
+            configurePlugin,
+            savePlugin,
             resetMetadata,
             downloadMetadata,
             submitMetadata
@@ -1418,5 +1678,14 @@ export default defineComponent({
 
 .coordinate-rows {
     height: 4rem;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+.plugin-buttons {
+    text-align: right;
+    vertical-align: middle;
 }
 </style>

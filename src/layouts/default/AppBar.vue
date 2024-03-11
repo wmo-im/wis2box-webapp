@@ -22,7 +22,7 @@
 
       <v-list-item prepend-icon="mdi-file-excel" title="CSV Form" exact to="/csv2bufr_form" />
 
-      <v-list-item prepend-icon="mdi-file-document" title="Metadata Form" exact to="/metadata_form" />
+      <v-list-item prepend-icon="mdi-file-document" title="Dataset Editor" exact to="/dataset_editor_form" />
 
       <v-list-item prepend-icon="mdi-satellite-uplink" title="Stations" exact to="/station" />
 
