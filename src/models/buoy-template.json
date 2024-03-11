@@ -1,4 +1,4 @@
-{   "reviewComments": "BUFR data, surface data - sea (Table A), pressure, temperature/air temperature,dewpoint temperature,humidity,wind,sst",
+{   
     "label": "weather/surface-based-observations/buoy",
     "title": "BUOY DATA",
     "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.buoy",
@@ -6,7 +6,7 @@
     "language": "en",
     "retention": "P30D",
     "resolution": "P1H",
-    "keywords": ["surface", "sea", "observations"],
+    "keywords": ["surface", "sea", "observations", "pressure","air temperature","sea-surface temperature","humidity","wind","waves","salinity","radiation","ice thickness","currents"],
     "duplicateFromContact": true,
     "themes": [
         {
