@@ -223,7 +223,7 @@
           showLoading.value = false;
           console.log(error);
         };
-        return data;
+        return data['@graph'].filter(item => item['@type'] === "skos:Concept");
       };
 
 
@@ -354,15 +354,12 @@
             station.value.properties.barometer_height = data.value.feature.properties.barometer_height;
             station.value.properties.url = data.value.feature.properties.url;
             station.value.properties.id = data.value.feature.properties.id;
-            // replace code list entries with full objects
-            station.value.properties.facility_type =
-                facilityTypeOptions.value.find( (item) => item['rdfs:label'] === data.value.feature.properties.facility_type);
-            station.value.properties.territory_name =
-                territoryOptions.value.find( (item) => item['rdfs:label'] === data.value.feature.properties.territory_name);
-            station.value.properties.wmo_region =
-                WMORegionOptions.value.find( (item) => item['rdfs:label'] === data.value.feature.properties.wmo_region);
-            station.value.properties.status =
-                operatingStatusOptions.value.find( (item) => item['rdfs:label'] === data.value.feature.properties.status);
+
+            station.value.properties.facility_type = data.value.feature.properties.facility_type;
+            station.value.properties.territory_name = data.value.feature.properties.territory_name;
+            station.value.properties.wmo_region = data.value.feature.properties.wmo_region;
+            station.value.properties.status = data.value.feature.properties.status;
+
             station.value._meta.ready = true;
             showLoading.value = false;
           }else if(data.value.error){
