@@ -181,7 +181,7 @@
                             @click="openSpatialHelpDialog = true" />
                     </v-card-title>
                     <v-row dense>
-                        <v-col cols="4">
+                        <v-col cols="5">
                             <v-row>
                                 <v-col cols="12">
                                     <!-- Allow the user to select a country different to that of the host for the auto bbox -->
@@ -225,7 +225,7 @@
                                 <v-col cols="4" />
                             </v-row>
                         </v-col>
-                        <v-col cols="8">
+                        <v-col cols="7">
                             <!-- Bounding box editor -->
                             <bbox-editor :box-bounds="bounds" id="bbox-editor"></bbox-editor>
                         </v-col>
@@ -266,58 +266,69 @@
                                 class="hint-text hint-invalid">Phone number is not valid</p>
                         </v-col>
                     </v-row>
-
-                    <!-- Authentication token section -->
-                    <v-card-title>Authentication Token
-                        <v-btn icon="mdi-comment-question" variant="text" size="small"
-                            @click="openTokenHelpDialog = true" />
-                    </v-card-title>
-                    <v-row>
-                        <v-col cols="12">
-                            <v-text-field label="wis2box auth token for 'collections/discovery-metadata'"
-                                v-model="token" rows="1" :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'"
-                                :type="showToken ? 'text' : 'password'" @click:append="showToken = !showToken"
-                                variant="outlined">
-                            </v-text-field>
-                        </v-col>
-                    </v-row>
                 </v-form>
             </v-card>
 
             <!-- Dataset Mappings Editor -->
-            <v-card v-if="metadataLoaded" class="mt-3 pa-3">
+            <v-card v-if="metadataLoaded" class="mt-6 pa-3">
                 <v-card-title class="big-title">Dataset Mappings Editor</v-card-title>
+                <v-card-item>
+                    <v-table v-if="canShowPluginTable" :hover="true">
+                        <thead>
+                            <tr>
+                                <th scope="row" class="text-left">
+                                    <p v-if="model.plugins.length > 0">Plugins in use:</p>
+                                    <p v-else>No plugins are currently associated with this dataset</p>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="plugin in model.plugins" :key="plugin.name" @click="viewPlugin(plugin)"
+                                class="clickable-row">
+                                <td class="medium-title">
+                                    {{ plugin.name }}
+                                </td>
+                                <td class="text-right">
+                                    <v-btn class="mr-5" icon="mdi-update" size="small" color="#003DA5" variant="flat"
+                                        @click.stop="configurePlugin(plugin)"></v-btn>
 
-                <v-table v-if="canShowPluginTable" :hover="true">
-                    <thead>
-                        <tr>
-                            <th scope="row" class="text-left">
-                                <p v-if="model.plugins.length > 0">Plugins in use:</p>
-                                <p v-else>No plugins are currently associated with this dataset</p>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="plugin in model.plugins" :key="plugin.name" @click="configurePlugin(plugin)"
-                            class="clickable-row">
-                            <td class="medium-title">
-                                {{ plugin.name }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </v-table>
+                                    <v-btn icon="mdi-delete" size="small" color="error" variant="flat"
+                                        @click.stop="removePlugin(plugin)"></v-btn>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </v-table>
+                </v-card-item>
+
+
                 <v-row justify="center" class="mt-1">
                     <v-col cols="8">
-                        <v-btn @click="configurePlugin()" append-icon="mdi-plus" color="#003DA5" block>Add Plugin</v-btn>
+                        <v-btn @click="configurePlugin()" append-icon="mdi-plus" color="#64BF40" block>Add
+                            A Plugin</v-btn>
                     </v-col>
                 </v-row>
+            </v-card>
+
+            <!-- Authentication token section -->
+            <v-card class="mt-6 pa-3" v-if="metadataLoaded">
+                <v-card-title>Authentication Token
+                    <v-btn icon="mdi-comment-question" variant="text" size="small"
+                        @click="openTokenHelpDialog = true" />
+                </v-card-title>
+                <v-card-item>
+                    <v-text-field label="wis2box auth token for 'collections/discovery-metadata'" v-model="token"
+                        rows="1" :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'"
+                        :type="showToken ? 'text' : 'password'" @click:append="showToken = !showToken"
+                        variant="outlined">
+                    </v-text-field>
+                </v-card-item>
             </v-card>
 
             <!-- Toolbar for user to reset, validate, export, or submit the data
             from the above forms -->
             <v-col cols="12">
                 <v-row class="pt-5" v-if="metadataLoaded">
-                    <v-btn color="red" class="ma-2" title="Reset" @click="resetMetadata" append-icon="mdi-sync">
+                    <v-btn color="error" class="ma-2" title="Reset" @click="resetMetadata" append-icon="mdi-sync">
                         Reset
                     </v-btn>
                     <v-spacer />
@@ -523,31 +534,67 @@
                 </v-card>
             </v-dialog>
 
+            <!-- Dialog for the user to view a plugin -->
+            <v-dialog v-model="openViewPluginDialog" max-width="600px">
+                <v-card>
+                    <v-toolbar title="Plugin Details" color="#003DA5">
+                        <v-btn icon="mdi-close" variant="text" size="small" @click="openViewPluginDialog = false" />
+                    </v-toolbar>
+                    <v-card-item>
+                        <v-table class="my-2">
+                            <tbody>
+                                <tr>
+                                    <td><b>Plugin Name</b></td>
+                                    <td>{{ pluginName }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Filetype</b></td>
+                                    <td>{{ pluginFileType }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Template</b></td>
+                                    <td>{{ pluginTemplate }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>WIS2 Buckets</b></td>
+                                    <td>{{ pluginBuckets?.join(', ') }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>File Pattern</b></td>
+                                    <td>{{ pluginFilePattern }}</td>
+                                </tr>
+                            </tbody>
+                        </v-table>
+                    </v-card-item>
+                </v-card>
+            </v-dialog>
+
             <!-- Dialog for the user to configure plugins -->
-            <v-dialog v-model="openPluginDialog" max-width="750px">
+            <v-dialog v-model="openConfigurePluginDialog" max-width="750px">
                 <v-card>
                     <v-toolbar title="Plugin Configuration" color="#003DA5">
-                        <v-btn icon="mdi-close" variant="text" size="small" @click="openPluginDialog = false" />
+                        <v-btn icon="mdi-close" variant="text" size="small"
+                            @click="openConfigurePluginDialog = false" />
                     </v-toolbar>
                     <v-container>
                         <v-col cols="12">
                             <v-row>
-                                <v-col cols="5">
-                                    <v-text-field label="Filetype" v-model="pluginFileType"
-                                        variant="outlined"></v-text-field>
-                                </v-col>
-                                <v-col cols="7">
+                                <v-col cols="8">
                                     <v-select label="Plugin Name" v-model="pluginName" :items="pluginList"
                                         variant="outlined"></v-select>
+                                </v-col>
+                                <v-col cols="4">
+                                    <v-text-field label="Filetype" v-model="pluginFileType"
+                                        variant="outlined"></v-text-field>
                                 </v-col>
                             </v-row>
 
                             <v-row>
-                                <v-col cols="5">
+                                <v-col cols="6">
                                     <v-select label="Template" v-model="pluginTemplate" :items="templateList"
                                         variant="outlined"></v-select>
                                 </v-col>
-                                <v-col cols="7">
+                                <v-col cols="6">
                                     <v-select label="WIS2 Buckets" v-model="pluginBuckets" :items="bucketList" multiple
                                         variant="outlined"></v-select>
                                 </v-col>
@@ -566,7 +613,7 @@
 
                             <v-row>
                                 <v-col cols="12">
-                                    <v-btn color="#009900" variant="flat" block @click="addPlugin">Add Plugin</v-btn>
+                                    <v-btn color="#003DA5" variant="flat" block @click="savePlugin">Save</v-btn>
                                 </v-col>
                             </v-row>
                         </v-col>
@@ -738,8 +785,9 @@ export default defineComponent({
         // Message dialog window
         const openMessageDialog = ref(false);
 
-        // Plugin configuration dialog window
-        const openPluginDialog = ref(false);
+        // Plugin dialog windows
+        const openViewPluginDialog = ref(false);
+        const openConfigurePluginDialog = ref(false);
 
         // Computed variables
 
@@ -1236,11 +1284,8 @@ export default defineComponent({
             }
         };
 
-        // Allows the user to configure a new or existing plugin, by automatically populating the fields
-        const configurePlugin = (plugin) => {
-            // Open the dialog
-            openPluginDialog.value = true;
-
+        // Populates plugin fields
+        const populatePluginFields = (plugin) => {
             // If plugin exists, populate the fields
             if (plugin) {
                 pluginIsNew.value = false;
@@ -1251,7 +1296,7 @@ export default defineComponent({
                 pluginBuckets.value = plugin.buckets;
                 pluginFilePattern.value = plugin.filePattern;
             }
-            // Otherwise ensure the fields are empty
+            // If plugin is new (null), reset the fields
             else {
                 pluginIsNew.value = true;
                 pluginFileType.value = null;
@@ -1261,6 +1306,22 @@ export default defineComponent({
                 pluginBuckets.value = null;
                 pluginFilePattern.value = null;
             }
+        }
+
+        // Let's the user see the details of the plugin without editing
+        const viewPlugin = (plugin) => {
+            // Open the view dialog
+            openViewPluginDialog.value = true;
+
+            populatePluginFields(plugin);
+        };
+
+        // Allows the user to configure a new or existing plugin, by automatically populating the fields
+        const configurePlugin = (plugin) => {
+            // Open the dialog
+            openConfigurePluginDialog.value = true;
+
+            populatePluginFields(plugin);
         };
 
         // Adds or updates the plugin in the model
@@ -1270,7 +1331,7 @@ export default defineComponent({
                 // Create a new plugin object
                 const newPlugin = {
                     fileType: pluginFileType.value,
-                    plugin: pluginName.value,
+                    name: pluginName.value,
                     template: pluginTemplate.value,
                     notify: pluginNotifyBoolean.value,
                     buckets: pluginBuckets.value,
@@ -1286,7 +1347,7 @@ export default defineComponent({
                 // Update the plugin in the model
                 model.value.plugins[index] = {
                     fileType: pluginFileType.value,
-                    plugin: pluginName.value,
+                    name: pluginName.value,
                     template: pluginTemplate.value,
                     notify: pluginNotifyBoolean.value,
                     buckets: pluginBuckets.value,
@@ -1294,7 +1355,24 @@ export default defineComponent({
                 };
             }
             // Close the dialog
-            openPluginDialog.value = false;
+            openConfigurePluginDialog.value = false;
+        };
+
+        // Allows the user to remove a plugin from the model
+        const removePlugin = (plugin) => {
+            // Find the index of the plugin in the model
+            const index = model.value.plugins.findIndex(item => item.fileType === plugin.fileType && item.name === plugin.name);
+
+            if (index > -1) {
+                // Create a shallow copy first
+                let updatedPluginList = [...model.value.plugins];
+
+                // Remove plugin
+                updatedPluginList.splice(index, 1);
+
+                // Reassign updated list to model
+                model.value.plugins = updatedPluginList;
+            }
         };
 
         // Resets the metadata form to the default state
@@ -1651,7 +1729,8 @@ export default defineComponent({
             openDistribHelpDialog,
             openTokenHelpDialog,
             openMessageDialog,
-            openPluginDialog,
+            openViewPluginDialog,
+            openConfigurePluginDialog,
             formFilledUpdatedAndAuthenticated,
             loadList,
             loadMetadata,
@@ -1661,8 +1740,10 @@ export default defineComponent({
             onDistribPhoneValidate,
             addKeyword,
             removeKeyword,
+            viewPlugin,
             configurePlugin,
             savePlugin,
+            removePlugin,
             resetMetadata,
             downloadMetadata,
             submitMetadata
