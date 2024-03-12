@@ -223,7 +223,7 @@
           showLoading.value = false;
           console.log(error);
         };
-        return data;
+        return data['@graph'].filter(item => item['@type'] === "skos:Concept");
       };
 
 
@@ -244,14 +244,14 @@
             name: station.value.properties.name,
             wigos_station_identifier: station.value.properties.wigos_station_identifier,  // WSI
             traditional_station_identifier: station.value.properties.traditional_station_identifier,
-            facility_type: station.value.properties.facility_type.id ? station.value.properties.facility_type.id : null,
-            territory_name: station.value.properties.territory_name.id ? station.value.properties.territory_name.id : null,
+            facility_type: station.value.properties.facility_type['skos:notation'] ?? null,
+              territory_name: station.value.properties.territory_name['skos:notation'] ?? null,
             barometer_height: parseFloat(station.value.properties.barometer_height),
-            wmo_region: station.value.properties.wmo_region.id ? station.value.properties.wmo_region.id : null,
+            wmo_region: station.value.properties.wmo_region['skos:notation'] ?? null,
             url: "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/" +
                     station.value.properties.wigos_station_identifier,
             topics: station.value.properties.topics.map( (topic) => (topic.id)),
-            status: station.value.properties.status.id ? station.value.properties.status.id : null,
+            status: station.value.properties.status['skos:notation'] ?? null,
             id: station.value.properties.wigos_station_identifier  // WSI
           }
         }
@@ -354,15 +354,11 @@
             station.value.properties.barometer_height = data.value.feature.properties.barometer_height;
             station.value.properties.url = data.value.feature.properties.url;
             station.value.properties.id = data.value.feature.properties.id;
-            // replace code list entries with full objects
-            station.value.properties.facility_type =
-                facilityTypeOptions.value.find( (item) => item.id === data.value.feature.properties.facility_type);
-            station.value.properties.territory_name =
-                territoryOptions.value.find( (item) => item.id === data.value.feature.properties.territory_name);
-            station.value.properties.wmo_region =
-                WMORegionOptions.value.find( (item) => item.id === data.value.feature.properties.wmo_region);
-            station.value.properties.status =
-                operatingStatusOptions.value.find( (item) => item.id === data.value.feature.properties.status);
+            station.value.properties.facility_type = data.value.feature.properties.facility_type;
+            station.value.properties.territory_name = data.value.feature.properties.territory_name;
+            station.value.properties.wmo_region = data.value.feature.properties.wmo_region;
+            station.value.properties.status = data.value.feature.properties.status;
+
             station.value._meta.ready = true;
             showLoading.value = false;
           }else if(data.value.error){
