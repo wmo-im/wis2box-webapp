@@ -1,8 +1,8 @@
 {
-    "label": "weather/surface-based-observations/wind_profiler",
-    "title": "wind_profiler DATA",
-    "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.wind_profiler",
-    "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.surface-based-observations.wind_profiler",
+    "label": "weather/surface-based-observations/pilot",
+    "title": "pilot DATA",
+    "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.pilot",
+    "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.surface-based-observations.pilot",
     "language": "en",
     "retention": "P30D",
     "resolution": "P1H",

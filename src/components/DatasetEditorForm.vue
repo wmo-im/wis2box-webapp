@@ -23,16 +23,10 @@
                         </v-card-title>
                         <v-card-text>
                             <v-row>
-                                <v-col cols="8">
-                                    <!-- Allow user to enter free text -->
-                                    <v-text-field v-if="!registeredCentre" v-model="model.identification.centreID"
-                                        label="Centre ID" variant="outlined"></v-text-field>
+                                <v-col cols="12">
                                     <!-- If centre registered, show official list -->
-                                    <v-autocomplete v-if="registeredCentre" v-model="model.identification.centreID"
-                                        :items="officialCentres" label="Centre ID" variant="outlined"></v-autocomplete>
-                                </v-col>
-                                <v-col cols="4">
-                                    <v-checkbox label="Registered" v-model="registeredCentre" color="#003DA5" />
+                                    <v-combobox v-model="model.identification.centreID" :items="officialCentres"
+                                        label="Centre ID" :rules="[rules.centreID]" variant="outlined"></v-combobox>
                                 </v-col>
                             </v-row>
                             <v-select v-model="selectedTemplate" :items="templateFiles" item-title="label" return-object
@@ -53,7 +47,7 @@
             </v-card>
 
             <!-- Metadata Editor -->
-            <v-card v-if="metadataLoaded" class="mt-3 pa-3">
+            <v-card v-if="metadataLoaded" class="mt-6 pa-3" style="overflow: initial; z-index: initial">
                 <v-card-title class="big-title">Metadata Editor</v-card-title>
                 <!-- Form which when filled and validated, can be exported or submitted -->
                 <v-form v-model="formFilled" validate-on="input">
@@ -94,8 +88,7 @@
                     <v-row>
                         <v-col cols="2">
                             <v-text-field label="Centre ID" type="string" v-model="model.identification.centreID"
-                                :rules="[rules.required, rules.centreID]" variant="outlined" clearable
-                                disabled></v-text-field>
+                                variant="outlined" clearable disabled></v-text-field>
                         </v-col>
                         <v-col cols="2">
                             <v-select label="WMO Data Policy" type="string" :items="['core', 'recommended']"
@@ -270,14 +263,14 @@
             </v-card>
 
             <!-- Dataset Mappings Editor -->
-            <v-card v-if="metadataLoaded" class="mt-6 pa-3">
+            <v-card v-if="metadataLoaded" class="mt-16 pa-3">
                 <v-card-title class="big-title">Dataset Mappings Editor</v-card-title>
                 <v-card-item>
                     <v-table v-if="canShowPluginTable" :hover="true">
                         <thead>
                             <tr>
                                 <th scope="row" class="text-left">
-                                    <p v-if="model.plugins.length > 0">Plugins in use:</p>
+                                    <p v-if="model.plugins?.length > 0">Plugins in use:</p>
                                     <p v-else>No plugins are currently associated with this dataset</p>
                                 </th>
                             </tr>
@@ -310,18 +303,18 @@
             </v-card>
 
             <!-- Authentication token section -->
-            <v-card class="mt-6 pa-3" v-if="metadataLoaded">
+            <v-card class="mt-16 pa-3" v-if="metadataLoaded">
                 <v-card-title>Authentication Token
                     <v-btn icon="mdi-comment-question" variant="text" size="small"
                         @click="openTokenHelpDialog = true" />
                 </v-card-title>
-                <v-card-item>
+                <v-card-text>
                     <v-text-field label="wis2box auth token for 'collections/discovery-metadata'" v-model="token"
                         rows="1" :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showToken ? 'text' : 'password'" @click:append="showToken = !showToken"
                         variant="outlined">
                     </v-text-field>
-                </v-card-item>
+                </v-card-text>
             </v-card>
 
             <!-- Toolbar for user to reset, validate, export, or submit the data
@@ -628,7 +621,7 @@
 import BboxEditor from "@/components/BboxEditor.vue";
 
 import { defineComponent, ref, computed, onMounted, watch } from 'vue';
-import { VCard, VForm, VBtn, VChipGroup, VChip } from 'vuetify/lib/components/index.mjs';
+import { VCard, VForm, VBtn, VChipGroup, VChip, VCombobox } from 'vuetify/lib/components/index.mjs';
 import Papa from 'papaparse';
 
 const oapi = import.meta.env.VITE_API_URL;
@@ -643,7 +636,8 @@ export default defineComponent({
         VForm,
         VBtn,
         VChipGroup,
-        VChip
+        VChip,
+        VCombobox
     },
     setup() {
         // Deep clone function to avoid reference issues between model and default model
@@ -680,25 +674,6 @@ export default defineComponent({
         const durations = [
             { name: 'minutes(s)', code: 'M' },
             { name: 'hour(s)', code: 'H' },
-        ];
-
-        // Possible plugins and templates to select from
-        const pluginList = [
-            'universal.UniversalData',
-            'bufr4.ObservationDataBUFR',
-            'synop2bufr.ObservationDataSYNOP2BUFR',
-            'csv2bufr.ObservationDataCSV2BUFR'
-        ];
-
-        const templateList = [
-            'CampbellAfrica-v1-template',
-            'daycli-template',
-            'aws-template'
-        ];
-
-        const bucketList = [
-            'Incoming',
-            'Public'
         ];
 
         // WCMP2 schema version
@@ -759,6 +734,10 @@ export default defineComponent({
         const isDistribPhoneValid = ref(null);
         // Each keyword added by the user, before being added to the model
         const keyword = ref("");
+        // Possible plugins and templates to select from
+        const pluginList = ref([]);
+        const templateList = ref([]);
+        const bucketList = ref([]);
         // Information for creating/configuring a dataset plugin
         const pluginIsNew = ref(true);
         const pluginFileType = ref(null);
@@ -814,10 +793,14 @@ export default defineComponent({
         // Note: The nested if statements are written this way to avoid this boolean ever being true
         // (this makes the datepicker component show a green border which is not desired)
         const endDatePossible = computed(() => {
-            if (model.value.extents.dateStopped) {
-                if (new Date(model.value.extents.dateStopped) < new Date(model.value.extents.dateStarted)) {
-                    return false;
-                }
+            const dateStopped = new Date(model.value.extents?.dateStopped);
+            const dateStarted = new Date(model.value.extents?.dateStarted);
+
+            const dateStoppedWithoutTime = new Date(dateStopped.getFullYear(), dateStopped.getMonth(), dateStopped.getDate());
+            const dateStartedWithoutTime = new Date(dateStarted.getFullYear(), dateStarted.getMonth(), dateStarted.getDate());
+
+            if (dateStoppedWithoutTime < dateStartedWithoutTime) {
+                return false;
             }
             return null;
         });
@@ -830,7 +813,7 @@ export default defineComponent({
         // Controls which parts of the page are enabled,
         // in particular the submit button
         const formFilledUpdatedAndAuthenticated = computed(() => {
-            return formFilled.value && formUpdated.value && model.value.plugins.length > 0 && token.value;
+            return formFilled.value && formUpdated.value && model.value.plugins?.length > 0 && token.value;
         });
 
         // Methods
@@ -860,6 +843,23 @@ export default defineComponent({
             items.value.push('Create New...');
         };
 
+        // A method to help tidy the list of loaded centres IDs
+        // to not include empty strings nor global brokers
+        const tidyCentres = (list) => {
+            let tidyList = list.filter(item => item);
+
+            const globalBrokerSuffixes = [
+                '-global-discovery-catalogue',
+                '-global-broker',
+                '-global-cache',
+                '-global-monitor'
+            ];
+
+            return tidyList.filter(item => {
+                return !globalBrokerSuffixes.some(suffix => item.endsWith(suffix));
+            });
+        };
+
         // Fetches a list of official centres from the topic hierarchy repository
         // and updates the list
         const loadCentres = async () => {
@@ -873,6 +873,7 @@ export default defineComponent({
                 const responseData = await response.text();
                 const parsed = Papa.parse(responseData, { header: true });
                 const list = parsed.data.map(item => item.Name);
+                officialCentres.value = tidyCentres(list);
                 // Remove any empty strings from the list
                 officialCentres.value = list.filter(item => item);
             } catch (error) {
@@ -918,9 +919,6 @@ export default defineComponent({
                 const file = await files[path]();
                 templateFiles.value.push(file.default);
             }
-
-            // Also push the 'other' datatype label
-            templateFiles.value.push({ 'label': 'other' });
         };
 
         // When the metadata is loaded, it must be transformed to the format of the form
@@ -1005,15 +1003,20 @@ export default defineComponent({
                         url: contact.links ? contact.links[0].href : ''
                     };
                 }
-
-                // Additional settings information
-                if (schema.properties["wmo:dataPolicy"]) {
-                    formModel.identification.wmoDataPolicy = schema.properties["wmo:dataPolicy"];
-                }
-                if (schema.properties.created) {
-                    formModel.extents.dateCreated = schema.properties.created;
-                }
             });
+            // Additional settings information
+            if (schema.properties["wmo:dataPolicy"]) {
+                formModel.identification.wmoDataPolicy = schema.properties["wmo:dataPolicy"];
+            }
+            if (schema.properties.created) {
+                formModel.extents.dateCreated = schema.properties.created;
+            }
+
+            // Plugins information
+            if (schema.properties.plugins) {
+                formModel.plugins = tidyPlugins(schema.properties.plugins);
+            }
+
             return formModel;
         }
 
@@ -1122,6 +1125,26 @@ export default defineComponent({
                 message.value = "Error loading automatic bounding box.";
             }
         }
+
+        // Loads the plugin lists from a separate JSON file
+        const loadPluginLists = async () => {
+            try {
+                // Get list of plugins from JSON file
+                const response = await fetch(`${import.meta.env.VITE_BASE_URL}/plugins/plugin-list.json`);
+                if (!response.ok) {
+                    throw new Error('Network response was not okay, failed to load plugin list.');
+                }
+                const responseData = await response.json();
+                // Update the list of items
+                pluginList.value = responseData.plugins;
+                templateList.value = responseData.templates;
+                bucketList.value = responseData.buckets;
+            } catch (error) {
+                console.error(error);
+                // Display error message to the user
+                message.value = 'Error loading plugin list.';
+            }
+        };
 
         // Method to flatten the plugins array so it is easier to work with
         const tidyPlugins = (plugins) => {
@@ -1408,6 +1431,41 @@ export default defineComponent({
             return phone.replace(/\s/g, '');
         };
 
+        // Helper method to handling the end date
+        const handleEndDate = (endDate) => {
+            // The end date defaults to ".." if the dataset is ongoing
+            if (isEndDateDisabled.value) {
+                return ".."
+            }
+            else if (endDate) {
+                return getDateFrom(endDate);
+            }
+            return ".."
+        };
+
+        // Method to structure the plugins object correctly for the schema
+        const untidyPluginsForSchema = (plugins) => {
+            let result = { "plugins": {} };
+            for (const plugin of plugins) {
+                // If the plugin has buckets, convert them to the correct format
+                if (plugin.buckets) {
+                    plugin.buckets = plugin.buckets.map(bucket => `wis2box-${bucket.toLowerCase()}`);
+                }
+                // Create a new object which has the plugin
+                // info except filetype
+                let pluginInfo = {
+                    plugin: plugin.name,
+                    template: plugin.template,
+                    notify: plugin.notify,
+                    buckets: plugin.buckets,
+                    'file-pattern': plugin.filePattern
+                };
+
+                result.plugins[plugin.fileType] = [pluginInfo];
+            }
+            return result;
+        };
+
         // Transforms the form data to the WCMP2 schema format
         const transformToSchema = (form) => {
             // Initialise schema model
@@ -1424,16 +1482,14 @@ export default defineComponent({
             schemaModel.wis2box["topic_hierarchy"] = form.identification.topicHierarchy;
             schemaModel.wis2box.country = form.host.country;
             schemaModel.wis2box["centre_id"] = form.identification.centreID;
+            schemaModel.wis2box["data_mappings"] = untidyPluginsForSchema(form.plugins);
 
             // Time period information
             schemaModel.time = {};
             // Get the start and end dates from the form (removing the time part of the string)
             const startDate = getDateFrom(form.extents.dateStarted);
-            // Note: the end date defaults to ".." if the dataset is ongoing
-            let endDate = "..";
-            if (form.extents.dateStopped !== "NaN-NaN-NaN") {
-                endDate = getDateFrom(form.extents.dateStopped);
-            }
+            const endDate = handleEndDate(form.extents.dateStopped);
+
             schemaModel.time.interval = [startDate, endDate];
             schemaModel.time.resolution = `P${form.extents.resolution}${form.extents.resolutionUnit}`;
 
@@ -1642,6 +1698,7 @@ export default defineComponent({
             loadCentres();
             loadDisciplines();
             loadTemplates();
+            loadPluginLists();
             loadCodes();
         });
 

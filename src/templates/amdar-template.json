@@ -1,12 +1,12 @@
 {
-    "label": "weather/advisories-warnings",
-    "title": "Advisories and Warnings using CAP XML format",
-    "identifier": "urn:wmo:md:$CENTRE_ID:advisories-warnings",
-    "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.advisories-warnings",
+    "label": "weather/surface-based-observations/amdar",
+    "title": "amdar DATA",
+    "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.amdar",
+    "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.surface-based-observations.amdar",
     "language": "en",
     "retention": "P30D",
     "resolution": "P1H",
-    "keywords": ["weather", "advisories", "warnings"],
+    "keywords": ["wind", "weather", "observations"],
     "duplicateFromContact": true,
     "themes": [
         {

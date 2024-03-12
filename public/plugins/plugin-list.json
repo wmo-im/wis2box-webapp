@@ -1,0 +1,14 @@
+{
+  "plugins": [
+    "universal.UniversalData",
+    "bufr4.ObservationDataBUFR",
+    "synop2bufr.ObservationDataSYNOP2BUFR",
+    "csv2bufr.ObservationDataCSV2BUFR"
+  ],
+  "templates": [
+    "CampbellAfrica-v1-template",
+    "daycli-template",
+    "aws-template"
+  ],
+  "buckets": ["Incoming", "Public"]
+}
