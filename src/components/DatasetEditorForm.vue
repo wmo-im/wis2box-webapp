@@ -282,11 +282,13 @@
                                     {{ plugin.name }}
                                 </td>
                                 <td class="text-right">
-                                    <v-btn class="mr-5" icon="mdi-update" size="small" color="#003DA5" variant="flat"
-                                        @click.stop="configurePlugin(plugin)"></v-btn>
+                                    <v-btn class="mr-5" append-icon="mdi-update"  color="#003DA5" variant="flat"
+                                        @click.stop="configurePlugin(plugin)">
+                                        Update
+                                    </v-btn>
 
-                                    <v-btn icon="mdi-delete" size="small" color="error" variant="flat"
-                                        @click.stop="removePlugin(plugin)"></v-btn>
+                                    <v-btn append-icon="mdi-delete" color="error" variant="flat"
+                                        @click.stop="removePlugin(plugin)">Delete</v-btn>
                                 </td>
                             </tr>
                         </tbody>
@@ -681,7 +683,7 @@ export default defineComponent({
         // Validation patterns for form fields
         const rules = {
             required: (value) => !!value || "Field is required",
-            centreID: value => /^[a-z_-]{2,}$/.test(value) || 'Invalid centre ID. Must be lowercase with at least 2 characters.',
+            centreID: value => /^[a-z0-9_-]{2,}$/.test(value) || 'Invalid centre ID. Must be lowercase with at least 2 characters.',
             latitude: value => value >= -90 && value <= 90 || 'Latitude must be between -90 and 90.',
             longitude: value => value >= -180 && value <= 180 || 'Longitude must be between -180 and 180.',
             url: value => value === '' || /^https?:\/\/[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(value) || 'Invalid URL format.',
@@ -1669,20 +1671,35 @@ export default defineComponent({
                 headers: headers,
                 body: JSON.stringify(schemaModel)
             });
-            // Check response from OAPI
-            if (!response.ok) {
-                throw new Error('Network response was not okay, failed to submit discovery metadata.');
-            }
 
             // Define HTTP responses
             const NO_CONTENT = 204;
             const UNAUTHORIZED = 401;
             const NOT_FOUND = 404;
             const INTERNAL_SERVER_ERROR = 500;
+
+            // Check response from OAPI
+            if (!response.ok) {
+                if (response.status == UNAUTHORIZED) {
+                    message.value = "Unauthorized, please provide a valid 'collections/discovery-metadata' token";
+                }
+                else if (response.status == NOT_FOUND) {
+                    message.value = "Error submitting data: API not found";
+                }
+                else if (response.status == INTERNAL_SERVER_ERROR) {
+                    message.value = "Error submitting data: Internal server error";
+                }
+                else {
+                    message.value = "API error, please check the console."
+                }
+                // Open a dialog window to show this message clearly
+                openMessageDialog.value = true;
+            }
+
             // If no content is returned from the fetch, then the put request is successful.
             // In this case, redirect the user to the home page
             if (response.status == NO_CONTENT) {
-                message.value = isNew.value ? "Discovery metadata added successfully." : "Discovery metadata updated successfully.";
+                message.value = isNew.value ? "Discovery metadata added successfully" : "Discovery metadata updated successfully";
                 // Open a dialog window to show this message clearly
                 openMessageDialog.value = true;
                 // Display this for 2 seconds then redirect
@@ -1690,20 +1707,6 @@ export default defineComponent({
                     window.location.href = "/wis2box-webapp/dataset_editor";
                 }, 2000);
             }
-            else if (response.status == UNAUTHORIZED) {
-                message.value = "Unauthorized, please provide a valid 'collections/discovery-metadata' token";
-            }
-            else if (response.status == NOT_FOUND) {
-                message.value = "Error submitting data: API not found";
-            }
-            else if (response.status == INTERNAL_SERVER_ERROR) {
-                message.value = "Error submitting data: Internal server error";
-            }
-            else {
-                message.value = "API error, please check the console."
-            }
-            // Open a dialog window to show this message clearly
-            openMessageDialog.value = true;
         };
 
         // Mounted
