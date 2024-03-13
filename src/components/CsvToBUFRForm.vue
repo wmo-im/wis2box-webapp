@@ -55,18 +55,18 @@
                                     <v-data-table :items="theData" :headers="headers" class="elevation-1">
                                         <template v-slot:item="{item}">
                                             <tr>
-                                                <td v-for="(value, key) in item.columns" :key="key">
+                                                <td v-for="(value, key) in item" :key="key">
                                                     <v-tooltip
-                                                        v-if="item.columns[key].msg !== ''"
-                                                        :text="item.columns[key].msg">
+                                                        v-if="item[key].msg !== ''"
+                                                        :text="item[key].msg">
                                                         <template v-slot:activator="{ props }">
-                                                            <v-chip :color="item.columns[key].status" v-bind="props">
-                                                                {{item.columns[key].value}}
+                                                            <v-chip :color="item[key].status" v-bind="props">
+                                                                {{item[key].value}}
                                                             </v-chip>
                                                         </template>
                                                     </v-tooltip>
-                                                    <v-chip v-else :color="item.columns[key].status">
-                                                        {{item.columns[key].value}}
+                                                    <v-chip v-else :color="item[key].status">
+                                                        {{item[key].value}}
                                                     </v-chip>
                                                 </td>
                                             </tr>
@@ -249,8 +249,8 @@
     import { VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VChip, VTooltip, VSwitch } from 'vuetify/lib/components/index.mjs';
     import { VList, VListItem, VListSubheader, VSheet, VContainer, VCardTitle, VIcon, VDialog} from 'vuetify/lib/components/index.mjs';
     import { VCardSubtitle} from 'vuetify/lib/components/index.mjs';
-    import { VDataTable} from 'vuetify/lib/labs/VDataTable/index.mjs';
-    import { VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem, VStepperActions} from 'vuetify/lib/labs/VStepper/index.mjs';
+    import { VDataTable} from 'vuetify/lib/components/index.mjs';
+    import { VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem, VStepperActions} from 'vuetify/lib/components/index.mjs';
     import InspectBufrButton from '@/components/InspectBufrButton.vue';
     import DownloadButton from '@/components/DownloadButton.vue';
     import TopicHierarchySelector from '@/components/TopicHierarchySelector.vue';
