@@ -13,8 +13,8 @@
                 <v-icon size="small" @click="deleteRecord(item)">mdi-delete</v-icon>
               </template>
               <template v-slot:item.url="{ item }">
-                <a :href="item.columns.url">
-                  {{ item.columns.url }}
+                <a :href="item.url">
+                  {{ item.url }}
                 </a>
               </template>
               <template v-slot:top>
@@ -41,13 +41,16 @@
       </v-card>
     </v-col>
   </v-row>
-  
+
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue';
-import { VCard, VCardTitle, VCardText, VTextField, VDataTable } from 'vuetify/lib/components/index.mjs';
-import {useRouter} from 'vue-router';
+import { defineComponent } from 'vue';
+import { VCard, VCardTitle, VCardText, VChip, VTextField } from 'vuetify/lib/components/index.mjs';
+import { onBeforeMount, onMounted, onBeforeUpdate, onUpdated, onBeforeUnmount, onUnmounted, onErrorCaptured} from 'vue';
+import { ref, computed, watchEffect, watch } from 'vue'
+import { VDataTable } from 'vuetify/lib/components/index.mjs';
+import {useRoute, useRouter} from 'vue-router';
 import APIStatus from '@/components/APIStatus.vue';
 
 
