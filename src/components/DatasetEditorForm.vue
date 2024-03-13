@@ -1373,9 +1373,9 @@ export default defineComponent({
             // Otherwise, update the existing plugin
             else {
                 // Find the index of the plugin in the model
-                const index = model.value.plugins.findIndex(item => 
-                item.name === previousPluginName.value &&
-                item.fileType === previousPluginFileType.value);
+                const index = model.value.plugins.findIndex(item =>
+                    item.name === previousPluginName.value &&
+                    item.fileType === previousPluginFileType.value);
                 // Update the plugin in the model
                 model.value.plugins[index] = {
                     fileType: pluginFileType.value,
@@ -1656,62 +1656,54 @@ export default defineComponent({
 
         // Submits the metadata to the wis2box OAPI endpoint
         const submitMetadata = async () => {
-            try {
-                // Add authentication token to the headers
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'authorization': 'Bearer ' + token.value
-                };
-                // Convert the form data to an object adhering to the WCMP2 schema
-                const schemaModel = transformToSchema(model.value);
-                // Send the data to the OAPI endpoint using PUT
-                const response = await fetch(`${oapi}/collections/discovery-metadata/items/${model.value.identification.identifier}`, {
-                    method: 'PUT',
-                    headers: headers,
-                    body: JSON.stringify(schemaModel)
-                });
-                // Check response from OAPI
-                if (!response.ok) {
-                    throw new Error('Network response was not okay, failed to submit discovery metadata.');
-                }
-
-                // Define HTTP responses
-                const NO_CONTENT = 204;
-                const UNAUTHORIZED = 401;
-                const NOT_FOUND = 404;
-                const INTERNAL_SERVER_ERROR = 500;
-                // If no content is returned from the fetch, then the put request is successful.
-                // In this case, redirect the user to the home page
-                if (response.status == NO_CONTENT) {
-                    message.value = isNew.value ? "Discovery metadata added successfully." : "Discovery metadata updated successfully.";
-                    // Open a dialog window to show this message clearly
-                    openMessageDialog.value = true;
-                    // Display this for 2 seconds then redirect
-                    setTimeout(() => {
-                        window.location.href = "/wis2box-webapp/dataset_editor";
-                    }, 2000);
-                }
-                else if (response.status == UNAUTHORIZED) {
-                    message.value = "Unauthorized, please provide a valid 'collections/discovery-metadata' token";
-                }
-                else if (response.status == NOT_FOUND) {
-                    message.value = "Error submitting data: API not found";
-                }
-                else if (response.status == INTERNAL_SERVER_ERROR) {
-                    message.value = "Error submitting data: Internal server error";
-                }
-                else {
-                    message.value = "API error, please check the console."
-                }
-                // Open a dialog window to show this message clearly
-                openMessageDialog.value = true;
-            } catch (error) {
-                console.error(error);
-                // If there is an error, display the appropriate error message to the user
-                message.value = isNew.value ? "Error adding discovery metadata." : "Error updating discovery metadata.";
-                // Open a dialog window to show this message clearly
-                openMessageDialog.value = true;
+            // Add authentication token to the headers
+            const headers = {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + token.value
+            };
+            // Convert the form data to an object adhering to the WCMP2 schema
+            const schemaModel = transformToSchema(model.value);
+            // Send the data to the OAPI endpoint using PUT
+            const response = await fetch(`${oapi}/collections/discovery-metadata/items/${model.value.identification.identifier}`, {
+                method: 'PUT',
+                headers: headers,
+                body: JSON.stringify(schemaModel)
+            });
+            // Check response from OAPI
+            if (!response.ok) {
+                throw new Error('Network response was not okay, failed to submit discovery metadata.');
             }
+
+            // Define HTTP responses
+            const NO_CONTENT = 204;
+            const UNAUTHORIZED = 401;
+            const NOT_FOUND = 404;
+            const INTERNAL_SERVER_ERROR = 500;
+            // If no content is returned from the fetch, then the put request is successful.
+            // In this case, redirect the user to the home page
+            if (response.status == NO_CONTENT) {
+                message.value = isNew.value ? "Discovery metadata added successfully." : "Discovery metadata updated successfully.";
+                // Open a dialog window to show this message clearly
+                openMessageDialog.value = true;
+                // Display this for 2 seconds then redirect
+                setTimeout(() => {
+                    window.location.href = "/wis2box-webapp/dataset_editor";
+                }, 2000);
+            }
+            else if (response.status == UNAUTHORIZED) {
+                message.value = "Unauthorized, please provide a valid 'collections/discovery-metadata' token";
+            }
+            else if (response.status == NOT_FOUND) {
+                message.value = "Error submitting data: API not found";
+            }
+            else if (response.status == INTERNAL_SERVER_ERROR) {
+                message.value = "Error submitting data: Internal server error";
+            }
+            else {
+                message.value = "API error, please check the console."
+            }
+            // Open a dialog window to show this message clearly
+            openMessageDialog.value = true;
         };
 
         // Mounted
