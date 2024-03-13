@@ -1,16 +1,32 @@
 {
   "plugins": [
-    {"title": "Universal data without conversion", "id": "wis2box.data.universal.UniversalData"},
-    {"title": "BUFR data converted to BUFR", "id": "wis2box.data.bufr4.ObservationDataBUFR"},
-    {"title": "FM-12 data converted to BUFR", "id": "wis2box.data.synop2bufr.ObservationDataSYNOP2BUFR"},
-    {"title": "CSV data converted to BUFR", "id": "wis2box.data.csv2bufr.ObservationDataCSV2BUFR"}
+    {
+      "title": "Universal data without conversion",
+      "id": "wis2box.data.universal.UniversalData"
+    },
+    {
+      "title": "BUFR data converted to BUFR",
+      "id": "wis2box.data.bufr4.ObservationDataBUFR"
+    },
+    {
+      "title": "FM-12 data converted to BUFR",
+      "id": "wis2box.data.synop2bufr.ObservationDataSYNOP2BUFR"
+    },
+    {
+      "title": "CSV data converted to BUFR",
+      "id": "wis2box.data.csv2bufr.ObservationDataCSV2BUFR"
+    },
+    {
+      "title": "BUFR data converted to GeoJSON",
+      "id": "wis2box.data.bufr2geojson.ObservationDataBUFR2GeoJSON"
+    }
   ],
   "templates": [
-    {"title": "Campbell", "id": "CampbellAfrica-v1-template"},
-    {"title": "AWS", "id": "daycli-template"}
+    { "title": "Campbell", "id": "CampbellAfrica-v1-template" },
+    { "title": "AWS", "id": "aws-template" }
   ],
   "buckets": [
-    {"title": "Incoming", "id": "wis2box-incoming"},
-    {"title": "Public", "id": "wis2box-public"}
+    { "title": "Incoming", "id": "wis2box-incoming" },
+    { "title": "Public", "id": "wis2box-public" }
   ]
 }

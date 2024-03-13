@@ -265,35 +265,39 @@
             <!-- Dataset Mappings Editor -->
             <v-card v-if="metadataLoaded" class="mt-16 pa-3">
                 <v-card-title class="big-title">Dataset Mappings Editor</v-card-title>
-                <v-card-item>
+                <v-container>
                     <v-table v-if="canShowPluginTable" :hover="true">
                         <thead>
                             <tr>
-                                <th scope="row" class="text-left">
-                                    <p v-if="model.plugins?.length > 0">Plugins in use:</p>
+                                <th scope="row">
+                                    <p v-if="model.plugins?.length > 0">Plugins in use</p>
                                     <p v-else>No plugins are currently associated with this dataset</p>
                                 </th>
+                                <th scope="row">Filetype</th>
+                                <th scope="row" class="text-right"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="plugin in model.plugins" :key="plugin.name" @click="viewPlugin(plugin)"
                                 class="clickable-row">
                                 <td class="medium-title">
-                                    {{ plugin.name }}
+                                    {{ getPluginTitle(plugin) }}
+                                </td>
+                                <td class="medium-title">
+                                    {{ plugin.fileType }}
                                 </td>
                                 <td class="text-right">
-                                    <v-btn class="mr-5" append-icon="mdi-update"  color="#003DA5" variant="flat"
+                                    <v-btn class="mr-5" append-icon="mdi-update" color="#003DA5" variant="flat"
                                         @click.stop="configurePlugin(plugin)">
                                         Update
                                     </v-btn>
-
                                     <v-btn append-icon="mdi-delete" color="error" variant="flat"
                                         @click.stop="removePlugin(plugin)">Delete</v-btn>
                                 </td>
                             </tr>
                         </tbody>
                     </v-table>
-                </v-card-item>
+                </v-container>
 
 
                 <v-row justify="center" class="mt-1">
@@ -543,7 +547,7 @@
                             <tbody>
                                 <tr>
                                     <td><b>Plugin Name</b></td>
-                                    <td>{{ pluginName }}</td>
+                                    <td>{{ pluginNameTitle }}</td>
                                 </tr>
                                 <tr>
                                     <td><b>Filetype</b></td>
@@ -551,11 +555,11 @@
                                 </tr>
                                 <tr>
                                     <td><b>Template</b></td>
-                                    <td>{{ pluginTemplate }}</td>
+                                    <td>{{ pluginTemplateTitle }}</td>
                                 </tr>
                                 <tr>
                                     <td><b>WIS2 Buckets</b></td>
-                                    <td>{{ formattedPluginBuckets?.join(', ') }}</td>
+                                    <td>{{ pluginBucketsTitle }}</td>
                                 </tr>
                                 <tr>
                                     <td><b>File Pattern</b></td>
@@ -589,12 +593,12 @@
 
                             <v-row>
                                 <v-col cols="6">
-                                    <v-select label="Template" v-model="pluginTemplate" :items="templateList" item-title="title" item-value="id"
-                                        variant="outlined"></v-select>
+                                    <v-select label="Template" v-model="pluginTemplate" :items="templateList"
+                                        item-title="title" item-value="id" variant="outlined"></v-select>
                                 </v-col>
                                 <v-col cols="6">
-                                    <v-select label="WIS2 Buckets" v-model="pluginBuckets" :items="bucketList" item-title="title" item-value="id" multiple
-                                        variant="outlined"></v-select>
+                                    <v-select label="WIS2 Buckets" v-model="pluginBuckets" :items="bucketList"
+                                        item-title="title" item-value="id" multiple variant="outlined"></v-select>
                                 </v-col>
                             </v-row>
 
@@ -751,6 +755,10 @@ export default defineComponent({
         const pluginNotifyBoolean = ref(null);
         const pluginBuckets = ref(null);
         const pluginFilePattern = ref(null);
+        // Information for plugin titles
+        const pluginNameTitle = ref(null);
+        const pluginTemplateTitle = ref(null);
+        const pluginBucketsTitle = ref(null);
         // Information for storing the previous plugin name and filetype
         // when we overwrite the plugin info
         const previousPluginName = ref(null);
@@ -1158,29 +1166,17 @@ export default defineComponent({
         // Method to flatten the plugins array so it is easier to work with
         const tidyPlugins = (plugins) => {
 
-            const tidyBuckets = (buckets) => {
-                if (!buckets) {
-                    return;
-                }
-                return buckets.map(bucket => {
-                    let lowercase = bucket.replace('wis2box-', '');
-                    let firstLetterCapital = lowercase.charAt(0).toUpperCase() + lowercase.slice(1);
-                    return firstLetterCapital;
-                });
-            }
-
             let result = [];
 
             for (const [filetype, entries] of Object.entries(plugins)) {
                 entries.forEach(entry => {
                     const singlePlugin = {
                         fileType: filetype,
-                        // Name of plugin should be without 'wis2box.data' prefix
                         name: entry.plugin,
                         template: entry.template || undefined,
                         notify: entry.notify || undefined,
                         // Bucket names should be without 'wis2box-' prefix
-                        buckets: tidyBuckets(entry.buckets) || undefined,
+                        buckets: entry.buckets || undefined,
                         filePattern: entry['file-pattern']
                     };
                     result.push(singlePlugin);
@@ -1312,16 +1308,20 @@ export default defineComponent({
             }
         };
 
-        // Formats the buckets to not have 'wis2box-' and start with a captial
-        const formatBuckets = (buckets) => {
-            if (!buckets) {
+        // Formats the plugin name to be human readable
+        // in the table of plugins
+        const getPluginTitle = (plugin) => {
+            if (!plugin) {
                 return;
             }
-            return buckets.map(bucket => {
-                let lowercase = bucket.replace('wis2box-', '');
-                let firstLetterCapital = lowercase.charAt(0).toUpperCase() + lowercase.slice(1);
-                return firstLetterCapital;
-            });
+            const foundPlugin = pluginList.value.find(item => item.id === plugin.name);
+
+            if (!foundPlugin) {
+                console.error(`No plugin found with id ${plugin.name}`);
+                return;
+            }
+
+            return foundPlugin.title;
         };
 
         // Populates plugin fields
@@ -1333,8 +1333,17 @@ export default defineComponent({
                 pluginName.value = plugin.name;
                 pluginTemplate.value = plugin.template;
                 pluginNotifyBoolean.value = plugin.notify;
-                pluginBuckets.value = formatBuckets(plugin.buckets);
+                pluginBuckets.value = plugin.buckets;
                 pluginFilePattern.value = plugin.filePattern;
+
+                // Also populate human readable plugin titles
+                pluginNameTitle.value = pluginList.value.find(item => item.id === plugin.name).title;
+                pluginTemplateTitle.value = templateList.value.find(item => item.id === plugin.template).title;
+                let listOfBucketTitles = plugin.buckets.map(bucket => {
+                    return bucketList.value.find(item => item.id === bucket).title;
+                });
+                pluginBucketsTitle.value = listOfBucketTitles.join(', ');
+
             }
             // If plugin is new (null), reset the fields
             else {
@@ -1485,6 +1494,11 @@ export default defineComponent({
             return result;
         };
 
+        // Helper method to format the WMO topic hierarchy
+        const formatTopicHierarchy = (topic) => {
+            return `origin/a/wis2/${topic.replace(/\./g, '/')}`
+        }
+
         // Transforms the form data to the WCMP2 schema format
         const transformToSchema = (form) => {
             // Initialise schema model
@@ -1581,7 +1595,7 @@ export default defineComponent({
             schemaModel.properties.created = form.extents.dateCreated || new Date().toISOString();
             schemaModel.properties.updated = new Date().toISOString();
             schemaModel.properties["wmo:dataPolicy"] = form.identification.wmoDataPolicy;
-            schemaModel.properties["wmo:topicHierarchy"] = form.identification.topicHierarchy;
+            schemaModel.properties["wmo:topicHierarchy"] = formatTopicHierarchy(form.identification.topicHierarchy);
             schemaModel.properties.id = form.identification.identifier;
 
 
@@ -1598,7 +1612,7 @@ export default defineComponent({
                 type: "application/json",
                 href: "mqtt://everyone:everyone@mosquitto:1883",
                 title: itemTitle,
-                channel: `origin/a/wis2/${form.identification.topicHierarchy}`
+                channel: formatTopicHierarchy(form.identification.topicHierarchy)
             });
 
             return schemaModel;
@@ -1801,6 +1815,9 @@ export default defineComponent({
             pluginNotifyBoolean,
             pluginBuckets,
             pluginFilePattern,
+            pluginNameTitle,
+            pluginTemplateTitle,
+            pluginBucketsTitle,
             previousPluginName,
             previousPluginFileType,
             model,
@@ -1825,6 +1842,7 @@ export default defineComponent({
             onDistribPhoneValidate,
             addKeyword,
             removeKeyword,
+            getPluginTitle,
             viewPlugin,
             configurePlugin,
             savePlugin,
