@@ -353,8 +353,7 @@
                             form.</p>
                         <br>
                         <p><b>Centre ID:</b> The agency acronym (in lower case and no spaces), as specified by
-                            member.
-                            Optionally, you can select your centre ID from a list by selecting 'Registered'.</p>
+                            member.</p>
                         <br>
                         <p><b>Data Type:</b> The type of data you are creating metadata for. <i>If 'other' is
                                 selected,
@@ -746,6 +745,10 @@ export default defineComponent({
         const pluginNotifyBoolean = ref(null);
         const pluginBuckets = ref(null);
         const pluginFilePattern = ref(null);
+        // Information for storing the previous plugin name and filetype
+        // when we overwrite the plugin info
+        const previousPluginName = ref(null);
+        const previousPluginFileType = ref(null);
         // Metadata form to be filled
         const model = ref({ 'identification': {}, 'extents': {}, 'host': {}, 'plugins': [] });
         // Execution token to be entered by user
@@ -1013,8 +1016,8 @@ export default defineComponent({
             }
 
             // Plugins information
-            if (schema.properties.plugins) {
-                formModel.plugins = tidyPlugins(schema.properties.plugins);
+            if (schema.wis2box["data_mappings"]?.plugins) {
+                formModel.plugins = tidyPlugins(schema.wis2box["data_mappings"].plugins);
             }
 
             return formModel;
@@ -1344,6 +1347,10 @@ export default defineComponent({
             // Open the dialog
             openConfigurePluginDialog.value = true;
 
+            // Save the original plugin name and filetype
+            previousPluginName.value = plugin?.name;
+            previousPluginFileType.value = plugin?.fileType;
+
             populatePluginFields(plugin);
         };
 
@@ -1366,7 +1373,9 @@ export default defineComponent({
             // Otherwise, update the existing plugin
             else {
                 // Find the index of the plugin in the model
-                const index = model.value.plugins.findIndex(item => item.fileType === pluginFileType.value && item.name === pluginName.value);
+                const index = model.value.plugins.findIndex(item => 
+                item.name === previousPluginName.value &&
+                item.fileType === previousPluginFileType.value);
                 // Update the plugin in the model
                 model.value.plugins[index] = {
                     fileType: pluginFileType.value,
@@ -1775,6 +1784,8 @@ export default defineComponent({
             pluginNotifyBoolean,
             pluginBuckets,
             pluginFilePattern,
+            previousPluginName,
+            previousPluginFileType,
             model,
             token,
             showToken,
