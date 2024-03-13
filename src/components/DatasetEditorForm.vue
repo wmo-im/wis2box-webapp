@@ -1675,7 +1675,11 @@ export default defineComponent({
                     throw new Error('Network response was not okay, failed to submit discovery metadata.');
                 }
 
+                // Define HTTP responses
                 const NO_CONTENT = 204;
+                const UNAUTHORIZED = 401;
+                const NOT_FOUND = 404;
+                const INTERNAL_SERVER_ERROR = 500;
                 // If no content is returned from the fetch, then the put request is successful.
                 // In this case, redirect the user to the home page
                 if (response.status == NO_CONTENT) {
@@ -1684,20 +1688,29 @@ export default defineComponent({
                     openMessageDialog.value = true;
                     // Display this for 2 seconds then redirect
                     setTimeout(() => {
-                        window.location.href = "/wis2box-webapp/metadata-form";
+                        window.location.href = "/wis2box-webapp/dataset_editor";
                     }, 2000);
                 }
-                // Otherwise, show a message with the description of the response
-                else {
-                    const responseData = await response.json()
-                    message.value = responseData.description;
-                    // Open a dialog window to show this message clearly
-                    openMessageDialog.value = true;
+                else if (response.status == UNAUTHORIZED) {
+                    message.value = "Unauthorized, please provide a valid 'collections/discovery-metadata' token";
                 }
+                else if (response.status == NOT_FOUND) {
+                    message.value = "Error submitting data: API not found";
+                }
+                else if (response.status == INTERNAL_SERVER_ERROR) {
+                    message.value = "Error submitting data: Internal server error";
+                }
+                else {
+                    message.value = "API error, please check the console."
+                }
+                // Open a dialog window to show this message clearly
+                openMessageDialog.value = true;
             } catch (error) {
                 console.error(error);
                 // If there is an error, display the appropriate error message to the user
                 message.value = isNew.value ? "Error adding discovery metadata." : "Error updating discovery metadata.";
+                // Open a dialog window to show this message clearly
+                openMessageDialog.value = true;
             }
         };
 
