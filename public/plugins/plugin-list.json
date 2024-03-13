@@ -1,14 +1,16 @@
 {
   "plugins": [
-    "universal.UniversalData",
-    "bufr4.ObservationDataBUFR",
-    "synop2bufr.ObservationDataSYNOP2BUFR",
-    "csv2bufr.ObservationDataCSV2BUFR"
+    {"title": "Universal data without conversion", "id": "wis2box.data.universal.UniversalData"},
+    {"title": "BUFR data converted to BUFR", "id": "wis2box.data.bufr4.ObservationDataBUFR"},
+    {"title": "FM-12 data converted to BUFR", "id": "wis2box.data.synop2bufr.ObservationDataSYNOP2BUFR"},
+    {"title": "CSV data converted to BUFR", "id": "wis2box.data.csv2bufr.ObservationDataCSV2BUFR"}
   ],
   "templates": [
-    "CampbellAfrica-v1-template",
-    "daycli-template",
-    "aws-template"
+    {"title": "Campbell", "id": "CampbellAfrica-v1-template"},
+    {"title": "AWS", "id": "daycli-template"}
   ],
-  "buckets": ["Incoming", "Public"]
+  "buckets": [
+    {"title": "Incoming", "id": "wis2box-incoming"},
+    {"title": "Public", "id": "wis2box-public"}
+  ]
 }

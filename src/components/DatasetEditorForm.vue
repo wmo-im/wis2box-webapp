@@ -520,11 +520,15 @@
             <v-dialog v-model="openMessageDialog" max-width="600px">
                 <v-card>
                     <v-toolbar title="Result" color="#003DA5">
-                        <v-btn icon="mdi-close" variant="text" size="small" @click="openMessageDialog = false" />
                     </v-toolbar>
                     <v-card-text>
                         {{ message }}
                     </v-card-text>
+                    <v-card-actions>
+                        <v-btn color="#003DA5" block @click="openMessageDialog = false">
+                            OK
+                        </v-btn>
+                    </v-card-actions>
                 </v-card>
             </v-dialog>
 
@@ -551,7 +555,7 @@
                                 </tr>
                                 <tr>
                                     <td><b>WIS2 Buckets</b></td>
-                                    <td>{{ pluginBuckets?.join(', ') }}</td>
+                                    <td>{{ formattedPluginBuckets?.join(', ') }}</td>
                                 </tr>
                                 <tr>
                                     <td><b>File Pattern</b></td>
@@ -575,7 +579,7 @@
                             <v-row>
                                 <v-col cols="8">
                                     <v-select label="Plugin Name" v-model="pluginName" :items="pluginList"
-                                        variant="outlined"></v-select>
+                                        item-title="title" item-value="id" variant="outlined"></v-select>
                                 </v-col>
                                 <v-col cols="4">
                                     <v-text-field label="Filetype" v-model="pluginFileType"
@@ -585,11 +589,11 @@
 
                             <v-row>
                                 <v-col cols="6">
-                                    <v-select label="Template" v-model="pluginTemplate" :items="templateList"
+                                    <v-select label="Template" v-model="pluginTemplate" :items="templateList" item-title="title" item-value="id"
                                         variant="outlined"></v-select>
                                 </v-col>
                                 <v-col cols="6">
-                                    <v-select label="WIS2 Buckets" v-model="pluginBuckets" :items="bucketList" multiple
+                                    <v-select label="WIS2 Buckets" v-model="pluginBuckets" :items="bucketList" item-title="title" item-value="id" multiple
                                         variant="outlined"></v-select>
                                 </v-col>
                             </v-row>
@@ -1154,10 +1158,6 @@ export default defineComponent({
         // Method to flatten the plugins array so it is easier to work with
         const tidyPlugins = (plugins) => {
 
-            const tidyName = (name) => {
-                return name.replace('wis2box.data.', '');
-            }
-
             const tidyBuckets = (buckets) => {
                 if (!buckets) {
                     return;
@@ -1176,7 +1176,7 @@ export default defineComponent({
                     const singlePlugin = {
                         fileType: filetype,
                         // Name of plugin should be without 'wis2box.data' prefix
-                        name: tidyName(entry.plugin),
+                        name: entry.plugin,
                         template: entry.template || undefined,
                         notify: entry.notify || undefined,
                         // Bucket names should be without 'wis2box-' prefix
@@ -1312,6 +1312,18 @@ export default defineComponent({
             }
         };
 
+        // Formats the buckets to not have 'wis2box-' and start with a captial
+        const formatBuckets = (buckets) => {
+            if (!buckets) {
+                return;
+            }
+            return buckets.map(bucket => {
+                let lowercase = bucket.replace('wis2box-', '');
+                let firstLetterCapital = lowercase.charAt(0).toUpperCase() + lowercase.slice(1);
+                return firstLetterCapital;
+            });
+        };
+
         // Populates plugin fields
         const populatePluginFields = (plugin) => {
             // If plugin exists, populate the fields
@@ -1321,7 +1333,7 @@ export default defineComponent({
                 pluginName.value = plugin.name;
                 pluginTemplate.value = plugin.template;
                 pluginNotifyBoolean.value = plugin.notify;
-                pluginBuckets.value = plugin.buckets;
+                pluginBuckets.value = formatBuckets(plugin.buckets);
                 pluginFilePattern.value = plugin.filePattern;
             }
             // If plugin is new (null), reset the fields
@@ -1458,10 +1470,6 @@ export default defineComponent({
         const untidyPluginsForSchema = (plugins) => {
             let result = { "plugins": {} };
             for (const plugin of plugins) {
-                // If the plugin has buckets, convert them to the correct format
-                if (plugin.buckets) {
-                    plugin.buckets = plugin.buckets.map(bucket => `wis2box-${bucket.toLowerCase()}`);
-                }
                 // Create a new object which has the plugin
                 // info except filetype
                 let pluginInfo = {
@@ -1702,10 +1710,11 @@ export default defineComponent({
                 message.value = isNew.value ? "Discovery metadata added successfully" : "Discovery metadata updated successfully";
                 // Open a dialog window to show this message clearly
                 openMessageDialog.value = true;
-                // Display this for 2 seconds then redirect
-                setTimeout(() => {
+                // If user presses 'OK', the message dialog will
+                // close and the page will redirect
+                if (!openMessageDialog.value) {
                     window.location.href = "/wis2box-webapp/dataset_editor";
-                }, 2000);
+                }
             }
         };
 
