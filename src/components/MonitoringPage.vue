@@ -25,19 +25,18 @@
                             <v-col cols="3">
                                 <!-- Search bar to search for a WSI and only monitor that station -->
                                 <v-text-field v-model="searchedWsiTemp" label="WSI"
-                                    hint="Search a WMO Station Identifier (optional)" persistent-hint></v-text-field>
+                                    hint="Search a WMO Station Identifier (optional)" persistent-hint variant="outlined"></v-text-field>
                             </v-col>
 
                             <!-- Limit for how many notifications to display (default = 100) -->
                             <v-col cols="2">
-                                <v-select v-model="selectedLimitTemp" :items="limits" hint="Limit"
-                                    persistent-hint></v-select>
+                                <v-select v-model="selectedLimitTemp" :items="limits" hint="Limit" persistent-hint variant="outlined"></v-select>
                             </v-col>
 
 
                             <!-- Monitor button, that is only clickable when topic and date range selected -->
                             <v-col cols="2">
-                                <v-btn class="update-button" size="x-large" block append-icon="mdi-database-search"
+                                <v-btn color="#003DA5" class="update-button" size="x-large" block append-icon="mdi-database-search"
                                     :disabled="updateDisabled" @click="handleUpdate">Update</v-btn>
                             </v-col>
                         </v-row>

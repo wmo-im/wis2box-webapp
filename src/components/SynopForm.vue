@@ -55,7 +55,7 @@
                                             rows="1" :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'"
                                             :type="showToken ? 'text' : 'password'"
                                             @click:append="showToken = !showToken"
-                                            hint="Enter wis2box auth token for 'processes/wis2box'"
+                                            :rules="[v => !!v || 'Token is required']"
                                             variant="outlined" />
                                     </v-col>
                                 </v-row>
@@ -71,7 +71,7 @@
                                 </v-col>
                                 <v-col cols="2">
                                     <v-checkbox :disabled="submitDisabled" v-model="notificationsOnPending"
-                                        label="Publish on WIS2" color="#003DA5" hide-details></v-checkbox>
+                                        label="Publish on WIS2" hide-details></v-checkbox>
                                 </v-col>
                             </v-row>
                         </v-container>

@@ -24,8 +24,7 @@
                         <v-card-text>
                             <v-row>
                                 <v-col cols="12">
-                                    <!-- If centre registered, show official list -->
-                                    <v-combobox v-model="model.identification.centreID" :items="officialCentres"
+                                    <v-combobox v-model="model.identification.centreID" :items="centreList"
                                         label="Centre ID" :rules="[rules.centreID]" variant="outlined"></v-combobox>
                                 </v-col>
                             </v-row>
@@ -273,7 +272,7 @@
                                     <p v-if="model.plugins?.length > 0">Plugins in use</p>
                                     <p v-else>No plugins are currently associated with this dataset</p>
                                 </th>
-                                <th scope="row">Filetype</th>
+                                <th scope="row">File extension</th>
                                 <th scope="row" class="text-right"></th>
                             </tr>
                         </thead>
@@ -302,8 +301,7 @@
 
                 <v-row justify="center" class="mt-1">
                     <v-col cols="8">
-                        <v-btn @click="configurePlugin()" append-icon="mdi-plus" color="#64BF40" block>Add
-                            A Plugin</v-btn>
+                        <v-btn @click="configurePlugin()" append-icon="mdi-plus" color="#64BF40" block>Add A Plugin</v-btn>
                     </v-col>
                 </v-row>
             </v-card>
@@ -318,6 +316,7 @@
                     <v-text-field label="wis2box auth token for 'collections/discovery-metadata'" v-model="token"
                         rows="1" :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showToken ? 'text' : 'password'" @click:append="showToken = !showToken"
+                        :rules="[rules.token]"
                         variant="outlined">
                     </v-text-field>
                 </v-card-text>
@@ -337,7 +336,7 @@
                         Export
                     </v-btn>
 
-                    <v-btn color="#64BF40" class="ma-2" title="Submit" @click="submitMetadata"
+                    <v-btn color="#003DA5" class="ma-2" title="Submit" @click="submitMetadata"
                         :disabled="!formFilledUpdatedAndAuthenticated" append-icon="mdi-cloud-upload">
                         Submit
                     </v-btn>
@@ -537,7 +536,7 @@
             </v-dialog>
 
             <!-- Dialog to display successful submission message -->
-            <v-dialog v-model="openSuccessDialog" max-width="600px">
+            <v-dialog v-model="openSuccessDialog" max-width="600px" persistent>
                 <v-card>
                     <v-toolbar title="Success" color="#64BF40">
                     </v-toolbar>
@@ -567,8 +566,8 @@
                                     <td>{{ pluginNameTitle }}</td>
                                 </tr>
                                 <tr>
-                                    <td><b>Filetype</b></td>
-                                    <td>{{ pluginFileType }}</td>
+                                    <td><b>File Extension</b></td>
+                                    <td>{{ pluginFileExtension }}</td>
                                 </tr>
                                 <tr>
                                     <td><b>Template</b></td>
@@ -603,7 +602,7 @@
                                         item-title="title" item-value="id" variant="outlined"></v-select>
                                 </v-col>
                                 <v-col cols="4">
-                                    <v-text-field label="Filetype" v-model="pluginFileType"
+                                    <v-text-field label="Filetype" v-model="pluginFileExtension"
                                         variant="outlined"></v-text-field>
                                 </v-col>
                             </v-row>
@@ -611,7 +610,8 @@
                             <v-row>
                                 <v-col cols="6">
                                     <v-select label="Template" v-model="pluginTemplate" :items="templateList"
-                                        item-title="title" item-value="id" variant="outlined"></v-select>
+                                        item-title="title" item-value="id" variant="outlined"
+                                        :disabled="pluginName !== 'wis2box.data.csv2bufr.ObservationDataCSV2BUFR'"></v-select>
                                 </v-col>
                                 <v-col cols="6">
                                     <v-select label="WIS2 Buckets" v-model="pluginBuckets" :items="bucketList"
@@ -708,12 +708,13 @@ export default defineComponent({
         // Validation patterns for form fields
         const rules = {
             required: (value) => !!value || "Field is required",
-            centreID: value => /^[a-z0-9_-]{2,}$/.test(value) || 'Invalid centre ID. Must be lowercase with at least 2 characters.',
-            latitude: value => value >= -90 && value <= 90 || 'Latitude must be between -90 and 90.',
-            longitude: value => value >= -180 && value <= 180 || 'Longitude must be between -180 and 180.',
-            url: value => value === '' || /^https?:\/\/[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(value) || 'Invalid URL format.',
-            email: value => /^[a-z0-9._-]+@[a-z0-9-]+\.[a-z0-9.-]+$/.test(value) || 'Invalid email format.',
-            keywords: value => Array.isArray(value) && value.length >= 3 || 'Keywords must be an array with at least 3 items.',
+            centreID: value => /^[a-z0-9_-]{2,}$/.test(value) || 'Invalid centre ID. Must be lowercase with at least 2 characters',
+            latitude: value => value >= -90 && value <= 90 || 'Latitude must be between -90 and 90',
+            longitude: value => value >= -180 && value <= 180 || 'Longitude must be between -180 and 180',
+            url: value => value === '' || /^https?:\/\/[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(value) || 'Invalid URL format',
+            email: value => /^[a-z0-9._-]+@[a-z0-9-]+\.[a-z0-9.-]+$/.test(value) || 'Invalid email format',
+            keywords: value => Array.isArray(value) && value.length >= 3 || 'Keywords must be an array with at least 3 items',
+            token: value => !!value || 'Token is required',
         };
 
         // Reactive variables
@@ -733,8 +734,7 @@ export default defineComponent({
         const items = ref([]);
         // Dialog window
         const showInitialDialog = ref(false);
-        const registeredCentre = ref(false);
-        const officialCentres = ref([]);
+        const centreList = ref([]);
         const templateFiles = ref([]);
         const selectedTemplate = ref(null);
         // Identifier of the selected dataset, used to load metadata from OAPI
@@ -766,10 +766,10 @@ export default defineComponent({
         const bucketList = ref([]);
         // Information for creating/configuring a dataset plugin
         const pluginIsNew = ref(true);
-        const pluginFileType = ref(null);
+        const pluginFileExtension = ref(null);
         const pluginName = ref(null);
         const pluginTemplate = ref(null);
-        const pluginNotifyBoolean = ref(null);
+        const pluginNotifyBoolean = ref(true);
         const pluginBuckets = ref(null);
         const pluginFilePattern = ref(null);
         // Information for plugin titles
@@ -779,7 +779,7 @@ export default defineComponent({
         // Information for storing the previous plugin name and filetype
         // when we overwrite the plugin info
         const previousPluginName = ref(null);
-        const previousPluginFileType = ref(null);
+        const previousPluginFileExtension = ref(null);
         // Metadata form to be filled
         const model = ref({ 'identification': {}, 'extents': {}, 'host': {}, 'plugins': [] });
         // Execution token to be entered by user
@@ -866,6 +866,8 @@ export default defineComponent({
 
                 // Update the list of items
                 items.value = responseData.features.map(item => item.properties.identifier);
+                // Also get the centre IDs from this list
+                centreList.value = responseData.features.map(item => item.wis2box["centre_id"]);
                 // At this point, the user has not specified a dataset
                 datasetSpecified.value = false;
             } catch (error) {
@@ -879,7 +881,7 @@ export default defineComponent({
         };
 
         // A method to help tidy the list of loaded centres IDs
-        // to not include empty strings nor global brokers
+        // to not include empty strings, global brokers, or duplications
         const tidyCentres = (list) => {
             let tidyList = list.filter(item => item);
 
@@ -890,14 +892,23 @@ export default defineComponent({
                 '-global-monitor'
             ];
 
-            return tidyList.filter(item => {
+            tidyList = tidyList.filter(item => {
                 return !globalBrokerSuffixes.some(suffix => item.endsWith(suffix));
             });
+
+            tidyList = tidyList.filter(item => item);
+
+            tidyList = tidyList.filter(centre => !centreList.value.includes(centre));
+
+            return tidyList
         };
+
+        // Fetches a list of centres from the metadata records
+
 
         // Fetches a list of official centres from the topic hierarchy repository
         // and updates the list
-        const loadCentres = async () => {
+        const loadOfficialCentres = async () => {
             try {
                 // Get list of official centres from raw GitHub link
                 const response = await fetch("https://raw.githubusercontent.com/wmo-im/wis2-topic-hierarchy/main/topic-hierarchy/centre-id.csv");
@@ -908,9 +919,12 @@ export default defineComponent({
                 const responseData = await response.text();
                 const parsed = Papa.parse(responseData, { header: true });
                 const list = parsed.data.map(item => item.Name);
-                officialCentres.value = tidyCentres(list);
-                // Remove any empty strings from the list
-                officialCentres.value = list.filter(item => item);
+                let officialCentres = tidyCentres(list);
+                // Add these centres to the currently loaded list of centres
+                // (Set a delay of 1 second to ensure the list is loaded first)
+                setTimeout(() => {
+                    centreList.value = centreList.value.concat(officialCentres);
+                }, 1000);
             } catch (error) {
                 console.error(error);
                 // Display error message to the user
@@ -1347,7 +1361,7 @@ export default defineComponent({
             // If plugin exists, populate the fields
             if (plugin) {
                 pluginIsNew.value = false;
-                pluginFileType.value = plugin.fileType;
+                pluginFileExtension.value = plugin.fileType;
                 pluginName.value = plugin.name;
                 pluginTemplate.value = plugin.template;
                 pluginNotifyBoolean.value = plugin.notify;
@@ -1366,7 +1380,7 @@ export default defineComponent({
             // If plugin is new (null), reset the fields
             else {
                 pluginIsNew.value = true;
-                pluginFileType.value = null;
+                pluginFileExtension.value = null;
                 pluginName.value = null;
                 pluginTemplate.value = null;
                 pluginNotifyBoolean.value = null;
@@ -1390,10 +1404,24 @@ export default defineComponent({
 
             // Save the original plugin name and filetype
             previousPluginName.value = plugin?.name;
-            previousPluginFileType.value = plugin?.fileType;
+            previousPluginFileExtension.value = plugin?.fileType;
 
             populatePluginFields(plugin);
         };
+
+        // If the user changes the plugin name, use sensible defaults
+        const defaultPluginFields = (name) => {
+            // Find the plugin in the list
+            const plugin = pluginList.value.find(item => item.id === name);
+
+            // If the plugin is found, populate the fields
+            if (plugin) {
+                pluginFileExtension.value = plugin.defaultFileExtension;
+                pluginTemplate.value = plugin?.defaultTemplate;
+                pluginBuckets.value = plugin?.defaultBuckets;
+                pluginFilePattern.value = plugin.defaultFilePattern;
+            }
+        }
 
         // Adds or updates the plugin in the model
         const savePlugin = () => {
@@ -1401,7 +1429,7 @@ export default defineComponent({
             if (pluginIsNew.value) {
                 // Create a new plugin object
                 const newPlugin = {
-                    fileType: pluginFileType.value,
+                    fileType: pluginFileExtension.value,
                     name: pluginName.value,
                     template: pluginTemplate.value,
                     notify: pluginNotifyBoolean.value,
@@ -1416,10 +1444,10 @@ export default defineComponent({
                 // Find the index of the plugin in the model
                 const index = model.value.plugins.findIndex(item =>
                     item.name === previousPluginName.value &&
-                    item.fileType === previousPluginFileType.value);
+                    item.fileType === previousPluginFileExtension.value);
                 // Update the plugin in the model
                 model.value.plugins[index] = {
-                    fileType: pluginFileType.value,
+                    fileType: pluginFileExtension.value,
                     name: pluginName.value,
                     template: pluginTemplate.value,
                     notify: pluginNotifyBoolean.value,
@@ -1753,7 +1781,7 @@ export default defineComponent({
         // Mounted
         onMounted(() => {
             loadList();
-            loadCentres();
+            loadOfficialCentres();
             loadDisciplines();
             loadTemplates();
             loadPluginLists();
@@ -1767,6 +1795,20 @@ export default defineComponent({
         watch(() => model.value.identification.wmoDataPolicy, () => {
             if (selectedTemplate.value && selectedTemplate.value?.label !== 'other') {
                 applyTemplate(selectedTemplate.value);
+            }
+        });
+
+        // For each plugin name, auto populate the plugin fields
+        watch(() => pluginName.value, () => {
+            if (pluginName.value) {
+                defaultPluginFields(pluginName.value);
+            }
+        });
+
+        // If the user selects a non-CSV plugin, the template section should be blank
+        watch(() => pluginName.value, () => {
+            if (pluginName.value !== "wis2box.data.csv2bufr.ObservationDataCSV2BUFR") {
+                pluginTemplate.value = null;
             }
         });
 
@@ -1809,8 +1851,7 @@ export default defineComponent({
             message,
             items,
             showInitialDialog,
-            registeredCentre,
-            officialCentres,
+            centreList,
             templateFiles,
             dialogFilled,
             filteredCountryCodeList,
@@ -1827,7 +1868,7 @@ export default defineComponent({
             isDistribPhoneValid,
             keyword,
             pluginIsNew,
-            pluginFileType,
+            pluginFileExtension,
             pluginName,
             pluginTemplate,
             pluginNotifyBoolean,
@@ -1837,7 +1878,7 @@ export default defineComponent({
             pluginTemplateTitle,
             pluginBucketsTitle,
             previousPluginName,
-            previousPluginFileType,
+            previousPluginFileExtension,
             model,
             token,
             showToken,

@@ -2,23 +2,38 @@
   "plugins": [
     {
       "title": "Universal data without conversion",
-      "id": "wis2box.data.universal.UniversalData"
+      "id": "wis2box.data.universal.UniversalData",
+      "defaultFileExtension": "",
+      "defaultFilePattern": ".*"
     },
     {
       "title": "BUFR data converted to BUFR",
-      "id": "wis2box.data.bufr4.ObservationDataBUFR"
+      "id": "wis2box.data.bufr4.ObservationDataBUFR",
+      "defaultFileExtension": "bufr4",
+      "defaultBuckets": ["wis2box-incoming"],
+      "defaultFilePattern": ".*\\.bufr4$"
     },
     {
       "title": "FM-12 data converted to BUFR",
-      "id": "wis2box.data.synop2bufr.ObservationDataSYNOP2BUFR"
+      "id": "wis2box.data.synop2bufr.ObservationDataSYNOP2BUFR",
+      "defaultFileExtension": "txt",
+      "defaultBuckets": ["wis2box-incoming"],
+      "defaultFilePattern": "^.*-(\\d{4})(\\d{2}).*\\.txt$"
     },
     {
       "title": "CSV data converted to BUFR",
-      "id": "wis2box.data.csv2bufr.ObservationDataCSV2BUFR"
+      "id": "wis2box.data.csv2bufr.ObservationDataCSV2BUFR",
+      "defaultFileExtension": "csv",
+      "defaultTemplate": "aws-template",
+      "defaultBuckets": ["wis2box-incoming"],
+      "defaultFilePattern": ".*\\.csv$"
     },
     {
       "title": "BUFR data converted to GeoJSON",
-      "id": "wis2box.data.bufr2geojson.ObservationDataBUFR2GeoJSON"
+      "id": "wis2box.data.bufr2geojson.ObservationDataBUFR2GeoJSON",
+      "defaultFileExtension": "bufr4",
+      "defaultBuckets": ["wis2box-public"],
+      "defaultFilePattern": "^WIGOS_(\\d-\\d+-\\d+-\\w+)_.*\\.bufr4$"
     }
   ],
   "templates": [

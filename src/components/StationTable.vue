@@ -5,7 +5,7 @@
       <v-card>
         <v-card-title class="big-title">Stations</v-card-title>
         <v-card-item v-if="items">
-          <VTextField style="width: 400px;" v-model="search" prepend-icon="mdi-text-search" label="search" single-line hide-details></VTextField>
+          <VTextField style="width: 400px;" v-model="search" prepend-icon="mdi-text-search" label="Search" single-line hide-details></VTextField>
           <VDataTable :headers="headers" :items="items" :search="search" dense small>
               <template v-slot:item.actions="{ item }">
                 <v-icon size="small" @click="editRecord(item)">mdi-pen</v-icon>
@@ -46,11 +46,11 @@
 
 <script>
 import { defineComponent } from 'vue';
-import { VCard, VCardTitle, VCardText, VChip, VTextField } from 'vuetify/lib/components/index.mjs';
-import { onBeforeMount, onMounted, onBeforeUpdate, onUpdated, onBeforeUnmount, onUnmounted, onErrorCaptured} from 'vue';
-import { ref, computed, watchEffect, watch } from 'vue'
+import { VCard, VCardTitle, VCardText, VTextField } from 'vuetify/lib/components/index.mjs';
+import { onMounted } from 'vue';
+import { ref } from 'vue'
 import { VDataTable } from 'vuetify/lib/components/index.mjs';
-import {useRoute, useRouter} from 'vue-router';
+import { useRouter } from 'vue-router';
 import APIStatus from '@/components/APIStatus.vue';
 
 
@@ -64,7 +64,7 @@ export default defineComponent({
     VTextField,
     APIStatus
   },
-  setup(props) {
+  setup() {
     const headers = ref([]);
     const search = ref("");
     const sortBy = ref([{key:"", order:"desc"}]);
