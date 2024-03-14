@@ -529,7 +529,7 @@
                         {{ message }}
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn color="#003DA5" block @click="openMessageDialog = false">
+                        <v-btn v-model="OkButtonPressed" color="#003DA5" block @click="openMessageDialog = false">
                             OK
                         </v-btn>
                     </v-card-actions>
@@ -780,6 +780,7 @@ export default defineComponent({
 
         // Message dialog window
         const openMessageDialog = ref(false);
+        const OkButtonPressed = ref(true);
 
         // Plugin dialog windows
         const openViewPluginDialog = ref(false);
@@ -1721,12 +1722,12 @@ export default defineComponent({
             // If no content is returned from the fetch, then the put request is successful.
             // In this case, redirect the user to the home page
             if (response.status == NO_CONTENT) {
-                message.value = isNew.value ? "Discovery metadata added successfully" : "Discovery metadata updated successfully";
+                message.value = isNew.value ? "Discovery metadata added successfully!" : "Discovery metadata updated successfully!";
                 // Open a dialog window to show this message clearly
                 openMessageDialog.value = true;
                 // If user presses 'OK', the message dialog will
                 // close and the page will redirect
-                if (!openMessageDialog.value) {
+                if (OkButtonPressed.value) {
                     window.location.href = "/wis2box-webapp/dataset_editor";
                 }
             }
@@ -1831,6 +1832,7 @@ export default defineComponent({
             openDistribHelpDialog,
             openTokenHelpDialog,
             openMessageDialog,
+            OkButtonPressed,
             openViewPluginDialog,
             openConfigurePluginDialog,
             formFilledUpdatedAndAuthenticated,
