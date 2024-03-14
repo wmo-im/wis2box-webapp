@@ -263,7 +263,11 @@
 
             <!-- Dataset Mappings Editor -->
             <v-card v-if="metadataLoaded" class="mt-16 pa-3">
-                <v-card-title class="big-title">Dataset Mappings Editor</v-card-title>
+                <v-card-title class="big-title">
+                    Dataset Mappings Editor
+                    <v-btn icon="mdi-comment-question" variant="text" size="small"
+                        @click="openPluginHelpDialog = true" />
+                </v-card-title>
                 <v-container>
                     <v-table v-if="canShowPluginTable" :hover="true">
                         <thead>
@@ -301,7 +305,8 @@
 
                 <v-row justify="center" class="mt-1">
                     <v-col cols="8">
-                        <v-btn @click="configurePlugin()" append-icon="mdi-plus" color="#64BF40" block>Add A Plugin</v-btn>
+                        <v-btn @click="configurePlugin()" append-icon="mdi-plus" color="#64BF40" block>Add A
+                            Plugin</v-btn>
                     </v-col>
                 </v-row>
             </v-card>
@@ -316,8 +321,7 @@
                     <v-text-field label="wis2box auth token for 'collections/discovery-metadata'" v-model="token"
                         rows="1" :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showToken ? 'text' : 'password'" @click:append="showToken = !showToken"
-                        :rules="[rules.token]"
-                        variant="outlined">
+                        :rules="[rules.token]" variant="outlined">
                     </v-text-field>
                 </v-card-text>
             </v-card>
@@ -326,20 +330,25 @@
             from the above forms -->
             <v-col cols="12">
                 <v-row class="pt-5" v-if="metadataLoaded">
-                    <v-btn color="error" class="ma-2" title="Reset" @click="resetMetadata" append-icon="mdi-sync">
-                        Reset
-                    </v-btn>
-                    <v-spacer />
-
-                    <v-btn color="#E09D00" class="ma-2" title="Export" @click="downloadMetadata"
-                        append-icon="mdi-arrow-down-bold-box-outline">
-                        Export
-                    </v-btn>
-
-                    <v-btn color="#003DA5" class="ma-2" title="Submit" @click="submitMetadata"
-                        :disabled="!formFilledUpdatedAndAuthenticated" append-icon="mdi-cloud-upload">
-                        Submit
-                    </v-btn>
+                    <v-col cols="3">
+                        <v-btn color="error" class="ma-2" title="Reset" @click="resetMetadata" append-icon="mdi-sync"
+                            block>
+                            Reset Form
+                        </v-btn>
+                    </v-col>
+                    <v-col cols="3" />
+                    <v-col cols="3">
+                        <v-btn color="#E09D00" class="ma-2" title="Export" @click="downloadMetadata"
+                            append-icon="mdi-arrow-down-bold-box-outline" block>
+                            Export As JSON
+                        </v-btn>
+                    </v-col>
+                    <v-col cols="3">
+                        <v-btn color="#003DA5" class="ma-2" title="Submit" @click="submitMetadata"
+                            :disabled="!formFilledUpdatedAndAuthenticated" append-icon="mdi-cloud-upload" block>
+                            Submit
+                        </v-btn>
+                    </v-col>
                 </v-row>
             </v-col>
 
@@ -499,21 +508,36 @@
                     </v-card-text>
                 </v-card>
             </v-dialog>
+
+            <v-dialog v-model="openPluginHelpDialog" max-width="600px">
+                <v-card>
+                    <v-toolbar title="Data Mappings" color="#003DA5">
+                        <v-btn icon="mdi-close" variant="text" size="small" @click="openPluginHelpDialog = false" />
+                    </v-toolbar>
+                    <v-card-subtitle>
+                        What is this section for?
+                    </v-card-subtitle>
+                    <v-card-text>
+                        <p>In order to submit this dataset to the wis2box, you must
+                            configure the plugins necessary to support the different
+                            data types found in this dataset.</p>
+                        <br>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+
             <v-dialog v-model="openTokenHelpDialog" max-width="600px">
                 <v-card>
-                    <v-card-item>
-                        <v-card-title class="d-flex justify-space-between">
-                            Authentication Token
+                        <v-toolbar title="Authentication Token" color="#003DA5">
                             <v-btn icon="mdi-close" variant="text" size="small" @click="openTokenHelpDialog = false" />
-                        </v-card-title>
+                        </v-toolbar>
                         <v-card-subtitle>
                             What is this section for?
                         </v-card-subtitle>
-                    </v-card-item>
                     <v-card-text>
-                        <p>In order to submit this data to the wis2box, you must provide a valid authentication
+                        <p>In order to submit this dataset to the wis2box, you must provide a valid authentication
                             token
-                            for the collections/discovery-metadata path.</p>
+                            for the <b>collections/discovery-metadata path</b>.</p>
                         <br>
                     </v-card-text>
                 </v-card>
@@ -793,6 +817,7 @@ export default defineComponent({
         const openSpatialHelpDialog = ref(false);
         const openHostHelpDialog = ref(false);
         const openDistribHelpDialog = ref(false);
+        const openPluginHelpDialog = ref(false);
         const openTokenHelpDialog = ref(false);
 
         // Message dialog windows
@@ -1888,6 +1913,7 @@ export default defineComponent({
             openSpatialHelpDialog,
             openHostHelpDialog,
             openDistribHelpDialog,
+            openPluginHelpDialog,
             openTokenHelpDialog,
             openMessageDialog,
             openSuccessDialog,
