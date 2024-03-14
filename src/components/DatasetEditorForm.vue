@@ -1383,7 +1383,7 @@ export default defineComponent({
                 pluginFileExtension.value = null;
                 pluginName.value = null;
                 pluginTemplate.value = null;
-                pluginNotifyBoolean.value = null;
+                pluginNotifyBoolean.value = true;
                 pluginBuckets.value = null;
                 pluginFilePattern.value = null;
             }
