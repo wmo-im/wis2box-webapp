@@ -780,7 +780,7 @@ export default defineComponent({
 
         // Message dialog window
         const openMessageDialog = ref(false);
-        const OkButtonPressed = ref(true);
+        const OkButtonPressed = ref(false);
 
         // Plugin dialog windows
         const openViewPluginDialog = ref(false);
