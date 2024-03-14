@@ -529,12 +529,29 @@
                         {{ message }}
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn v-model="OkButtonPressed" color="#003DA5" block @click="openMessageDialog = false">
+                        <v-btn color="#003DA5" block @click="openMessageDialog = false">
                             OK
                         </v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
+
+            <!-- Dialog to display successful submission message -->
+            <v-dialog v-model="openSuccessDialog" max-width="600px">
+                <v-card>
+                    <v-toolbar title="Success" color="#64BF40">
+                    </v-toolbar>
+                    <v-card-text>
+                        {{ message }}
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn color="#64BF40" block @click="redirectUser">
+                            OK
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+
 
             <!-- Dialog for the user to view a plugin -->
             <v-dialog v-model="openViewPluginDialog" max-width="600px">
@@ -778,9 +795,9 @@ export default defineComponent({
         const openDistribHelpDialog = ref(false);
         const openTokenHelpDialog = ref(false);
 
-        // Message dialog window
+        // Message dialog windows
         const openMessageDialog = ref(false);
-        const OkButtonPressed = ref(false);
+        const openSuccessDialog = ref(false);
 
         // Plugin dialog windows
         const openViewPluginDialog = ref(false);
@@ -1679,6 +1696,11 @@ export default defineComponent({
             element.click()
         }
 
+        // Redirects the user when they successfully submit data
+        const redirectUser = () => {
+            window.location.href = "/wis2box-webapp/dataset_editor";
+        };
+
         // Submits the metadata to the wis2box OAPI endpoint
         const submitMetadata = async () => {
             // Add authentication token to the headers
@@ -1723,13 +1745,8 @@ export default defineComponent({
             // In this case, redirect the user to the home page
             if (response.status == NO_CONTENT) {
                 message.value = isNew.value ? "Discovery metadata added successfully!" : "Discovery metadata updated successfully!";
-                // Open a dialog window to show this message clearly
-                openMessageDialog.value = true;
-                // If user presses 'OK', the message dialog will
-                // close and the page will redirect
-                if (OkButtonPressed.value) {
-                    window.location.href = "/wis2box-webapp/dataset_editor";
-                }
+                // Open the success window to show this message clearly
+                openSuccessDialog.value = true;
             }
         };
 
@@ -1832,7 +1849,7 @@ export default defineComponent({
             openDistribHelpDialog,
             openTokenHelpDialog,
             openMessageDialog,
-            OkButtonPressed,
+            openSuccessDialog,
             openViewPluginDialog,
             openConfigurePluginDialog,
             formFilledUpdatedAndAuthenticated,
@@ -1851,6 +1868,7 @@ export default defineComponent({
             removePlugin,
             resetMetadata,
             downloadMetadata,
+            redirectUser,
             submitMetadata
         }
     }
