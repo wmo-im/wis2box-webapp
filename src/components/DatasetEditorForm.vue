@@ -626,7 +626,7 @@
                                         item-title="title" item-value="id" variant="outlined"></v-select>
                                 </v-col>
                                 <v-col cols="4">
-                                    <v-text-field label="Filetype" v-model="pluginFileExtension"
+                                    <v-text-field label="File Extension" v-model="pluginFileExtension"
                                         variant="outlined"></v-text-field>
                                 </v-col>
                             </v-row>
