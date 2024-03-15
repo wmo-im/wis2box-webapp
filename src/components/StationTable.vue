@@ -159,16 +159,16 @@ export default defineComponent({
       }
     };
     const deleteRecord = (id) => {
-      selectedStation.value = id.key;
+      selectedStation.value = id.id;
       deleteDialog.value = true;
     };
 
     const editRecord = (id) => {
-      router.push("/station/"+id.key+"?action=edit")
+      router.push("/station/"+id.id+"?action=edit")
     }
 
     const viewRecord = (id) => {
-      router.push("/station/"+id.key)
+      router.push("/station/"+id.id)
     }
 
     const addRecord = () => {
