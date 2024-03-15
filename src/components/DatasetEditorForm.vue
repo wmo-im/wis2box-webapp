@@ -118,7 +118,7 @@
                                 </v-col>
                                 <v-col cols="1">
                                     <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large"
-                                        @click="addKeyword" :disabled="keyword == ''"></v-btn>
+                                        @click="addKeyword" :disabled="keyword === ''"></v-btn>
                                 </v-col>
                                 <v-col cols="7">
                                     <v-chip-group :rules="[rules.required, rules.keywords]">
@@ -528,12 +528,12 @@
 
             <v-dialog v-model="openTokenHelpDialog" max-width="600px">
                 <v-card>
-                        <v-toolbar title="Authentication Token" color="#003DA5">
-                            <v-btn icon="mdi-close" variant="text" size="small" @click="openTokenHelpDialog = false" />
-                        </v-toolbar>
-                        <v-card-subtitle>
-                            What is this section for?
-                        </v-card-subtitle>
+                    <v-toolbar title="Authentication Token" color="#003DA5">
+                        <v-btn icon="mdi-close" variant="text" size="small" @click="openTokenHelpDialog = false" />
+                    </v-toolbar>
+                    <v-card-subtitle>
+                        What is this section for?
+                    </v-card-subtitle>
                     <v-card-text>
                         <p>In order to submit this dataset to the wis2box, you must provide a valid authentication
                             token
@@ -735,7 +735,7 @@ export default defineComponent({
             centreID: value => /^[a-z0-9_-]{2,}$/.test(value) || 'Invalid centre ID. Must be lowercase with at least 2 characters',
             latitude: value => value >= -90 && value <= 90 || 'Latitude must be between -90 and 90',
             longitude: value => value >= -180 && value <= 180 || 'Longitude must be between -180 and 180',
-            url: value => value === '' || /^https?:\/\/[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(value) || 'Invalid URL format',
+            url: value => value === '' || /^https?:\/\/[-a-zA-Z0-9@:%._+~#=]{1,253}\.[a-z]{2,}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(value) || 'Invalid URL format',
             email: value => /^[a-z0-9._-]+@[a-z0-9-]+\.[a-z0-9.-]+$/.test(value) || 'Invalid email format',
             keywords: value => Array.isArray(value) && value.length >= 3 || 'Keywords must be an array with at least 3 items',
             token: value => !!value || 'Token is required',
@@ -1038,14 +1038,12 @@ export default defineComponent({
             }
 
             // Geometry information
-            if (schema.geometry?.coordinates) {
+            if (schema.geometry?.coordinates && schema.geometry?.coordinates[0].length >= 4) {
                 const coordinates = schema.geometry.coordinates[0];
-                if (coordinates.length >= 4) {
-                    formModel.extents.westLongitude = coordinates[0][0];
-                    formModel.extents.northLatitude = coordinates[0][1];
-                    formModel.extents.eastLongitude = coordinates[2][0];
-                    formModel.extents.southLatitude = coordinates[2][1];
-                }
+                formModel.extents.westLongitude = coordinates[0][0];
+                formModel.extents.northLatitude = coordinates[0][1];
+                formModel.extents.eastLongitude = coordinates[2][0];
+                formModel.extents.southLatitude = coordinates[2][1];
             }
 
             // Properties information
@@ -1059,25 +1057,29 @@ export default defineComponent({
             formModel.identification.conceptSchemes = ["https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline"];
 
             // Contacts information
+            const structureHostDetails = (contact) => {
+                return {
+                    individual: contact.name,
+                    positionName: contact.position,
+                    name: contact.organization,
+                    phone: contact.phones ? contact.phones[0].value : '',
+                    email: contact.emails ? contact.emails[0].value : '',
+                    deliveryPoint: contact.addresses ? contact.addresses[0].deliveryPoint : '',
+                    city: contact.addresses ? contact.addresses[0].city : '',
+                    administrativeArea: contact.addresses ? contact.addresses[0].administrativeArea : '',
+                    postalCode: contact.addresses ? contact.addresses[0].postalCode : '',
+                    country: contact.addresses ? contact.addresses[0].country : '',
+                    hoursOfService: contact.hoursOfService,
+                    contactInstructions: contact.contactInstructions,
+                    url: contact.links ? contact.links[0].href : ''
+                };
+            }
             schema.properties.contacts.forEach(contact => {
                 if (contact.roles?.includes("host")) {
-                    formModel.host = {
-                        individual: contact.name,
-                        positionName: contact.position,
-                        name: contact.organization,
-                        phone: contact.phones ? contact.phones[0].value : '',
-                        email: contact.emails ? contact.emails[0].value : '',
-                        deliveryPoint: contact.addresses ? contact.addresses[0].deliveryPoint : '',
-                        city: contact.addresses ? contact.addresses[0].city : '',
-                        administrativeArea: contact.addresses ? contact.addresses[0].administrativeArea : '',
-                        postalCode: contact.addresses ? contact.addresses[0].postalCode : '',
-                        country: contact.addresses ? contact.addresses[0].country : '',
-                        hoursOfService: contact.hoursOfService,
-                        contactInstructions: contact.contactInstructions,
-                        url: contact.links ? contact.links[0].href : ''
-                    };
+                    formModel.host = structureHostDetails(contact);
                 }
             });
+
             // Additional settings information
             if (schema.properties["wmo:dataPolicy"]) {
                 formModel.identification.wmoDataPolicy = schema.properties["wmo:dataPolicy"];
@@ -1635,7 +1637,7 @@ export default defineComponent({
             // Contacts information
             schemaModel.properties.contacts = [];
             // Point of contact
-            schemaModel.properties.contacts.push({
+            const hostDetails = {
                 name: form.host.individual,
                 position: form.host.positionName,
                 organization: form.host.name,
@@ -1660,7 +1662,8 @@ export default defineComponent({
                 hoursOfService: form.host.hoursOfService,
                 contactInstructions: form.host.contactInstructions,
                 roles: ["host"]
-            });
+            };
+            schemaModel.properties.contacts.push(hostDetails);
 
             // If the metadata has been loaded, use the original creation date. Otherwise use today
             schemaModel.properties.created = form.extents.dateCreated || new Date().toISOString();
@@ -1778,13 +1781,13 @@ export default defineComponent({
 
             // Check response from OAPI
             if (!response.ok) {
-                if (response.status == UNAUTHORIZED) {
+                if (response.status === UNAUTHORIZED) {
                     message.value = "Unauthorized, please provide a valid 'collections/discovery-metadata' token";
                 }
-                else if (response.status == NOT_FOUND) {
+                else if (response.status === NOT_FOUND) {
                     message.value = "Error submitting data: API not found";
                 }
-                else if (response.status == INTERNAL_SERVER_ERROR) {
+                else if (response.status === INTERNAL_SERVER_ERROR) {
                     message.value = "Error submitting data: Internal server error";
                 }
                 else {
@@ -1796,7 +1799,7 @@ export default defineComponent({
 
             // If no content is returned from the fetch, then the put request is successful.
             // In this case, redirect the user to the home page
-            if (response.status == NO_CONTENT) {
+            if (response.status === NO_CONTENT) {
                 message.value = isNew.value ? "Discovery metadata added successfully!" : "Discovery metadata updated successfully!";
                 // Open the success window to show this message clearly
                 openSuccessDialog.value = true;
