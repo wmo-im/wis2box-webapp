@@ -318,7 +318,7 @@
                         @click="openTokenHelpDialog = true" />
                 </v-card-title>
                 <v-card-text>
-                    <v-text-field label="wis2box auth token for 'collections/discovery-metadata'" v-model="token"
+                    <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token"
                         rows="1" :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showToken ? 'text' : 'password'" @click:append="showToken = !showToken"
                         :rules="[rules.token]" variant="outlined">
@@ -537,7 +537,7 @@
                     <v-card-text>
                         <p>In order to submit this dataset to the wis2box, you must provide a valid authentication
                             token
-                            for the <b>collections/discovery-metadata path</b>.</p>
+                            for the <b>processes/wis2box path</b>.</p>
                         <br>
                     </v-card-text>
                 </v-card>
@@ -645,7 +645,7 @@
 
                             <v-row>
                                 <v-col cols="10">
-                                    <v-text-field label="File Pattern" v-model="pluginFilePattern"
+                                    <v-text-field label="File Pattern (Regex)" v-model="pluginFilePattern" :hint="pluginPatternHint"
                                         variant="outlined"></v-text-field>
                                 </v-col>
                                 <v-col cols="2">
@@ -796,6 +796,7 @@ export default defineComponent({
         const pluginNotifyBoolean = ref(true);
         const pluginBuckets = ref(null);
         const pluginFilePattern = ref(null);
+        const pluginPatternHint = ref("");
         // Information for plugin titles
         const pluginNameTitle = ref(null);
         const pluginTemplateTitle = ref(null);
@@ -1447,6 +1448,7 @@ export default defineComponent({
                 pluginTemplate.value = plugin?.defaultTemplate;
                 pluginBuckets.value = plugin?.defaultBuckets;
                 pluginFilePattern.value = plugin.defaultFilePattern;
+                pluginPatternHint.value = plugin.hint;
             }
         }
 
@@ -1672,23 +1674,6 @@ export default defineComponent({
             schemaModel.properties["wmo:topicHierarchy"] = formatTopicHierarchy(form.identification.topicHierarchy);
             schemaModel.properties.id = form.identification.identifier;
 
-
-
-            // Links information
-            // Note: the only link should be the MQTT link (items).
-            // This is to avoid exposing the API endpoint to the user
-            // (please correct if I have misunderstood)
-            schemaModel.links = [];
-            // The title is the form topic hierarchy with dots instead of slashes
-            const itemTitle = form.identification.topicHierarchy.replace(/\//g, '.');
-            schemaModel.links.push({
-                rel: "items",
-                type: "application/json",
-                href: "mqtt://everyone:everyone@mosquitto:1883",
-                title: itemTitle,
-                channel: formatTopicHierarchy(form.identification.topicHierarchy)
-            });
-
             return schemaModel;
         };
 
@@ -1902,6 +1887,7 @@ export default defineComponent({
             pluginNotifyBoolean,
             pluginBuckets,
             pluginFilePattern,
+            pluginPatternHint,
             pluginNameTitle,
             pluginTemplateTitle,
             pluginBucketsTitle,
