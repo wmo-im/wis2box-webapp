@@ -14,7 +14,7 @@
                 {"id": "weather", "label": "Weather"},
                 {"id": "ocean", "label": "Ocean"}
             ],
-            "scheme": "https://github.com/wmo-im/wis2-topic-hierarchy/blob/main/topic-hierarchy/earth-system-discipline/index.csv"
+            "scheme": "http://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline"
         }
     ]
 }
