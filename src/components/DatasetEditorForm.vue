@@ -1667,9 +1667,11 @@ export default defineComponent({
             };
             schemaModel.properties.contacts.push(hostDetails);
 
+            const currentDTNoMilliseconds = new Date().toISOString().slice(0,-5)+"Z";
+
             // If the metadata has been loaded, use the original creation date. Otherwise use today
-            schemaModel.properties.created = form.extents.dateCreated || new Date().toISOString();
-            schemaModel.properties.updated = new Date().toISOString();
+            schemaModel.properties.created = form.extents.dateCreated || currentDTNoMilliseconds;
+            schemaModel.properties.updated = currentDTNoMilliseconds;
             schemaModel.properties["wmo:dataPolicy"] = form.identification.wmoDataPolicy;
             schemaModel.properties["wmo:topicHierarchy"] = formatTopicHierarchy(form.identification.topicHierarchy);
             schemaModel.properties.id = form.identification.identifier;
@@ -1751,11 +1753,13 @@ export default defineComponent({
             };
             // Convert the form data to an object adhering to the WCMP2 schema
             const schemaModel = transformToSchema(model.value);
-            // Send the data to the OAPI endpoint using PUT
-            const response = await fetch(`${oapi}/collections/discovery-metadata/items/${model.value.identification.identifier}`, {
-                method: 'PUT',
+            // Adjust the structure of the schema model to fit the new process
+            const inputs = {"inputs": {"metadata": schemaModel}}
+            // Send the data to the publish dataset process
+            const response = await fetch(`${oapi}/processes/publish_dataset/execution`, {
+                method: 'POST',
                 headers: headers,
-                body: JSON.stringify(schemaModel)
+                body: JSON.stringify(inputs)
             });
 
             // Define HTTP responses
