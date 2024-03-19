@@ -704,7 +704,7 @@ export default defineComponent({
                 keywords: [],
                 wmoDataPolicy: 'core',
                 concept: ['weather'],
-                conceptSchemes: ['https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline']
+                conceptScheme: 'https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline'
             },
             extents: {
                 // Default to the current date
@@ -1055,7 +1055,7 @@ export default defineComponent({
 
             // Themes - hardcoded for now
             formModel.identification.concepts = ["weather"];
-            formModel.identification.conceptSchemes = ["https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline"];
+            formModel.identification.conceptScheme = "https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline";
 
             // Contacts information
             const structureHostDetails = (contact) => {
@@ -1253,7 +1253,7 @@ export default defineComponent({
             model.value.identification.identifier = template.identifier.replace('$CENTRE_ID', model.value.identification.centreID);
             // Converts the theme structure into a list of the theme labels
             model.value.identification.concepts = template.themes.flatMap(theme => theme.concepts.map(concept => concept.label));
-            model.value.identification.conceptSchemes = template.themes.map(theme => theme.scheme);
+            model.value.identification.conceptScheme = template.themes.map(theme => theme.scheme);
             model.value.identification.keywords = template.keywords;
             // Use centre ID and WMO data policy to create topic hierarchy
             model.value.identification.topicHierarchy = template.topicHierarchy
@@ -1633,7 +1633,7 @@ export default defineComponent({
             schemaModel.properties.themes = [
                 {
                     concepts: concepts,
-                    scheme: form.identification.conceptSchemes
+                    scheme: form.identification.conceptScheme
                 }
             ]
             // Contacts information
