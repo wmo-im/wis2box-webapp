@@ -1771,16 +1771,17 @@ export default defineComponent({
             // Check response from OAPI
             if (!response.ok) {
                 if (response.status === UNAUTHORIZED) {
-                    message.value = "Unauthorized, please provide a valid 'collections/discovery-metadata' token";
+                    let processResponse = response.data.status;
+                    message.value = "Unauthorized, please provide a valid 'processes/wis2box' token";
                 }
                 else if (response.status === NOT_FOUND) {
-                    message.value = "Error submitting data: API not found";
+                    message.value = `Error submitting data: API not found. API response: ${response.data.status}`;
                 }
                 else if (response.status === INTERNAL_SERVER_ERROR) {
-                    message.value = "Error submitting data: Internal server error";
+                    message.value = `Error submitting data: Internal server error. API response: ${response.data.status}`;
                 }
                 else {
-                    message.value = "API error, please check the console."
+                    message.value = `API error. API response: ${response.data.status}. Please check the console for more information.`
                 }
                 // Open a dialog window to show this message clearly
                 openMessageDialog.value = true;
@@ -1788,7 +1789,7 @@ export default defineComponent({
 
             // If the response is OK and the data status
             // is success, display a success message
-            if (response.status === OK && repsonse.data.status === "success") {
+            if (response.status === OK && response.data.status === "success") {
                 message.value = isNew.value ? "Discovery metadata added successfully!" : "Discovery metadata updated successfully!";
                 // Open the success window to show this message clearly
                 openSuccessDialog.value = true;
