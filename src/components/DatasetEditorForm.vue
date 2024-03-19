@@ -1588,7 +1588,6 @@ export default defineComponent({
             // Note: This is an extension to the WCMP2 schema
             schemaModel.wis2box = {};
             schemaModel.wis2box["topic_hierarchy"] = form.identification.topicHierarchy;
-            schemaModel.wis2box.country = form.host.country;
             schemaModel.wis2box["centre_id"] = form.identification.centreID;
             schemaModel.wis2box["data_mappings"] = untidyPluginsForSchema(form.plugins);
 
