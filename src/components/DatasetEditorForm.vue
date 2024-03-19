@@ -1763,7 +1763,7 @@ export default defineComponent({
             });
 
             // Define HTTP responses
-            const NO_CONTENT = 204;
+            const OK = 200;
             const UNAUTHORIZED = 401;
             const NOT_FOUND = 404;
             const INTERNAL_SERVER_ERROR = 500;
@@ -1786,9 +1786,9 @@ export default defineComponent({
                 openMessageDialog.value = true;
             }
 
-            // If no content is returned from the fetch, then the put request is successful.
-            // In this case, redirect the user to the home page
-            if (response.status === NO_CONTENT) {
+            // If the response is OK and the data status
+            // is success, display a success message
+            if (response.status === OK && repsonse.data.status === "success") {
                 message.value = isNew.value ? "Discovery metadata added successfully!" : "Discovery metadata updated successfully!";
                 // Open the success window to show this message clearly
                 openSuccessDialog.value = true;
