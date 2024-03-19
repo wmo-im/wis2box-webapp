@@ -710,10 +710,7 @@ export default defineComponent({
                 // Default to the current date
                 dateStarted: new Date().toISOString(),
             },
-            host: {
-                hoursOfService: 'Hours: Mo-Fr 9am-5pm Sa 10am-5pm Su 10am-4pm',
-                contactInstructions: 'Email'
-            },
+            host: {},
             distrib: {
                 duplicateFromContact: true
             },
