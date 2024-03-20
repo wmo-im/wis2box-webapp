@@ -33,17 +33,54 @@
                         </v-card-text>
                         <v-card-actions>
                             <v-btn color="#009900" variant="flat" block @click="continueToForm"
-                                :disabled="!dialogFilled">Continue to
-                                Form</v-btn>
+                                :disabled="!initialDialogFilled">Continue to Form</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
 
                 <!-- Display messages to the user -->
-                <v-row class="pa-5">
-                    <p class="black--text ma-0">{{ message }}</p>
-                </v-row>
+                <v-col cols="12">
+                    <v-row align="center">
+                        <v-col cols="4">
+                            <h4>{{ message }}</h4>
+                        </v-col>
+                        <v-col cols="4" />
+                        <v-col cols="4">
+                            <v-btn v-if="datasetIsBeingUpdated" color="error" class="ma-2" title="Reset"
+                                @click="openRemoveConfirmationDialog = true" append-icon="mdi-delete" block>
+                                Remove Dataset From Collection
+                            </v-btn>
+                        </v-col>
+                    </v-row>
+                </v-col>
             </v-card>
+
+            <!-- Dialog to confirm the removal of the dataset
+            from the collection, by the user entering the
+            authentication token -->
+            <v-dialog v-model="openRemoveConfirmationDialog" max-width="600px">
+                <v-card>
+                    <v-toolbar title="Confirm Removal of Dataset" color="error">
+                        <v-btn icon="mdi-close" variant="text" size="small"
+                            @click="openRemoveConfirmationDialog = false" />
+                    </v-toolbar>
+                    <v-card-text>
+                        To confirm that you want to remove
+                        this dataset from the collection,
+                        please enter your authentication token.
+                    </v-card-text>
+                    <v-container>
+                        <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
+                            :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                            @click:append="showToken = !showToken" :rules="[rules.token]" variant="outlined">
+                        </v-text-field>
+                    </v-container>
+                    <v-card-actions>
+                        <v-btn color="error" block variant="flat" @click="removeDataset"
+                            :disabled="!token">Remove</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
 
             <!-- Metadata Editor -->
             <v-card v-if="metadataLoaded" class="mt-6 pa-3" style="overflow: initial; z-index: initial">
@@ -318,10 +355,9 @@
                         @click="openTokenHelpDialog = true" />
                 </v-card-title>
                 <v-card-text>
-                    <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token"
-                        rows="1" :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'"
-                        :type="showToken ? 'text' : 'password'" @click:append="showToken = !showToken"
-                        :rules="[rules.token]" variant="outlined">
+                    <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
+                        :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                        @click:append="showToken = !showToken" :rules="[rules.token]" variant="outlined">
                     </v-text-field>
                 </v-card-text>
             </v-card>
@@ -330,20 +366,19 @@
             from the above forms -->
             <v-col cols="12">
                 <v-row class="pt-5" v-if="metadataLoaded">
-                    <v-col cols="3">
-                        <v-btn color="error" class="ma-2" title="Reset" @click="resetMetadata" append-icon="mdi-sync"
+                    <v-col cols="4">
+                        <v-btn color="#1fb5db" class="ma-2" title="Reset" @click="resetMetadata" append-icon="mdi-sync"
                             block>
                             Reset Form
                         </v-btn>
                     </v-col>
-                    <v-col cols="3" />
-                    <v-col cols="3">
+                    <v-col cols="4">
                         <v-btn color="#E09D00" class="ma-2" title="Export" @click="downloadMetadata"
                             append-icon="mdi-arrow-down-bold-box-outline" block>
                             Export As JSON
                         </v-btn>
                     </v-col>
-                    <v-col cols="3">
+                    <v-col cols="4">
                         <v-btn color="#003DA5" class="ma-2" title="Submit" @click="submitMetadata"
                             :disabled="!formFilledUpdatedAndAuthenticated" append-icon="mdi-cloud-upload" block>
                             Submit
@@ -645,8 +680,8 @@
 
                             <v-row>
                                 <v-col cols="10">
-                                    <v-text-field label="File Pattern (Regex)" v-model="pluginFilePattern" :hint="pluginPatternHint"
-                                        variant="outlined"></v-text-field>
+                                    <v-text-field label="File Pattern (Regex)" v-model="pluginFilePattern"
+                                        :hint="pluginPatternHint" variant="outlined"></v-text-field>
                                 </v-col>
                                 <v-col cols="2">
                                     <v-switch v-model="pluginNotifyBoolean" label="Notify
@@ -738,6 +773,12 @@ export default defineComponent({
             token: value => !!value || 'Token is required',
         };
 
+        // Define HTTP responses
+        const OK = 200;
+        const UNAUTHORIZED = 401;
+        const NOT_FOUND = 404;
+        const INTERNAL_SERVER_ERROR = 500;
+
         // Reactive variables
 
         // Controls loading animation
@@ -753,13 +794,16 @@ export default defineComponent({
         const message = ref("Select existing discovery metadata file or create a new file.");
         // List of datasets to select from, if any
         const items = ref([]);
-        // Dialog window
+        // Dialog for initial information when creating
+        // a new dataset
         const showInitialDialog = ref(false);
         const centreList = ref([]);
         const templateFiles = ref([]);
         const selectedTemplate = ref(null);
         // Identifier of the selected dataset, used to load metadata from OAPI
         const identifier = ref("");
+        // Dialog to confirm removal of dataset
+        const openRemoveConfirmationDialog = ref(false);
         // List of languages and language codes
         const languageCodeList = ref([]);
         // List of country names, alph-2 codes, and alpha-3 codes
@@ -828,8 +872,13 @@ export default defineComponent({
 
         // Computed variables
 
+        // Is the dataset being updated, so can be removed?
+        const datasetIsBeingUpdated = computed(() => {
+            return items.value.includes(model.value.identification.identifier);
+        })
+
         // Has the user filled the dialog window?
-        const dialogFilled = computed(() => {
+        const initialDialogFilled = computed(() => {
             return model.value.identification.centreID && selectedTemplate.value;
         });
 
@@ -993,6 +1042,64 @@ export default defineComponent({
             }
         };
 
+
+        // When the user specifies a dataset identifier, load the corresponding metadata
+        const loadMetadata = async () => {
+            // Page values
+            console.log("Loading metadata...")
+            working.value = true;
+            metadataLoaded.value = false;
+            datasetSpecified.value = true;
+            message.value = 'Loading discovery metadata...';
+
+            // If the user selects 'Create New...', populate the form with default values
+            if (identifier.value === "Create New...") {
+                isNew.value = true;
+                // Set model to default values
+                model.value = deepClone(defaults);
+                metadataValidated.value = false;
+                // Open the dialog window
+                showInitialDialog.value = true;
+            }
+            // Otherwise, populate the form with the loaded values
+            else {
+                isNew.value = false;
+                try {
+                    const response = await fetch(`${oapi}/collections/discovery-metadata/items/${identifier.value}`);
+                    if (!response.ok) {
+                        throw new Error('Network response was not okay, failed to load selected discovery metadata.');
+                    }
+                    const responseData = await response.json();
+                    // The response data will have a different format to that of the form, so the data must be transformed
+                    const formModel = transformToForm(responseData);
+                    // Update the form (model) with the loaded values
+                    model.value = formModel;
+                    // Note: Set time delay to prevent watchers from firing too early
+                    setTimeout(() => {
+                        // Force bounding box map to update
+                        updateBbox();
+                        // As form was loaded, it must be already validated
+                        metadataValidated.value = true;
+                        // ...But it hasn't been updated yet
+                        formUpdated.value = false;
+                    }, 500); // Delay of 0.5 seconds
+                } catch (error) {
+                    console.log(error);
+                    message.value = "Error loading selected discovery metadata file.";
+                }
+            }
+
+            // Now update the UI
+
+            // If no error, display the form and present a success message
+            if (!message.value.includes("Error")) {
+                metadataLoaded.value = true;
+                message.value = "Discovery metadata loaded successfully.";
+            }
+            // Remove working animation
+            working.value = false;
+        };
+
         // When the metadata is loaded, it must be transformed to the format of the form
         // (this is because the form has a different structure to the schema)
         // It is easier to understand the transformToSchema method first, because this
@@ -1094,63 +1201,6 @@ export default defineComponent({
             return formModel;
         }
 
-        // When the user specifies a dataset identifier, load the corresponding metadata
-        const loadMetadata = async () => {
-            // Page values
-            console.log("Loading metadata...")
-            working.value = true;
-            metadataLoaded.value = false;
-            datasetSpecified.value = true;
-            message.value = 'Loading discovery metadata...';
-
-            // If the user selects 'Create New...', populate the form with default values
-            if (identifier.value === "Create New...") {
-                isNew.value = true;
-                // Set model to default values
-                model.value = deepClone(defaults);
-                metadataValidated.value = false;
-                // Open the dialog window
-                showInitialDialog.value = true;
-            }
-            // Otherwise, populate the form with the loaded values
-            else {
-                isNew.value = false;
-                try {
-                    const response = await fetch(`${oapi}/collections/discovery-metadata/items/${identifier.value}`);
-                    if (!response.ok) {
-                        throw new Error('Network response was not okay, failed to load selected discovery metadata.');
-                    }
-                    const responseData = await response.json();
-                    // The response data will have a different format to that of the form, so the data must be transformed
-                    const formModel = transformToForm(responseData);
-                    // Update the form (model) with the loaded values
-                    model.value = formModel;
-                    // Note: Set time delay to prevent watchers from firing too early
-                    setTimeout(() => {
-                        // Force bounding box map to update
-                        updateBbox();
-                        // As form was loaded, it must be already validated
-                        metadataValidated.value = true;
-                        // ...But it hasn't been updated yet
-                        formUpdated.value = false;
-                    }, 500); // Delay of 0.5 seconds
-                } catch (error) {
-                    console.log(error);
-                    message.value = "Error loading selected discovery metadata file.";
-                }
-            }
-
-            // Now update the UI
-
-            // If no error, display the form and present a success message
-            if (!message.value.includes("Error")) {
-                metadataLoaded.value = true;
-                message.value = "Discovery metadata loaded successfully.";
-            }
-            // Remove working animation
-            working.value = false;
-        };
-
         // Dialog window for auto-filling form
         const continueToForm = () => {
             // Close the dialog
@@ -1241,13 +1291,28 @@ export default defineComponent({
             }
 
             return result;
-        }
+        };
+
+        // Method to check that the identifier does not already exist
+        const createAndCheckIdentifier = (identifier) => {
+            let id = identifier.replace('$CENTRE_ID', model.value.identification.centreID);
+
+            // If id already in items, show a message and open the initial dialog again
+            if (items.value.includes(id)) {
+                message.value = "Identifier already exists. Either update the existing dataset or choose another identifier.";
+                openMessageDialog.value = true;
+                showInitialDialog.value = true;
+                return;
+            }
+
+            return id;
+        };
 
         // Autofill form based on template
         const applyTemplate = (template) => {
             // Metadata Editor parts
             model.value.identification.title = template.title.replace('$CENTRE_ID', model.value.identification.centreID);
-            model.value.identification.identifier = template.identifier.replace('$CENTRE_ID', model.value.identification.centreID);
+            model.value.identification.identifier = createAndCheckIdentifier(template.identifier);
             // Converts the theme structure into a list of the theme labels
             model.value.identification.concepts = template.themes.flatMap(theme => theme.concepts.map(concept => concept.label));
             model.value.identification.conceptScheme = template.themes.map(theme => theme.scheme);
@@ -1502,6 +1567,51 @@ export default defineComponent({
             }
         };
 
+        // Removes the dataset from the collection
+        const removeDataset = async () => {
+            // Add authentication token to the headers
+            const headers = {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + token.value
+            };
+
+            const inputs = { "inputs": { "metadata_id": model.value.identification.identifer } }
+            // Send the data to the unpublish and delete the dataset
+            const response = await fetch(`${oapi}/processes/unpublish_dataset/execution`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(inputs)
+            });
+
+            const responseData = await response.json();
+
+            // Check response from OAPI
+            if (!response.ok) {
+                if (response.status === UNAUTHORIZED) {
+                    message.value = "Unauthorized, please provide a valid 'processes/wis2box' token";
+                }
+                else if (response.status === NOT_FOUND) {
+                    message.value = `Error submitting data: API not found. API response: ${responseData.status}`;
+                }
+                else if (response.status === INTERNAL_SERVER_ERROR) {
+                    message.value = `Error submitting data: Internal server error. API response: ${responseData.status}`;
+                }
+                else {
+                    message.value = `API error. API response: ${responseData.status}. Please check the console for more information.`
+                }
+                // Open a dialog window to show this message clearly
+                openMessageDialog.value = true;
+            }
+
+            // If the response is OK and the data status
+            // is success, display a success message
+            if (response.status === OK && responseData.status === "success") {
+                message.value = "Dataset removed successfully.";
+                // Open the success window to show this message clearly
+                openSuccessDialog.value = true;
+            }
+        };
+
         // Resets the metadata form to the default state
         const resetMetadata = () => {
             model.value = deepClone(defaults);
@@ -1663,7 +1773,7 @@ export default defineComponent({
             };
             schemaModel.properties.contacts.push(hostDetails);
 
-            const currentDTNoMilliseconds = new Date().toISOString().slice(0,-5)+"Z";
+            const currentDTNoMilliseconds = new Date().toISOString().slice(0, -5) + "Z";
 
             // If the metadata has been loaded, use the original creation date. Otherwise use today
             schemaModel.properties.created = form.extents.dateCreated || currentDTNoMilliseconds;
@@ -1750,7 +1860,7 @@ export default defineComponent({
             // Convert the form data to an object adhering to the WCMP2 schema
             const schemaModel = transformToSchema(model.value);
             // Adjust the structure of the schema model to fit the new process
-            const inputs = {"inputs": {"metadata": schemaModel}}
+            const inputs = { "inputs": { "metadata": schemaModel } }
             // Send the data to the publish dataset process
             const response = await fetch(`${oapi}/processes/publish_dataset/execution`, {
                 method: 'POST',
@@ -1758,12 +1868,6 @@ export default defineComponent({
                 body: JSON.stringify(inputs)
             });
             const responseData = await response.json();
-
-            // Define HTTP responses
-            const OK = 200;
-            const UNAUTHORIZED = 401;
-            const NOT_FOUND = 404;
-            const INTERNAL_SERVER_ERROR = 500;
 
             // Check response from OAPI
             if (!response.ok) {
@@ -1867,7 +1971,9 @@ export default defineComponent({
             showInitialDialog,
             centreList,
             templateFiles,
-            dialogFilled,
+            datasetIsBeingUpdated,
+            openRemoveConfirmationDialog,
+            initialDialogFilled,
             filteredCountryCodeList,
             selectedTemplate,
             identifier,
@@ -1923,6 +2029,7 @@ export default defineComponent({
             configurePlugin,
             savePlugin,
             removePlugin,
+            removeDataset,
             resetMetadata,
             downloadMetadata,
             redirectUser,
