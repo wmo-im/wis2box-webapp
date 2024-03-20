@@ -6,7 +6,7 @@
     "language": "en",
     "retention": "P30D",
     "resolution": "P12H",
-    "keywords": ["upper air", "humidity", "wind", "observations"],
+    "keywords": ["observations", "upper air", "humidity", "wind", "observations","temperature","dewpoint","clouds"],
     "duplicateFromContact": true,
     "themes": [
         {

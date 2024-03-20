@@ -6,7 +6,7 @@
     "language": "en",
     "retention": "P30D",
     "resolution": "P1H",
-    "keywords": ["surface", "land", "observations"],
+    "keywords": ["surface", "land", "observations", "temperature","visibility","precipitation","clouds","snow depth","evaporation","radiation","wind","total sunshine","humidity"],
     "duplicateFromContact": true,
     "themes": [
         {
