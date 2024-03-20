@@ -6,7 +6,7 @@
     "language": "en",
     "retention": "P30D",
     "resolution": "P1H",
-    "keywords": ["weather", "advisories", "warnings"],
+    "keywords": ["weather", "advisories", "warnings", "extreme", "severe", "moderate","minor","wind","snow or ice","thunderstorm","fog","high temperature","low temperature","coastal event","forest fire","avalanches","rain","flooding","rain flood","tropical cylones","add country?"],
     "duplicateFromContact": true,
     "themes": [
         {
