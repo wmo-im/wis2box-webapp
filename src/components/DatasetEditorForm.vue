@@ -32,8 +32,18 @@
                                 label="Data Type" variant="outlined"></v-select>
                         </v-card-text>
                         <v-card-actions>
-                            <v-btn color="#009900" variant="flat" block @click="continueToForm"
-                                :disabled="!initialDialogFilled">Continue to Form</v-btn>
+                            <v-col cols="12">
+                                <v-row>
+                                    <v-col cols="6">
+                                        <v-btn color="#009900" append-icon="mdi-home" variant="flat" block @click="redirectUser"
+                                            >Return Home</v-btn>
+                                    </v-col>
+                                    <v-col cols="6">
+                                        <v-btn color="#003DA5" append-icon="mdi-form-select" variant="flat" block @click="continueToForm"
+                                            :disabled="!initialDialogFilled">Continue to Form</v-btn>
+                                    </v-col>
+                                </v-row>
+                            </v-col>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
@@ -379,8 +389,8 @@
                         </v-btn>
                     </v-col>
                     <v-col cols="4">
-                        <v-btn color="#003DA5" class="ma-2" title="Submit" @click="submitMetadata"
-                            :disabled="!formFilledUpdatedAndAuthenticated" append-icon="mdi-cloud-upload" block>
+                        <v-btn color="#003DA5" class="ma-2" title="Submit" @click="verifyFormIsFilled"
+                            append-icon="mdi-cloud-upload" block>
                             Submit
                         </v-btn>
                     </v-col>
@@ -579,15 +589,18 @@
             </v-dialog>
 
             <!-- Dialog to display validation and submission messages -->
-            <v-dialog v-model="openMessageDialog" max-width="600px">
+            <v-dialog v-model="openMessageDialog" max-width="600px" persistent>
                 <v-card>
                     <v-toolbar title="Result" color="#003DA5">
                     </v-toolbar>
                     <v-card-text>
                         {{ message }}
+                        <ul style="padding-left: 1rem;">
+                            <li v-for="(issue, index) in submissionIssues" :key="index">{{ issue }}</li>
+                        </ul>
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn color="#003DA5" block @click="openMessageDialog = false">
+                        <v-btn color="#003DA5" block @click="resetMessage">
                             OK
                         </v-btn>
                     </v-card-actions>
@@ -792,6 +805,7 @@ export default defineComponent({
         const datasetSpecified = ref(false);
         // Messages to display to user (this changes overtime)
         const message = ref("Select existing discovery metadata file or create a new file.");
+        const submissionIssues = ref([]);
         // List of datasets to select from, if any
         const items = ref([]);
         // Dialog for initial information when creating
@@ -915,12 +929,6 @@ export default defineComponent({
         // Controls whether the plugin table should be showed
         const canShowPluginTable = computed(() => {
             return metadataLoaded.value
-        });
-
-        // Controls which parts of the page are enabled,
-        // in particular the submit button
-        const formFilledUpdatedAndAuthenticated = computed(() => {
-            return formFilled.value && formUpdated.value && model.value.plugins?.length > 0 && token.value;
         });
 
         // Methods
@@ -1843,6 +1851,46 @@ export default defineComponent({
             element.target = "_blank"
             element.download = "discovery-metadata.json"
             element.click()
+        };
+
+        const resetMessage = () => {
+            openMessageDialog.value = false;
+            message.value = "";
+        };
+
+        const addIssueIfUnique = (issue) => {
+            if (!submissionIssues.value.includes(issue)) {
+                submissionIssues.value.push(issue);
+            }
+        };
+
+        // Checks the form is correctly filled before submitting
+        const verifyFormIsFilled = async () => {
+
+            if (!formFilled.value) {
+                addIssueIfUnique("Every field of the form must be filled");
+            }
+
+            if (!formUpdated.value) {
+                addIssueIfUnique("You must update the existing data");
+            }
+
+            if (model.value.plugins?.length === 0) {
+                addIssueIfUnique("At least one plugin must be added");
+            }
+
+            if (!token.value) {
+                addIssueIfUnique("You must provide a 'processes/wis2box' token");
+            }
+
+            // Now either display the issues or submit the metadata
+            if (submissionIssues.value.length > 0) {
+                message.value = "In order to submit the data:";
+                openMessageDialog.value = true;
+            }
+            else {
+                await submitMetadata();
+            }
         }
 
         // Redirects the user when they successfully submit data
@@ -1967,6 +2015,7 @@ export default defineComponent({
             formUpdated,
             datasetSpecified,
             message,
+            submissionIssues,
             items,
             showInitialDialog,
             centreList,
@@ -2015,7 +2064,6 @@ export default defineComponent({
             openSuccessDialog,
             openViewPluginDialog,
             openConfigurePluginDialog,
-            formFilledUpdatedAndAuthenticated,
             loadList,
             loadMetadata,
             continueToForm,
@@ -2032,7 +2080,9 @@ export default defineComponent({
             removeDataset,
             resetMetadata,
             downloadMetadata,
+            resetMessage,
             redirectUser,
+            verifyFormIsFilled,
             submitMetadata
         }
     }
