@@ -1575,7 +1575,7 @@ export default defineComponent({
                 'authorization': 'Bearer ' + token.value
             };
 
-            const inputs = { "inputs": { "metadata_id": model.value.identification.identifer } }
+            const inputs = { "inputs": { "metadata_id": model.value.identification.identifier } }
             // Send the data to the unpublish and delete the dataset
             const response = await fetch(`${oapi}/processes/unpublish_dataset/execution`, {
                 method: 'POST',
