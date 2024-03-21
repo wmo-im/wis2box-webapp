@@ -114,7 +114,7 @@
                             <v-row dense>
                                 <v-col cols="12">
                                     <v-text-field label="Identifier" type="string"
-                                        v-model="model.identification.identifier" :rules="[rules.required]"
+                                        v-model="model.identification.identifier" :rules="[rules.required, rules.identifier]"
                                         variant="outlined" clearable
                                         :disabled="selectedTemplate?.label !== 'other'"></v-text-field>
                                 </v-col>
@@ -777,6 +777,7 @@ export default defineComponent({
         // Validation patterns for form fields
         const rules = {
             required: (value) => !!value || "Field is required",
+            identifier: (value) => !items.value.includes(value) || "Identifier already exists",
             centreID: value => /^[a-z0-9_-]{2,}$/.test(value) || 'Invalid centre ID. Must be lowercase with at least 2 characters',
             latitude: value => value >= -90 && value <= 90 || 'Latitude must be between -90 and 90',
             longitude: value => value >= -180 && value <= 180 || 'Longitude must be between -180 and 180',
@@ -888,7 +889,7 @@ export default defineComponent({
 
         // Is the dataset being updated, so can be removed?
         const datasetIsBeingUpdated = computed(() => {
-            return items.value.includes(model.value.identification.identifier);
+            return items.value.includes(model.value.identification.identifier) && !isNew.value;
         })
 
         // Has the user filled the dialog window?
@@ -1048,6 +1049,9 @@ export default defineComponent({
                 const file = await files[path]();
                 templateFiles.value.push(file.default);
             }
+
+            // Also push the 'other' datatype label
+            templateFiles.value.push({ 'label': 'other' });
         };
 
 
