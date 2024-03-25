@@ -1395,7 +1395,7 @@ export default defineComponent({
             }
 
             // Otherwise, create sensible defaults
-            model.value.identification.identifier = 'urn:x-wmo:md:' + model.value.identification.centreID + ':';
+            model.value.identification.identifier = 'urn:wmo:md:' + model.value.identification.centreID + ':';
             model.value.identification.topicHierarchy = model.value.identification.centreID + '.data.' + model.value.identification.wmoDataPolicy + '.';
         }
 
