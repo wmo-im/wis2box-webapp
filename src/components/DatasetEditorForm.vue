@@ -1589,7 +1589,7 @@ export default defineComponent({
 
             const inputs = { "inputs": { "metadata_id": model.value.identification.identifier } }
             // Send the data to the unpublish and delete the dataset
-            const response = await fetch(`${oapi}/processes/unpublish_dataset/execution`, {
+            const response = await fetch(`${oapi}/processes/wis2box-dataset_unpublish/execution`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(inputs)
@@ -1914,7 +1914,7 @@ export default defineComponent({
             // Adjust the structure of the schema model to fit the new process
             const inputs = { "inputs": { "metadata": schemaModel } }
             // Send the data to the publish dataset process
-            const response = await fetch(`${oapi}/processes/publish_dataset/execution`, {
+            const response = await fetch(`${oapi}/processes/wis2box-dataset_publish/execution`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(inputs)
