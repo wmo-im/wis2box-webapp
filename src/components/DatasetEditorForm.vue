@@ -1841,6 +1841,9 @@ export default defineComponent({
                 { condition: !token.value, message: "You must provide a 'processes/wis2box' token" }
             ];
 
+            // Clear existing issues
+            submissionIssues.value = [];
+
             checks.forEach(check => {
                 handleSubmitIssues(check.message, check.condition ? 'add' : 'remove');
             });
