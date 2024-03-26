@@ -1,64 +1,76 @@
 {
-    "label": "weather/surface-based-observations/synop",
-    "title": "Hourly synoptic observations from fixed-land stations (SYNOP) ($CENTRE_ID)",
-    "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.synop",
-    "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.surface-based-observations.synop",
-    "language": "en",
-    "resolution": "P1H",
-    "keywords": ["surface", "land", "observations"],
-    "duplicateFromContact": true,
-    "themes": [
-        {
-            "concepts": [
-                {"id": "weather", "label": "weather"}
-            ],
-            "scheme": "https://github.com/wmo-im/wis2-topic-hierarchy/blob/main/topic-hierarchy/earth-system-discipline/index.csv"
-        }
-    ],
-    "wis2box": {
-        "retention": "P30D",
-        "topic_hierarchy": "$CENTRE_ID.data.core.weather.surface-based-observations.synop",
-        "data_mappings": {
-            "plugins": {
-                "bin": [
-                    {
-                        "plugin": "wis2box.data.bufr4.ObservationDataBUFR",
-                        "notify": true,
-                        "buckets": [ "wis2box-incoming" ],
-                        "file-pattern": "^.*\\.bin$"
-                    }
-                ],
-                "txt": [
-                    {
-                        "plugin": "wis2box.data.synop2bufr.ObservationDataSYNOP2BUFR",
-                        "notify": true,
-                        "file-pattern": "^A_SMR.*EDZW_(\\d{4})(\\d{2}).*.txt$"
-                    }
-                ],
-                "b": [
-                    {
-                        "plugin": "wis2box.data.bufr4.ObservationDataBUFR",
-                        "notify": true,
-                        "buckets": [ "wis2box-incoming" ],
-                        "file-pattern": "^.*\\.b$"
-                    }
-                ],
-                "csv": [	
-                    {
-                        "plugin": "wis2box.data.csv2bufr.ObservationDataCSV2BUFR",
-                        "template": "aws-template",
-                        "notify": true,
-                        "buckets": [ "wis2box-incoming" ],
-                        "file-pattern": "^.*\\.csv$"
-                    }
-                ],
-                "bufr4": [
-                    {
-                        "plugin": "wis2box.data.bufr2geojson.ObservationDataBUFR2GeoJSON",
-                        "buckets": [ "wis2box-public" ],
-                        "file-pattern": "^WIGOS_(\\d-\\d+-\\d+-\\w+)_.*\\.bufr4$"
-                    }]
-                }
-        }
+  "label": "weather/surface-based-observations/synop",
+  "title": "Hourly synoptic observations from fixed-land stations (SYNOP) ($CENTRE_ID)",
+  "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.synop",
+  "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.surface-based-observations.synop",
+  "language": "en",
+  "resolution": "P1H",
+  "keywords": [
+    "observations",
+    "temperature",
+    "visibility",
+    "precipitation",
+    "pressure",
+    "clouds",
+    "snow depth",
+    "evaporation",
+    "radiation",
+    "wind",
+    "total sunshine",
+    "humidity"
+  ],
+  "duplicateFromContact": true,
+  "themes": [
+    {
+      "concepts": [{ "id": "weather", "label": "weather" }],
+      "scheme": "https://github.com/wmo-im/wis2-topic-hierarchy/blob/main/topic-hierarchy/earth-system-discipline/index.csv"
     }
+  ],
+  "wis2box": {
+    "retention": "P30D",
+    "topic_hierarchy": "$CENTRE_ID.data.core.weather.surface-based-observations.synop",
+    "data_mappings": {
+      "plugins": {
+        "bin": [
+          {
+            "plugin": "wis2box.data.bufr4.ObservationDataBUFR",
+            "notify": true,
+            "buckets": ["wis2box-incoming"],
+            "file-pattern": "^.*\\.bin$"
+          }
+        ],
+        "txt": [
+          {
+            "plugin": "wis2box.data.synop2bufr.ObservationDataSYNOP2BUFR",
+            "notify": true,
+            "file-pattern": "^.*_(\\d{4})(\\d{2}).*.txt$"
+          }
+        ],
+        "b": [
+          {
+            "plugin": "wis2box.data.bufr4.ObservationDataBUFR",
+            "notify": true,
+            "buckets": ["wis2box-incoming"],
+            "file-pattern": "^.*\\.b$"
+          }
+        ],
+        "csv": [
+          {
+            "plugin": "wis2box.data.csv2bufr.ObservationDataCSV2BUFR",
+            "template": "aws-template",
+            "notify": true,
+            "buckets": ["wis2box-incoming"],
+            "file-pattern": "^.*\\.csv$"
+          }
+        ],
+        "bufr4": [
+          {
+            "plugin": "wis2box.data.bufr2geojson.ObservationDataBUFR2GeoJSON",
+            "buckets": ["wis2box-public"],
+            "file-pattern": "^WIGOS_(\\d-\\d+-\\d+-\\w+)_.*\\.bufr4$"
+          }
+        ]
+      }
+    }
+  }
 }

@@ -1,18 +1,59 @@
 {
-    "label": "weather/surface-based-observations/temp",
-    "title": "Upper-level temperature/humidity/wind reports from fixed-land stations (TEMP) ($CENTRE_ID)",
-    "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.temp",
-    "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.surface-based-observations.temp",
-    "language": "en",
-    "resolution": "P12H",
-    "keywords": ["upper air", "humidity", "wind", "observations"],
-    "duplicateFromContact": true,
-    "themes": [
-        {
-            "concepts": [
-                {"id": "weather", "label": "weather"}
-            ],
-            "scheme": "https://github.com/wmo-im/wis2-topic-hierarchy/blob/main/topic-hierarchy/earth-system-discipline/index.csv"
-        }
-    ]
+  "label": "weather/surface-based-observations/temp",
+  "title": "Upper-level temperature/humidity/wind reports from fixed-land stations (TEMP) ($CENTRE_ID)",
+  "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.temp",
+  "topicHierarchy": "$CENTRE_ID.data.$DATA_POLICY.weather.surface-based-observations.temp",
+  "language": "en",
+  "resolution": "P12H",
+  "keywords": [
+    "observations",
+    "upper air",
+    "humidity",
+    "wind",
+    "observations",
+    "temperature",
+    "dewpoint",
+    "clouds",
+    "pressure",
+    "atmosperic profile"
+  ],
+  "duplicateFromContact": true,
+  "themes": [
+    {
+      "concepts": [{ "id": "weather", "label": "weather" }],
+      "scheme": "https://github.com/wmo-im/wis2-topic-hierarchy/blob/main/topic-hierarchy/earth-system-discipline/index.csv"
+    }
+  ],
+  "wis2box": {
+    "retention": "P30D",
+    "topic_hierarchy": "$CENTRE_ID.data.core.weather.surface-based-observations.temp",
+    "data_mappings": {
+      "plugins": {
+        "b": [
+          {
+            "plugin": "wis2box.data.bufr4.ObservationDataBUFR",
+            "notify": true,
+            "buckets": ["wis2box-incoming"],
+            "file-pattern": "^.*\\.b$"
+          }
+        ],
+        "bin": [
+          {
+            "plugin": "wis2box.data.bufr4.ObservationDataBUFR",
+            "notify": true,
+            "buckets": ["wis2box-incoming"],
+            "file-pattern": "^.*\\.bin$"
+          }
+        ],
+        "bufr": [
+          {
+            "plugin": "wis2box.data.bufr4.ObservationDataBUFR",
+            "notify": true,
+            "buckets": ["wis2box-incoming"],
+            "file-pattern": "^.*\\.bufr$"
+          }
+        ]
+      }
+    }
+  }
 }

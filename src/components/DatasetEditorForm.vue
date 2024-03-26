@@ -35,12 +35,13 @@
                             <v-col cols="12">
                                 <v-row>
                                     <v-col cols="6">
-                                        <v-btn color="#009900" append-icon="mdi-home" variant="flat" block @click="redirectUser"
-                                            >Return Home</v-btn>
+                                        <v-btn color="#009900" append-icon="mdi-home" variant="flat" block
+                                            @click="redirectUser">Return Home</v-btn>
                                     </v-col>
                                     <v-col cols="6">
-                                        <v-btn color="#003DA5" append-icon="mdi-form-select" variant="flat" block @click="continueToForm"
-                                            :disabled="!initialDialogFilled">Continue to Form</v-btn>
+                                        <v-btn color="#003DA5" append-icon="mdi-form-select" variant="flat" block
+                                            @click="continueToForm" :disabled="!initialDialogFilled">Continue to
+                                            Form</v-btn>
                                     </v-col>
                                 </v-row>
                             </v-col>
@@ -56,7 +57,7 @@
                         </v-col>
                         <v-col cols="4" />
                         <v-col cols="4">
-                            <v-btn v-if="datasetIsBeingUpdated" color="error" class="ma-2" title="Reset"
+                            <v-btn v-if="datasetIsBeingUpdated" color="error" class="ma-2"
                                 @click="openRemoveConfirmationDialog = true" append-icon="mdi-delete" block>
                                 Remove Dataset From Collection
                             </v-btn>
@@ -96,7 +97,7 @@
             <v-card v-if="metadataLoaded" class="mt-6 pa-3" style="overflow: initial; z-index: initial">
                 <v-card-title class="big-title">Metadata Editor</v-card-title>
                 <!-- Form which when filled and validated, can be exported or submitted -->
-                <v-form v-model="formFilled" validate-on="input">
+                <v-form v-model="formFilled" ref="formRef">
                     <!-- Identification section -->
                     <v-card-title>
                         Dataset Identification
@@ -114,8 +115,8 @@
                             <v-row dense>
                                 <v-col cols="12">
                                     <v-text-field label="Identifier" type="string"
-                                        v-model="model.identification.identifier" :rules="[rules.required, rules.identifier]"
-                                        variant="outlined" clearable
+                                        v-model="model.identification.identifier"
+                                        :rules="[rules.required, rules.identifier]" variant="outlined" clearable
                                         :disabled="selectedTemplate?.label !== 'other'"></v-text-field>
                                 </v-col>
                             </v-row>
@@ -129,7 +130,6 @@
                         </v-col>
                     </v-row>
                     <v-row>
-
                     </v-row>
                     <v-row>
                         <v-col cols="2">
@@ -305,6 +305,22 @@
                                 class="hint-text hint-invalid">Phone number is not valid</p>
                         </v-col>
                     </v-row>
+                    <v-col cols="12">
+                        <v-row>
+                            <v-col cols="6">
+                                <v-btn @click="resetForm" append-icon="mdi-sync"
+                                block color="#1FB5DB">
+                                Reset Form
+                            </v-btn>
+                        </v-col>
+                        <v-col cols="6">
+                            <v-btn @click="validateForm" append-icon="mdi-shield-check" block color="#003DA5"
+                            v-if="formUpdated">
+                                Validate Form
+                            </v-btn>
+                        </v-col>
+                        </v-row>
+                    </v-col>
                 </v-form>
             </v-card>
 
@@ -376,19 +392,13 @@
             from the above forms -->
             <v-col cols="12">
                 <v-row class="pt-5" v-if="metadataLoaded">
-                    <v-col cols="4">
-                        <v-btn color="#1fb5db" class="ma-2" title="Reset" @click="resetMetadata" append-icon="mdi-sync"
-                            block>
-                            Reset Form
-                        </v-btn>
-                    </v-col>
-                    <v-col cols="4">
+                    <v-col cols="6">
                         <v-btn color="#E09D00" class="ma-2" title="Export" @click="downloadMetadata"
                             append-icon="mdi-arrow-down-bold-box-outline" block>
                             Export As JSON
                         </v-btn>
                     </v-col>
-                    <v-col cols="4">
+                    <v-col cols="6">
                         <v-btn color="#003DA5" class="ma-2" title="Submit" @click="verifyFormIsFilled"
                             append-icon="mdi-cloud-upload" block>
                             Submit
@@ -588,7 +598,7 @@
                 </v-card>
             </v-dialog>
 
-            <!-- Dialog to display validation and submission messages -->
+            <!-- Dialog to display typical informative messages -->
             <v-dialog v-model="openMessageDialog" max-width="600px" persistent>
                 <v-card>
                     <v-toolbar title="Result" color="#003DA5">
@@ -600,7 +610,25 @@
                         </ul>
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn color="#003DA5" block @click="resetMessage">
+                        <v-btn color="#003DA5" block @click="resetMessage('typical')">
+                            OK
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+
+            <!-- Dialog to display the validation outcome -->
+            <!-- Dialog to display successful submission message -->
+            <v-dialog v-model="openValidationDialog" max-width="600px" persistent>
+                <v-card>
+                    <v-toolbar title="Validation Outcome" :color="formValidated ? '#64BF40' : 'error'">
+                    </v-toolbar>
+                    <v-card-text>
+                        {{ message }}
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn block @click="resetMessage('validation')"
+                        :color="formValidated ? '#64BF40' : 'error'">
                             OK
                         </v-btn>
                     </v-card-actions>
@@ -777,7 +805,7 @@ export default defineComponent({
         // Validation patterns for form fields
         const rules = {
             required: (value) => !!value || "Field is required",
-            identifier: (value) => !items.value.includes(value) || "Identifier already exists",
+            identifier: (value) => !isNew.value || !items.value.includes(value) || "Identifier already exists",
             centreID: value => /^[a-z0-9_-]{2,}$/.test(value) || 'Invalid centre ID. Must be lowercase with at least 2 characters',
             latitude: value => value >= -90 && value <= 90 || 'Latitude must be between -90 and 90',
             longitude: value => value >= -180 && value <= 180 || 'Longitude must be between -180 and 180',
@@ -799,9 +827,10 @@ export default defineComponent({
         const working = ref(false);
         // Controls which parts of the page are displayed
         const metadataLoaded = ref(false);
-        const metadataValidated = ref(false);
+        const formValidated = ref(false);
         const formFilled = ref(true);
         const formUpdated = ref(false);
+        const formRef = ref(null);
         // If no datasets can be found and the user must create a new one, disable the dataset selection
         const datasetSpecified = ref(false);
         // Messages to display to user (this changes overtime)
@@ -879,6 +908,7 @@ export default defineComponent({
 
         // Message dialog windows
         const openMessageDialog = ref(false);
+        const openValidationDialog = ref(false);
         const openSuccessDialog = ref(false);
 
         // Plugin dialog windows
@@ -1069,7 +1099,7 @@ export default defineComponent({
                 isNew.value = true;
                 // Set model to default values
                 model.value = deepClone(defaults);
-                metadataValidated.value = false;
+                formValidated.value = false;
                 // Open the dialog window
                 showInitialDialog.value = true;
             }
@@ -1091,7 +1121,7 @@ export default defineComponent({
                         // Force bounding box map to update
                         updateBbox();
                         // As form was loaded, it must be already validated
-                        metadataValidated.value = true;
+                        formValidated.value = true;
                         // ...But it hasn't been updated yet
                         formUpdated.value = false;
                     }, 500); // Delay of 0.5 seconds
@@ -1600,13 +1630,13 @@ export default defineComponent({
             // Check response from OAPI
             if (!response.ok) {
                 if (response.status === UNAUTHORIZED) {
-                    message.value = "Unauthorized, please provide a valid 'processes/wis2box' token";
+                    message.value = "Unauthorized, please provide a valid 'processes/wis2box' token.";
                 }
                 else if (response.status === NOT_FOUND) {
-                    message.value = `Error submitting data: API not found. API response: ${responseData.status}`;
+                    message.value = `Error submitting data: API not found. API response: ${responseData.status}.`;
                 }
                 else if (response.status === INTERNAL_SERVER_ERROR) {
-                    message.value = `Error submitting data: Internal server error. API response: ${responseData.status}`;
+                    message.value = `Error submitting data: Internal server error. API response: ${responseData.status}.`;
                 }
                 else {
                     message.value = `API error. API response: ${responseData.status}. Please check the console for more information.`
@@ -1622,14 +1652,6 @@ export default defineComponent({
                 // Open the success window to show this message clearly
                 openSuccessDialog.value = true;
             }
-        };
-
-        // Resets the metadata form to the default state
-        const resetMetadata = () => {
-            model.value = deepClone(defaults);
-            metadataValidated.value = false;
-            formFilled.value = false;
-            message.value = "Discovery metadata reset successfully.";
         };
 
         // Method to get the date from a datetime
@@ -1797,51 +1819,31 @@ export default defineComponent({
             return schemaModel;
         };
 
-        // Validate the metadata generated by the format against the WCMP2 schema
-        // NOTE: This shall be commented out indefinitely
-        // const validateMetadata = async () => {
-        //     // Push the form data transformed to the schema format
-        //     try {
-        //         const schemaModel = transformToSchema(model.value);
-        //         const response = await fetch(`${oapi}/processes/pywcmp-wis2-wcmp2-ets/execution`, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json'
-        //             },
-        //             body: JSON.stringify({
-        //                 "inputs": {
-        //                     "record": schemaModel
-        //                 }
-        //             })
-        //         })
+        // Validates the metadata form
+        const validateForm = async () => {
+            const { valid } = await formRef.value.validate();
+            
+            if (valid) {
+                message.value = "Form is valid, please proceed."
+                formValidated.value = true;
+            }
+            else {
+                message.value = "Form is invalid, please check all of the fields are filled correctly and try again."
+                formValidated.value = false;
+            }
+            openValidationDialog.value = true;
+        };
 
-        //         if (!response.ok) {
-        //             throw new Error('Network response was not okay, failed to validate discovery metadata.');
-        //         }
-
-        //         const responseData = await response.json();
-
-        //         // If there is a code in the response, then the validation failed
-        //         if ("code" in responseData) {
-        //             // Display the error message to the user
-        //             message.value = `Discovery metadata not valid: ${responseData.message}`;
-        //             // Temporary set the validation state to true regardless
-        //             metadataValidated.value = true;
-        //         }
-        //         else {
-        //             // Otherwise, the validation succeeded
-        //             message.value = "Discovery metadata validated successfully.";
-        //             metadataValidated.value = true;
-        //         }
-        //         // Open a dialog window to show this message clearly
-        //         openMessageDialog.value = true;
-        //     } catch (error) {
-        //         console.error(error);
-        //         message.value = "Error validating discovery metadata.";
-        //         // Temporary set the validation state to true regardless
-        //         metadataValidated.value = true;
-        //     }
-        // };
+        // Resets the metadata form to the default state and clears the form
+        // and its associated validation
+        const resetForm = () => {
+            model.value = deepClone(defaults);
+            formRef.value.reset();
+            formRef.value.resetValidation();
+            formValidated.value = false;
+            formFilled.value = false;
+            message.value = "Discovery metadata reset successfully.";
+        };
 
         // Generates a downloadable JSON file from the filled and validated form, which follows the WCMP2 schema
         const downloadMetadata = () => {
@@ -1857,45 +1859,46 @@ export default defineComponent({
             element.click()
         };
 
-        const resetMessage = () => {
-            openMessageDialog.value = false;
+        const resetMessage = (type) => {
+            if (type === 'typical') {
+                openMessageDialog.value = false;
+            }
+            else if (type === 'validation') {
+                openValidationDialog.value = false;
+            }
             message.value = "";
         };
 
-        const addIssueIfUnique = (issue) => {
-            if (!submissionIssues.value.includes(issue)) {
+        const handleSubmitIssues = (issue, action) => {
+            const issueIndex = submissionIssues.value.indexOf(issue);
+            const issueExists = issueIndex !== -1;
+
+            if (action === 'add' && !issueExists) {
                 submissionIssues.value.push(issue);
+            } else if (action === 'remove' && issueExists) {
+                submissionIssues.value.splice(issueIndex, 1);
             }
         };
 
-        // Checks the form is correctly filled before submitting
         const verifyFormIsFilled = async () => {
+            const checks = [
+                { condition: !formValidated.value, message: "The form must be validated" },
+                { condition: !formUpdated.value, message: "You must update the existing data" },
+                { condition: model.value.plugins?.length === 0, message: "At least one plugin must be added" },
+                { condition: !token.value, message: "You must provide a 'processes/wis2box' token" }
+            ];
 
-            if (!formFilled.value) {
-                addIssueIfUnique("Every field of the form must be filled");
-            }
+            checks.forEach(check => {
+                handleSubmitIssues(check.message, check.condition ? 'add' : 'remove');
+            });
 
-            if (!formUpdated.value) {
-                addIssueIfUnique("You must update the existing data");
-            }
-
-            if (model.value.plugins?.length === 0) {
-                addIssueIfUnique("At least one plugin must be added");
-            }
-
-            if (!token.value) {
-                addIssueIfUnique("You must provide a 'processes/wis2box' token");
-            }
-
-            // Now either display the issues or submit the metadata
             if (submissionIssues.value.length > 0) {
-                message.value = "In order to submit the data:";
+                message.value = "In order to submit the data, the following must be done first:";
                 openMessageDialog.value = true;
-            }
-            else {
+            } else {
                 await submitMetadata();
             }
-        }
+        };
 
         // Redirects the user when they successfully submit data
         const redirectUser = () => {
@@ -1904,47 +1907,53 @@ export default defineComponent({
 
         // Submits the metadata to the wis2box OAPI endpoint
         const submitMetadata = async () => {
-            // Add authentication token to the headers
-            const headers = {
-                'Content-Type': 'application/json',
-                'authorization': 'Bearer ' + token.value
-            };
-            // Convert the form data to an object adhering to the WCMP2 schema
-            const schemaModel = transformToSchema(model.value);
-            // Adjust the structure of the schema model to fit the new process
-            const inputs = { "inputs": { "metadata": schemaModel } }
-            // Send the data to the publish dataset process
-            const response = await fetch(`${oapi}/processes/wis2box-dataset_publish/execution`, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(inputs)
-            });
-            const responseData = await response.json();
+            try {
+                // Add authentication token to the headers
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'authorization': 'Bearer ' + token.value
+                };
+                // Convert the form data to an object adhering to the WCMP2 schema
+                const schemaModel = transformToSchema(model.value);
+                // Adjust the structure of the schema model to fit the new process
+                const inputs = { "inputs": { "metadata": schemaModel } }
+                // Send the data to the publish dataset process
+                const response = await fetch(`${oapi}/processes/wis2box-dataset_publish/execution`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(inputs)
+                });
+                const responseData = await response.json();
 
-            // Check response from OAPI
-            if (!response.ok) {
-                if (response.status === UNAUTHORIZED) {
-                    message.value = "Unauthorized, please provide a valid 'processes/wis2box' token";
+                // Check response from OAPI
+                if (!response.ok) {
+                    if (response.status === UNAUTHORIZED) {
+                        message.value = "Unauthorized, please provide a valid 'processes/wis2box' token.";
+                    }
+                    else if (response.status === NOT_FOUND) {
+                        message.value = `Error submitting data: API not found. API response: ${responseData.status}.`;
+                    }
+                    else if (response.status === INTERNAL_SERVER_ERROR) {
+                        message.value = `Error submitting data: Internal server error. API response: ${responseData.status}.`;
+                    }
+                    else {
+                        message.value = `API error. API response: ${responseData.status}. Please check the console for more information.`
+                    }
+                    // Open a dialog window to show this message clearly
+                    openMessageDialog.value = true;
                 }
-                else if (response.status === NOT_FOUND) {
-                    message.value = `Error submitting data: API not found. API response: ${responseData.status}`;
+
+                // If the response is OK and the data status
+                // is success, display a success message
+                if (response.status === OK && responseData.status === "success") {
+                    message.value = isNew.value ? "Discovery metadata added successfully!" : "Discovery metadata updated successfully!";
+                    // Open the success window to show this message clearly
+                    openSuccessDialog.value = true;
                 }
-                else if (response.status === INTERNAL_SERVER_ERROR) {
-                    message.value = `Error submitting data: Internal server error. API response: ${responseData.status}`;
-                }
-                else {
-                    message.value = `API error. API response: ${responseData.status}. Please check the console for more information.`
-                }
-                // Open a dialog window to show this message clearly
-                openMessageDialog.value = true;
             }
-
-            // If the response is OK and the data status
-            // is success, display a success message
-            if (response.status === OK && responseData.status === "success") {
-                message.value = isNew.value ? "Discovery metadata added successfully!" : "Discovery metadata updated successfully!";
-                // Open the success window to show this message clearly
-                openSuccessDialog.value = true;
+            catch {
+                message.value = "Error submitting data.";
+                openMessageDialog.value = true;
             }
         };
 
@@ -1991,9 +2000,9 @@ export default defineComponent({
 
         // Also set the validation state to false if the formFilled value changes
         watch(() => formFilled.value, (oldVal, newVal) => {
-            // Set metadataValidated.value to false whenever formFilled is changed
+            // Set formValidated.value to false whenever formFilled is changed
             if (oldVal !== newVal) {
-                metadataValidated.value = false;
+                formValidated.value = false;
             }
         });
 
@@ -2014,9 +2023,10 @@ export default defineComponent({
             working,
             metadataLoaded,
             canShowPluginTable,
-            metadataValidated,
+            formValidated,
             formFilled,
             formUpdated,
+            formRef,
             datasetSpecified,
             message,
             submissionIssues,
@@ -2065,6 +2075,7 @@ export default defineComponent({
             openPluginHelpDialog,
             openTokenHelpDialog,
             openMessageDialog,
+            openValidationDialog,
             openSuccessDialog,
             openViewPluginDialog,
             openConfigurePluginDialog,
@@ -2082,7 +2093,8 @@ export default defineComponent({
             savePlugin,
             removePlugin,
             removeDataset,
-            resetMetadata,
+            validateForm,
+            resetForm,
             downloadMetadata,
             resetMessage,
             redirectUser,
