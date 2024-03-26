@@ -161,14 +161,14 @@
                             <v-row dense>
                                 <v-col cols="4">
                                     <v-text-field label="Keywords (3 minimum)" type="array" v-model="keyword"
-                                        @keyup.enter="addKeyword" variant="outlined" clearable></v-text-field>
+                                        @keyup.enter="addKeyword" variant="outlined" clearable :rules="[rules.keywords]"></v-text-field>
                                 </v-col>
                                 <v-col cols="1">
                                     <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large"
                                         @click="addKeyword" :disabled="keyword === ''"></v-btn>
                                 </v-col>
                                 <v-col cols="7">
-                                    <v-chip-group :rules="[rules.required, rules.keywords]">
+                                    <v-chip-group>
                                         <v-chip v-for="keyword in model.identification.keywords" :key="keyword" closable
                                             label @click:close="removeKeyword(keyword)">
                                             {{ keyword }}
@@ -777,7 +777,7 @@ export default defineComponent({
                 identifier: 'urn:wmo:md:',
                 keywords: [],
                 wmoDataPolicy: 'core',
-                concept: ['weather'],
+                concepts: ['weather'],
                 conceptScheme: 'https://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline'
             },
             extents: {
@@ -802,14 +802,14 @@ export default defineComponent({
 
         // Validation patterns for form fields
         const rules = {
-            required: (value) => !!value || "Field is required",
-            identifier: (value) => !isNew.value || !items.value.includes(value) || "Identifier already exists",
+            required: value => !!value || "Field is required",
+            identifier: value => !isNew.value || !items.value.includes(value) || "Identifier already exists",
             centreID: value => /^[a-z0-9_-]{2,}$/.test(value) || 'Invalid centre ID. Must be lowercase with at least 2 characters',
             latitude: value => value >= -90 && value <= 90 || 'Latitude must be between -90 and 90',
             longitude: value => value >= -180 && value <= 180 || 'Longitude must be between -180 and 180',
             url: value => value === '' || /^https?:\/\/[-a-zA-Z0-9@:%._+~#=]{1,253}\.[a-z]{2,}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/.test(value) || 'Invalid URL format',
             email: value => /^[a-z0-9._-]+@[a-z0-9-]+\.[a-z0-9.-]+$/.test(value) || 'Invalid email format',
-            keywords: value => Array.isArray(value) && value.length >= 3 || 'Keywords must be an array with at least 3 items',
+            keywords: value => model.value.identification.keywords?.length >= 3 || 'There must be at least 3 keywords',
             token: value => !!value || 'Token is required',
         };
 
@@ -868,7 +868,6 @@ export default defineComponent({
         const bboxCountry = ref(null);
         // Phone number validation for each field
         const isHostPhoneValid = ref(null);
-        const isDistribPhoneValid = ref(null);
         // Each keyword added by the user, before being added to the model
         const keyword = ref("");
         // Possible plugins and templates to select from
@@ -1446,10 +1445,6 @@ export default defineComponent({
             isHostPhoneValid.value = output.valid;
         };
 
-        const onDistribPhoneValidate = (output) => {
-            isDistribPhoneValid.value = output.valid;
-        }
-
         // Adds a keyword to the model
         const addKeyword = () => {
             if (keyword.value !== "") {
@@ -1781,7 +1776,7 @@ export default defineComponent({
         const validateForm = async () => {
             const { valid } = await formRef.value.validate();
 
-            if (valid) {
+            if (valid && isHostPhoneValid.value) {
                 message.value = "Form is valid, please proceed."
                 formValidated.value = true;
             }
@@ -2065,7 +2060,6 @@ export default defineComponent({
             bounds,
             bboxCountry,
             isHostPhoneValid,
-            isDistribPhoneValid,
             keyword,
             pluginIsNew,
             pluginFileExtension,
@@ -2101,7 +2095,6 @@ export default defineComponent({
             continueToForm,
             getAutoBbox,
             onHostPhoneValidate,
-            onDistribPhoneValidate,
             addKeyword,
             removeKeyword,
             getPluginTitle,
