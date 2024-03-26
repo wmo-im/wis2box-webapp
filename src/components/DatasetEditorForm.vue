@@ -1909,12 +1909,13 @@ export default defineComponent({
                     body: JSON.stringify(inputs)
                 });
 
-                const responseData = await response.json();
-
-                // Check response from OAPI
+                // Check response from OAPI before proceeding
                 if (!response.ok) {
                     handleProcessError(response.status);
+                    return;
                 }
+
+                const responseData = await response.json();
 
                 // If the response is OK and the data status
                 // is success, display a success message
@@ -1950,12 +1951,14 @@ export default defineComponent({
                     headers: headers,
                     body: JSON.stringify(inputs)
                 });
-                const responseData = await response.json();
 
-                // Check response from OAPI
+                // Check response from OAPI before proceeding
                 if (!response.ok) {
                     handleProcessError(response.status);
+                    return;
                 }
+
+                const responseData = await response.json();
 
                 // If the response is OK and the data status
                 // is success, display a success message
