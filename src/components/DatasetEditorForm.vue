@@ -308,17 +308,16 @@
                     <v-col cols="12">
                         <v-row>
                             <v-col cols="6">
-                                <v-btn @click="resetForm" append-icon="mdi-sync"
-                                block color="#1FB5DB">
-                                Reset Form
-                            </v-btn>
-                        </v-col>
-                        <v-col cols="6">
-                            <v-btn @click="validateForm" append-icon="mdi-shield-check" block color="#003DA5"
-                            v-if="formUpdated">
-                                Validate Form
-                            </v-btn>
-                        </v-col>
+                                <v-btn @click="resetForm" append-icon="mdi-sync" block color="#1FB5DB">
+                                    Reset Form
+                                </v-btn>
+                            </v-col>
+                            <v-col cols="6">
+                                <v-btn @click="validateForm" append-icon="mdi-shield-check" block color="#003DA5"
+                                    v-if="formUpdated">
+                                    Validate Form
+                                </v-btn>
+                            </v-col>
                         </v-row>
                     </v-col>
                 </v-form>
@@ -627,8 +626,7 @@
                         {{ message }}
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn block @click="resetMessage('validation')"
-                        :color="formValidated ? '#64BF40' : 'error'">
+                        <v-btn block @click="resetMessage('validation')" :color="formValidated ? '#64BF40' : 'error'">
                             OK
                         </v-btn>
                     </v-card-actions>
@@ -817,8 +815,12 @@ export default defineComponent({
 
         // Define HTTP responses
         const OK = 200;
+        const BAD_REQUEST = 400;
         const UNAUTHORIZED = 401;
+        const FORBIDDEN = 403;
         const NOT_FOUND = 404;
+        const CONFLICT = 409;
+        const TOO_MANY_REQUESTS = 429;
         const INTERNAL_SERVER_ERROR = 500;
 
         // Reactive variables
@@ -1609,50 +1611,6 @@ export default defineComponent({
             }
         };
 
-        // Removes the dataset from the collection
-        const removeDataset = async () => {
-            // Add authentication token to the headers
-            const headers = {
-                'Content-Type': 'application/json',
-                'authorization': 'Bearer ' + token.value
-            };
-
-            const inputs = { "inputs": { "metadata_id": model.value.identification.identifier } }
-            // Send the data to the unpublish and delete the dataset
-            const response = await fetch(`${oapi}/processes/wis2box-dataset_unpublish/execution`, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(inputs)
-            });
-
-            const responseData = await response.json();
-
-            // Check response from OAPI
-            if (!response.ok) {
-                if (response.status === UNAUTHORIZED) {
-                    message.value = "Unauthorized, please provide a valid 'processes/wis2box' token.";
-                }
-                else if (response.status === NOT_FOUND) {
-                    message.value = `Error submitting data: API not found. API response: ${responseData.status}.`;
-                }
-                else if (response.status === INTERNAL_SERVER_ERROR) {
-                    message.value = `Error submitting data: Internal server error. API response: ${responseData.status}.`;
-                }
-                else {
-                    message.value = `API error. API response: ${responseData.status}. Please check the console for more information.`
-                }
-                // Open a dialog window to show this message clearly
-                openMessageDialog.value = true;
-            }
-
-            // If the response is OK and the data status
-            // is success, display a success message
-            if (response.status === OK && responseData.status === "success") {
-                message.value = "Dataset removed successfully.";
-                // Open the success window to show this message clearly
-                openSuccessDialog.value = true;
-            }
-        };
 
         // Method to get the date from a datetime
         const getDateFrom = (datetime) => {
@@ -1822,7 +1780,7 @@ export default defineComponent({
         // Validates the metadata form
         const validateForm = async () => {
             const { valid } = await formRef.value.validate();
-            
+
             if (valid) {
                 message.value = "Form is valid, please proceed."
                 formValidated.value = true;
@@ -1905,18 +1863,89 @@ export default defineComponent({
             window.location.href = "/wis2box-webapp/dataset_editor";
         };
 
+        const handleProcessError = (status, data) => {
+            switch (status) {
+                case UNAUTHORIZED:
+                    message.value = "Unauthorized, please provide a valid 'processes/wis2box' token.";
+                    break;
+                case NOT_FOUND:
+                    message.value = `Error submitting data: API not found. API response: ${data.status}.`;
+                    break;
+                case INTERNAL_SERVER_ERROR:
+                    message.value = `Error submitting data: Internal server error. API response: ${data.status}.`;
+                    break;
+                case BAD_REQUEST:
+                    message.value = "Bad request. Please check your request and try again.";
+                    break;
+                case FORBIDDEN:
+                    message.value = "Forbidden. You do not have permission to access this resource.";
+                    break;
+                case CONFLICT:
+                    message.value = "Conflict. Your request conflicts with the current state of the server.";
+                    break;
+                case TOO_MANY_REQUESTS:
+                    message.value = "Too many requests in a given time. Please try again later.";
+                    break;
+                default:
+                    message.value = `API error. API response: ${data.status}. Please check the console for more information.`;
+            }
+            // Open a dialog window to show this message clearly
+            openMessageDialog.value = true;
+        }
+
+        // Removes the dataset from the collection
+        const removeDataset = async () => {
+            // Add authentication token to the headers
+            const headers = {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + token.value
+            };
+
+            const inputs = { "inputs": { "metadata_id": model.value.identification.identifier } }
+
+            try {
+                // Send the data to the unpublish and delete the dataset
+                const response = await fetch(`${oapi}/processes/wis2box-dataset_unpublish/execution`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify(inputs)
+                });
+
+                const responseData = await response.json();
+
+                // Check response from OAPI
+                if (!response.ok) {
+                    handleProcessError(response.status, responseData);
+                }
+
+                // If the response is OK and the data status
+                // is success, display a success message
+                if (response.status === OK && responseData.status === "success") {
+                    message.value = "Dataset removed successfully.";
+                    // Open the success window to show this message clearly
+                    openSuccessDialog.value = true;
+                }
+            }
+            catch (error) {
+                console.error(error);
+                message.value = "Error removing dataset, please check the console for details.";
+                openMessageDialog.value = true;
+            }
+        };
+
         // Submits the metadata to the wis2box OAPI endpoint
         const submitMetadata = async () => {
+            // Add authentication token to the headers
+            const headers = {
+                'Content-Type': 'application/json',
+                'authorization': 'Bearer ' + token.value
+            };
+            // Convert the form data to an object adhering to the WCMP2 schema
+            const schemaModel = transformToSchema(model.value);
+            // Adjust the structure of the schema model to fit the new process
+            const inputs = { "inputs": { "metadata": schemaModel } }
+
             try {
-                // Add authentication token to the headers
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'authorization': 'Bearer ' + token.value
-                };
-                // Convert the form data to an object adhering to the WCMP2 schema
-                const schemaModel = transformToSchema(model.value);
-                // Adjust the structure of the schema model to fit the new process
-                const inputs = { "inputs": { "metadata": schemaModel } }
                 // Send the data to the publish dataset process
                 const response = await fetch(`${oapi}/processes/wis2box-dataset_publish/execution`, {
                     method: 'POST',
@@ -1927,20 +1956,7 @@ export default defineComponent({
 
                 // Check response from OAPI
                 if (!response.ok) {
-                    if (response.status === UNAUTHORIZED) {
-                        message.value = "Unauthorized, please provide a valid 'processes/wis2box' token.";
-                    }
-                    else if (response.status === NOT_FOUND) {
-                        message.value = `Error submitting data: API not found. API response: ${responseData.status}.`;
-                    }
-                    else if (response.status === INTERNAL_SERVER_ERROR) {
-                        message.value = `Error submitting data: Internal server error. API response: ${responseData.status}.`;
-                    }
-                    else {
-                        message.value = `API error. API response: ${responseData.status}. Please check the console for more information.`
-                    }
-                    // Open a dialog window to show this message clearly
-                    openMessageDialog.value = true;
+                    handleProcessError(response.status, responseData);
                 }
 
                 // If the response is OK and the data status
@@ -1951,8 +1967,9 @@ export default defineComponent({
                     openSuccessDialog.value = true;
                 }
             }
-            catch {
-                message.value = "Error submitting data.";
+            catch (error) {
+                console.log(error);
+                message.value = "Error submitting data, please check the console for details.";
                 openMessageDialog.value = true;
             }
         };
