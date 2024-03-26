@@ -1861,16 +1861,16 @@ export default defineComponent({
             window.location.href = "/wis2box-webapp/dataset_editor";
         };
 
-        const handleProcessError = (status, data) => {
+        const handleProcessError = (status) => {
             switch (status) {
                 case UNAUTHORIZED:
                     message.value = "Unauthorized, please provide a valid 'processes/wis2box' token.";
                     break;
                 case NOT_FOUND:
-                    message.value = `Error submitting data: API not found. API response: ${data.status}.`;
+                    message.value = `Error submitting data: API not found.`;
                     break;
                 case INTERNAL_SERVER_ERROR:
-                    message.value = `Error submitting data: Internal server error. API response: ${data.status}.`;
+                    message.value = `Error submitting data: Internal server error.`;
                     break;
                 case BAD_REQUEST:
                     message.value = "Bad request. Please check your request and try again.";
@@ -1885,7 +1885,7 @@ export default defineComponent({
                     message.value = "Too many requests in a given time. Please try again later.";
                     break;
                 default:
-                    message.value = `API error. API response: ${data.status}. Please check the console for more information.`;
+                    message.value = `API error. Please check the console for more information.`;
             }
             // Open a dialog window to show this message clearly
             openMessageDialog.value = true;
@@ -1913,7 +1913,7 @@ export default defineComponent({
 
                 // Check response from OAPI
                 if (!response.ok) {
-                    handleProcessError(response.status, responseData);
+                    handleProcessError(response.status);
                 }
 
                 // If the response is OK and the data status
@@ -1954,7 +1954,7 @@ export default defineComponent({
 
                 // Check response from OAPI
                 if (!response.ok) {
-                    handleProcessError(response.status, responseData);
+                    handleProcessError(response.status);
                 }
 
                 // If the response is OK and the data status
