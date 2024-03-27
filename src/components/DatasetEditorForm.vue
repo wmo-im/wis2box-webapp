@@ -1852,7 +1852,7 @@ export default defineComponent({
 
             formValidated.value = false;
             formFilled.value = false;
-            message.value = "Discovery metadata form reset successfully.";
+            message.value = "Form reset successfully.";
         };
 
         // Generates a downloadable JSON file from the filled and validated form, which follows the WCMP2 schema
