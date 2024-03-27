@@ -314,7 +314,7 @@
                             </v-col>
                             <v-col cols="6">
                                 <v-btn @click="validateForm" append-icon="mdi-shield-check" block color="#003DA5"
-                                    v-if="formUpdated">
+                                    :disabled="!formUpdated">
                                     Validate Form
                                 </v-btn>
                             </v-col>
