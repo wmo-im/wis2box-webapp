@@ -2005,7 +2005,10 @@ export default defineComponent({
 
         // If the user changes the data policy, update the topic hierarcy accordingly
         watch(() => model.value.identification.wmoDataPolicy, () => {
-            if (selectedTemplate.value && selectedTemplate.value?.label !== 'other') {
+            if (!selectedTemplate.value) {
+                return;
+            }
+            if (selectedTemplate.value?.label !== 'other') {
                 applyTemplate(selectedTemplate.value);
             }
             else {
