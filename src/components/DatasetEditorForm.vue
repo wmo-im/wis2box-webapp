@@ -339,6 +339,7 @@
                                     <p v-else>No plugins are currently associated with this dataset</p>
                                 </th>
                                 <th scope="row">File extension</th>
+                                <th scope="row">File pattern</th>
                                 <th scope="row" class="text-right"></th>
                             </tr>
                         </thead>
@@ -350,6 +351,9 @@
                                 </td>
                                 <td class="medium-title">
                                     {{ plugin.fileType }}
+                                </td>
+                                <td class="medium-title">
+                                    {{ plugin.filePattern }}
                                 </td>
                                 <td class="text-right">
                                     <v-btn class="mr-5" append-icon="mdi-update" color="#003DA5" variant="flat"
@@ -1510,7 +1514,7 @@ export default defineComponent({
 
                 // Also populate human readable plugin titles
                 pluginNameTitle.value = pluginList.value.find(item => item.id === plugin.name).title;
-                pluginTemplateTitle.value = templateList.value.find(item => item.id === plugin.template).title;
+                pluginTemplateTitle.value = templateList.value.find(item => item.id === plugin.template)?.title;
                 let listOfBucketTitles = plugin.buckets.map(bucket => {
                     return bucketList.value.find(item => item.id === bucket).title;
                 });
@@ -1676,7 +1680,7 @@ export default defineComponent({
 
         // Helper method to format the WIS2 topic hierarchy
         const formatWIS2TopicHierarchy = (topic) => {
-            return topic.replace(/\./g, '/');
+            return topic.replace(/\//g, '.');
         }
 
         // Helper method to format the WMO topic hierarchy
