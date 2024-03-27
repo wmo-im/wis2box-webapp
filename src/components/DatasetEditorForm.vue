@@ -139,7 +139,7 @@
                         <v-col cols="2">
                             <v-select label="WMO Data Policy" type="string" :items="['core', 'recommended']"
                                 v-model="model.identification.wmoDataPolicy" :rules="[rules.required]"
-                                variant="outlined"></v-select>
+                                variant="outlined" :disabled="!isNew"></v-select>
                         </v-col>
                         <!-- Unless the user selects 'other' for the datatype 
                         label, the topic hierarchy should remain disabled as 
@@ -1663,9 +1663,14 @@ export default defineComponent({
             return result;
         };
 
+        // Helper method to format the WIS2 topic hierarchy
+        const formatWIS2TopicHierarchy = (topic) => {
+            return topic.replace(/\./g, '/');
+        }
+
         // Helper method to format the WMO topic hierarchy
-        const formatTopicHierarchy = (topic) => {
-            return `origin/a/wis2/${topic.replace(/\./g, '/')}`
+        const formatWMOTopicHierarchy = (topic) => {
+            return `origin/a/wis2/${topic}`
         }
 
         // Transforms the form data to the WCMP2 schema format
@@ -1681,7 +1686,7 @@ export default defineComponent({
             // wis2box information
             // Note: This is an extension to the WCMP2 schema
             schemaModel.wis2box = {};
-            schemaModel.wis2box["topic_hierarchy"] = form.identification.topicHierarchy;
+            schemaModel.wis2box["topic_hierarchy"] = formatWIS2TopicHierarchy(form.identification.topicHierarchy);
             schemaModel.wis2box["centre_id"] = form.identification.centreID;
             schemaModel.wis2box["data_mappings"] = untidyPluginsForSchema(form.plugins);
 
@@ -1766,7 +1771,7 @@ export default defineComponent({
             schemaModel.properties.created = form.extents.dateCreated || currentDTNoMilliseconds;
             schemaModel.properties.updated = currentDTNoMilliseconds;
             schemaModel.properties["wmo:dataPolicy"] = form.identification.wmoDataPolicy;
-            schemaModel.properties["wmo:topicHierarchy"] = formatTopicHierarchy(form.identification.topicHierarchy);
+            schemaModel.properties["wmo:topicHierarchy"] = formatWMOTopicHierarchy(form.identification.topicHierarchy);
             schemaModel.properties.id = form.identification.identifier;
 
             return schemaModel;
