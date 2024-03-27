@@ -1351,6 +1351,17 @@ export default defineComponent({
             return id;
         };
 
+        // If the template is other and the data policy is changed,
+        // replace the data policy in the topic hierarchy
+        const replaceDataPolicyInTopicHierarchy = () => {
+            let policy = model.value.identification.wmoDataPolicy;
+            let hierarcy = model.value.identification.topicHierarchy;
+
+            // Replace 'core' or 'recommended' in the topic hierachy
+            // string with the policy
+            model.value.identification.topicHierarchy = hierarcy.replace(/core|recommended/g, policy);
+        };
+
         // Autofill form based on template
         const applyTemplate = (template) => {
             // Metadata Editor parts
@@ -1992,11 +2003,13 @@ export default defineComponent({
 
         // Watched
 
-        // If the user changes the data policy, update the topic hierarcy
-        // using the template
+        // If the user changes the data policy, update the topic hierarcy accordingly
         watch(() => model.value.identification.wmoDataPolicy, () => {
             if (selectedTemplate.value && selectedTemplate.value?.label !== 'other') {
                 applyTemplate(selectedTemplate.value);
+            }
+            else {
+                replaceDataPolicyInTopicHierarchy();
             }
         });
 
