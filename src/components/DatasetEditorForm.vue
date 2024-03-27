@@ -161,7 +161,8 @@
                             <v-row dense>
                                 <v-col cols="4">
                                     <v-text-field label="Keywords (3 minimum)" type="array" v-model="keyword"
-                                        @keyup.enter="addKeyword" variant="outlined" clearable :rules="[rules.keywords]"></v-text-field>
+                                        @keyup.enter="addKeyword" variant="outlined" clearable
+                                        :rules="[rules.keywords]"></v-text-field>
                                 </v-col>
                                 <v-col cols="1">
                                     <v-btn color="#003DA5" variant="flat" icon="mdi-plus" size="large"
@@ -272,7 +273,7 @@
 
                     <!-- Contact (host) section -->
                     <v-card-title>
-                        Host Contact Information
+                        Contact Information of the Data Provider
                         <v-btn icon="mdi-comment-question" variant="text" size="small"
                             @click="openHostHelpDialog = true" />
                     </v-card-title>
@@ -538,7 +539,7 @@
             </v-dialog>
             <v-dialog v-model="openHostHelpDialog" max-width="600px">
                 <v-card>
-                    <v-toolbar title="Host Contact Information" color="#003DA5">
+                    <v-toolbar title="Contact Information of the Data Provider" color="#003DA5">
                         <v-btn icon="mdi-close" variant="text" size="small" @click="openHostHelpDialog = false" />
                     </v-toolbar>
                     <v-card-subtitle>
@@ -549,18 +550,18 @@
                             of the
                             resource.</p>
                         <br>
-                        <p><b>Organization Name:</b> The name of the organization.</p>
+                        <p><b>Organization Name:</b> The name of the contact's organization.</p>
                         <br>
-                        <p><b>URL:</b> The URL to the organization homepage, including the <i>http</i> or
+                        <p><b>URL:</b> The URL to the contact's organization homepage, including the <i>http</i> or
                             <i>https</i>
                             prefix.
                         </p>
                         <br>
-                        <p><b>Country:</b> The country of the point of contact.</p>
+                        <p><b>Country:</b> The country of the contact.</p>
                         <br>
-                        <p><b>Email:</b> The email address of the point of contact.</p>
+                        <p><b>Email:</b> The email address of the contact.</p>
                         <br>
-                        <p><b>Phone Number:</b> The phone number of the point of contact, written in
+                        <p><b>Phone Number:</b> The phone number of the contact, written in
                             international
                             format (+).</p>
                     </v-card-text>
@@ -576,9 +577,15 @@
                         What is this section for?
                     </v-card-subtitle>
                     <v-card-text>
-                        <p>In order to submit this dataset to the wis2box, you must
-                            configure the plugins necessary to support the different
-                            data types found in this dataset.</p>
+                        <p>The data mappings define how the data that is uploaded to the "wis2box-incoming"-bucket is
+                            processed before it is published.</p>
+                        <br>
+                        <p>To publish data without conversion, select Plugin Name = "Universal data without conversion".
+                        </p>
+                        <br>
+                        <p><b>At least one plugin</b> needs to be associated with your dataset before proceeding.</p>
+                        <br>
+                        <p><i>For more information about Plugins see the wis2box documentation.</i></p>
                         <br>
                     </v-card-text>
                 </v-card>
@@ -593,9 +600,11 @@
                         What is this section for?
                     </v-card-subtitle>
                     <v-card-text>
-                        <p>In order to submit this dataset to the wis2box, you must provide a valid authentication
-                            token
+                        <p>In order to submit this dataset to the wis2box, you must provide a valid authentication token
                             for the <b>processes/wis2box path</b>.</p>
+                        <br>
+                        <p><i>For information about creating authentication tokens, see the wis2box documentation.</i>
+                        </p>
                         <br>
                     </v-card-text>
                 </v-card>
@@ -1107,6 +1116,9 @@ export default defineComponent({
                 formValidated.value = false;
                 // Open the dialog window
                 showInitialDialog.value = true;
+                // Reset identifier so that the user can reselect 'Create New...'
+                // (the same value cannot be selected twice)
+                identifier.value = "";
             }
             // Otherwise, populate the form with the loaded values
             else {
@@ -1807,12 +1819,37 @@ export default defineComponent({
             openValidationDialog.value = true;
         };
 
-        // Resets the metadata form to the default state and clears the form
-        // and its associated validation
-        const resetForm = () => {
+        const handleFormDefaults = (centreID, identifier, topicHierarchy) => {
+            // Set the default values for the form
             model.value = deepClone(defaults);
-            formRef.value.reset();
+
+            // Set the centre ID to the original value
+            model.value.identification.centreID = centreID;
+
+            // If dataset exists, set the identifier and topic hierarchy
+            // to what they were before (as they are uneditable)
+            if (!isNew.value) {
+                model.value.identification.identifier = identifier;
+                model.value.identification.topicHierarchy = topicHierarchy;
+            }
+            // Otherwise, treat the form as it were just loaded from the
+            // 'Continue to Form' button in the initial dialog
+            else {
+                continueToForm();
+            }
+        };
+
+        // Resets the form to the default state, clearing the associated validation
+        const resetForm = () => {
+            const centreID = model.value.identification.centreID;
+            const identifier = model.value.identification.identifier;
+            const topicHierarchy = model.value.identification.topicHierarchy;
+
+            handleFormDefaults(centreID, identifier, topicHierarchy);
+
+            // Remove red boxes from validation errors
             formRef.value.resetValidation();
+
             formValidated.value = false;
             formFilled.value = false;
             message.value = "Discovery metadata reset successfully.";
