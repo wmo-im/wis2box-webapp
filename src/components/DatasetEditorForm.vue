@@ -1153,7 +1153,7 @@ export default defineComponent({
             // If no error, display the form and present a success message
             if (!message.value.includes("Error")) {
                 metadataLoaded.value = true;
-                message.value = "Discovery metadata loaded successfully.";
+                message.value = "Dataset loaded successfully.";
             }
             // Remove working animation
             working.value = false;
@@ -1852,7 +1852,7 @@ export default defineComponent({
 
             formValidated.value = false;
             formFilled.value = false;
-            message.value = "Discovery metadata reset successfully.";
+            message.value = "Discovery metadata form reset successfully.";
         };
 
         // Generates a downloadable JSON file from the filled and validated form, which follows the WCMP2 schema
@@ -2020,7 +2020,7 @@ export default defineComponent({
                 // If the response is OK and the data status
                 // is success, display a success message
                 if (response.status === OK && responseData.status === "success") {
-                    message.value = isNew.value ? "Discovery metadata added successfully!" : "Discovery metadata updated successfully!";
+                    message.value = isNew.value ? "Dataset added successfully!" : "Dataset updated successfully!";
                     // Open the success window to show this message clearly
                     openSuccessDialog.value = true;
                 }
