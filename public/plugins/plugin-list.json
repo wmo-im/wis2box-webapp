@@ -5,8 +5,8 @@
       "id": "wis2box.data.universal.UniversalData",
       "defaultFileExtension": "grib2",
       "defaultBuckets": ["wis2box-incoming"],
-      "defaultFilePattern": ".*",
-      "hint": "Any regex pattern can be used"
+      "defaultFilePattern": "^.*?_(\\d{8}).*?\\..*$",
+      "hint": "The regex pattern must contain one group for the date/datetime"
     },
     {
       "title": "BUFR data converted to BUFR",
