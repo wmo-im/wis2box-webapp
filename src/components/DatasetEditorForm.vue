@@ -1903,7 +1903,7 @@ export default defineComponent({
 
             try {
                 // Send the data to the unpublish and delete the dataset
-                const response = await fetch(`${oapi}/processes/wis2box-dataset_unpublish/execution`, {
+                const response = await fetch(`${oapi}/processes/wis2box-unpublish_dataset/execution`, {
                     method: 'POST',
                     headers: headers,
                     body: JSON.stringify(inputs)
@@ -1946,7 +1946,7 @@ export default defineComponent({
 
             try {
                 // Send the data to the publish dataset process
-                const response = await fetch(`${oapi}/processes/wis2box-dataset_publish/execution`, {
+                const response = await fetch(`${oapi}/processes/wis2box-publish_dataset/execution`, {
                     method: 'POST',
                     headers: headers,
                     body: JSON.stringify(inputs)
