@@ -426,7 +426,7 @@
                             form.</p>
                         <br>
                         <p><b>Centre ID:</b> The agency acronym (in lower case and no spaces), as specified by
-                            member.</p>
+                            the WMO Member.</p>
                         <br>
                         <p><b>Data Type:</b> The type of data you are creating metadata for. <i>If 'other' is
                                 selected,
@@ -451,12 +451,10 @@
                         <br>
                         <p><b>Description:</b> A free-text summary description of the dataset.</p>
                         <br>
-                        <p><b>Identifier:</b> The unique identifier for the dataset.</p>
-                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled and cannot
-                                be
-                                edited.</i></p>
+                        <p><b>Identifier:</b> The unique identifier for the dataset. It should start with <b>urn:wmo:md</b></p>
+                        <p><i>Note: once the dataset is created, the identifier can no longer be updated. To use a different Identifier you will need to delete and create the dataset.</i></p>
                         <br>
-                        <p><b>Centre ID:</b> This was already filled earlier and <i>cannot be edited</i>.</p>
+                        <p><b>Centre ID:</b> This is pre-filled and <i>cannot be edited</i>.</p>
                         <br>
                         <p><b>WMO Data Policy:</b> Classification code of core or recommended based on the WMO
                             Unified
