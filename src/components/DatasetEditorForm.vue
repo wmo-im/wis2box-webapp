@@ -798,9 +798,6 @@ export default defineComponent({
                 dateStarted: new Date().toISOString(),
             },
             host: {},
-            distrib: {
-                duplicateFromContact: true
-            },
             plugins: []
         };
 
@@ -1169,16 +1166,19 @@ export default defineComponent({
                 identification: {},
                 extents: {},
                 host: {},
-                distrib: {},
                 settings: {}
             };
 
             // Retrieve the identifier from the schema
             formModel.identification.identifier = schema.id;
 
-            // Centre ID and topic hierarchy from wis2box section
+            // Centre ID from wis2box section
             formModel.identification.centreID = schema.wis2box['centre_id'];
-            formModel.identification.topicHierarchy = schema.wis2box['topic_hierarchy'];
+
+            // Topic hierarcy from properties section, removing
+            // the 'origin/a/wis2' prefix
+            let fullTopic = schema.properties['wmo:topicHierarchy'];
+            formModel.identification.topicHierarchy = fullTopic.replace(/origin\/a\/wis2/g, '');
 
             // Time period information
             if (schema.time?.interval) {
@@ -1397,7 +1397,6 @@ export default defineComponent({
                 model.value.extents.resolution = parseInt(match[1]);
                 model.value.extents.resolutionUnit = match[2].toUpperCase();
             }
-            model.value.distrib.duplicateFromContact = template.duplicateFromContact;
 
             // Data Mappings Editor parts
             model.value.plugins = tidyPlugins(template.wis2box['data_mappings']['plugins']);

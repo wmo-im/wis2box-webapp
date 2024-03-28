@@ -19,7 +19,6 @@
     "total sunshine",
     "humidity"
   ],
-  "duplicateFromContact": true,
   "themes": [
     {
       "concepts": [{ "id": "weather", "label": "weather" }],

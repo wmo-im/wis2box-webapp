@@ -17,7 +17,6 @@
     "pressure",
     "atmosperic profile"
   ],
-  "duplicateFromContact": true,
   "themes": [
     {
       "concepts": [{ "id": "weather", "label": "weather" }],
