@@ -117,7 +117,7 @@
                                     <v-text-field label="Identifier" type="string"
                                         v-model="model.identification.identifier"
                                         :rules="[rules.required, rules.identifier]" variant="outlined" clearable
-                                        :disabled="selectedTemplate?.label !== 'other'"></v-text-field>
+                                        :disabled="!isNew"></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-col>
