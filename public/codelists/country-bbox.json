@@ -1,5 +1,14 @@
 {
     "countries": {
+        "int": {
+            "name": "International Organizations",
+            "bbox": {
+                "minx": -180.0,
+                "miny": -90.0,
+                "maxx": 180.0,
+                "maxy": 90.0
+            }
+        },
         "fj": {
             "name": "Fiji",
             "bbox": {
