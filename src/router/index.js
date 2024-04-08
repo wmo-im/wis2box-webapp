@@ -11,13 +11,13 @@ const routes = [
         component: () => import('@/views/Home.vue'),
       },
       {
-        path: 'csv2bufr_form',
+        path: 'csv2bufr',
         name: 'CsvToBUFRForm',
         component: () => import('@/views/CsvToBUFRForm.vue'),
         meta: {title: 'wis2box - CSV to BUFR Form'}
       },
       {
-        path: 'synop_form',
+        path: 'synop2bufr',
         name: 'SynopForm',
         component: () => import('@/views/SynopForm.vue'),
         meta: {title: 'wis2box - Synop Form'}
@@ -27,6 +27,12 @@ const routes = [
         name: 'Monitoring',
         component: () => import('@/views/MonitoringPage.vue'),
         meta: {title: 'wis2box - Monitoring'}
+      },
+      {
+        path: 'dataset_editor',
+        name: 'DatasetEditorForm',
+        component: () => import('@/views/DatasetEditorForm.vue'),
+        meta: {title: 'wis2box - Dataset Editor Form'}
       },
       {
         path: '/import-station',

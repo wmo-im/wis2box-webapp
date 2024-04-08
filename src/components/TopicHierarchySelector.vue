@@ -13,6 +13,7 @@
         persistent-hint
         :multiple="multiple"
         return-object
+        variant="outlined"
         />
     </div>
     <div v-else class="error">

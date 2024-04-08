@@ -1,0 +1,53 @@
+{
+  "plugins": [
+    {
+      "title": "Universal data without conversion",
+      "id": "wis2box.data.universal.UniversalData",
+      "defaultFileExtension": "grib2",
+      "defaultBuckets": ["wis2box-incoming"],
+      "defaultFilePattern": "^.*?_(\\d{8}).*?\\..*$",
+      "hint": "The regex pattern must contain one group for the date/datetime"
+    },
+    {
+      "title": "BUFR data converted to BUFR",
+      "id": "wis2box.data.bufr4.ObservationDataBUFR",
+      "defaultFileExtension": "bufr4",
+      "defaultBuckets": ["wis2box-incoming"],
+      "defaultFilePattern": ".*\\.bufr4$",
+      "hint": ""
+    },
+    {
+      "title": "FM-12 data converted to BUFR",
+      "id": "wis2box.data.synop2bufr.ObservationDataSYNOP2BUFR",
+      "defaultFileExtension": "txt",
+      "defaultBuckets": ["wis2box-incoming"],
+      "defaultFilePattern": "^.*-(\\d{4})(\\d{2}).*\\.txt$",
+      "hint": "The regex pattern must contain two groups for the year and month"
+    },
+    {
+      "title": "CSV data converted to BUFR",
+      "id": "wis2box.data.csv2bufr.ObservationDataCSV2BUFR",
+      "defaultFileExtension": "csv",
+      "defaultTemplate": "aws-template",
+      "defaultBuckets": ["wis2box-incoming"],
+      "defaultFilePattern": ".*\\.csv$",
+      "hint": ""
+    },
+    {
+      "title": "BUFR data converted to GeoJSON",
+      "id": "wis2box.data.bufr2geojson.ObservationDataBUFR2GeoJSON",
+      "defaultFileExtension": "bufr4",
+      "defaultBuckets": ["wis2box-public"],
+      "defaultFilePattern": "^WIGOS_(\\d-\\d+-\\d+-\\w+)_.*\\.bufr4$",
+      "hint": "The regex pattern must contain the WIGOS station identifier"
+    }
+  ],
+  "templates": [
+    { "title": "Campbell", "id": "CampbellAfrica-v1-template" },
+    { "title": "AWS", "id": "aws-template" }
+  ],
+  "buckets": [
+    { "title": "Incoming", "id": "wis2box-incoming" },
+    { "title": "Public", "id": "wis2box-public" }
+  ]
+}

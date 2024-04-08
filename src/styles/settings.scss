@@ -16,13 +16,21 @@
     max-width: 1400px;
 }
 
+.max-metadata-form-width {
+    max-width: 1600px;
+}
+
 .big-title {
     font-size: 1.5rem;
     font-weight: 700;
 }
 
+.medium-title {
+    font-size: 1rem;
+}
+
 .hint-text {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     margin-top: 0.25rem;
     padding-left: 1rem;
 }
@@ -32,7 +40,7 @@
 }
 
 .hint-invalid {
-    color: red;
+    color: #B71C1C;
 }
 
 .hint-default {

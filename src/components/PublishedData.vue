@@ -4,7 +4,9 @@
       Published Data
     </v-card-title>
     <!-- Limit the size of the list and add scroll feature -->
-    <v-text-field v-model="fileSearch" placeholder="Search for a file..." clearable />
+    <v-card-text>
+      <v-text-field v-model="fileSearch" placeholder="Search for a file..." clearable/>
+    </v-card-text>
     <div class="scrollable-file-list">
       <template v-for="(file_url, index) in filteredFileUrls" :key="index">
         <v-list class="file-list">

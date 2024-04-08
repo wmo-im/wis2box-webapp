@@ -14,28 +14,28 @@
                     <v-stepper-item
                         :complete="status.fileLoaded"
                         title="Select file"
-                        value="1">
+                        value="1" :color="step1Color">
                     </v-stepper-item>
                     <v-stepper-item
                         :complete="status.fileValidated"
                         :error="validationErrors.length>0"
                         title="Preview / validate"
-                        value="2">
+                        value="2" :color="step2Color">
                     </v-stepper-item>
                     <v-stepper-item
                         :complete="status.topicHierarchy"
                         title="Select topic hierarchy"
-                        value="3">
+                        value="3" :color="step3Color">
                     </v-stepper-item>
                     <v-stepper-item
-                        :complete="status.submitted"
+                        :complete="status.password"
                         title="Authorize / publish"
-                        value="4">
+                        value="4" :color="step4Color">
                     </v-stepper-item>
                     <v-stepper-item
-                        :complete="status.fileLoaded && status.fileValidated && status.topicHierarchy && status.submitted"
+                        :complete="step5Complete"
                         title="Review"
-                        value="5">
+                        value="5" :color="step5Color">
                     </v-stepper-item>
                 </v-stepper-header>
                 <v-stepper-window>
@@ -43,7 +43,7 @@
                         <v-card width="100%">
                             <v-card-title>Load data</v-card-title>
                             <v-card-text>
-                                <v-file-input label="Select CSV file to upload" accept=".csv" v-model="incomingFile"/>
+                                <v-file-input label="Select CSV file to upload" accept=".csv" v-model="incomingFile" variant="outlined"/>
                             </v-card-text>
                         </v-card>
                     </v-stepper-window-item>
@@ -105,14 +105,15 @@
                     <v-stepper-window-item value="4">
                         <v-card>
                             <v-card-title>Authorize and publish</v-card-title>
-                            <v-card-item>
+                            <v-card-text>
                               <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
                               :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
-                              @click:append="showToken = !showToken" hint="Enter wis2box auth token for 'processes/wis2box'"
-                              persistent-hint>
+                              @click:append="showToken = !showToken"
+                              :rules="[v => !!v || 'Token is required']"
+                              variant="outlined">
                             </v-text-field>
-                            </v-card-item>
-                            <v-switch v-model="notificationsOnPending" label="Publish on WIS2" color="primary" hide-details></v-switch>
+                            </v-card-text>
+                            <v-checkbox v-model="notificationsOnPending" label="Publish on WIS2" color="#" hide-details></v-checkbox>
                             <v-card-item v-if="token">Click next to submit the data</v-card-item>
                         </v-card>
                     </v-stepper-window-item>
@@ -245,10 +246,9 @@
 </template>
 
 <script>
-    import { defineComponent, ref,onBeforeMount, onMounted, watch, computed} from 'vue';
-    import { VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VChip, VTooltip, VSwitch } from 'vuetify/lib/components/index.mjs';
-    import { VList, VListItem, VListSubheader, VSheet, VContainer, VCardTitle, VIcon, VDialog} from 'vuetify/lib/components/index.mjs';
-    import { VCardSubtitle} from 'vuetify/lib/components/index.mjs';
+    import { defineComponent, ref, onMounted, watch, computed} from 'vue';
+    import { VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VChip, VTooltip } from 'vuetify/lib/components/index.mjs';
+    import { VList, VListItem, VContainer, VCardTitle, VIcon, VDialog} from 'vuetify/lib/components/index.mjs';
     import { VDataTable} from 'vuetify/lib/components/index.mjs';
     import { VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem, VStepperActions} from 'vuetify/lib/components/index.mjs';
     import InspectBufrButton from '@/components/InspectBufrButton.vue';
@@ -261,8 +261,8 @@
             VFileInput, VCardActions, VBtn, VCard, VCardText, VCardItem, VDataTable,
             VChip, VTooltip, VListItem, VList, VContainer,
             VCardTitle, VIcon, VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem,
-            VStepperActions, VDialog, VCardSubtitle, InspectBufrButton, DownloadButton,
-            TopicHierarchySelector, VSwitch
+            VStepperActions, VDialog, InspectBufrButton, DownloadButton,
+            TopicHierarchySelector
         },
         setup() {
             // reactive variables
@@ -290,7 +290,46 @@
             }
             const result = ref(null);
             const notificationsOnPending = ref(false);
+
             // computed properties
+            
+            const step1Color = computed(() => {
+                if (status.value.fileLoaded) {
+                    return "#64BF40"
+                }
+                return "#003DA5"
+            })
+            const step2Color = computed(() => {
+                if (status.value.fileValidated) {
+                    return "#64BF40"
+                }
+                else if (validationErrors.value.length > 0) {
+                    return "error"
+                }
+                return "#003DA5"
+            })
+            const step3Color = computed(() => {
+                if (status.value.topicHierarchy) {
+                    return "#64BF40"
+                }
+                return "#003DA5"
+            })
+            const step4Color = computed(() => {
+                if (status.value.password) {
+                    return "#64BF40"
+                }
+                return "#003DA5"
+            })
+            const step5Complete = computed(() => {
+                return status.value.fileLoaded && status.value.fileValidated && status.value.topicHierarchy && status.value.password && status.value.submitted;
+            })
+            const step5Color = computed(() => {
+                if (step5Complete.value) {
+                    return "#64BF40"
+                }
+                return "#003DA5"
+            })
+
             const resultTitle = computed( () => {
                 if( result.value && result.value.result){
                   return "Result: " + result.value.result;
@@ -414,7 +453,8 @@
                 };
             };
             const submit = async() => {
-              CsvToBUFR()
+                CsvToBUFR();
+                status.value.submitted = true;
             };
             const CsvToBUFR = async() => {
               const payload = {
@@ -547,7 +587,7 @@
             });
 
             return {theData, headers, incomingFile, loadCSV, step, prev, next, scrollToRef,
-                    validationWarnings, validationErrors, status, showToken, token, notificationsOnPending,
+                    validationWarnings, validationErrors, status, showToken, token, notificationsOnPending, step1Color, step2Color, step3Color, step4Color, step5Complete, step5Color,
                     topicSelected, submit, msg, showDialog, result, resultTitle, numberNotifications};
         },
     })
