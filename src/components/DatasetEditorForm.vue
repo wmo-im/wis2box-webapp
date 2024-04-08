@@ -987,7 +987,8 @@ export default defineComponent({
                 // Update the list of items
                 items.value = responseData.features.map(item => item.properties.identifier);
                 // Also get the centre IDs from this list
-                centreList.value = responseData.features.map(item => item.wis2box["centre_id"]);
+                const loadedCentres = responseData.features.map(item => item.wis2box["centre_id"]);
+                centreList.value = [...new Set(loadedCentres)];
                 // At this point, the user has not specified a dataset
                 datasetSpecified.value = false;
             } catch (error) {
@@ -1176,7 +1177,7 @@ export default defineComponent({
             // Topic hierarcy from properties section, removing
             // the 'origin/a/wis2' prefix
             let fullTopic = schema.properties['wmo:topicHierarchy'];
-            formModel.identification.topicHierarchy = fullTopic.replace(/origin\/a\/wis2/g, '');
+            formModel.identification.topicHierarchy = fullTopic.replace(/origin\/a\/wis2\//g, '');
 
             // Time period information
             if (schema.time?.interval) {
