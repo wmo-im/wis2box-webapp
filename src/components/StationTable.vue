@@ -45,11 +45,8 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
-import { VCard, VCardTitle, VCardText, VTextField } from 'vuetify/lib/components/index.mjs';
-import { onMounted } from 'vue';
-import { ref } from 'vue'
-import { VDataTable } from 'vuetify/lib/components/index.mjs';
+import { defineComponent, ref, onMounted } from 'vue';
+import { VCard, VCardTitle, VCardText, VTextField, VDataTable } from 'vuetify/lib/components/index.mjs';
 import { useRouter } from 'vue-router';
 import APIStatus from '@/components/APIStatus.vue';
 
@@ -80,11 +77,11 @@ export default defineComponent({
         items.value = null;
         const apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items?f=json`;
         try {
-          var response = await fetch(apiURL);
+          let response = await fetch(apiURL);
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }else{
-            var featureCollection = await response.json();
+            let featureCollection = await response.json();
             items.value = featureCollection.features.map( (feature) => {
               return{
                 actions: "actions",
@@ -136,7 +133,7 @@ export default defineComponent({
       if( selectedStation.value === stationToDelete.value ){
         const apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items/${stationToDelete.value}`;
         try{
-          var response = await fetch(apiURL, {
+          let response = await fetch(apiURL, {
               method: 'DELETE',
               headers: {
                   'encode': 'json',
