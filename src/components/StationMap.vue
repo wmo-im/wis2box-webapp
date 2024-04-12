@@ -115,7 +115,9 @@ export default defineComponent({
                 // Clicking on a cluster zooms in to show more clusters
                 zoomToBoundsOnClick: true,
                 // Shows a marker as a size 1 cluster
-                singleMarkerMode: true
+                singleMarkerMode: false,
+                // decrease the cluster radius to show more clusters
+                maxClusterRadius: 5
             });
             clusters.addTo(map.value);
             stationLayer.value = clusters;
