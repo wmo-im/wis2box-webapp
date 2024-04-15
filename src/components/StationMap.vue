@@ -75,14 +75,17 @@ export default defineComponent({
             })
         });
 
-        // Count the number of messages published by each WSI
-        const wsiCount = computed(() => {
+        // Count the number of messages published by each WSI at each location
+        const wsiCoordCount = computed(() => {
             const counts = {};
             props.messages.forEach(msg => {
-                if (counts[msg.wsi]) {
-                    counts[msg.wsi] += 1;
+                // The key is not just determined by WSI, but also by the coordinates
+                // Note: This helps in the example of moving stations e.g. buoys
+                let key = `${msg.wsi}_${msg.coordinates[1]}_${msg.coordinates[0]}`
+                if (counts[key]) {
+                    counts[key]++;
                 } else {
-                    counts[msg.wsi] = 1;
+                    counts[key] = 1;
                 }
             });
             return counts;
@@ -110,10 +113,12 @@ export default defineComponent({
                                 iconSize: L.point(30, 30)  // Set size sufficiently large to handle icon
                             })
                         });
+                        // Define marker key (WSI, lat, lon)
+                        let key = `${feature.properties.wigos_station_identifier}_${coords[0]}_${coords[1]}`
                         // Bind a tooltip to each marker to display the WSI
                         marker.bindTooltip(
                             `WSI: ${feature.properties.wigos_station_identifier}<br>
-                            Messages: ${wsiCount.value[feature.properties.wigos_station_identifier]}`, {
+                            Messages: ${wsiCoordCount.value[key]}`, {
                             permanent: false,
                             direction: 'top',
                             // Offset tooltip to avoid covering marker
