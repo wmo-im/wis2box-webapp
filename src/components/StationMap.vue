@@ -93,49 +93,51 @@ export default defineComponent({
 
         // Fill map with markers when data changes
         const updateMarkers = () => {
-            if (readyToUpdate.value) {
-                stationLayer.value.clearLayers();
-                // Initialise LatLngBounds object
-                let bounds = L.latLngBounds()
-                // Structure features array in form [lat, lon] required for markers
-                features.value.forEach((feature) => {
-                    let coords = feature.geometry?.coordinates;
-                    // Check if coordinates are defined before proceeding
-                    if (coords) {
-                        // Swap coordinates to [lat, lon] for Leaflet
-                        coords = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
-                        // Define marker styling
-                        const iconHtml = "<i class='fas fa-location-dot' style='color: #003DA5; font-size: 24px; filter: drop-shadow(2px 2px 0.5px rgba(0,0,0,0.4));'/>"
-                        let marker = L.marker(coords, {
-                            icon: L.divIcon({
-                                html: iconHtml,
-                                className: 'customIcon',
-                                iconSize: L.point(30, 30)  // Set size sufficiently large to handle icon
-                            })
-                        });
-                        // Define marker key (WSI, lat, lon)
-                        let key = `${feature.properties.wigos_station_identifier}_${coords[0]}_${coords[1]}`
-                        // Bind a tooltip to each marker to display the WSI
-                        marker.bindTooltip(
-                            `WSI: ${feature.properties.wigos_station_identifier}<br>
-                            Messages: ${wsiCoordCount.value[key]}`, {
-                            permanent: false,
-                            direction: 'top',
-                            // Offset tooltip to avoid covering marker
-                            offset: [-5, -15]
-                        });
-                        // Set ID for marker, which is a link to
-                        // the notification
-                        marker.id = feature.id;
-                        // Set type of marker
-                        marker.type = "host";
-                        // Extend LatLngBounds with coordinates
-                        stationLayer.value.addLayer(marker);
-                        bounds.extend(coords)
-                    }
-                })
-                map.value.fitBounds(bounds);
-            }
+            if (!readyToUpdate.value) return;
+
+            // Clear existing markers first
+            stationLayer.value.clearLayers();
+            // Initialise LatLngBounds object
+            let bounds = L.latLngBounds()
+            // Structure features array in form [lat, lon] required for markers
+            features.value.forEach((feature) => {
+                let coords = feature.geometry?.coordinates;
+
+                // Check if coordinates are defined before proceeding
+                if (!coords) return;
+
+                // Swap coordinates to [lat, lon] for Leaflet
+                coords = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
+                // Define marker styling
+                const iconHtml = "<i class='fas fa-location-dot' style='color: #003DA5; font-size: 24px; filter: drop-shadow(2px 2px 0.5px rgba(0,0,0,0.4));'/>"
+                let marker = L.marker(coords, {
+                    icon: L.divIcon({
+                        html: iconHtml,
+                        className: 'customIcon',
+                        iconSize: L.point(30, 30)  // Set size sufficiently large to handle icon
+                    })
+                });
+                // Define marker key (WSI, lat, lon)
+                let key = `${feature.properties.wigos_station_identifier}_${coords[0]}_${coords[1]}`
+                // Bind a tooltip to each marker to display the WSI
+                marker.bindTooltip(
+                    `WSI: ${feature.properties.wigos_station_identifier}<br>
+                    Messages: ${wsiCoordCount.value[key]}`, {
+                    permanent: false,
+                    direction: 'top',
+                    // Offset tooltip to avoid covering marker
+                    offset: [-5, -15]
+                });
+                // Set ID for marker, which is a link to
+                // the notification
+                marker.id = feature.id;
+                // Set type of marker
+                marker.type = "host";
+                // Extend LatLngBounds with coordinates
+                stationLayer.value.addLayer(marker);
+                bounds.extend(coords)
+            })
+            map.value.fitBounds(bounds);
         };
 
         onMounted(() => {
