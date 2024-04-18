@@ -86,7 +86,6 @@
             v-model="station.properties.barometer_height"
             :rules="[rules.validBarometerHeight]"
             :readonly="readonly"
-            type="number"
             hint="Enter barometer height (metres)" persistent-hint type="number">
           </v-text-field>
         </v-card-item>
