@@ -86,6 +86,7 @@
             v-model="station.properties.barometer_height"
             :rules="[rules.validBarometerHeight]"
             :readonly="readonly"
+            type="number"
             hint="Enter barometer height (metres)" persistent-hint type="number">
           </v-text-field>
         </v-card-item>
@@ -146,12 +147,12 @@
         // define validation rules
         const rules = ref({
           validWSI: value => /^0-[0-9]{1,5}-[0-9]{0,5}-[0-9a-zA-Z]{1,16}$/.test(value) || 'Invalid WSI',
-          validTSI: value => (!value) || (/^\d{5}(\d{2})?$/.test(value) ) ? true : 'Invalid TSI',
+          validTSI: value => (!value) || /^[a-zA-Z 0-9-_]+$/.test(value) ? true : 'Invalid TSI',
           validLongitude: value => ! (Math.abs(value) > 180 || isNaN(value)) ? true : 'Invalid longitude',
           validLatitude: value => value && ! (Math.abs(value) > 90 || isNaN(value)) ? true : 'Invalid latitude',
           validElevation: value => value && ! isNaN(value) ? true : 'Invalid elevation',
           validBarometerHeight: value => value && ! isNaN(value) ? true : 'Invalid barometer height',
-          validName: value => value && value.length > 3 ? true : 'Name must be more than 3 characters',
+          validName: value => value && value.length > 3 && /^[a-zA-Z ]+$/.test(value) ? true : 'Name must be more than 3 characters and contain only characters a-Z',
           token: value => value && value.length > 0 ? true : 'Please enter the authorization token',
           topic: value => value.length > 0 ? true : 'Select at least one topic'
         });
