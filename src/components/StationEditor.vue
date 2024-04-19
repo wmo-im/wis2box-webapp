@@ -35,8 +35,9 @@
           <v-text-field
             label="Traditional station identifier"
             v-model="station.properties.traditional_station_identifier"
+            :rules="[rules.validTSI]"
             :readonly="readonly"
-            hint="Enter the traditional (5 or 7 digit) station identifier" persistent-hint>
+            hint="Enter the traditional station identifier (ASCII or numeric characters only)" persistent-hint>
           </v-text-field>
         </v-card-item>
         <v-card-item>
@@ -146,7 +147,7 @@
         // define validation rules
         const rules = ref({
           validWSI: value => /^0-[0-9]{1,5}-[0-9]{0,5}-[0-9a-zA-Z]{1,16}$/.test(value) || 'Invalid WSI',
-          validTSI: value => (!value) || /^[a-zA-Z 0-9-_]+$/.test(value) ? true : 'Invalid TSI',
+          validTSI: value => (!value) || /^[a-zA-Z 0-9-_]+$/.test(value) ? true : 'Invalid TSI, only ASCII or numeric characters',
           validLongitude: value => ! (Math.abs(value) > 180 || isNaN(value)) ? true : 'Invalid longitude',
           validLatitude: value => value && ! (Math.abs(value) > 90 || isNaN(value)) ? true : 'Invalid latitude',
           validElevation: value => value && ! isNaN(value) ? true : 'Invalid elevation',
