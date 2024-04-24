@@ -451,8 +451,10 @@
                         <br>
                         <p><b>Description:</b> A free-text summary description of the dataset.</p>
                         <br>
-                        <p><b>Identifier:</b> The unique identifier for the dataset. It should start with <b>urn:wmo:md</b></p>
-                        <p><i>Note: once the dataset is created, the identifier can no longer be updated. To use a different Identifier you will need to delete and create the dataset.</i></p>
+                        <p><b>Identifier:</b> The unique identifier for the dataset. It should start with
+                            <b>urn:wmo:md</b></p>
+                        <p><i>Note: once the dataset is created, the identifier can no longer be updated. To use a
+                                different Identifier you will need to delete and create the dataset.</i></p>
                         <br>
                         <p><b>Centre ID:</b> This is pre-filled and <i>cannot be edited</i>.</p>
                         <br>
@@ -1810,14 +1812,14 @@ export default defineComponent({
         const validateForm = async () => {
             const { valid } = await formRef.value.validate();
 
-            if (valid && isHostPhoneValid.value) {
-                message.value = "Form is valid, please proceed."
-                formValidated.value = true;
-            }
-            else {
-                message.value = "Form is invalid, please check all of the fields are filled correctly and try again."
-                formValidated.value = false;
-            }
+            const isFormValid = valid && (!model.value.host.phone || isHostPhoneValid.value);
+
+            message.value = isFormValid
+                ? "Form is valid, please proceed."
+                : "Form is invalid, please check all of the fields are filled correctly and try again.";
+
+            formValidated.value = isFormValid;
+
             openValidationDialog.value = true;
         };
 
