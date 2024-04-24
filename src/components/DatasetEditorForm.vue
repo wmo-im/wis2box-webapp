@@ -559,7 +559,7 @@
                         <br>
                         <p><b>Email:</b> The email address of the contact.</p>
                         <br>
-                        <p><b>Phone Number:</b> The phone number of the contact, written in
+                        <p><b>Phone Number (optional):</b> The phone number of the contact, written in
                             international
                             format (+).</p>
                     </v-card-text>
@@ -1766,9 +1766,6 @@ export default defineComponent({
                 name: form.host.individual,
                 position: form.host.positionName,
                 organization: form.host.name,
-                phones: [{
-                    value: removeSpacesFrom(form.host.phone)
-                }],
                 emails: [{
                     value: form.host.email
                 }],
@@ -1788,6 +1785,13 @@ export default defineComponent({
                 contactInstructions: form.host.contactInstructions,
                 roles: ["host"]
             };
+
+            // Add optional phone number if it exists
+            if (form.host.phone) {
+                hostDetails.phones = [];
+                hostDetails.phones.push({ value: removeSpacesFrom(form.host.phone) });
+            }
+
             schemaModel.properties.contacts.push(hostDetails);
 
             const currentDTNoMilliseconds = new Date().toISOString().slice(0, -5) + "Z";
