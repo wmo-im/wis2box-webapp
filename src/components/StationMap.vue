@@ -10,11 +10,10 @@ import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { VCard } from 'vuetify/lib/components/index.mjs';
 
 // Leaflet imports
-import 'leaflet/dist/leaflet.css';
-import 'leaflet.markercluster/dist/MarkerCluster.css';
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import L from 'leaflet';
-import 'leaflet.markercluster';
+import 'leaflet/dist/leaflet.css';
+import '@fortawesome/fontawesome-free/css/all.css';
+
 
 export default defineComponent({
     name: "StationMap",
@@ -49,14 +48,24 @@ export default defineComponent({
         const map = ref(null);
         const stationLayer = ref(null);
 
+        // Computed
+
+        // Ensure all necessary data is available before updating the map
+        const readyToUpdate = computed(() => {
+            return map.value && stationLayer.value && props.messages.length > 0;
+        });
+
         // Create geoJSON data from the messages prop
         const features = computed(() => {
+            if (props.messages.length === 0) {
+                return [];
+            }
             return props.messages.map(msg => {
                 return {
                     type: 'Feature',
                     id: msg.id,
                     properties: {
-                        wigos_station_identifer: msg.wsi
+                        wigos_station_identifier: msg.wsi
                     },
                     geometry: {
                         type: 'Point',
@@ -66,65 +75,92 @@ export default defineComponent({
             })
         });
 
+        // Count the number of messages published by each WSI at each location
+        const wsiCoordCount = computed(() => {
+            const counts = {};
+            props.messages.forEach(msg => {
+                // The key is not just determined by WSI, but also by the coordinates
+                // Note: This helps in the example of moving stations e.g. buoys
+                let key = `${msg.wsi}_${msg.coordinates[1]}_${msg.coordinates[0]}`
+                if (counts[key]) {
+                    counts[key]++;
+                } else {
+                    counts[key] = 1;
+                }
+            });
+            return counts;
+        });
+
         // Fill map with markers when data changes
         const updateMarkers = () => {
-            if (map.value && props.messages.length > 0) {
-                stationLayer.value.clearLayers();
-                // Instantiate LatLngBounds object
-                var bounds = L.latLngBounds()
-                // Structure features array in form [lat, lon]
-                // required for markers
-                features.value.map((feature) => {
-                    let coords = feature.geometry?.coordinates;
-                    // Check if coordinates are defined before proceeding
-                    if (coords) {
-                        // Swap coordinates to [lat, lon] for Leaflet
-                        coords = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
-                        const marker = L.marker(coords, {
-                            // Set the marker icon, if desired
-                            icon: L.icon({
-                                iconUrl: import.meta.env.VITE_BASE_URL + '/assets/marker-icon.png',
-                                shadowUrl: import.meta.env.VITE_BASE_URL + '/assets/marker-shadow.png',
-                                iconSize: [25, 41],
-                                iconAnchor: [12, 41],
-                                popupAnchor: [1, -34]
-                            })
-                        });
-                        // Set ID for marker, which is a link to
-                        // the notification
-                        marker.id = feature.id;
-                        // Set type of marker
-                        marker.type = "host";
-                        // Extend LatLngBounds with coordinates
-                        bounds.extend(coords)
-                        stationLayer.value.addLayer(marker);
-                    }
-                })
-                map.value.fitBounds(bounds);
-            }
+            if (!readyToUpdate.value) return;
+
+            // Clear existing markers first
+            stationLayer.value.clearLayers();
+            // Initialise LatLngBounds object
+            let bounds = L.latLngBounds()
+            // Structure features array in form [lat, lon] required for markers
+            features.value.forEach((feature) => {
+                let coords = feature.geometry?.coordinates;
+
+                // Check if coordinates are defined before proceeding
+                if (!coords) return;
+
+                // Swap coordinates to [lat, lon] for Leaflet
+                coords = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
+                // Define marker styling
+                const iconHtml = "<i class='fas fa-location-dot' style='color: #003DA5; font-size: 24px; filter: drop-shadow(2px 2px 0.5px rgba(0,0,0,0.4));'/>"
+                let marker = L.marker(coords, {
+                    icon: L.divIcon({
+                        html: iconHtml,
+                        className: 'customIcon',
+                        iconSize: L.point(30, 30)  // Set size sufficiently large to handle icon
+                    })
+                });
+                // Define marker key (WSI, lat, lon)
+                let key = `${feature.properties.wigos_station_identifier}_${coords[0]}_${coords[1]}`
+                // Bind a tooltip to each marker to display the WSI
+                marker.bindTooltip(
+                    `WSI: ${feature.properties.wigos_station_identifier}<br>
+                    Messages: ${wsiCoordCount.value[key]}`, {
+                    permanent: false,
+                    direction: 'top',
+                    // Offset tooltip to avoid covering marker
+                    offset: [-5, -15]
+                });
+                // Set ID for marker, which is a link to
+                // the notification
+                marker.id = feature.id;
+                // Set type of marker
+                marker.type = "host";
+                // Extend LatLngBounds with coordinates
+                stationLayer.value.addLayer(marker);
+                bounds.extend(coords)
+            })
+            map.value.fitBounds(bounds);
         };
 
         onMounted(() => {
+            // Create the map, base layer and add it to the DOM
             map.value = L.map(props.id, { zoomAnimation: false, fadeAnimation: true, markerZoomAnimation: true }).setView(props.center, props.zoom);
             map.value.attributionControl.setPrefix('');
             L.tileLayer(`${import.meta.env.VITE_BASEMAP_URL}`, { attribution: `${import.meta.env.VITE_BASEMAP_ATTRIBUTION}` }).addTo(map.value);
-            // Disable the spiderfy and zoom effects
-            let clusters = new L.markerClusterGroup({
-                spiderfyOnMaxZoom: false,
-                showCoverageOnHover: false,
-                // Clicking on a cluster zooms in to show more clusters
-                zoomToBoundsOnClick: true,
-                // Shows a marker as a size 1 cluster
-                singleMarkerMode: true
-            });
-            clusters.addTo(map.value);
-            stationLayer.value = clusters;
-            // Update markers then cluster
+            // Initialise the station layer and update with markers
+            stationLayer.value = L.layerGroup().addTo(map.value);
             updateMarkers();
         })
 
         watch(features, () => { updateMarkers() });
     }
 })
-
 </script>
+
+<style scoped>
+.customIcon {
+    /* Ensures the text icon is centered both vertically and horizontally */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+</style>

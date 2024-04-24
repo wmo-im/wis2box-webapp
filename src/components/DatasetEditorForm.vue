@@ -451,8 +451,10 @@
                         <br>
                         <p><b>Description:</b> A free-text summary description of the dataset.</p>
                         <br>
-                        <p><b>Identifier:</b> The unique identifier for the dataset. It should start with <b>urn:wmo:md</b></p>
-                        <p><i>Note: once the dataset is created, the identifier can no longer be updated. To use a different Identifier you will need to delete and create the dataset.</i></p>
+                        <p><b>Identifier:</b> The unique identifier for the dataset. It should start with
+                            <b>urn:wmo:md</b></p>
+                        <p><i>Note: once the dataset is created, the identifier can no longer be updated. To use a
+                                different Identifier you will need to delete and create the dataset.</i></p>
                         <br>
                         <p><b>Centre ID:</b> This is pre-filled and <i>cannot be edited</i>.</p>
                         <br>
@@ -559,7 +561,7 @@
                         <br>
                         <p><b>Email:</b> The email address of the contact.</p>
                         <br>
-                        <p><b>Phone Number:</b> The phone number of the contact, written in
+                        <p><b>Phone Number (optional):</b> The phone number of the contact, written in
                             international
                             format (+).</p>
                     </v-card-text>
@@ -1766,9 +1768,6 @@ export default defineComponent({
                 name: form.host.individual,
                 position: form.host.positionName,
                 organization: form.host.name,
-                phones: [{
-                    value: removeSpacesFrom(form.host.phone)
-                }],
                 emails: [{
                     value: form.host.email
                 }],
@@ -1788,6 +1787,13 @@ export default defineComponent({
                 contactInstructions: form.host.contactInstructions,
                 roles: ["host"]
             };
+
+            // Add optional phone number if it exists
+            if (form.host.phone) {
+                hostDetails.phones = [];
+                hostDetails.phones.push({ value: removeSpacesFrom(form.host.phone) });
+            }
+
             schemaModel.properties.contacts.push(hostDetails);
 
             const currentDTNoMilliseconds = new Date().toISOString().slice(0, -5) + "Z";
@@ -1806,14 +1812,14 @@ export default defineComponent({
         const validateForm = async () => {
             const { valid } = await formRef.value.validate();
 
-            if (valid && isHostPhoneValid.value) {
-                message.value = "Form is valid, please proceed."
-                formValidated.value = true;
-            }
-            else {
-                message.value = "Form is invalid, please check all of the fields are filled correctly and try again."
-                formValidated.value = false;
-            }
+            const isFormValid = valid && (!model.value.host.phone || isHostPhoneValid.value);
+
+            message.value = isFormValid
+                ? "Form is valid, please proceed."
+                : "Form is invalid, please check all of the fields are filled correctly and try again.";
+
+            formValidated.value = isFormValid;
+
             openValidationDialog.value = true;
         };
 
