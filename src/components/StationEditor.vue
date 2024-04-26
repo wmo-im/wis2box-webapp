@@ -126,7 +126,7 @@
         return '';
       }
       const tag_regex = /<\/?[a-zA-Z]+\/?>/g;
-      const escapes = /[\x00-\x1F\x7F]/g;
+      const escapes = /[\x00-\x1F\x7F;\\]/g;
       return input.replace(tag_regex,'').replace(escapes,'');
     }
 
