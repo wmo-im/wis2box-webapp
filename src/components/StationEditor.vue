@@ -35,7 +35,6 @@
           <v-text-field
             label="Traditional station identifier"
             v-model="station.properties.traditional_station_identifier"
-            :rules="[rules.validTSI]"
             :readonly="readonly"
             hint="Enter the traditional station identifier (ASCII or numeric characters only)" persistent-hint>
           </v-text-field>
