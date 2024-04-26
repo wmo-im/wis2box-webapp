@@ -61,7 +61,6 @@
           <v-text-field
             label="Traditional station identifier"
             v-model="station.properties.traditional_station_identifier"
-            :rules="[rules.validTSI]"
             hint="Enter the traditional (5 or 7 digit) station identifier" persistent-hint>
           </v-text-field>
         </v-card-item>
@@ -137,6 +136,16 @@
   import CodeListSelector from '@/components/CodeListSelector.vue';
   import APIStatus from '@/components/APIStatus.vue';
 
+    function stripHTMLTags(input){
+      if( typeof input !== 'string' ){
+        console.warning("Invalid input passed to stripHTMLTags, empty string returned")
+        return '';
+      }
+      const tag_regex = /<\/?[a-zA-Z]+\/?>/g;
+      const escapes = /[\x00-\x1F\x7F;\\]/g;
+      return input.replace(tag_regex,'').replace(escapes,'');
+    }
+
   export default defineComponent({
     name: "ImportOSCAR",
     components: {
@@ -180,15 +189,14 @@
       const token = ref(null);
       const rules = ref({
         validWSI: value => /^0-[0-9]{1,5}-[0-9]{0,5}-[0-9a-zA-Z]{1,16}$/.test(value) || 'Invalid WSI',
-        validTSI: value => (!value) || (/^\d{5}(\d{2})?$/.test(value) ) ? true : 'Invalid TSI',
+        validTSI: value => value && value.length > 0  ? true : 'TSI must be set',
         validLongitude: value => ! (Math.abs(value) > 180 || isNaN(value)) ? true : 'Invalid longitude',
         validLatitude: value => value && ! (Math.abs(value) > 90 || isNaN(value)) ? true : 'Invalid latitude',
         validElevation: value => value && ! isNaN(value) ? true : 'Invalid elevation',
         validBarometerHeight: value => value && ! isNaN(value) ? true : 'Invalid barometer height',
-        validName: value => value && value.length > 3 ? true : 'Name must be more than 3 characters',
-        token: value => value && value.length > 0 ? true: 'Please enter the authorization token',
+        validName: value => value && value.length > 0 ? true : 'Name must be set',
+        token: value => value && value.length > 0 ? true : 'Please enter the authorization token',
         topic: value => value.length > 0 ? true : 'Select at least one topic'
-
       });
       const data = ref(null);
       const router = useRouter();
@@ -232,7 +240,7 @@
         var leaf = "";
         apiURL = apiURL + leaf;
         var record = {
-          id: station.value.properties.wigos_station_identifier,  // WSI
+          id: stripHTMLTags(station.value.properties.wigos_station_identifier),  // WSI
           type: 'Feature',
           geometry: {
             type: 'Point',
@@ -241,18 +249,18 @@
                           parseFloat(station.value.geometry.elevation)]
           },
           properties: {
-            name: station.value.properties.name,
-            wigos_station_identifier: station.value.properties.wigos_station_identifier,  // WSI
-            traditional_station_identifier: station.value.properties.traditional_station_identifier,
+            name: stripHTMLTags(station.value.properties.name),
+            wigos_station_identifier: stripHTMLTags(station.value.properties.wigos_station_identifier),  // WSI
+            traditional_station_identifier: stripHTMLTags(station.value.properties.traditional_station_identifier),
             facility_type: station.value.properties.facility_type['skos:notation'] ?? null,
               territory_name: station.value.properties.territory_name['skos:notation'] ?? null,
             barometer_height: parseFloat(station.value.properties.barometer_height),
             wmo_region: station.value.properties.wmo_region['skos:notation'] ?? null,
             url: "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/" +
-                    station.value.properties.wigos_station_identifier,
+                    stripHTMLTags(station.value.properties.wigos_station_identifier),
             topics: station.value.properties.topics.map( (topic) => (topic.id)),
             status: station.value.properties.status['skos:notation'] ?? null,
-            id: station.value.properties.wigos_station_identifier  // WSI
+            id: stripHTMLTags(station.value.properties.wigos_station_identifier)  // WSI
           }
         }
 
@@ -307,7 +315,7 @@
         var apiURL = `${import.meta.env.VITE_API_URL}/processes/oscar2feature/execution`;
         var payload = {
               "inputs": {
-                "wigos_station_identifier": wsi.value
+                "wigos_station_identifier": stripHTMLTags(wsi.value)
               }
             };
         // get data
