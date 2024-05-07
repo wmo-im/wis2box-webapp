@@ -1,8 +1,49 @@
-# wis2box-webapp
+<div align="center">
+    <h1 align="center">The wis2box Web App</h1>
+    <h3>Access the wis2box toolset from your browser.</h3>
+</div>
 
-## Test locally without Docker
+<div align="center">
+    <a href="https://github.com/wmo-im/wis2box-webapp/blob/main/LICENSE" alt="License" src="https://img.shields.io/badge/License-Apache_2.0-blue.svg"></a>
+</div>
 
-To test the webapp locally without docker, you need to install the following dependencies:
+<br/>
+
+The wis2box Web App is Vue.js application that allows you to use publish, edit, and visualise WIS2 data and metadata.
+
+## Features
+
+- **Data Conversion:** Easily convert your SYNOP or CSV data to the WMO BUFR format and publish in one click.
+- **Station Editor:** View, edit, or create new station metadata.
+- **Dataset Editor:** Edit or create a new dataset and its associated data plugins.
+- **Monitoring:** Visualise the frequency and origin of the latest data published on your datasets.
+
+
+## Getting Started Locally
+
+### 1. Clone the repository
+
+```bash
+    git clone https://github.com/wmo-im/wis2box-webapp
+    cd wis2box-webapp
+```
+
+### 2. Set the environment variables
+
+Create a file in the root directory named `.env`. Here you can set all of the necessary environment variables to be used. For testing purposes, the most important two are `WIS2BOX_BASEMAP_URL` and `WIS2BOX_BASEMAP_ATTRIBUTION`, for example:
+
+```bash
+    WIS2BOX_BASEMAP_URL=https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
+    WIS2BOX_BASEMAP_ATTRIBUTION=<a href="https://osm.org/copyright">OpenStreetMap</a> contributors
+```
+
+You can find an exhaustive list <a href="https://github.com/wmo-im/wis2box-webapp/blob/main/tests/test.env">here</a>.
+
+Now we are ready to start the web app with or without Docker.
+
+### 3. (No Docker) Install npm dependencies and running  
+
+Ensure the following dependencies are installed first:
 
 - [nodejs](https://nodejs.org/en/download/)
 - [npm](https://www.npmjs.com/get-npm)
@@ -13,21 +54,41 @@ Then, you can run the following commands:
     npm install
     npm run dev
 ```
-This will start the webapp which will be available at http://localhost:8080/wis2box-webapp/
+This will start the web app which will be available at http://localhost:8080/wis2box-webapp/
 
-## test locally with docker
+### 3. (Docker) Build the image
 
-### build the image
+In the environment variable file, set the `WIS2BOX_URL`. For example:
 
-Run the following command to build the image:
+```bash
+    WIS2BOX_URL=http://localhost:4173
+```
+
+Run the following command to build the Docker image:
 
 ```bash
     docker build -t wis2box-webapp .
 ```
 
-## Test the wis2box-webapp image as part of the wis2box stack
+Finally, start the Docker container, referencing the environment variables:
 
-To test the webapp as part of the wis2box stack, run the following commands:
+```bash
+    docker run --env-file .env wis2box-webapp
+```
+
+This will start the web app which will be available at your `WIS2BOX_URL`/wis2box-webapp/
+
+*Note: If, on running the Docker container, you receive an error regarding the* `entrypoint.sh` *file, please go to* `docker/entrypoint.sh` *and ensure that the end of line sequence in your IDE is set to **LF**.*
+
+*For example, in Visual Studio Code this can be done by clicking CRLF in the bottom right and then ensuring LF is selected in the drop down at the top of the screen:*
+
+<img src="public/documentation/LF.png">
+
+## Testing the wis2box-webapp image as part of the wis2box stack
+
+You can also run the web app as part of your wis2box stack (<a href="https://docs.wis2box.wis.wmo.int/en/1.0b7/">see the wis2box documentation</a>) to test the web app as part of the wis2box stack.
+
+To do this, run the following commands:
 
 ```bash
     cd tests/
@@ -40,6 +101,7 @@ This will start the webapp which will be available at http://localhost:4173/wis2
 
 ### Project setup
 
+#### Install dependencies
 ```bash
 # yarn
 yarn
