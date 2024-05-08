@@ -5,7 +5,7 @@
 </div>
 
 <div>
-    <img href="https://github.com/wmo-im/wis2box-webapp/blob/main/LICENSE" alt="License" src="https://img.shields.io/badge/License-Apache_2.0-blue"></img>
+    <a href="https://github.com/wmo-im/wis2box-webapp/blob/main/LICENSE" alt="License" ><img src="https://img.shields.io/badge/License-Apache_2.0-blue"></img></a>
 </div>
 
 <br/>
