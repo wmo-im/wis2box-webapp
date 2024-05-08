@@ -43,8 +43,8 @@ The wis2box Web App is Vue.js application that allows you to publish, edit, and 
 ### 1. Clone the repository
 
 ```bash
-    git clone https://github.com/wmo-im/wis2box-webapp
-    cd wis2box-webapp
+git clone https://github.com/wmo-im/wis2box-webapp
+cd wis2box-webapp
 ```
 
 ### 2. Set the environment variables
@@ -52,8 +52,8 @@ The wis2box Web App is Vue.js application that allows you to publish, edit, and 
 Create a file in the root directory named `.env`. Here you can set all of the necessary environment variables to be used. For testing purposes, the most important two are `WIS2BOX_BASEMAP_URL` and `WIS2BOX_BASEMAP_ATTRIBUTION`, for example:
 
 ```bash
-    WIS2BOX_BASEMAP_URL=https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
-    WIS2BOX_BASEMAP_ATTRIBUTION=<a href="https://osm.org/copyright">OpenStreetMap</a> contributors
+WIS2BOX_BASEMAP_URL=https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
+WIS2BOX_BASEMAP_ATTRIBUTION=<a href="https://osm.org/copyright">OpenStreetMap</a> contributors
 ```
 
 You can find an exhaustive list <a href="https://github.com/wmo-im/wis2box-webapp/blob/main/tests/test.env">here</a>.
@@ -70,8 +70,8 @@ Ensure the following dependencies are installed first:
 Then, you can run the following commands:
 
 ```bash
-    npm install
-    npm run dev
+npm install
+npm run dev
 ```
 This will start the web app which will be available at http://localhost:8080/wis2box-webapp/
 
@@ -80,19 +80,19 @@ This will start the web app which will be available at http://localhost:8080/wis
 In the environment variable file, set the `WIS2BOX_URL`. For example:
 
 ```bash
-    WIS2BOX_URL=http://localhost:4173
+WIS2BOX_URL=http://localhost:4173
 ```
 
 Run the following command to build the Docker image:
 
 ```bash
-    docker build -t wis2box-webapp .
+docker build -t wis2box-webapp .
 ```
 
 Finally, start the Docker container, referencing the environment variables:
 
 ```bash
-    docker run --env-file .env wis2box-webapp
+docker run --env-file .env wis2box-webapp
 ```
 
 This will start the web app which will be available at your `WIS2BOX_URL`/wis2box-webapp/
@@ -110,8 +110,8 @@ You can also run the web app as part of your wis2box stack (<a href="https://doc
 To do this, run the following commands:
 
 ```bash
-    cd tests/
-    docker-compose -f docker-compose.yml up -d --build
+cd tests/
+docker-compose -f docker-compose.yml up -d --build
 ```
 
 This will start the webapp which will be available at http://localhost:4173/wis2box-webapp/
