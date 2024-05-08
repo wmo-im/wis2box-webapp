@@ -1,4 +1,7 @@
 <div>
+    <img src="public/documentation/banner.png" style="width:800px"/>
+</div>
+<div>
     <h1>The wis2box Web App</h1>
     <h3>Access the wis2box toolset from your browser.</h3>
 </div>
@@ -9,9 +12,6 @@
 
 <br/>
 
-<div>
-    <img src="public/documentation/banner.png" style="width:800px"/>
-</div>
 The wis2box Web App is Vue.js application that allows you to publish, edit, and visualise data and metadata from your WIS2 node.
 
 ## Features
