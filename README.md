@@ -1,8 +1,6 @@
-<div>
-    <img src="public/documentation/banner.png" style="width:900px"/>
-    <h1>The wis2box Web App</h1>
-    <h3>Access the wis2box toolset from your browser.</h3>
-</div>
+
+# The wis2box Web App <img src="public/documentation/banner-compact.png" style="width:500px" align="right"/>
+### Access the wis2box toolset from your browser.
 
 <div>
     <a href="https://github.com/wmo-im/wis2box-webapp/blob/main/LICENSE" alt="License" ><img src="https://img.shields.io/badge/License-Apache_2.0-blue"></img></a>
