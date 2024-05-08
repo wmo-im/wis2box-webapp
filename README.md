@@ -1,7 +1,5 @@
 <div>
     <img src="public/documentation/banner.png" style="width:900px"/>
-</div>
-<div>
     <h1>The wis2box Web App</h1>
     <h3>Access the wis2box toolset from your browser.</h3>
 </div>
