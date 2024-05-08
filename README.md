@@ -1,12 +1,10 @@
+<img src="public/documentation/banner.png" style="width:100%"></img>
 
-# The wis2box Web App <img src="public/documentation/banner-compact.png" style="float: right; width: 57%"/>
+# The wis2box Web App
 ### Access the wis2box toolset from your browser.
 
-<div>
-    <a href="https://github.com/wmo-im/wis2box-webapp/blob/main/LICENSE" alt="License" ><img src="https://img.shields.io/badge/License-Apache_2.0-blue"></img></a>
-</div>
+<a href="https://github.com/wmo-im/wis2box-webapp/blob/main/LICENSE" alt="License" ><img src="https://img.shields.io/badge/License-Apache_2.0-blue"></img></a>
 
-<br/>
 
 The wis2box Web App is Vue.js application that allows you to publish, edit, and visualise data and metadata from your WIS2 node.
 
