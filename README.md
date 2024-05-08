@@ -1,23 +1,48 @@
-<div align="center">
-    <h1 align="center">The wis2box Web App</h1>
+<div>
+    <h1>The wis2box Web App</h1>
     <h3>Access the wis2box toolset from your browser.</h3>
 </div>
 
-<div align="center">
-    <a href="https://github.com/wmo-im/wis2box-webapp/blob/main/LICENSE" alt="License" src="https://img.shields.io/badge/License-Apache_2.0-blue.svg"></a>
+<div>
+    <img href="https://github.com/wmo-im/wis2box-webapp/blob/main/LICENSE" alt="License" src="https://img.shields.io/badge/License-Apache_2.0-blue"></img>
 </div>
 
 <br/>
 
-The wis2box Web App is Vue.js application that allows you to use publish, edit, and visualise WIS2 data and metadata.
+<div>
+    <img src="public/documentation/banner.png" style="width:800px"/>
+</div>
+The wis2box Web App is Vue.js application that allows you to publish, edit, and visualise data and metadata from your WIS2 node.
 
 ## Features
 
-- **Data Conversion:** Easily convert your SYNOP or CSV data to the WMO BUFR format and publish in one click.
+- **Modern Interface**: Easily navigate the wis2box tools with a user-friendly interface, built with <a href="https://vuetifyjs.com/en/">Vuetify 3</a>.
+- **Data Conversion:** Convert your SYNOP or CSV data to the WMO BUFR format and publish in one click.
 - **Station Editor:** View, edit, or create new station metadata.
 - **Dataset Editor:** Edit or create a new dataset and its associated data plugins.
-- **Monitoring:** Visualise the frequency and origin of the latest data published on your datasets.
+- **Monitoring:** Visualise and inspect the frequency and origin of the latest data published on your datasets.
 
+## Examples
+
+
+<div align="center">
+    <img src="public/documentation/synop.png" style="width:400px; height:225px"/>
+    <img src="public/documentation/stations.png" style="width:400px; height:225px"/>
+</div>
+
+<br/>
+
+<div align="center">
+    <img src="public/documentation/metadata-editor.png" style="width:400px; height:225px"/>
+    <img src="public/documentation/plugin-editor.png" style="width:400px; height:225px"/>
+</div>
+
+<br/>
+    
+<div align="center">
+    <img src="public/documentation/bar-chart.png" style="width:400px; height:225px"/>
+    <img src="public/documentation/inspect-bufr.png" style="width:400px; height:225px"/>
+</div>
 
 ## Getting Started Locally
 
