@@ -1,5 +1,5 @@
 
-# The wis2box Web App <img src="public/documentation/banner-compact.png" style="width:500px" align="right"/>
+# The wis2box Web App <img src="public/documentation/banner-compact.png" style="float: right; width: 57%"/>
 ### Access the wis2box toolset from your browser.
 
 <div>
