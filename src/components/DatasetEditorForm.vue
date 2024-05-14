@@ -237,7 +237,7 @@
                                 <v-col cols="4" />
                                 <v-col cols="4">
                                     <v-text-field label="North Latitude" type="number"
-                                        v-model="model.extents.northLatitude" :rules="[rules.required, rules.latitude]"
+                                        v-model.number="model.extents.northLatitude" :rules="[rules.required, rules.latitude]"
                                         variant="outlined" clearable></v-text-field>
                                 </v-col>
                                 <v-col cols="4" />
@@ -245,13 +245,13 @@
                             <v-row class="coordinate-rows">
                                 <v-col cols="4">
                                     <v-text-field label="West Longitude" type="number"
-                                        v-model="model.extents.westLongitude" :rules="[rules.required, rules.longitude]"
+                                        v-model.number="model.extents.westLongitude" :rules="[rules.required, rules.longitude]"
                                         variant="outlined" clearable></v-text-field>
                                 </v-col>
                                 <v-col cols="4" />
                                 <v-col cols="4">
                                     <v-text-field label="East Longitude" type="number"
-                                        v-model="model.extents.eastLongitude" :rules="[rules.required, rules.longitude]"
+                                        v-model.number="model.extents.eastLongitude" :rules="[rules.required, rules.longitude]"
                                         variant="outlined" clearable></v-text-field>
                                 </v-col>
                             </v-row>
@@ -259,7 +259,7 @@
                                 <v-col cols="4" />
                                 <v-col cols="4">
                                     <v-text-field label="South Latitude" type="number"
-                                        v-model="model.extents.southLatitude" :rules="[rules.required, rules.latitude]"
+                                        v-model.number="model.extents.southLatitude" :rules="[rules.required, rules.latitude]"
                                         variant="outlined" clearable></v-text-field>
                                 </v-col>
                                 <v-col cols="4" />
