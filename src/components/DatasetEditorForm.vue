@@ -2035,7 +2035,7 @@ export default defineComponent({
                 
                 // Otherwise, there must be an application-level error in the API
                 else {
-                    message.value = responseData.status;
+                    message.value = responseData.status || "Error submitting data, please check the console for details.";
                 }
 
                 // Open the success window to show this message clearly
