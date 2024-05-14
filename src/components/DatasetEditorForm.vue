@@ -1982,9 +1982,15 @@ export default defineComponent({
                 // is success, display a success message
                 if (response.status === OK && responseData.status === "success") {
                     message.value = "Dataset removed successfully.";
-                    // Open the success window to show this message clearly
-                    openSuccessDialog.value = true;
                 }
+
+                // Otherwise, there must be an application-level error in the API
+                else {
+                    message.value = responseData.status;
+                }
+
+                // Open the success window to show this message clearly
+                openSuccessDialog.value = true;
             }
             catch (error) {
                 console.error(error);
@@ -2025,9 +2031,15 @@ export default defineComponent({
                 // is success, display a success message
                 if (response.status === OK && responseData.status === "success") {
                     message.value = isNew.value ? "Dataset added successfully!" : "Dataset updated successfully!";
-                    // Open the success window to show this message clearly
-                    openSuccessDialog.value = true;
                 }
+                
+                // Otherwise, there must be an application-level error in the API
+                else {
+                    message.value = responseData.status;
+                }
+
+                // Open the success window to show this message clearly
+                openSuccessDialog.value = true;
             }
             catch (error) {
                 console.log(error);
