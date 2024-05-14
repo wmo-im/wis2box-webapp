@@ -5,16 +5,15 @@
 
 <a href="https://github.com/wmo-im/wis2box-webapp/blob/main/LICENSE" alt="License" ><img src="https://img.shields.io/badge/License-Apache_2.0-blue"></img></a>
 
-
-The wis2box Web App is Vue.js application that allows you to publish, edit, and visualise data and metadata from your WIS2 node.
+The wis2box Web App is a Vue.js application that allows you to publish, edit, and visualize data and metadata from your WIS2 node.
 
 ## Features
 
-- **Modern Interface**: Easily navigate the wis2box tools with a user-friendly interface, built with <a href="https://vuetifyjs.com/en/">Vuetify 3</a>.
+- **Modern Interface**: Easily navigate the wis2box tools with a user-friendly interface built with <a href="https://vuetifyjs.com/en/">Vuetify 3</a>.
 - **Data Conversion:** Convert your SYNOP or CSV data to the WMO BUFR format and publish in one click.
 - **Station Editor:** View, edit, or create new station metadata.
 - **Dataset Editor:** Edit or create a new dataset and its associated data plugins.
-- **Monitoring:** Visualise and inspect the frequency and origin of the latest data published on your datasets.
+- **Monitoring:** Visualize and inspect the frequency and origin of the latest data published on your datasets.
 
 ## Examples
 
