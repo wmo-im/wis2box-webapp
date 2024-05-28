@@ -35,7 +35,7 @@ echo "VITE_BASEMAP_ATTRIBUTION=$VITE_BASEMAP_ATTRIBUTION"
 # vite welcome message
 if [ -z "$WIS2BOX_WEBAPP_HOMEPAGE_MESSAGE" ]; then
   echo "WIS2BOX_WEBAPP_HOMEPAGE_MESSAGE is not set use default"
-  VITE_WEBAPP_HOMEPAGE_MESSAGE="<h2>Welcome to the wis2box-webapp!</h2><br> This web-application allows you to submit ASCII and CSV data, update/review station metadata and check notifications sent by this wis2box."
+  VITE_WEBAPP_HOMEPAGE_MESSAGE="<h2>Welcome to the wis2box-webapp!</h2><br> This web-application allows you to configure your datasets, configure station metadata, submit FM-12/CSV data and monitor your WIS2-notifications.  "
 else
   export VITE_WEBAPP_HOMEPAGE_MESSAGE=$WIS2BOX_WEBAPP_HOMEPAGE_MESSAGE
 fi
