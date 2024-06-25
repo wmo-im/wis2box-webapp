@@ -622,7 +622,7 @@
                         </ul>
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn color="#003DA5" block @click="resetMessage('typical')">
+                        <v-btn color="#003DA5" variant="flat" block @click="resetMessage('typical')">
                             OK
                         </v-btn>
                     </v-card-actions>
@@ -1359,10 +1359,8 @@ export default defineComponent({
 
             // If id already in items, show a message and open the initial dialog again
             if (items.value.includes(id)) {
-                message.value = "Identifier already exists. Either update the existing dataset or choose another identifier.";
+                message.value = "This centre ID already has a dataset with this data type. Please ensure the identifier is changed in the form.";
                 openMessageDialog.value = true;
-                showInitialDialog.value = true;
-                return;
             }
 
             return id;
@@ -1880,7 +1878,10 @@ export default defineComponent({
             else if (type === 'validation') {
                 openValidationDialog.value = false;
             }
-            message.value = "";
+            // Add a delay to prevent the message from disappearing on screen
+            setTimeout(() => {
+                message.value = "";
+            }, 500);
         };
 
         const handleSubmitIssues = (issue, action) => {
