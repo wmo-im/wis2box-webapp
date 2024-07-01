@@ -1357,9 +1357,9 @@ export default defineComponent({
         const createAndCheckIdentifier = (identifier) => {
             let id = identifier.replace('$CENTRE_ID', model.value.identification.centreID);
 
-            // If id already in items, show a message and open the initial dialog again
+            // If id already in items, inform the user that they will need to change the id in the form
             if (items.value.includes(id)) {
-                message.value = "This centre ID already has a dataset with this data type. Please ensure the identifier is changed in the form.";
+                message.value = "There already is a dataset for this centre ID and data type. If you want to publish another dataset with the same centre ID and data type, please provide a new unique identifier for this dataset.";
                 openMessageDialog.value = true;
             }
 
