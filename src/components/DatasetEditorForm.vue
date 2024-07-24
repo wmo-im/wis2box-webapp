@@ -201,16 +201,16 @@
                         <v-col cols="2">
                             <v-checkbox v-model="isEndDateDisabled" label="Dataset ongoing" color="#003DA5" />
                         </v-col>
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <v-row dense>
                                 <v-col cols="5">
                                     <v-text-field label="Resolution" type="string" v-model="model.extents.resolution"
-                                        :rules="[rules.required]" variant="outlined" clearable></v-text-field>
+                                        variant="outlined" clearable></v-text-field>
                                 </v-col>
                                 <v-col cols="5">
                                     <v-select label="Unit" :items="durations" item-title="name" item-value="code"
-                                        v-model="model.extents.resolutionUnit" :rules="[rules.required]"
-                                        variant="outlined"></v-select>
+                                        v-model="model.extents.resolutionUnit"
+                                        variant="outlined" clearable></v-select>
                                 </v-col>
                             </v-row>
                         </v-col>
@@ -497,7 +497,7 @@
                         <br>
                         <p><b>End Date:</b> The date in UTC when the dataset ends.</p>
                         <br>
-                        <p><b>Temporal Resolution:</b> The smallest increment of time that is represented in the
+                        <p><b>Temporal Resolution (optional):</b> The smallest increment of time that is represented in the
                             dataset.
                         </p>
                         <p>This is split into two parts, the <b>value</b> (e.g. 1) and the <b>unit</b> (e.g.
@@ -804,7 +804,7 @@ export default defineComponent({
         // Time durations for resolution
         const durations = [
             { name: 'minutes(s)', code: 'M' },
-            { name: 'hour(s)', code: 'H' },
+            { name: 'hour(s)', code: 'H' }
         ];
 
         // WCMP2 schema version
@@ -1722,7 +1722,9 @@ export default defineComponent({
             const endDate = handleEndDate(form.extents.dateStopped);
 
             schemaModel.time.interval = [startDate, endDate];
-            schemaModel.time.resolution = `P${form.extents.resolution}${form.extents.resolutionUnit}`;
+            if (form.extents.resolution && form.extents.resolutionUnit) {
+                schemaModel.time.resolution = `P${form.extents.resolution}${form.extents.resolutionUnit}`;
+            }
 
             // Geometry information
             schemaModel.geometry = {
