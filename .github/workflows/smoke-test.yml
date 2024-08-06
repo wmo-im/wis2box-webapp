@@ -12,7 +12,7 @@ jobs:
         run: docker build -t wis2box-webapp .
       - name: Start Docker Compose services
         working-directory: tests
-        run: docker-compose -f docker-compose.yml up -d --build
+        run: docker compose -f docker-compose.yml up -d --build
       - name: check status
         run: docker ps -a
       - name: Wait for service to start
@@ -33,4 +33,4 @@ jobs:
         if: ${{ failure() }}
         run: |
           echo "check docker logs"
-          docker-compose -f docker-compose.yml logs
+          docker compose -f docker-compose.yml logs
