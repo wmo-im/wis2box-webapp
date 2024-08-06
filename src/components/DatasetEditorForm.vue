@@ -237,30 +237,34 @@
                                 <v-col cols="4" />
                                 <v-col cols="4">
                                     <v-text-field label="North Latitude" type="number"
-                                        v-model.number="model.extents.northLatitude" :rules="[rules.required, rules.latitude]"
-                                        variant="outlined" clearable></v-text-field>
+                                        v-model.number="model.extents.northLatitude"
+                                        :rules="[rules.required, rules.latitude]" variant="outlined"
+                                        clearable></v-text-field>
                                 </v-col>
                                 <v-col cols="4" />
                             </v-row>
                             <v-row class="coordinate-rows">
                                 <v-col cols="4">
                                     <v-text-field label="West Longitude" type="number"
-                                        v-model.number="model.extents.westLongitude" :rules="[rules.required, rules.longitude]"
-                                        variant="outlined" clearable></v-text-field>
+                                        v-model.number="model.extents.westLongitude"
+                                        :rules="[rules.required, rules.longitude]" variant="outlined"
+                                        clearable></v-text-field>
                                 </v-col>
                                 <v-col cols="4" />
                                 <v-col cols="4">
                                     <v-text-field label="East Longitude" type="number"
-                                        v-model.number="model.extents.eastLongitude" :rules="[rules.required, rules.longitude]"
-                                        variant="outlined" clearable></v-text-field>
+                                        v-model.number="model.extents.eastLongitude"
+                                        :rules="[rules.required, rules.longitude]" variant="outlined"
+                                        clearable></v-text-field>
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col cols="4" />
                                 <v-col cols="4">
                                     <v-text-field label="South Latitude" type="number"
-                                        v-model.number="model.extents.southLatitude" :rules="[rules.required, rules.latitude]"
-                                        variant="outlined" clearable></v-text-field>
+                                        v-model.number="model.extents.southLatitude"
+                                        :rules="[rules.required, rules.latitude]" variant="outlined"
+                                        clearable></v-text-field>
                                 </v-col>
                                 <v-col cols="4" />
                             </v-row>
@@ -452,7 +456,8 @@
                         <p><b>Description:</b> A free-text summary description of the dataset.</p>
                         <br>
                         <p><b>Identifier:</b> The unique identifier for the dataset. It should start with
-                            <b>urn:wmo:md</b></p>
+                            <b>urn:wmo:md</b>
+                        </p>
                         <p><i>Note: once the dataset is created, the identifier can no longer be updated. To use a
                                 different Identifier you will need to delete and create the dataset.</i></p>
                         <br>
@@ -1355,7 +1360,15 @@ export default defineComponent({
 
         // Method to check that the identifier does not already exist
         const createAndCheckIdentifier = (identifier) => {
-            let id = identifier.replace('$CENTRE_ID', model.value.identification.centreID);
+            // Truncate data policy
+            let truncatedPolicy = model.value.identification.wmoDataPolicy.substring(0, 4);
+
+            // Replace centre ID and data policy
+            let id = identifier.replace(
+                '$CENTRE_ID', model.value.identification.centreID
+            ).replace(
+                '$DATA_POLICY', truncatedPolicy
+            );
 
             // If id already in items, inform the user that they will need to change the id in the form
             if (items.value.includes(id)) {
@@ -1365,6 +1378,19 @@ export default defineComponent({
 
             return id;
         };
+
+        // Update the identifier to include 'core' or 'reco'
+        // each time the data policy is updated
+        const replaceDataPolicyInIdentifier = () => {
+            let id = model.value.identification.identifier;
+
+            // Truncate policy to 4 letters
+            let truncatedPolicy = model.value.identification.wmoDataPolicy.substring(0, 4);
+
+            // Replace ':core.' or ':reco.' in the identifier
+            model.value.identification.identifier = id.replace(/:core\.|:reco\./g, `:${truncatedPolicy}.`);
+        };
+
 
         // If the template is other and the data policy is changed,
         // replace the data policy in the topic hierarchy
@@ -1450,9 +1476,12 @@ export default defineComponent({
                 return;
             }
 
-            // Otherwise, create sensible defaults
-            model.value.identification.identifier = 'urn:wmo:md:' + model.value.identification.centreID + ':';
-            model.value.identification.topicHierarchy = model.value.identification.centreID + '/data/' + model.value.identification.wmoDataPolicy + '/';
+            // Otherwise, create sensible defaults using centre ID and policy
+            let policy = model.value.identification.wmoDataPolicy;
+            let truncatedPolicy = policy.substring(0, 4);
+            let centreID = model.value.identification.centreID;
+            model.value.identification.identifier = 'urn:wmo:md:' + centreID + ':' + truncatedPolicy + '.';
+            model.value.identification.topicHierarchy = centreID + '/data/' + policy + '/';
         }
 
         // Update the rectangle in the map when the user changes the bounding box
@@ -2035,7 +2064,7 @@ export default defineComponent({
                 if (response.status === OK && responseData.status === "success") {
                     message.value = isNew.value ? "Dataset added successfully!" : "Dataset updated successfully!";
                 }
-                
+
                 // Otherwise, there must be an application-level error in the API
                 else {
                     message.value = responseData.status || "Error submitting data, please check the console for details.";
@@ -2072,6 +2101,7 @@ export default defineComponent({
                 applyTemplate(selectedTemplate.value);
             }
             else {
+                replaceDataPolicyInIdentifier();
                 replaceDataPolicyInTopicHierarchy();
             }
         });
