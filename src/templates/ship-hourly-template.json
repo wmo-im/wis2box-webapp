@@ -1,21 +1,24 @@
 {
-  "label": "weather/surface-based-observations/temp",
-  "title": "Upper-level temperature/humidity/wind reports from fixed-land stations (TEMP) ($CENTRE_ID)",
-  "identifier": "urn:wmo:md:$CENTRE_ID:$DATA_POLICY.surface-based-observations.temp",
-  "topicHierarchy": "$CENTRE_ID/data/$DATA_POLICY/weather/surface-based-observations/temp",
+  "label": "weather/surface-based-observations/synop",
+  "title": "Hourly, or lower frequency, synoptic weather observations from ships ($CENTRE_ID)",
+  "identifier": "urn:wmo:md:$CENTRE_ID:$DATA_POLICY.surface-based-observations.ship-hourly",
+  "topicHierarchy": "$CENTRE_ID/data/$DATA_POLICY/weather/surface-based-observations/ship-hourly",
   "language": "en",
-  "resolution": "P12H",
+  "resolution": "P1H",
   "keywords": [
     "observations",
-    "upper air",
-    "humidity",
-    "wind",
-    "observations",
     "temperature",
-    "dewpoint",
-    "clouds",
+    "sea surface temperature",
+    "visibility",
+    "precipitation",
     "pressure",
-    "atmosperic profile"
+    "clouds",
+    "wind",
+    "humidity",
+    "present weather",
+    "past weather",
+    "waves",
+    "ship"
   ],
   "themes": [
     {
@@ -25,7 +28,7 @@
   ],
   "wis2box": {
     "retention": "P30D",
-    "topic_hierarchy": "$CENTRE_ID.data.core.weather.surface-based-observations.temp",
+    "topic_hierarchy": "$CENTRE_ID.data.core.weather.surface-based-observations.synop",
     "data_mappings": {
       "plugins": {
         "b": [

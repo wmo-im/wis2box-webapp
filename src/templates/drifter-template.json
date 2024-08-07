@@ -1,31 +1,27 @@
 {
-  "label": "weather/surface-based-observations/temp",
-  "title": "Upper-level temperature/humidity/wind reports from fixed-land stations (TEMP) ($CENTRE_ID)",
-  "identifier": "urn:wmo:md:$CENTRE_ID:$DATA_POLICY.surface-based-observations.temp",
-  "topicHierarchy": "$CENTRE_ID/data/$DATA_POLICY/weather/surface-based-observations/temp",
+  "label": "ocean/surface-based-observations/drifting-buoys",
+  "title": "Drifting buoy observations made as part of the --Enter program name here-- programme",
+  "identifier": "urn:wmo:md:$CENTRE_ID:$DATA_POLICY.surface-based-observations.drifting-buoys",
+  "topicHierarchy": "$CENTRE_ID/data/$DATA_POLICY/ocean/surface-based-observations/drifting-buoys",
   "language": "en",
-  "resolution": "P12H",
+  "resolution": "P1H",
   "keywords": [
-    "observations",
-    "upper air",
-    "humidity",
-    "wind",
-    "observations",
-    "temperature",
-    "dewpoint",
-    "clouds",
-    "pressure",
-    "atmosperic profile"
+    "oceans",
+    "surface current",
+    "sea surface temperature",
+    "sea level pressure",
+    "lagrangian drifter",
+    "goos"
   ],
   "themes": [
     {
-      "concepts": [{ "id": "weather", "label": "weather" }],
+      "concepts": [{ "id": "ocean", "label": "ocean" }],
       "scheme": "http://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline"
     }
   ],
   "wis2box": {
     "retention": "P30D",
-    "topic_hierarchy": "$CENTRE_ID.data.core.weather.surface-based-observations.temp",
+    "topic_hierarchy": "$CENTRE_ID.data.core.ocean.surface-based-observations.drifting-buoys",
     "data_mappings": {
       "plugins": {
         "b": [
