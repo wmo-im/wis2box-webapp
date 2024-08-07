@@ -1,7 +1,7 @@
 {
   "label": "ocean/surface-based-observations/drifting-buoys",
-  "title": "Drifting buoy observations made as part of the --Enter program name here-- programme",
-  "identifier": "urn:wmo:md:$CENTRE_ID:$DATA_POLICY.surface-based-observations.drifting-buoys",
+  "title": "Drifting buoy observations made as part of the --ENTER PROGRAM NAME HERE-- program",
+  "identifier": "urn:wmo:md:$CENTRE_ID:$DATA_POLICY.surface-based-observations.drifting-buoys.PROGRAM",
   "topicHierarchy": "$CENTRE_ID/data/$DATA_POLICY/ocean/surface-based-observations/drifting-buoys",
   "language": "en",
   "resolution": "P1H",
