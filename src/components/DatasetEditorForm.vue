@@ -644,7 +644,7 @@
                         {{ message }}
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn block @click="resetMessage('validation')" :color="formValidated ? '#64BF40' : 'error'">
+                        <v-btn block variant="flat" @click="resetMessage('validation')" :color="formValidated ? '#64BF40' : 'error'">
                             OK
                         </v-btn>
                     </v-card-actions>
@@ -2108,7 +2108,7 @@ export default defineComponent({
 
         // For each plugin name, auto populate the plugin fields
         watch(() => pluginName.value, () => {
-            if (pluginName.value) {
+            if (pluginName.value && pluginIsNew.value) {
                 defaultPluginFields(pluginName.value);
             }
         });
