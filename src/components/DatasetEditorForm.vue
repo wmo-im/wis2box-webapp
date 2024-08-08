@@ -644,7 +644,7 @@
                         {{ message }}
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn block @click="resetMessage('validation')" :color="formValidated ? '#64BF40' : 'error'">
+                        <v-btn block variant="flat" @click="resetMessage('validation')" :color="formValidated ? '#64BF40' : 'error'">
                             OK
                         </v-btn>
                     </v-card-actions>
@@ -714,8 +714,9 @@
                         <v-col cols="12">
                             <v-row>
                                 <v-col cols="8">
+                                    <!-- Disable this if editing an existing plugin -->
                                     <v-select label="Plugin Name" v-model="pluginName" :items="pluginList"
-                                        item-title="title" item-value="id" variant="outlined"></v-select>
+                                        item-title="title" item-value="id" variant="outlined" :disabled="!pluginIsNew"></v-select>
                                 </v-col>
                                 <v-col cols="4">
                                     <v-text-field label="File Extension" v-model="pluginFileExtension"
@@ -2108,7 +2109,7 @@ export default defineComponent({
 
         // For each plugin name, auto populate the plugin fields
         watch(() => pluginName.value, () => {
-            if (pluginName.value) {
+            if (pluginName.value && pluginIsNew.value) {
                 defaultPluginFields(pluginName.value);
             }
         });

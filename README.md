@@ -48,14 +48,18 @@ cd wis2box-webapp
 
 ### 2. Set the environment variables
 
-Create a file in the root directory named `.env`. Here you can set all of the necessary environment variables to be used. For testing purposes, the most important two are `WIS2BOX_BASEMAP_URL` and `WIS2BOX_BASEMAP_ATTRIBUTION`, for example:
+Create a file in the root directory named `.env`. Here you can set all of the necessary environment variables to be used.
+
+In a local environment, the environment variables have prefix `VITE_`. For example, `VITE_API_URL`. If testing locally, here are the most important environment variables to set:
 
 ```bash
-WIS2BOX_BASEMAP_URL=https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
-WIS2BOX_BASEMAP_ATTRIBUTION=<a href="https://osm.org/copyright">OpenStreetMap</a> contributors
+VITE_API_URL=http://localhost:8080/oapi
+VITE_BASE_URL=http://localhost:8080/wis2box-webapp
+VITE_BASEMAP_URL=https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png
+VITE_BASEMAP_ATTRIBUTION=<a href="https://osm.org/copyright">OpenStreetMap</a> contributors
 ```
 
-You can find an exhaustive list <a href="https://github.com/wmo-im/wis2box-webapp/blob/main/tests/test.env">here</a>.
+In a Docker environment, the environment variables have prefix `WIS2BOX_`. We recommend that you copy these from the test environment file, found <a href="https://github.com/wmo-im/wis2box-webapp/blob/main/tests/test.env">here</a>.
 
 Now we are ready to start the web app with or without Docker.
 
