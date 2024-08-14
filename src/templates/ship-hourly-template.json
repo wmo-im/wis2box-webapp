@@ -22,7 +22,7 @@
   ],
   "themes": [
     {
-      "concepts": [{ "id": "weather", "label": "weather" }],
+      "concepts": [{ "id": "climate", "label": "climate" }, { "id": "ocean", "label": "ocean" },{ "id": "weather", "label": "weather" }],
       "scheme": "http://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline"
     }
   ],
