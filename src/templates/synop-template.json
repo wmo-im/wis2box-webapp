@@ -22,7 +22,7 @@
   "themes": [
     {
       "concepts": [{ "id": "weather", "label": "weather" }],
-      "scheme": "https://github.com/wmo-im/wis2-topic-hierarchy/blob/main/topic-hierarchy/earth-system-discipline/index.csv"
+      "scheme": "http://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline"
     }
   ],
   "wis2box": {
