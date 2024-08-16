@@ -215,10 +215,13 @@ export default defineComponent({
         // Methods
 
         // Method to get canonical URL from a message
-        const getCanonicalUrl = (links) => {
+        const getCanonicalInfo = (links) => {
             const canonicalLink = links.find(link => link.rel === "canonical");
             if (canonicalLink) {
-                return canonicalLink.href;
+                return {
+                    'url': canonicalLink.href,
+                    'type': canonicalLink.type
+                };
             }
             return '';
         }
@@ -228,7 +231,8 @@ export default defineComponent({
             const selectedFields = features.map(item => ({
                 id: item.id,
                 pubtime: new Date(item.properties.pubtime),
-                canonical_url: getCanonicalUrl(item.links),
+                canonical_url: getCanonicalInfo(item.links).url,
+                type: getCanonicalInfo(item.links).type,
                 wsi: item.properties.wigos_station_identifier,
                 coordinates: item.geometry?.coordinates ?? null // Geometry may not be present
             }));
