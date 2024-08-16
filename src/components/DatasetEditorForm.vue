@@ -1411,7 +1411,7 @@ export default defineComponent({
             model.value.identification.identifier = createAndCheckIdentifier(template.identifier);
             // Converts the theme structure into a list of the theme labels
             model.value.identification.concepts = template.themes.flatMap(theme => theme.concepts.map(concept => concept.label));
-            model.value.identification.conceptScheme = template.themes.map(theme => theme.scheme);
+            model.value.identification.conceptScheme = template.themes.map(theme => theme.scheme)[0];
             model.value.identification.keywords = template.keywords;
             // Use centre ID and WMO data policy to create topic hierarchy
             model.value.identification.topicHierarchy = template.topicHierarchy
