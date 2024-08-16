@@ -42,8 +42,8 @@
 <script>
 import { defineComponent, ref, computed } from 'vue';
 import { VCard, VCardTitle } from 'vuetify/lib/components/index.mjs';
-import DownloadButton from './DownloadButton.vue';
-import InspectBufrButton from './InspectBufrButton.vue';
+import DownloadButton from '@/components/DownloadButton.vue';
+import InspectBufrButton from '@/components/InspectBufrButton.vue';
 
 export default defineComponent({
   name: 'PublishedData',

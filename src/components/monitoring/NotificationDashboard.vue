@@ -59,16 +59,16 @@
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
-import BarChart from './BarChart.vue';
-import SummaryStats from './SummaryStats.vue';
-import StationStats from './StationStats.vue';
-import PublishedData from './PublishedData.vue';
-import StationMap from './StationMap.vue';
+import BarChart from '@/components/monitoring/BarChart.vue';
+import SummaryStats from '@/components/monitoring/SummaryStats.vue';
+import StationStats from '@/components/monitoring/StationStats.vue';
+import PublishedData from '@/components/monitoring/PublishedData.vue';
+import StationMap from '@/components/monitoring/StationMap.vue';
 
 export default defineComponent({
     name: 'NotificationDashboard',
     props: {
-        topicHierarchy: {
+        datasetID: {
             type: String,
             required: true
         },
@@ -103,7 +103,8 @@ export default defineComponent({
         // Example message of Romania synoptic dataset
         const testMessageSynoptic = [
             {
-                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d", "geometry": {
+                "id": "urn:wmo:md:test1-centre:core.test1.test1.test1", 
+                "geometry": {
                     "type": "Point",
                     "coordinates": [6.146197, 46.223432, 1]
                 },
@@ -112,7 +113,7 @@ export default defineComponent({
                     "datetime": "2022-03-31T00:00:00Z",
                     "pubtime": "2023-09-22T08:55:20Z",
                     "wigos_station_identifier": "0-20000-0-15020",
-                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                    "identifier": "urn:wmo:md:test1-centre:core.test1.test1.test1"
                 },
                 "links": [
                     {
@@ -127,7 +128,8 @@ export default defineComponent({
                     }]
             },
             {
-                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d", "geometry": {
+                "id": "urn:wmo:md:test1-centre:core.test1.test1.test1",
+                "geometry": {
                     "type": "Point",
                     "coordinates": [6.146197, 46.223432, 1]
                 },
@@ -136,7 +138,7 @@ export default defineComponent({
                     "datetime": "2022-03-31T00:00:00Z",
                     "pubtime": "2023-09-22T08:55:20Z",
                     "wigos_station_identifier": "0-20000-0-15020",
-                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                    "identifier": "urn:wmo:md:test1-centre:core.test1.test1.test1"
                 },
                 "links": [
                     {
@@ -151,7 +153,8 @@ export default defineComponent({
                     }]
             },
             {
-                "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d", "geometry": {
+                "id": "urn:wmo:md:test1-centre:core.test1.test1.test1",
+                "geometry": {
                     "type": "Point",
                     "coordinates": [6.146197, 46.423432, 1]
                 },
@@ -160,7 +163,7 @@ export default defineComponent({
                     "datetime": "2022-03-31T00:00:00Z",
                     "pubtime": "2023-09-22T08:55:20Z",
                     "wigos_station_identifier": "0-20000-0-15030",
-                    "id": "8855221f-2112-43fa-b2da-1552e8aa9a2d"
+                    "identifier": "urn:wmo:md:test1-centre:core.test1.test1.test1"
                 },
                 "links": [
                     {
@@ -178,7 +181,7 @@ export default defineComponent({
         // Example message of Malawi surface dataset
         const testMessageSurface = [
             {
-                "id": "af14d8c4-5f63-45af-8171-7730ec9932ba",
+                "id": "urn:wmo:md:test2-centre:core.test2.test2.test2",
                 "geometry": {
                     "type": "Point",
                     "coordinates": [6.146197, 46.223432]
@@ -188,7 +191,7 @@ export default defineComponent({
                     "datetime": "2022-03-31T00:00:00Z",
                     "pubtime": "2023-09-19T13:40:49Z",
                     "wigos_station_identifier": "0-20000-0-15015",
-                    "id": "af14d8c4-5f63-45af-8171-7730ec9932ba"
+                    "identifier": "urn:wmo:md:test2-centre:core.test2.test2.test2"
                 },
                 "links": [
                     {
@@ -240,13 +243,11 @@ export default defineComponent({
             try {
                 let params;
 
-                // data_id is props.topicHierarchy with origin/a/wis2/ removed
-                let data_id = props.topicHierarchy.replace("origin/a/wis2/", "");
                 // If WSI prop is given, include it in the search:
                 if (props.wsi) {
                     params = new URLSearchParams({
                         f: 'json', // Specify the response format as JSON
-                        data_id: `${data_id}%`, // Filter by data_id that starts with the provided topic hierarchy
+                        data_id: `${props.datasetID}%`, // Filter by data_id that starts with the provided topic hierarchy
                         sortBy: '-datetime', // Sort by time in descending order
                         datetime: `${props.startDate.toISOString()}/${props.endDate.toISOString()}`, // Filter to date range specified by user
                         wigos_station_identifier: `${props.wsi}`, // Filter by WSI searched
@@ -256,7 +257,7 @@ export default defineComponent({
                 else {
                     params = new URLSearchParams({
                         f: 'json', // Specify the response format as JSON
-                        data_id: `${data_id}%`, // Filter by data_id that starts with the provided topic hierarchy
+                        data_id: `${props.datasetID}%`, // Filter by data_id that starts with the provided topic hierarchy
                         sortBy: '-datetime', // Sort by time in descending order
                         datetime: `${props.startDate.toISOString()}/${props.endDate.toISOString()}`, // Filter to date range specified by user
                         limit: `${props.limit}`, // Limit number of notifications shown on dashboard
@@ -288,17 +289,14 @@ export default defineComponent({
             // Check if TEST_MODE is set in .env file or if VITE_API_URL is not set
             if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
                 console.log("TEST_MODE is enabled");
-                console.log("Dataset selected: ", props.topicHierarchy);
+                console.log("Dataset selected: ", props.datasetID);
                 // Use example data selected by user
-                if (props.topicHierarchy == "test1") {
+                if (props.datasetID == "urn:wmo:md:test1-centre:core.test1.test1.test1") {
                     messages.value = getMessagesFromFeatures(testMessageSynoptic);
                     console.log(messages.value)
                 }
-                else if (props.topicHierarchy == "test2") {
+                else if (props.datasetID == "urn:wmo:md:test2-centre:core.test2.test2.test2") {
                     messages.value = getMessagesFromFeatures(testMessageSurface);
-                }
-                else if (props.topicHierarchy == "test3") {
-                    messages.value = getMessagesFromFeatures(testMessageSynoptic);
                 }
             }
             // If not in test mode, make the API call

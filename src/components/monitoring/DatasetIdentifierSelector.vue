@@ -1,33 +1,22 @@
 <template>
-    <div v-if="! errorMessage">
-      <v-select
-        v-if="(options !== null)"
-        :items="options"
-        item-title="name"
-        item-value="id"
-        label="Topic hierarchy"
-        v-model="selected"
-        :readonly="readonly"
-        :rules="rules"
-        :hint="selected ? selected.description : 'Select topic hierarchy'"
-        persistent-hint
-        :multiple="multiple"
-        return-object
-        variant="outlined"
-        />
-    </div>
-    <div v-else class="error">
-      <v-text-field class="text-error" readonly>{{ errorMessage }}</v-text-field>
-    </div>
+  <div v-if="!errorMessage">
+    <v-select v-if="(options !== null)" :items="options" item-title="name" item-value="id" label="Dataset Identifier"
+      v-model="selected" :readonly="readonly" :rules="rules"
+      :hint="selected ? selected.description : 'Select dataset identifier'" persistent-hint :multiple="multiple"
+      return-object variant="outlined" />
+  </div>
+  <div v-else class="error">
+    <v-text-field class="text-error" readonly>{{ errorMessage }}</v-text-field>
+  </div>
 </template>
 
 <script>
-import { defineComponent, ref, onBeforeMount, watch, onErrorCaptured } from 'vue';
+import { defineComponent, ref, onBeforeMount, watch } from 'vue';
 import { VSelect, VTextField } from 'vuetify/lib/components/index.mjs';
 
 
 export default defineComponent({
-  name: 'SelectTopicHierarchy',
+  name: 'SelectDatasetIdentifier',
   components: {
     VSelect, VTextField
   },
@@ -47,17 +36,26 @@ export default defineComponent({
     const errorMessage = ref(null);
 
     const fetchOptions = async () => {
-      // Get topic hierarchies
+      // Get dataset IDs
       if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
-        // If test mode enabled, show test topics
+        // If test mode enabled, show test IDs
         console.log("TEST_MODE is enabled");
         options.value = [
-          {name: "test1", id: "test1", description: "Test 1"}, {name: "test2", id: "test2", description: "Test 2"}, {name: "test3", id: "test3", description: "Test 3"}
+          {
+            name: "urn:wmo:md:test1-centre:core.test1.test1.test1",
+            id: "urn:wmo:md:test1-centre:core.test1.test1.test1",
+            description: "Test 1 description"
+          },
+          {
+            name: "urn:wmo:md:test2-centre:core.test2.test2.test2",
+            id: "urn:wmo:md:test2-centre:core.test2.test2.test2",
+            description: "Test 2 description"
+          },
         ]
 
       }
       else {
-        console.log("Fetching topic hierarchy from:", apiUrl);
+        console.log("Fetching dataset identifiers from:", apiUrl);
         try {
           const response = await fetch(apiUrl);
           if (!response.ok) {
@@ -66,12 +64,12 @@ export default defineComponent({
           else {
             const data = await response.json();
             if (data.features) {
-              // Use Array.map to create a new array of the topic hierarchies
+              // Use Array.map to create a new array of the dataset IDs
               options.value = data.features.map(feature => {
-                if (feature.properties && feature.properties['wmo:topicHierarchy']) {
+                if (feature.properties?.identifier) {
                   return {
-                    name: feature.properties['wmo:topicHierarchy'],
-                    id: feature.properties['wmo:topicHierarchy'],
+                    name: feature.properties.identifier,
+                    id: feature.properties.identifier,
                     description: feature.properties['description']
                   }
                 }
@@ -84,36 +82,36 @@ export default defineComponent({
           }
         }
         catch (error) {
-          errorMessage.value = "Error fetching topic hierarchy, please check the API end point." +
+          errorMessage.value = "Error fetching dataset identifiers, please check the API end point." +
             " See logs for more information.";
-          console.error("Error fetching topic hierarchy:", error)
+          console.error("Error fetching dataset identifiers:", error)
         }
       }
     };
 
 
     onBeforeMount(async () => {
-      var m = false;
+      let m = false;
       await fetchOptions();
       if (props.modelValue && props.modelValue.length) {
         for (const topicId of props.modelValue) {
-          const option = options.value.find( option => option.id === topicId );
-          if (option){
+          const option = options.value.find(option => option.id === topicId);
+          if (option) {
             m = true;
             selected.value.push(option);
           }
         }
       }
-      if(m){
+      if (m) {
         emit("update:modelValue", selected.value);
       }
     });
 
-    watch( () => props.modelValue, (newValue) => {
+    watch(() => props.modelValue, (newValue) => {
       selected.value = newValue;
     });
 
-    watch( () => selected.value, (newValue) => {
+    watch(() => selected.value, (newValue) => {
       if (selected.value) {
         emit("update:modelValue", newValue);
       }
