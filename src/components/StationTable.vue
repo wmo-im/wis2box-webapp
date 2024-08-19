@@ -5,7 +5,7 @@
       <v-card>
         <v-card-title class="big-title">Stations</v-card-title>
         <v-card-item v-if="items">
-          <VTextField style="width: 400px;" v-model="search" prepend-icon="mdi-text-search" label="Search" single-line hide-details></VTextField>
+          <VTextField style="width: 400px;" v-model="search" prepend-icon="mdi-text-search" label="Search" single-line hide-details variant="outlined"></VTextField>
           <VDataTable :headers="headers" :items="items" :search="search" dense small>
               <template v-slot:item.actions="{ item }">
                 <v-icon size="small" @click="editRecord(item)">mdi-pen</v-icon>

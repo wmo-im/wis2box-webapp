@@ -41,15 +41,17 @@
                                     </v-col>
                                 </v-row>
 
-                                <!-- Topic hierarchy selection -->
+                                <!-- Dataset identifier selection -->
                                 <v-row>
                                     <v-col cols="12">
-                                        <TopicHierarchySelector v-model="topic"></TopicHierarchySelector>
+                                        <DatasetIdentifierSelector v-model="datasetSelected"></DatasetIdentifierSelector>
                                     </v-col>
                                 </v-row>
 
+
                                 <!-- Execution token -->
                                 <v-row>
+                                    <v-divider class="mb-5"/>
                                     <v-col cols="12">
                                         <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token"
                                             rows="1" :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'"
@@ -211,8 +213,8 @@
 
 <script>
 import { defineComponent, ref, computed, watch } from 'vue';
-import { VCard, VCardTitle, VCardText, VCardItem, VForm, VTextarea, VBtn, VListGroup } from 'vuetify/lib/components/index.mjs';
-import TopicHierarchySelector from './TopicHierarchySelector.vue';
+import { VCard, VCardTitle, VCardItem, VForm, VTextarea, VBtn, VListGroup } from 'vuetify/lib/components/index.mjs';
+import DatasetIdentifierSelector from './DatasetIdentifierSelector.vue';
 import InspectBufrButton from '@/components/InspectBufrButton.vue';
 import DownloadButton from '@/components/DownloadButton.vue';
 
@@ -221,13 +223,12 @@ export default defineComponent({
     components: {
         VCard,
         VCardTitle,
-        VCardText,
         VCardItem,
         VTextarea,
         VForm,
         VBtn,
         VListGroup,
-        TopicHierarchySelector,
+        DatasetIdentifierSelector,
         InspectBufrButton,
         DownloadButton
     },
@@ -247,10 +248,8 @@ export default defineComponent({
         const aaxxPresent = ref(true);
         // Boolean to check if = delimiter is in bulletin
         const equalsPresent = ref(true);
-        // List of topic hierarchies before they are obtained from discovery metadata
-        const topicList = ref(["test1", "test2", "test3"]);
-        // Topic hierarchy selected by user
-        const topic = ref(null);
+        // Dataset selected by user
+        const datasetSelected = ref(null);
         // Execution token to be entered by user
         const token = ref(null);
         // Variable to control whether token is seen or not
@@ -274,7 +273,7 @@ export default defineComponent({
 
         // Boolean for whether the submit button is disabled or not
         const submitDisabled = computed(() => {
-            return (datePossible.value === false) || !bulletin.value || !aaxxPresent.value || !equalsPresent.value || !topic.value || !token.value
+            return (datePossible.value === false) || !bulletin.value || !aaxxPresent.value || !equalsPresent.value || !datasetSelected.value || !token.value
         })
 
         // Computes the result title re: success, partial success, or failure
@@ -402,7 +401,8 @@ export default defineComponent({
                     year: date.value.year, // Year of data
                     month: date.value.month + 1, // Month of data, +1 as JS starts 
                     // from 0 for months
-                    channel: topic.value.id, // Topic hierarchy
+                    channel: datasetSelected.value.metadata.topic, // Topic hierarchy
+                    metadata_id: datasetSelected.value.metadata.id, // Dataset identifier
                     notify: notificationsOn.value // Boolean for WIS2 notifications
                 }
             };
@@ -496,8 +496,7 @@ export default defineComponent({
             bulletin,
             aaxxPresent,
             equalsPresent,
-            topicList,
-            topic,
+            datasetSelected,
             token,
             showToken,
             notificationsOnPending,

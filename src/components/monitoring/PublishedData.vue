@@ -5,7 +5,7 @@
     </v-card-title>
     <!-- Limit the size of the list and add scroll feature -->
     <v-card-text>
-      <v-text-field v-model="fileSearch" placeholder="Search for a file..." clearable />
+      <v-text-field v-model="fileSearch" placeholder="Search for a file..." clearable variant="outlined" />
     </v-card-text>
     <div class="scrollable-file-list">
       <template v-for="(file, index) in filteredFiles" :key="index">
@@ -23,6 +23,8 @@
                 {{ getFileName(file.url) }}
               </div>
             </v-col>
+
+            <v-divider vertical class="mx-3"/>
 
             <v-col cols="3">
               <DownloadButton :fileName="getFileName(file.url)" :fileUrl="file.url" :block="true" />

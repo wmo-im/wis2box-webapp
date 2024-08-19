@@ -114,7 +114,7 @@
         <v-card-item><CodeListSelector codeList="territory" label="Territory or WMO member operating the station" defaultHint= "Select territory" v-model="station.properties.territory_name"/></v-card-item>
         <v-card-item><CodeListSelector codeList="operatingStatus" label="Operating status" defaultHint= "Select operating status" v-model="station.properties.status"/></v-card-item>
          <v-card-item>
-          <TopicHierarchySelector v-model="station.properties.topics" multiple :rules="[rules.topic]"/>
+          <DatasetIdentifierSelector v-model="selectedDataset" multiple :rules="[rules.topic]" @change="station.properties.topics = selectedDataset.metadata.id" class="mt-2"/>
         </v-card-item>
         <v-card-item>
           <v-text-field :rules="[rules.token]" type="password" clearable v-model="token" label='wis2box auth token for "collections/stations"' hint='Enter wis2box auth token for "collections/stations"' persistent-token></v-text-field>
@@ -130,8 +130,8 @@
 <script>
   import {defineComponent, ref, onBeforeMount, watch} from "vue";
   import {VSheet, VCard, VCardTitle, VCardItem, VForm, VTextField, VBtn, VCardActions, VProgressLinear} from 'vuetify/lib/components/index.mjs';
-  import {useRoute, useRouter} from 'vue-router';
-  import TopicHierarchySelector from '@/components/TopicHierarchySelector.vue';
+  import { useRouter } from 'vue-router';
+  import DatasetIdentifierSelector from '@/components/DatasetIdentifierSelector.vue';
   import LocatorMap from '@/components/LocatorMap.vue';
   import CodeListSelector from '@/components/CodeListSelector.vue';
   import APIStatus from '@/components/APIStatus.vue';
@@ -150,7 +150,7 @@
     name: "ImportOSCAR",
     components: {
       VSheet, VCard, VCardTitle, VCardItem, VForm, VTextField, VBtn, VCardActions, LocatorMap,
-      CodeListSelector, VProgressLinear, APIStatus, TopicHierarchySelector
+      CodeListSelector, VProgressLinear, APIStatus, DatasetIdentifierSelector
     },
     setup(){
       const wsi = ref("");
@@ -205,6 +205,7 @@
       const WMORegionOptions = ref(null);
       const facilityTypeOptions = ref(null);
       const operatingStatusOptions = ref(null);
+      const selectedDataset = ref(null);
 
       onBeforeMount( async() => {
           territoryOptions.value = await loadCodeList('territory');
@@ -216,7 +217,7 @@
       const loadCodeList = async (codeList) => {
         try{
           const clist = await fetch(`${import.meta.env.VITE_BASE_URL}/codelists/${codeList}.json`);
-          var data = null;
+          let data = null;
           if( clist.ok ){
             await clist.json().then( (d) => data = d);
           }else{
@@ -236,10 +237,10 @@
 
 
       const confirm = async () => {
-        var apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items`;
-        var leaf = "";
+        let apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items`;
+        let leaf = "";
         apiURL = apiURL + leaf;
-        var record = {
+        let record = {
           id: stripHTMLTags(station.value.properties.wigos_station_identifier),  // WSI
           type: 'Feature',
           geometry: {
@@ -312,8 +313,8 @@
 
       const submit = async () => {
         showLoading.value = true;
-        var apiURL = `${import.meta.env.VITE_API_URL}/processes/oscar2feature/execution`;
-        var payload = {
+        let apiURL = `${import.meta.env.VITE_API_URL}/processes/oscar2feature/execution`;
+        let payload = {
               "inputs": {
                 "wigos_station_identifier": stripHTMLTags(wsi.value)
               }
@@ -391,7 +392,7 @@
       });
 
       return {wsi, errorMessage, showDialog, rules, router, station, formValid, confirm, showLoading,
-          redirectMessage, redirectWarning, showRedirect, submit, token};
+          redirectMessage, redirectWarning, showRedirect, submit, token, selectedDataset};
     }
   });
 </script>

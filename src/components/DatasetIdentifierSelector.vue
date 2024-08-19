@@ -1,6 +1,6 @@
 <template>
   <div v-if="!errorMessage">
-    <v-select v-if="(options !== null)" :items="options" item-title="name" item-value="id" label="Dataset Identifier"
+    <v-select v-if="(options !== null)" :items="options" item-title="title" item-value="metadata" label="Dataset Identifier"
       v-model="selected" :readonly="readonly" :rules="rules"
       :hint="selected ? selected.description : 'Select dataset identifier'" persistent-hint :multiple="multiple"
       return-object variant="outlined" />
@@ -42,13 +42,19 @@ export default defineComponent({
         console.log("TEST_MODE is enabled");
         options.value = [
           {
-            name: "urn:wmo:md:test1-centre:core.test1.test1.test1",
-            id: "urn:wmo:md:test1-centre:core.test1.test1.test1",
+            title: "urn:wmo:md:test1-centre:core.test1.test1.test1",
+            metadata: {
+              'id': "urn:wmo:md:test1-centre:core.test1.test1.test1",
+              'topic': "origin/a/wis2/test1-centre/core/test1"
+            },
             description: "Test 1 description"
           },
           {
-            name: "urn:wmo:md:test2-centre:core.test2.test2.test2",
-            id: "urn:wmo:md:test2-centre:core.test2.test2.test2",
+            title: "urn:wmo:md:test2-centre:core.test2.test2.test2",
+            metadata: {
+              'id': "urn:wmo:md:test2-centre:core.test2.test2.test2",
+              'topic': "origin/a/wis2/test1-centre/core/test1"
+            },
             description: "Test 2 description"
           },
         ]
@@ -68,8 +74,11 @@ export default defineComponent({
               options.value = data.features.map(feature => {
                 if (feature.properties?.identifier) {
                   return {
-                    name: feature.properties.identifier,
-                    id: feature.properties.identifier,
+                    title: feature.properties.identifier,
+                    metadata: {
+                      "id": feature.properties.identifier,
+                      "topic": feature.properties['wmo:topicHierarchy']
+                    },
                     description: feature.properties['description']
                   }
                 }
@@ -94,8 +103,8 @@ export default defineComponent({
       let m = false;
       await fetchOptions();
       if (props.modelValue && props.modelValue.length) {
-        for (const topicId of props.modelValue) {
-          const option = options.value.find(option => option.id === topicId);
+        for (const topic of props.modelValue.metadata.topic) {
+          const option = options.value.find(option => option.value.metadata.topic === topic);
           if (option) {
             m = true;
             selected.value.push(option);

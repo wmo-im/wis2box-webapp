@@ -13,107 +13,104 @@
     <v-card-title v-else>View station</v-card-title>
     <v-card v-if="station" max-width="1200px">
       <v-form v-model="formValid" align="left">
-        <v-card-item>
-          <v-text-field
-            label="Station name"
-            v-model="station.properties.name"
-            :rules="[rules.validName]"
-            :readonly="readonly || route.params.id.length>0"
-            hint="Enter name of station" persistent-hint>
-          </v-text-field>
-        </v-card-item>
-        <v-card-item>
-          <v-text-field
-            label="WIGOS station identifier"
-            v-model="station.properties.wigos_station_identifier"
-            :rules="[rules.validWSI]"
-            :readonly="readonly || route.params.id.length>0"
-            hint="Enter the WIGOS station identifier" persistent-hint>
-          </v-text-field>
-        </v-card-item>
-        <v-card-item>
-          <v-text-field
-            label="Traditional station identifier"
-            v-model="station.properties.traditional_station_identifier"
-            :readonly="readonly"
-            hint="Enter the traditional station identifier (ASCII or numeric characters only)" persistent-hint>
-          </v-text-field>
-        </v-card-item>
-        <v-card-item>
-          <v-container>
-            <v-row>
-              <v-col cols="4">
-                <v-row>
-                <v-text-field
-                  label="Longitude (decimal degrees E), -180 to 180"
-                  v-model="station.geometry.longitude"
-                  :rules="[rules.validLongitude]"
-                  :readonly="readonly"
-                  type="number"
-                  hint="Enter the station longitude (degrees E)" persistent-hint/>
+        <v-container class="pa-5">
+            <v-text-field
+              label="Station name"
+              v-model="station.properties.name"
+              :rules="[rules.validName]"
+              :readonly="readonly || route.params.id.length>0"
+              hint="Enter name of station" persistent-hint
+              variant="outlined" class="my-5">
+            </v-text-field>
+            <v-text-field
+              label="WIGOS station identifier"
+              v-model="station.properties.wigos_station_identifier"
+              :rules="[rules.validWSI]"
+              :readonly="readonly || route.params.id.length>0"
+              hint="Enter the WIGOS station identifier" persistent-hint
+              variant="outlined" class="my-5">
+            </v-text-field>
+            <v-text-field
+              label="Traditional station identifier"
+              v-model="station.properties.traditional_station_identifier"
+              :readonly="readonly"
+              hint="Enter the traditional station identifier (ASCII or numeric characters only)" persistent-hint
+              variant="outlined" class="my-5">
+            </v-text-field>
+            <v-container>
+              <v-row>
+                <v-col cols="4">
+                  <v-row>
+                  <v-text-field
+                    label="Longitude (decimal degrees E), -180 to 180"
+                    v-model="station.geometry.longitude"
+                    :rules="[rules.validLongitude]"
+                    :readonly="readonly"
+                    type="number"
+                    hint="Enter the station longitude (degrees E)" persistent-hint
+                    variant="outlined" class="my-5"/>
+                  </v-row>
+                  <v-row>
+                    <v-text-field
+                    label="Latitude (decimal degrees N), -90 to 90"
+                    v-model="station.geometry.latitude"
+                    :rules="[rules.validLatitude]"
+                    :readonly="readonly"
+                    type="number"
+                    hint="Enter the station latitude (degrees N)" persistent-hint
+                    variant="outlined" class="my-5"/>
                 </v-row>
                 <v-row>
                   <v-text-field
-                  label="Latitude (decimal degrees N), -90 to 90"
-                  v-model="station.geometry.latitude"
-                  :rules="[rules.validLatitude]"
-                  :readonly="readonly"
-                  type="number"
-                  hint="Enter the station latitude (degrees N)" persistent-hint/>
+                    label="Station elevation above sea level (metres)"
+                    v-model="station.geometry.elevation"
+                    :rules="[rules.validElevation]"
+                    :readonly="readonly"
+                    type="number"
+                    hint="Station elevation above sea level (metres)" persistent-hint
+                    variant="outlined" class="my-5"/>
+                </v-row>
+                </v-col>
+                <v-col cols="8">
+                  <LocatorMap
+                      :longitude="parseFloat(station.geometry.longitude)"
+                      :latitude="parseFloat(station.geometry.latitude)"
+                      variant="outlined"/>
+                </v-col>
               </v-row>
-              <v-row>
-                <v-text-field
-                  label="Station elevation above sea level (metres)"
-                  v-model="station.geometry.elevation"
-                  :rules="[rules.validElevation]"
-                  :readonly="readonly"
-                  type="number"
-                  hint="Station elevation above sea level (metres)" persistent-hint/>
-              </v-row>
-              </v-col>
-              <v-col cols="8">
-                <LocatorMap
-                    :longitude="parseFloat(station.geometry.longitude)"
-                    :latitude="parseFloat(station.geometry.latitude)"/>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-item>
-        <v-card-item><CodeListSelector :readonly="readonly" codeList="facilityType" label="Facility type" defaultHint= "Select facility type" v-model="station.properties.facility_type"/></v-card-item>
-        <v-card-item>
-          <v-text-field
-            label="Barometer height above sea level"
-            v-model="station.properties.barometer_height"
-            :rules="[rules.validBarometerHeight]"
-            :readonly="readonly"
-            hint="Enter barometer height (metres)" persistent-hint type="number">
-          </v-text-field>
-        </v-card-item>
-        <v-card-item><CodeListSelector :readonly="readonly" codeList="WMORegion" label="WMO Region" defaultHint= "Select WMO region" v-model="station.properties.wmo_region"/></v-card-item>
-        <v-card-item><CodeListSelector :readonly="readonly" codeList="territory" label="Territory or WMO member operating the station" defaultHint= "Select territory" v-model="station.properties.territory_name"/></v-card-item>
-        <v-card-item><CodeListSelector :readonly="readonly" codeList="operatingStatus" label="Operating status" defaultHint= "Select operating status" v-model="station.properties.status"/></v-card-item>
-         <v-card-item>
-          <TopicHierarchySelector v-model="station.properties.topics" multiple :readonly="readonly" :rules="[rules.topic]"/>
-        </v-card-item>
-        <v-card-item>
-          <v-text-field :rules="[rules.token]" type="password" clearable v-model="token" label='wis2box auth token for "collections/stations"' hint='Enter wis2box auth token for "collections/stations"' persistent-token></v-text-field>
-        </v-card-item>
-        <v-card-actions v-if="!readonly">
-          <v-btn @click="registerStation()" elevation=2 :disabled="!formValid">Save</v-btn>
-          <v-btn @click="cancelEdit()" elevation=2>Cancel</v-btn>
-        </v-card-actions>
-        <v-card-actions v-else>
-          <v-btn @click="router.push('/station/'+route.params.id+'?action=edit')" elevation=2>Edit</v-btn>
-        </v-card-actions>
+            </v-container>
+          <CodeListSelector :readonly="readonly" codeList="facilityType" label="Facility type" defaultHint= "Select facility type" v-model="station.properties.facility_type"
+          class="my-5"/>
+            <v-text-field
+              label="Barometer height above sea level"
+              v-model="station.properties.barometer_height"
+              :rules="[rules.validBarometerHeight]"
+              :readonly="readonly"
+              hint="Enter barometer height (metres)" persistent-hint type="number"
+              variant="outlined" class="my-5">
+            </v-text-field>
+          <CodeListSelector :readonly="readonly" codeList="WMORegion" label="WMO Region" defaultHint= "Select WMO region" v-model="station.properties.wmo_region"/>
+          <CodeListSelector :readonly="readonly" codeList="territory" label="Territory or WMO member operating the station" defaultHint= "Select territory" v-model="station.properties.territory_name"/>
+          <CodeListSelector :readonly="readonly" codeList="operatingStatus" label="Operating status" defaultHint= "Select operating status" v-model="station.properties.status"/>
+          <DatasetIdentifierSelector v-model="selectedDataset" multiple :readonly="readonly" :rules="[rules.topic]" @change="station.properties.topics = selectedDataset.metadata.topic" class="mt-2"/>
+          <v-divider/>
+          <v-text-field :rules="[rules.token]" type="password" clearable v-model="token" label='wis2box auth token for "collections/stations"' hint='Enter wis2box auth token for "collections/stations"' persistent-token variant="outlined" class="my-5"></v-text-field>
+          <v-card-actions v-if="!readonly">
+            <v-btn @click="registerStation()" elevation=2 :disabled="!formValid">Save</v-btn>
+            <v-btn @click="cancelEdit()" elevation=2>Cancel</v-btn>
+          </v-card-actions>
+          <v-card-actions v-else>
+            <v-btn @click="router.push('/station/'+route.params.id+'?action=edit')" elevation=2>Edit</v-btn>
+          </v-card-actions>
+        </v-container>
       </v-form>
     </v-card>
     </v-sheet>
   </template>
   <script>
     import {defineComponent, ref, watch, onBeforeMount, onMounted} from 'vue';
-    import {VSheet, VCard, VCardItem, VTextField, VContainer, VRow, VCol, VBtn, VCardActions} from 'vuetify/lib/components/index.mjs';
-    import {VForm} from 'vuetify/lib/components/index.mjs';
-    import TopicHierarchySelector from '@/components/TopicHierarchySelector.vue';
+    import { VCard, VCardItem, VTextField, VContainer, VRow, VBtn, VCardActions, VForm } from 'vuetify/lib/components/index.mjs';
+    import DatasetIdentifierSelector from '@/components/DatasetIdentifierSelector.vue';
     import LocatorMap from '@/components/LocatorMap.vue';
     import {useRoute, useRouter} from 'vue-router';
     import CodeListSelector from '@/components/CodeListSelector.vue';
@@ -133,7 +130,7 @@
       name: 'StationEditor',
       components: {
         VContainer, VRow, VContainer, VCard, VCardItem, VTextField, APIStatus,
-        TopicHierarchySelector, VBtn, VCardActions, LocatorMap, VForm, CodeListSelector
+        DatasetIdentifierSelector, VBtn, VCardActions, LocatorMap, VForm, CodeListSelector
       },
       setup(){
         const route = useRoute();
@@ -142,14 +139,11 @@
         const topics = ref([null]);
         const showDialog = ref(false);
         const errorMessage = ref(null);
-        const operatingStatusOptions = ref(null);
-        const territoryOptions = ref(null);
-        const WMORegionOptions = ref(null);
-        const facilityTypeOptions = ref(null);
         const readonly = ref(false);
         const msg = ref('');
         const token = ref(null);
         const formValid = ref(null);
+        const selectedDataset = ref(null);
 
         // define validation rules
         const rules = ref({
@@ -179,7 +173,7 @@
             showDialog.value = true;
             return;
           }
-          var record = {
+          let record = {
             id: stripHTMLTags(station.value.properties.wigos_station_identifier),  // WSI
             type: 'Feature',
             geometry: {
@@ -203,8 +197,8 @@
               id: stripHTMLTags(station.value.properties.wigos_station_identifier)  // WSI
             }
           }
-          var apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items`;
-          var leaf = route.params.id ? "/" + route.params.id : "";
+          let apiURL = `${import.meta.env.VITE_API_URL}/collections/stations/items`;
+          let leaf = route.params.id ? "/" + route.params.id : "";
           apiURL = apiURL + leaf;
           const response = await fetch(apiURL, {
               method: route.params.id ? 'PUT' : 'POST',
@@ -290,7 +284,7 @@
               showDialog.value = true;
               router.push('/station/');
             } else{
-              var data = await response.json();
+              let data = await response.json();
               station.value = {
                 id: data.id,  // WSI
                 type: data.type,
@@ -333,9 +327,7 @@
         })
         return {station, topics, registerStation, showDialog, msg, rules, route, router,
           readonly, errorMessage, token, formValid,
-          cancelEdit
-
-        };
+          cancelEdit, selectedDataset};
       }
     });
   </script>
