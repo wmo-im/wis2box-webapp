@@ -359,15 +359,7 @@
                     await fetch("./csv2bufr/csvw_schema.json").then( (response) => response.json() ).then( (theData) => {schema.value = theData.tableSchema.columns});
                     // now load the data file
                     let reader = new FileReader();
-                    // NOTE: Currently, in development mode, the file is returned as
-                    // an array (even if the multiple prop is false or unspecified).
-                    // This is a workfaround to handle this case, but it should be
-                    // removed when this Vuetify issue is fixed.
-                    if (Array.isArray(incomingFile.value)) {
-                        reader.readAsText(incomingFile.value[0]);
-                    } else {
-                        reader.readAsText(incomingFile.value);
-                    }
+                    reader.readAsText(incomingFile.value);
                     reader.onload = async () => {
                         validationErrors.value = [];
                         validationWarnings.value = [];
@@ -573,15 +565,7 @@
               }
             });
             watch( incomingFile, (val) => {
-              // NOTE: Currently, in development mode, the file is returned as
-              // an array (even if the multiple prop is false or unspecified).
-              // This is a workfaround to handle this case, but it should be
-              // removed when this Vuetify issue is fixed.
-              if (Array.isArray(val)) {
-                status.value.fileLoaded = val && val.length > 0;
-              } else {
-                status.value.fileLoaded = val;
-              }
+              status.value.fileLoaded = val;
             });
             watch( validationErrors, (val) => {
               if( val && val.length > 0 ){
