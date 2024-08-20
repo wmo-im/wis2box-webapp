@@ -23,8 +23,8 @@
                 {{ getFileName(file.url) }}
               </div>
             </v-col>
-
-            <v-divider vertical class="mx-3"/>
+            
+            <v-divider vertical class="mr-5"/>
 
             <v-col cols="3">
               <DownloadButton :fileName="getFileName(file.url)" :fileUrl="file.url" :block="true" />
