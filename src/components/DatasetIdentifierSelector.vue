@@ -1,6 +1,6 @@
 <template>
   <div v-if="!errorMessage">
-    <v-select v-if="(options !== null)" :items="options" item-title="title" item-value="metadata" label="Dataset Identifier"
+    <v-select v-if="(options !== null)" :items="options" :item-title="title" item-value="metadata" :label="label"
       v-model="selected" :readonly="readonly" :rules="rules"
       :hint="selected ? selected.description : 'Select dataset identifier'" persistent-hint :multiple="multiple"
       return-object variant="outlined" />
@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onBeforeMount, watch } from 'vue';
+import { defineComponent, ref, computed, onBeforeMount, watch } from 'vue';
 import { VSelect, VTextField } from 'vuetify/lib/components/index.mjs';
 
 
@@ -22,10 +22,22 @@ export default defineComponent({
   },
   props: {
     modelValue: {},
-    readonly: false,
-    multiple: false,
+    readonly: {
+      type: Boolean,
+      default: false
+    },
+    multiple: {
+      type: Boolean,
+      default: false
+    },
     rules: {
       type: Array
+    },
+    title: {
+      type: String,
+      default: "id",
+      rules: ["id", "topic"],
+      required: false
     }
   },
   emits: ["update:modelValue"],
@@ -35,6 +47,18 @@ export default defineComponent({
     const selected = ref([]);
     const errorMessage = ref(null);
 
+    // Computed
+    const label = computed(() => {
+      let label = "Dataset Identifier";
+      if (props.title === "topic") {
+        label = "Topic";
+      }
+      if (props.multiple) {
+        label += "s";
+      }
+      return label;
+    });
+
     const fetchOptions = async () => {
       // Get dataset IDs
       if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
@@ -42,7 +66,8 @@ export default defineComponent({
         console.log("TEST_MODE is enabled");
         options.value = [
           {
-            title: "urn:wmo:md:test1-centre:core.test1.test1.test1",
+            id: "urn:wmo:md:test1-centre:core.test1.test1.test1",
+            topic: "origin/a/wis2/test1-centre/core/test1",
             metadata: {
               'id': "urn:wmo:md:test1-centre:core.test1.test1.test1",
               'topic': "origin/a/wis2/test1-centre/core/test1"
@@ -50,7 +75,8 @@ export default defineComponent({
             description: "Test 1 description"
           },
           {
-            title: "urn:wmo:md:test2-centre:core.test2.test2.test2",
+            id: "urn:wmo:md:test2-centre:core.test2.test2.test2",
+            topic: "origin/a/wis2/test1-centre/core/test1",
             metadata: {
               'id': "urn:wmo:md:test2-centre:core.test2.test2.test2",
               'topic': "origin/a/wis2/test1-centre/core/test1"
@@ -74,7 +100,8 @@ export default defineComponent({
               options.value = data.features.map(feature => {
                 if (feature.properties?.identifier) {
                   return {
-                    title: feature.properties.identifier,
+                    id: feature.properties.identifier,
+                    topic: feature.properties['wmo:topicHierarchy'],
                     metadata: {
                       "id": feature.properties.identifier,
                       "topic": feature.properties['wmo:topicHierarchy']
@@ -126,7 +153,7 @@ export default defineComponent({
       }
     });
 
-    return { selected, options, errorMessage };
+    return { label, selected, options, errorMessage };
   }
 });
 </script>

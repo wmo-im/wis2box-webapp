@@ -92,7 +92,7 @@
           <CodeListSelector :readonly="readonly" codeList="WMORegion" label="WMO Region" defaultHint= "Select WMO region" v-model="station.properties.wmo_region"/>
           <CodeListSelector :readonly="readonly" codeList="territory" label="Territory or WMO member operating the station" defaultHint= "Select territory" v-model="station.properties.territory_name"/>
           <CodeListSelector :readonly="readonly" codeList="operatingStatus" label="Operating status" defaultHint= "Select operating status" v-model="station.properties.status"/>
-          <DatasetIdentifierSelector v-model="selectedDataset" multiple :readonly="readonly" :rules="[rules.topic]" @change="station.properties.topics = selectedDataset.metadata.topic" class="mt-2"/>
+          <DatasetIdentifierSelector v-model="selectedDataset" title="topic" multiple :readonly="readonly" :rules="[rules.topic]" @change="station.properties.topics = selectedDataset.metadata.topic" class="mt-2"/>
           <v-divider/>
           <v-text-field :rules="[rules.token]" type="password" clearable v-model="token" label='wis2box auth token for "collections/stations"' hint='Enter wis2box auth token for "collections/stations"' persistent-token variant="outlined" class="my-5"></v-text-field>
           <v-card-actions v-if="!readonly">

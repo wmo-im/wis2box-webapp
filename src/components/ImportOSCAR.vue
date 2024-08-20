@@ -114,7 +114,7 @@
         <v-card-item><CodeListSelector codeList="territory" label="Territory or WMO member operating the station" defaultHint= "Select territory" v-model="station.properties.territory_name"/></v-card-item>
         <v-card-item><CodeListSelector codeList="operatingStatus" label="Operating status" defaultHint= "Select operating status" v-model="station.properties.status"/></v-card-item>
          <v-card-item>
-          <DatasetIdentifierSelector v-model="selectedDataset" multiple :rules="[rules.topic]" @change="station.properties.topics = selectedDataset.metadata.id" class="mt-2"/>
+          <DatasetIdentifierSelector v-model="selectedDataset" title="topic" multiple :rules="[rules.topic]" @change="station.properties.topics = selectedDataset.metadata.id" class="mt-2"/>
         </v-card-item>
         <v-card-item>
           <v-text-field :rules="[rules.token]" type="password" clearable v-model="token" label='wis2box auth token for "collections/stations"' hint='Enter wis2box auth token for "collections/stations"' persistent-token></v-text-field>
