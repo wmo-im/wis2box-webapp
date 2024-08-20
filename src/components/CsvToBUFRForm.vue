@@ -76,7 +76,7 @@
                             </v-card-item>
                             <v-card-item>
                                 <v-list v-if="validationWarnings.length > 0">
-                                    <v-list-item v-for="message in validationWarnings" base-color="warning">
+                                    <v-list-item v-for="message in validationWarnings" :key="message" base-color="warning">
                                         <template v-slot:prepend>
                                             <v-icon icon="mdi-alert-circle"></v-icon>
                                         </template>
@@ -84,7 +84,7 @@
                                     </v-list-item>
                                 </v-list>
                                 <v-list v-if="validationErrors.length > 0">
-                                    <v-list-item v-for="message in validationErrors" base-color="error">
+                                    <v-list-item v-for="message in validationErrors" :key="message" base-color="error">
                                         <template v-slot:prepend>
                                             <v-icon icon="mdi-alert-circle"></v-icon>
                                         </template>
@@ -273,7 +273,12 @@
             const step=ref(0);
             const validationWarnings = ref([]);
             const validationErrors = ref([]);
-            const status = ref(null);
+            const status = ref({
+                fileLoaded: false,
+                fileValidated: false,
+                datasetIdentifier: false,
+                password: false
+            });
             // Variable to control whether token is seen or not
             const showToken = ref(false);
             const token = ref(null);
@@ -282,12 +287,6 @@
             const msg = ref(null);
             const showDialog = ref(null);
             const scrollRef = ref(null);
-            status.value = {
-                fileLoaded: false,
-                fileValidated: false,
-                datasetIdentifier: false,
-                password: false
-            }
             const result = ref(null);
             const notificationsOnPending = ref(false);
 
@@ -337,11 +336,11 @@
                 return "Unknown";
             });
             const numberNotifications = computed( () => {
-                var messagesPublished = 0;
+                let messagesPublished = 0;
                 if( result.value ){
                   messagesPublished = result.value['messages published'];
                 }
-                return "WIS2 notifications published: " + messagesPublished;;
+                return "WIS2 notifications published: " + messagesPublished;
             });
             // life cycle hooks
             onMounted( () => {
@@ -359,8 +358,16 @@
                     // load schema
                     await fetch("./csv2bufr/csvw_schema.json").then( (response) => response.json() ).then( (theData) => {schema.value = theData.tableSchema.columns});
                     // now load the data file
-                    var reader = new FileReader();
-                    reader.readAsText(incomingFile.value[0]);
+                    let reader = new FileReader();
+                    // NOTE: Currently, in development mode, the file is returned as
+                    // an array (even if the multiple prop is false or unspecified).
+                    // This is a workfaround to handle this case, but it should be
+                    // removed when this Vuetify issue is fixed.
+                    if (Array.isArray(incomingFile.value)) {
+                        reader.readAsText(incomingFile.value[0]);
+                    } else {
+                        reader.readAsText(incomingFile.value);
+                    }
                     reader.onload = async () => {
                         validationErrors.value = [];
                         validationWarnings.value = [];
@@ -376,9 +383,9 @@
                             divider: true
                         }));
                         // check the headers against the schema
-                        for(var column in headers.value ){
-                            var key = headers.value[column].key
-                            var schemaColumn = schema.value.find( col => col.titles === key )
+                        for(let column in headers.value ){
+                            let key = headers.value[column].key
+                            let schemaColumn = schema.value.find( col => col.titles === key )
                             if( ! schemaColumn ){
                                 validationWarnings.value.push("Column '" + key +
                                     "' not found in schema, data will be skipped")
@@ -390,29 +397,29 @@
                                 schemaColumn.present = true;
                             }
                         }
-                        for(var col in schema.value){
+                        for(let col in schema.value){
                             if(!schema.value[col].present){
-                                key = schema.value[col].titles;
+                                let key = schema.value[col].titles;
                                 validationWarnings.value.push("Column '" + key +
                                     "' missing from data file, data will be set to missing in BUFR encoding");
                             }
                         }
                         // now validate the data
-                        var count = 0;
+                        let count = 0;
                         for(const record of theData.value){
                             count++;
                             for( const key in record){
-                                var header = headers.value.find(header => header.key === key );
-                                var value = record[key];
+                                let header = headers.value.find(header => header.key === key );
+                                let value = record[key];
                                 record[key] = {
                                     value: value,
                                     status: "",
                                     msg: ""
                                 }
-                                var valid_min = false;
-                                var valid_max = false;
-                                var msg = "";
-                                var status = "success";
+                                let valid_min = false;
+                                let valid_max = false;
+                                let msg = "";
+                                let status = "success";
                                 if( header.inSchema ){
                                     if( header.dataType.minimum ){
                                         valid_min = header.dataType.minimum
@@ -446,11 +453,11 @@
                                 record[key].status = status;
                                 record[key].msg = msg;
                             }
-                        };
+                        }
                         // get limits and kind from schema
                     };
                     step.value = 1;
-                };
+                }
             };
             const submit = async() => {
                 CsvToBUFR();
@@ -502,7 +509,7 @@
                 const data = await response.json();
                 result.value = data;
                 result.value.files = [];
-                for( var item in result.value.data_items){
+                for( let item in result.value.data_items){
                   result.value.files.push( result.value.data_items[item].file_url);
                 }
               }
@@ -511,7 +518,7 @@
                 step.value = step.value === 0 ? 0 : step.value - 1;
             };
             const next = () => {
-                var proceed = false;
+                let proceed = false;
                 switch (step.value){
                   case 0:
                     if( status.value.fileLoaded){
@@ -566,12 +573,16 @@
               }
             });
             watch( incomingFile, (val) => {
-              if( val && val.length > 0){
-                status.value.fileLoaded = true;
-              }else{
-                status.value.fileLoaded = false;
+              // NOTE: Currently, in development mode, the file is returned as
+              // an array (even if the multiple prop is false or unspecified).
+              // This is a workfaround to handle this case, but it should be
+              // removed when this Vuetify issue is fixed.
+              if (Array.isArray(val)) {
+                status.value.fileLoaded = val && val.length > 0;
+              } else {
+                status.value.fileLoaded = val;
               }
-            } );
+            });
             watch( validationErrors, (val) => {
               if( val && val.length > 0 ){
                 status.value.fileValidated = false;
@@ -579,7 +590,7 @@
                 status.value.fileValidated = true;
               }
             });
-            watch( token, (val) => {
+            watch( token, () => {
               if( token.value && token.value.length > 0 ){
                 status.value.password = true;
               }else{
