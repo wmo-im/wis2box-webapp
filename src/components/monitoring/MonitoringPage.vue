@@ -77,7 +77,7 @@ export default defineComponent({
     },
     setup() {
         // Static variables
-
+        const testMode = import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined;
         const now = new Date();
         const twentyFourHoursAgo = new Date(now.getTime() - 86400000);
 
@@ -130,9 +130,12 @@ export default defineComponent({
             dashboardKey.value++
             // Display dashboard
             showDashboard.value = true;
-            // Log
-            console.log('Sent start time:', selectedStartDate.value.toISOString())
-            console.log('Sent end time:', selectedEndDate.value.toISOString())
+            // Log in test mode
+            if (testMode) {
+                console.log('TEST_MODE is enabled')
+                console.log('Sent start time:', selectedStartDate.value.toISOString())
+                console.log('Sent end time:', selectedEndDate.value.toISOString())
+            }
         }
 
         return {

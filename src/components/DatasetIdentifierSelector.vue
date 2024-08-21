@@ -42,6 +42,10 @@ export default defineComponent({
   },
   emits: ["update:modelValue"],
   setup(props, { emit }) {
+    // Static variables
+    const testMode = import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined;
+
+    // Reactive variables
     const apiUrl = `${import.meta.env.VITE_API_URL}/collections/discovery-metadata/items?f=json`;
     const options = ref(null);
     const selected = ref([]);
@@ -58,10 +62,9 @@ export default defineComponent({
       }
       return label;
     });
-
     const fetchOptions = async () => {
       // Get dataset IDs
-      if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
+      if (testMode) {
         // If test mode enabled, show test IDs
         console.log("TEST_MODE is enabled");
         options.value = [
@@ -87,7 +90,6 @@ export default defineComponent({
 
       }
       else {
-        console.log("Fetching dataset identifiers from:", apiUrl);
         try {
           const response = await fetch(apiUrl);
           if (!response.ok) {

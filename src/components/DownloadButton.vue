@@ -38,7 +38,6 @@ export default defineComponent({
             // Create a temporary anchor element to initiate the download
             const link = document.createElement('a');
             if( props.fileUrl != '' ) {
-                //console.log("Downloading file from URL: " + props.fileUrl)
                 link.href = props.fileUrl;
                 link.target = '_blank';
                 // Programmatically trigger the click event on the link to start the download
@@ -47,7 +46,6 @@ export default defineComponent({
                 URL.revokeObjectURL(link.href);
             }
             else if( props.data != '' ) {
-                //console.log("Downloading file from data: " + props.data)
                 // Decode the base64 encoded data
                 const decodedData = atob(props.data);
                 // Convert the decoded data to a Uint8Array

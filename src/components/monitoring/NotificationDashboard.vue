@@ -97,9 +97,8 @@ export default defineComponent({
         StationMap
     },
     setup(props) {
-
         // Static variables
-
+        const testMode = import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined;
         // Example message of Romania synoptic dataset
         const testMessageSynoptic = [
             {
@@ -243,7 +242,10 @@ export default defineComponent({
         // Make API call
         const apiCall = async () => {
             const apiUrl = `${import.meta.env.VITE_API_URL}/collections/messages/items`;
-            console.log("Fetching notifications from:", apiUrl);
+            if (testMode) {
+                console.log("TEST_MODE is enabled");
+                console.log("Fetching notifications from:", apiUrl);
+            }
             try {
                 let params;
 
@@ -268,7 +270,9 @@ export default defineComponent({
                     });
                 }
                 // Make the HTTP GET request
-                console.log("API request:", `${apiUrl}?${params}`)
+                if (testMode) {
+                    console.log("API request:", `${apiUrl}?${params}`)
+                }
                 const response = await fetch(`${apiUrl}?${params}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -291,7 +295,7 @@ export default defineComponent({
         // Retrieve messages
         const updateMessages = async () => {
             // Check if TEST_MODE is set in .env file or if VITE_API_URL is not set
-            if (import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined) {
+            if (testMode) {
                 console.log("TEST_MODE is enabled");
                 console.log("Dataset selected: ", props.datasetID);
                 // Use example data selected by user
@@ -311,7 +315,6 @@ export default defineComponent({
 
         // Mounted lifecycle hook to display newest notification dashboard
         onMounted(() => {
-            console.log("Mounted updateMessages")
             updateMessages();
         })
 

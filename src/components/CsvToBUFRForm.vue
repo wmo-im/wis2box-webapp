@@ -432,7 +432,6 @@
                                         status = 'error';
                                         validationErrors.value.push(msg);
                                     }
-                                    // console.log(status + ": " + msg);
                                 }else{
                                     status = "warning";
                                     msg = "Field not in schema";
@@ -536,7 +535,6 @@
                       proceed = true;
                     }else{
                       showDialog.value = true;
-                      console.log(datasetSelected.value)
                       msg.value = "Please select a dataset to publish on before proceeding";
                     }
                     break;
@@ -555,18 +553,15 @@
                 }
             };
 
-            // Define watches
+            // Watchers
             watch( datasetSelected, (val) => {
-              console.log(val);
-              if( val ){
-                status.value.datasetIdentifier = true;
-              }else{
-                status.value.datasetIdentifier = false;
-              }
+              status.value.datasetIdentifier = !!val;
             });
+  
             watch( incomingFile, (val) => {
-              status.value.fileLoaded = val;
+              status.value.fileLoaded = !!val;
             });
+  
             watch( validationErrors, (val) => {
               if( val && val.length > 0 ){
                 status.value.fileValidated = false;
@@ -574,6 +569,7 @@
                 status.value.fileValidated = true;
               }
             });
+
             watch( token, () => {
               if( token.value && token.value.length > 0 ){
                 status.value.password = true;

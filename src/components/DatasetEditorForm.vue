@@ -1073,7 +1073,6 @@ export default defineComponent({
                 // Get CSV response and parse it into an object
                 const responseData = await response.text();
                 const parsed = Papa.parse(responseData, { header: true });
-                console.log(parsed.data)
                 // Filter out any empty data (the final row of the CSV)
                 const filteredData = parsed.data.filter(item => item.Name && item.Description);
                 // Map this data into the correct format for the v-select component
