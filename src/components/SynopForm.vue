@@ -214,7 +214,7 @@
 <script>
 import { defineComponent, ref, computed, watch } from 'vue';
 import { VCard, VCardTitle, VCardItem, VForm, VTextarea, VBtn, VListGroup } from 'vuetify/lib/components/index.mjs';
-import DatasetIdentifierSelector from './DatasetIdentifierSelector.vue';
+import DatasetIdentifierSelector from '@/components/DatasetIdentifierSelector.vue';
 import InspectBufrButton from '@/components/InspectBufrButton.vue';
 import DownloadButton from '@/components/DownloadButton.vue';
 

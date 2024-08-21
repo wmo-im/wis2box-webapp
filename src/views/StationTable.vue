@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-  import StationTable from '@/components/StationTable.vue'
+  import StationTable from '@/components/stations/StationTable.vue'
 </script>

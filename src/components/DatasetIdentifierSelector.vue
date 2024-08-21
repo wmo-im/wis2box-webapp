@@ -1,6 +1,6 @@
 <template>
   <div v-if="!errorMessage">
-    <v-select v-if="(options !== null)" :items="options" :item-title="title" item-value="metadata" :label="label"
+    <v-select v-if="(options !== null)" :items="options" item-title="id" item-value="metadata" :label="label"
       v-model="selected" :readonly="readonly" :rules="rules"
       :hint="selected ? selected.description : 'Select dataset identifier'" persistent-hint :multiple="multiple"
       return-object variant="outlined" />
@@ -16,7 +16,7 @@ import { VSelect, VTextField } from 'vuetify/lib/components/index.mjs';
 
 
 export default defineComponent({
-  name: 'SelectDatasetIdentifier',
+  name: 'DatasetIdentifierSelector',
   components: {
     VSelect, VTextField
   },
@@ -32,12 +32,6 @@ export default defineComponent({
     },
     rules: {
       type: Array
-    },
-    title: {
-      type: String,
-      default: "id",
-      rules: ["id", "topic"],
-      required: false
     }
   },
   emits: ["update:modelValue"],
@@ -54,14 +48,12 @@ export default defineComponent({
     // Computed
     const label = computed(() => {
       let label = "Dataset Identifier";
-      if (props.title === "topic") {
-        label = "Topic";
-      }
       if (props.multiple) {
         label += "s";
       }
       return label;
     });
+
     const fetchOptions = async () => {
       // Get dataset IDs
       if (testMode) {
@@ -70,7 +62,6 @@ export default defineComponent({
         options.value = [
           {
             id: "urn:wmo:md:test1-centre:core.test1.test1.test1",
-            topic: "origin/a/wis2/test1-centre/core/test1",
             metadata: {
               'id': "urn:wmo:md:test1-centre:core.test1.test1.test1",
               'topic': "origin/a/wis2/test1-centre/core/test1"
@@ -79,10 +70,9 @@ export default defineComponent({
           },
           {
             id: "urn:wmo:md:test2-centre:core.test2.test2.test2",
-            topic: "origin/a/wis2/test1-centre/core/test1",
             metadata: {
               'id': "urn:wmo:md:test2-centre:core.test2.test2.test2",
-              'topic': "origin/a/wis2/test1-centre/core/test1"
+              'topic': "origin/a/wis2/test2-centre/core/test2"
             },
             description: "Test 2 description"
           },

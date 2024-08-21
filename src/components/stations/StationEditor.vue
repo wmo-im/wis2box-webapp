@@ -65,7 +65,7 @@
             v-model="station.properties.territory_name" />
           <CodeListSelector :readonly="readonly" codeList="operatingStatus" label="Operating status"
             defaultHint="Select operating status" v-model="station.properties.status" />
-          <DatasetIdentifierSelector v-model="selectedDataset" title="topic" multiple :readonly="readonly"
+          <TopicSelector v-model="station.properties.topics" multiple :readonly="readonly"
             :rules="[rules.topic]" class="mt-2" />
           <v-divider />
           <v-text-field :rules="[rules.token]" type="password" clearable v-model="token"
@@ -86,13 +86,12 @@
 </template>
 <script>
 import { defineComponent, ref, watch, onBeforeMount, onMounted } from 'vue';
-import { VCard, VCardItem, VTextField, VContainer, VRow, VBtn, VCardActions, VForm } from 'vuetify/lib/components/index.mjs';
-import DatasetIdentifierSelector from '@/components/DatasetIdentifierSelector.vue';
+import { VCard, VTextField, VContainer, VRow, VBtn, VCardActions, VForm } from 'vuetify/lib/components/index.mjs';
+import TopicSelector from '@/components/stations/TopicSelector.vue';
 import LocatorMap from '@/components/LocatorMap.vue';
 import { useRoute, useRouter } from 'vue-router';
 import CodeListSelector from '@/components/CodeListSelector.vue';
 import APIStatus from '@/components/APIStatus.vue';
-import { createTopicList } from '@/utils/DatasetHelpers.js';
 
 function stripHTMLTags(input) {
   if (typeof input !== 'string') {
@@ -107,8 +106,8 @@ function stripHTMLTags(input) {
 export default defineComponent({
   name: 'StationEditor',
   components: {
-    VContainer, VRow, VContainer, VCard, VCardItem, VTextField, APIStatus,
-    DatasetIdentifierSelector, VBtn, VCardActions, LocatorMap, VForm, CodeListSelector
+    VContainer, VRow, VCard, VTextField, APIStatus,
+    TopicSelector, VBtn, VCardActions, LocatorMap, VForm, CodeListSelector
   },
   setup() {
     // Reactive variables
@@ -174,7 +173,7 @@ export default defineComponent({
           wmo_region: station.value.properties.wmo_region['skos:notation'] ?? null,
           url: "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/" +
             stripHTMLTags(station.value.properties.wigos_station_identifier),
-          topics: station.value.properties.topics.map((topic) => (topic.id)),
+          topics: station.value.properties.topics,
           status: station.value.properties.status['skos:notation'] ?? null,
           id: stripHTMLTags(station.value.properties.wigos_station_identifier)  // WSI
         }
@@ -310,14 +309,6 @@ export default defineComponent({
       }
     })
 
-    // Updates station.value.properties.topics with the topic list
-    // each time that selectedDataset changes
-    watch(selectedDataset, (newValue) => {
-      if (newValue) {
-        station.value.properties.topics = createTopicList(newValue);
-      }
-    });
-
     return {
       station,
       topics,
@@ -332,8 +323,7 @@ export default defineComponent({
       token,
       formValid,
       cancelEdit,
-      selectedDataset,
-      createTopicList
+      selectedDataset
     };
   }
 });

@@ -105,7 +105,7 @@
             v-model="station.properties.status" />
         </v-card-item>
         <v-card-item>
-          <DatasetIdentifierSelector v-model="selectedDataset" title="topic" multiple :rules="[rules.topic]" class="mt-2" />
+          <TopicSelector v-model="station.properties.topics" multiple :rules="[rules.topic]" class="mt-2" />
         </v-card-item>
         <v-card-item>
           <v-text-field :rules="[rules.token]" type="password" clearable v-model="token"
@@ -124,11 +124,10 @@
 import { defineComponent, ref, onBeforeMount, watch } from "vue";
 import { VSheet, VCard, VCardTitle, VCardItem, VForm, VTextField, VBtn, VCardActions, VProgressLinear } from 'vuetify/lib/components/index.mjs';
 import { useRouter } from 'vue-router';
-import DatasetIdentifierSelector from '@/components/DatasetIdentifierSelector.vue';
+import TopicSelector from '@/components/stations/TopicSelector.vue';
 import LocatorMap from '@/components/LocatorMap.vue';
 import CodeListSelector from '@/components/CodeListSelector.vue';
 import APIStatus from '@/components/APIStatus.vue';
-import { createTopicList } from '@/utils/DatasetHelpers.js';
 
 function stripHTMLTags(input) {
   if (typeof input !== 'string') {
@@ -144,7 +143,7 @@ export default defineComponent({
   name: "ImportOSCAR",
   components: {
     VSheet, VCard, VCardTitle, VCardItem, VForm, VTextField, VBtn, VCardActions, LocatorMap,
-    CodeListSelector, VProgressLinear, APIStatus, DatasetIdentifierSelector
+    CodeListSelector, VProgressLinear, APIStatus, TopicSelector
   },
   setup() {
     const wsi = ref("");
@@ -253,7 +252,7 @@ export default defineComponent({
           wmo_region: station.value.properties.wmo_region['skos:notation'] ?? null,
           url: "https://oscar.wmo.int/surface/#/search/station/stationReportDetails/" +
             stripHTMLTags(station.value.properties.wigos_station_identifier),
-          topics: station.value.properties.topics.map((topic) => (topic.id)),
+          topics: station.value.properties.topics,
           status: station.value.properties.status['skos:notation'] ?? null,
           id: stripHTMLTags(station.value.properties.wigos_station_identifier)  // WSI
         }
@@ -386,14 +385,6 @@ export default defineComponent({
       console.log(newValue);
     });
 
-    // Updates station.value.properties.topics with the topic list
-    // each time that selectedDataset changes
-    watch(selectedDataset, (newValue) => {
-      if (newValue) {
-        station.value.properties.topics = createTopicList(newValue);
-      }
-    });
-
     return {
       wsi,
       errorMessage,
@@ -409,8 +400,7 @@ export default defineComponent({
       showRedirect,
       submit,
       token,
-      selectedDataset,
-      createTopicList
+      selectedDataset
     };
   }
 });
