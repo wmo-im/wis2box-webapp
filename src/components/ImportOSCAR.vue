@@ -105,8 +105,7 @@
             v-model="station.properties.status" />
         </v-card-item>
         <v-card-item>
-          <DatasetIdentifierSelector v-model="selectedDataset" title="topic" multiple :rules="[rules.topic]"
-            @change="station.properties.topics = createTopicList(selectedDataset)" class="mt-2" />
+          <DatasetIdentifierSelector v-model="selectedDataset" title="topic" multiple :rules="[rules.topic]" class="mt-2" />
         </v-card-item>
         <v-card-item>
           <v-text-field :rules="[rules.token]" type="password" clearable v-model="token"
@@ -210,9 +209,9 @@ export default defineComponent({
     });
 
     const loadCodeList = async (codeList) => {
+      let data;
       try {
         const clist = await fetch(`${import.meta.env.VITE_BASE_URL}/codelists/${codeList}.json`);
-        let data = null;
         if (clist.ok) {
           await clist.json().then((d) => data = d);
         } else {
@@ -226,7 +225,7 @@ export default defineComponent({
         showDialog.value = true;
         showLoading.value = false;
         console.log(error);
-      };
+      }
       return data['@graph'].filter(item => item['@type'] === "skos:Concept");
     };
 
@@ -335,13 +334,13 @@ export default defineComponent({
           showLoading.value = false;
         } else {
           data.value = await response.json();
-        };
+        }
       } catch (error) {
         errorMessage.value = "Error fetching form OSCAR/Surface via WIS2box API, please check status of the API and OSCAR/Surface. See console for more details.";
         console.log(error);
         showDialog.value = true;
         showLoading.value = false;
-      };
+      }
       if (data.value) {
         if (data.value.feature) {
           station.value.id = data.value.feature.id;
@@ -379,11 +378,20 @@ export default defineComponent({
           showDialog.value = true;
           showLoading.value = false;
         }
-      };
+      }
     };
 
+    // Watchers
     watch(() => station.value.properties.wmo_region, (newValue) => {
       console.log(newValue);
+    });
+
+    // Updates station.value.properties.topics with the topic list
+    // each time that selectedDataset changes
+    watch(selectedDataset, (newValue) => {
+      if (newValue) {
+        station.value.properties.topics = createTopicList(newValue);
+      }
     });
 
     return {

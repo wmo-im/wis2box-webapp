@@ -66,7 +66,7 @@
           <CodeListSelector :readonly="readonly" codeList="operatingStatus" label="Operating status"
             defaultHint="Select operating status" v-model="station.properties.status" />
           <DatasetIdentifierSelector v-model="selectedDataset" title="topic" multiple :readonly="readonly"
-            :rules="[rules.topic]" @change="station.properties.topics = createTopicList(selectedDataset)" class="mt-2" />
+            :rules="[rules.topic]" class="mt-2" />
           <v-divider />
           <v-text-field :rules="[rules.token]" type="password" clearable v-model="token"
             label='wis2box auth token for "collections/stations"'
@@ -301,6 +301,7 @@ export default defineComponent({
       }
     }
 
+    // Watchers
     watch((route), () => {
       if (route.query.action === "edit") {
         readonly.value = false;
@@ -308,6 +309,15 @@ export default defineComponent({
         readonly.value = true;
       }
     })
+
+    // Updates station.value.properties.topics with the topic list
+    // each time that selectedDataset changes
+    watch(selectedDataset, (newValue) => {
+      if (newValue) {
+        station.value.properties.topics = createTopicList(newValue);
+      }
+    });
+
     return {
       station,
       topics,
