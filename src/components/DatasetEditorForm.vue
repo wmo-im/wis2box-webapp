@@ -82,7 +82,7 @@
                     </v-card-text>
                     <v-container>
                         <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
-                            :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                            :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'" autocomplete="off"
                             @click:append="showToken = !showToken" :rules="[rules.token]" variant="outlined">
                         </v-text-field>
                     </v-container>
@@ -390,7 +390,7 @@
                 </v-card-title>
                 <v-card-text>
                     <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
-                        :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                        :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'" autocomplete="off"
                         @click:append="showToken = !showToken" :rules="[rules.token]" variant="outlined">
                     </v-text-field>
                 </v-card-text>

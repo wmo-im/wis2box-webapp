@@ -107,7 +107,7 @@
                             <v-card-title>Authorize and publish</v-card-title>
                             <v-card-text>
                               <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
-                              :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                              :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'" autocomplete="off"
                               @click:append="showToken = !showToken"
                               :rules="[v => !!v || 'Token is required']"
                               variant="outlined">
