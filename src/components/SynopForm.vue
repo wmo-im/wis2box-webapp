@@ -56,7 +56,7 @@
                                         <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token"
                                             rows="1" :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'"
                                             :type="showToken ? 'text' : 'password'"
-                                            autocomplete="off"
+                                            autocomplete="one-time-code"
                                             @click:append="showToken = !showToken"
                                             :rules="[v => !!v || 'Token is required']"
                                             variant="outlined" />

@@ -1,6 +1,6 @@
 <template>
     <div v-if="!errorMessage">
-      <v-select v-if="(options !== null)" :items="options" item-title="topic" item-value="topic" :label="label"
+      <v-select v-if="(options !== null)" :items="options" item-title="name" item-value="topic" :label="label"
         v-model="selected" :readonly="readonly" :rules="rules"
         :hint="selected ? selected.description : 'Select topic'" persistent-hint :multiple="multiple"
         return-object variant="outlined" />
@@ -61,10 +61,12 @@
           console.log("TEST_MODE is enabled");
           options.value = [
             {
+              name: "origin/a/wis2/test2-centre/core/test2",
               topic: "origin/a/wis2/test1-centre/core/test1",
               description: "Test 1 description"
             },
             {
+              name: "origin/a/wis2/test2-centre/core/test2",
               topic: "origin/a/wis2/test2-centre/core/test2",
               description: "Test 2 description"
             },
@@ -82,14 +84,10 @@
               if (data.features) {
                 // Use Array.map to create a new array of the dataset IDs
                 options.value = data.features.map(feature => {
-                  if (feature.properties?.identifier) {
+                  if (feature.properties) {
                     return {
-                      id: feature.properties.identifier,
+                      name: feature.properties['wmo:topicHierarchy'],
                       topic: feature.properties['wmo:topicHierarchy'],
-                      metadata: {
-                        "id": feature.properties.identifier,
-                        "topic": feature.properties['wmo:topicHierarchy']
-                      },
                       description: feature.properties['description']
                     }
                   }

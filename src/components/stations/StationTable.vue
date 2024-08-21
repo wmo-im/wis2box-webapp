@@ -22,7 +22,7 @@
                   <v-card>
                     <v-card-text>Please type the WIGOS station identifier to confirm the deletion</v-card-text>
                     <v-card-item><v-text-field v-model="stationToDelete" label="Station to delete"></v-text-field></v-card-item>
-                    <v-card-item><v-text-field type="password" autocomplete="off" clearable v-model="token" label="Auth token"></v-text-field></v-card-item>
+                    <v-card-item><v-text-field type="password" autocomplete="one-time-code" clearable v-model="token" label="Auth token"></v-text-field></v-card-item>
                     <v-card-actions>
                       <v-btn
                           color="error"
