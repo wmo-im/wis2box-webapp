@@ -855,7 +855,7 @@ export default defineComponent({
         const message = ref("Select existing discovery metadata file or create a new file.");
         const submissionIssues = ref([]);
         // List of datasets to select from, if any
-        const items = ref([]);
+        const items = ref(['Loading...']);
         // Dialog for initial information when creating
         // a new dataset
         const showInitialDialog = ref(false);
