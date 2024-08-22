@@ -93,7 +93,6 @@ export default defineComponent({
                 if (feature.properties?.identifier) {
                   return {
                     id: feature.properties.identifier,
-                    topic: feature.properties['wmo:topicHierarchy'],
                     metadata: {
                       "id": feature.properties.identifier,
                       "topic": feature.properties['wmo:topicHierarchy']
