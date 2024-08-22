@@ -1,6 +1,6 @@
 <template>
     <div v-if="!errorMessage">
-      <v-select v-if="(options !== null)" :items="options" item-title="name" item-value="topic" :label="label"
+      <v-select v-if="(options !== null)" :items="options" item-title="topic" item-value="topic" :label="label"
         v-model="selected" :readonly="readonly" :rules="rules"
         :hint="selected ? selected.description : 'Select topic'" persistent-hint :multiple="multiple"
         return-object variant="outlined" />
@@ -61,12 +61,10 @@
           console.log("TEST_MODE is enabled");
           options.value = [
             {
-              name: "origin/a/wis2/test2-centre/core/test2",
               topic: "origin/a/wis2/test1-centre/core/test1",
               description: "Test 1 description"
             },
             {
-              name: "origin/a/wis2/test2-centre/core/test2",
               topic: "origin/a/wis2/test2-centre/core/test2",
               description: "Test 2 description"
             },
@@ -86,13 +84,11 @@
                 options.value = data.features.map(feature => {
                   if (feature.properties) {
                     return {
-                      name: feature.properties['wmo:topicHierarchy'],
                       topic: feature.properties['wmo:topicHierarchy'],
                       description: feature.properties['description']
                     }
                   }
-                }
-                );
+                });
               }
               else {
                 console.error("API response is not an object");
@@ -112,8 +108,8 @@
         let m = false;
         await fetchOptions();
         if (props.modelValue && props.modelValue.length) {
-          for (const topic of props.modelValue.topic) {
-            const option = options.value.find(option => option.value.topic === topic);
+          for (const topic of props.modelValue) {
+            const option = options.value.find(option => option.topic === topic);
             if (option) {
               m = true;
               selected.value.push(option);

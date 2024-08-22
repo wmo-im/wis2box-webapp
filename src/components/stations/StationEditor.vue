@@ -286,7 +286,7 @@ export default defineComponent({
               barometer_height: data.properties.barometer_height,
               wmo_region: data.properties.wmo_region,
               url: data.properties.url,
-              topics: JSON.parse(JSON.stringify(data.properties.topics)),
+              topics: data.properties.topics,
               status: data.properties.status,
               id: data.properties.id  // WSI
             }
