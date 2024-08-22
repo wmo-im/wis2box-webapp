@@ -5,33 +5,36 @@
     </v-card-title>
     <!-- Limit the size of the list and add scroll feature -->
     <v-card-text>
-      <v-text-field v-model="fileSearch" placeholder="Search for a file..." clearable/>
+      <v-text-field v-model="fileSearch" placeholder="Search for a file..." clearable variant="outlined" />
     </v-card-text>
     <div class="scrollable-file-list">
-      <template v-for="(file_url, index) in filteredFileUrls" :key="index">
+      <template v-for="(file, index) in filteredFiles" :key="index">
         <v-list class="file-list">
-            <v-row justify="center" align="center">
-              <v-col cols="5">
+          <v-row justify="center" align="center">
+            <v-col cols="5">
 
-                <!-- Display the timestamp -->
-                <div class="secondary">
-                  {{ formatTime(filteredPublishTimes[index]) }} UTC
-                </div>
+              <!-- Display the timestamp -->
+              <div class="secondary">
+                {{ formatTime(filteredPublishTimes[index]) }} UTC
+              </div>
 
-                <!-- Display the file name -->
-                <div class="url-font">
-                  {{ getFileName(file_url) }}
-                </div>
-              </v-col>
+              <!-- Display the file name -->
+              <div class="url-font">
+                {{ getFileName(file.url) }}
+              </div>
+            </v-col>
+            
+            <v-divider vertical class="mr-5"/>
 
-              <v-col cols="3">
-                <DownloadButton :fileName="getFileName(file_url)" :fileUrl="file_url" :block="true" />
-              </v-col>
+            <v-col cols="3">
+              <DownloadButton :fileName="getFileName(file.url)" :fileUrl="file.url" :block="true" />
+            </v-col>
 
-              <v-col cols="3">
-                <InspectBufrButton :fileName="getFileName(file_url)" :fileUrl="file_url" :block="true" />
-              </v-col>
-            </v-row>
+            <v-col cols="3">
+              <InspectBufrButton v-if="file.type === 'application/x-bufr'" :fileName="getFileName(file.url)"
+                :fileUrl="file.url" :block="true" />
+            </v-col>
+          </v-row>
         </v-list>
         <v-divider />
       </template>
@@ -42,8 +45,8 @@
 <script>
 import { defineComponent, ref, computed } from 'vue';
 import { VCard, VCardTitle } from 'vuetify/lib/components/index.mjs';
-import DownloadButton from './DownloadButton.vue';
-import InspectBufrButton from './InspectBufrButton.vue';
+import DownloadButton from '@/components/DownloadButton.vue';
+import InspectBufrButton from '@/components/InspectBufrButton.vue';
 
 export default defineComponent({
   name: 'PublishedData',
@@ -69,15 +72,18 @@ export default defineComponent({
 
     // Computed
 
-    // Filter the file URLs in published data by the search parameter
-    const filteredFileUrls = computed(() => {
-      // Create array of file urls from the messages
-      let fileUrls = props.messages.map(message => message.canonical_url);
+    // Filter the files in published data by the search parameter
+    const filteredFiles = computed(() => {
+      // Create array of objects with url and type from the messages
+      let fileObjects = props.messages.map(message => ({
+        url: message.canonical_url,
+        type: message.type
+      }));
 
       if (fileSearch.value) {
-        return fileUrls.filter(url => getFileName(url).includes(fileSearch.value));
+        return fileObjects.filter(file => getFileName(file.url).includes(fileSearch.value));
       }
-      return fileUrls;
+      return fileObjects;
     });
 
     // Filter the associated publish times by the search parameter
@@ -112,7 +118,7 @@ export default defineComponent({
 
     return {
       fileSearch,
-      filteredFileUrls,
+      filteredFiles,
       filteredPublishTimes,
       getFileName,
       formatTime

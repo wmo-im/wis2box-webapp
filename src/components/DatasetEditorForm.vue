@@ -82,7 +82,7 @@
                     </v-card-text>
                     <v-container>
                         <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
-                            :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                            :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'" autocomplete="one-time-code"
                             @click:append="showToken = !showToken" :rules="[rules.token]" variant="outlined">
                         </v-text-field>
                     </v-container>
@@ -390,7 +390,7 @@
                 </v-card-title>
                 <v-card-text>
                     <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
-                        :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                        :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'" autocomplete="one-time-code"
                         @click:append="showToken = !showToken" :rules="[rules.token]" variant="outlined">
                     </v-text-field>
                 </v-card-text>
@@ -855,7 +855,7 @@ export default defineComponent({
         const message = ref("Select existing discovery metadata file or create a new file.");
         const submissionIssues = ref([]);
         // List of datasets to select from, if any
-        const items = ref([]);
+        const items = ref(['Loading...']);
         // Dialog for initial information when creating
         // a new dataset
         const showInitialDialog = ref(false);
@@ -1073,7 +1073,6 @@ export default defineComponent({
                 // Get CSV response and parse it into an object
                 const responseData = await response.text();
                 const parsed = Papa.parse(responseData, { header: true });
-                console.log(parsed.data)
                 // Filter out any empty data (the final row of the CSV)
                 const filteredData = parsed.data.filter(item => item.Name && item.Description);
                 // Map this data into the correct format for the v-select component

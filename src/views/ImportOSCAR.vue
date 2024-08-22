@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-  import ImportOSCAR from '@/components/ImportOSCAR.vue'
+  import ImportOSCAR from '@/components/stations/ImportOSCAR.vue'
 </script>

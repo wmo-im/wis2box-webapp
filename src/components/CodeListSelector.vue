@@ -21,6 +21,8 @@
       clearable
       persistent-hint
       return-object
+      variant="outlined"
+      class="my-5"
       />
     </div>
     <div v-else class="error">
@@ -29,14 +31,14 @@
 </template>
 
 <script>
-  import { defineComponent, ref, onBeforeMount, watch, onMounted} from 'vue';
-  import { VCard, VCardItem, VAutocomplete} from 'vuetify/lib/components/index.mjs';
+  import { defineComponent, ref, onBeforeMount, watch } from 'vue';
+  import { VCard, VAutocomplete} from 'vuetify/lib/components/index.mjs';
 
 
   export default defineComponent({
     name: 'CodeListSelector',
     components: {
-      VCard, VCardItem, VAutocomplete
+      VCard, VAutocomplete
     },
     props: {
       codeList: {type: String},

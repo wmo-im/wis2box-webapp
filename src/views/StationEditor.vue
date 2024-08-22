@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-  import StationEditor from '@/components/StationEditor.vue'
+  import StationEditor from '@/components/stations/StationEditor.vue'
 </script>

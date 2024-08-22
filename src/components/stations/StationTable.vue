@@ -5,7 +5,7 @@
       <v-card>
         <v-card-title class="big-title">Stations</v-card-title>
         <v-card-item v-if="items">
-          <VTextField style="width: 400px;" v-model="search" prepend-icon="mdi-text-search" label="Search" single-line hide-details></VTextField>
+          <VTextField style="width: 400px;" v-model="search" prepend-icon="mdi-text-search" label="Search" single-line hide-details variant="outlined"></VTextField>
           <VDataTable :headers="headers" :items="items" :search="search" dense small>
               <template v-slot:item.actions="{ item }">
                 <v-icon size="small" @click="editRecord(item)">mdi-pen</v-icon>
@@ -22,7 +22,7 @@
                   <v-card>
                     <v-card-text>Please type the WIGOS station identifier to confirm the deletion</v-card-text>
                     <v-card-item><v-text-field v-model="stationToDelete" label="Station to delete"></v-text-field></v-card-item>
-                    <v-card-item><v-text-field type="password" clearable v-model="token" label="Auth token"></v-text-field></v-card-item>
+                    <v-card-item><v-text-field type="password" autocomplete="one-time-code" clearable v-model="token" label="Auth token"></v-text-field></v-card-item>
                     <v-card-actions>
                       <v-btn
                           color="error"
@@ -82,6 +82,7 @@ export default defineComponent({
             throw new Error(`HTTP error! Status: ${response.status}`);
           }else{
             let featureCollection = await response.json();
+            console.log("featureCollection", featureCollection);
             items.value = featureCollection.features.map( (feature) => {
               return{
                 actions: "actions",

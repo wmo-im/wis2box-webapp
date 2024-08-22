@@ -23,8 +23,8 @@
                         value="2" :color="step2Color">
                     </v-stepper-item>
                     <v-stepper-item
-                        :complete="status.topicHierarchy"
-                        title="Select topic hierarchy"
+                        :complete="status.datasetIdentifier"
+                        title="Select dataset"
                         value="3" :color="step3Color">
                     </v-stepper-item>
                     <v-stepper-item
@@ -76,7 +76,7 @@
                             </v-card-item>
                             <v-card-item>
                                 <v-list v-if="validationWarnings.length > 0">
-                                    <v-list-item v-for="message in validationWarnings" base-color="warning">
+                                    <v-list-item v-for="message in validationWarnings" :key="message" base-color="warning">
                                         <template v-slot:prepend>
                                             <v-icon icon="mdi-alert-circle"></v-icon>
                                         </template>
@@ -84,7 +84,7 @@
                                     </v-list-item>
                                 </v-list>
                                 <v-list v-if="validationErrors.length > 0">
-                                    <v-list-item v-for="message in validationErrors" base-color="error">
+                                    <v-list-item v-for="message in validationErrors" :key="message" base-color="error">
                                         <template v-slot:prepend>
                                             <v-icon icon="mdi-alert-circle"></v-icon>
                                         </template>
@@ -96,10 +96,10 @@
                     </v-stepper-window-item>
                     <v-stepper-window-item value="3">
                         <v-card>
-                            <v-card-title>Select topic hierarchy</v-card-title>
-                            <v-card-item>
-                              <TopicHierarchySelector :value="topicSelected" @update:modelValue="newValue => topicSelected = newValue"/>
-                            </v-card-item>
+                            <v-card-title>Select dataset identifier</v-card-title>
+                            <v-col cols="12">
+                                <DatasetIdentifierSelector :value="datasetSelected" @update:modelValue="newValue => datasetSelected = newValue"/>
+                            </v-col>
                         </v-card>
                     </v-stepper-window-item>
                     <v-stepper-window-item value="4">
@@ -107,7 +107,7 @@
                             <v-card-title>Authorize and publish</v-card-title>
                             <v-card-text>
                               <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
-                              :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                              :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'" autocomplete="one-time-code"
                               @click:append="showToken = !showToken"
                               :rules="[v => !!v || 'Token is required']"
                               variant="outlined">
@@ -253,7 +253,7 @@
     import { VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem, VStepperActions} from 'vuetify/lib/components/index.mjs';
     import InspectBufrButton from '@/components/InspectBufrButton.vue';
     import DownloadButton from '@/components/DownloadButton.vue';
-    import TopicHierarchySelector from '@/components/TopicHierarchySelector.vue';
+    import DatasetIdentifierSelector from '@/components/DatasetIdentifierSelector.vue';
     import * as d3 from 'd3';
     export default defineComponent({
         name: 'CsvToBUFRForm',
@@ -262,7 +262,7 @@
             VChip, VTooltip, VListItem, VList, VContainer,
             VCardTitle, VIcon, VStepper, VStepperHeader, VStepperItem, VStepperWindow, VStepperWindowItem,
             VStepperActions, VDialog, InspectBufrButton, DownloadButton,
-            TopicHierarchySelector
+            DatasetIdentifierSelector
         },
         setup() {
             // reactive variables
@@ -273,21 +273,20 @@
             const step=ref(0);
             const validationWarnings = ref([]);
             const validationErrors = ref([]);
-            const status = ref(null);
+            const status = ref({
+                fileLoaded: false,
+                fileValidated: false,
+                datasetIdentifier: false,
+                password: false
+            });
             // Variable to control whether token is seen or not
             const showToken = ref(false);
             const token = ref(null);
-            const topicSelected = ref(null);
+            const datasetSelected = ref(null);
             const rawCSV = ref(null);
             const msg = ref(null);
             const showDialog = ref(null);
             const scrollRef = ref(null);
-            status.value = {
-                fileLoaded: false,
-                fileValidated: false,
-                topicHierarchy: false,
-                password: false
-            }
             const result = ref(null);
             const notificationsOnPending = ref(false);
 
@@ -309,7 +308,7 @@
                 return "#003DA5"
             })
             const step3Color = computed(() => {
-                if (status.value.topicHierarchy) {
+                if (status.value.datasetIdentifier) {
                     return "#64BF40"
                 }
                 return "#003DA5"
@@ -321,7 +320,7 @@
                 return "#003DA5"
             })
             const step5Complete = computed(() => {
-                return status.value.fileLoaded && status.value.fileValidated && status.value.topicHierarchy && status.value.password && status.value.submitted;
+                return status.value.fileLoaded && status.value.fileValidated && status.value.datasetIdentifier && status.value.password && status.value.submitted;
             })
             const step5Color = computed(() => {
                 if (step5Complete.value) {
@@ -337,11 +336,11 @@
                 return "Unknown";
             });
             const numberNotifications = computed( () => {
-                var messagesPublished = 0;
+                let messagesPublished = 0;
                 if( result.value ){
                   messagesPublished = result.value['messages published'];
                 }
-                return "WIS2 notifications published: " + messagesPublished;;
+                return "WIS2 notifications published: " + messagesPublished;
             });
             // life cycle hooks
             onMounted( () => {
@@ -359,8 +358,8 @@
                     // load schema
                     await fetch("./csv2bufr/csvw_schema.json").then( (response) => response.json() ).then( (theData) => {schema.value = theData.tableSchema.columns});
                     // now load the data file
-                    var reader = new FileReader();
-                    reader.readAsText(incomingFile.value[0]);
+                    let reader = new FileReader();
+                    reader.readAsText(incomingFile.value);
                     reader.onload = async () => {
                         validationErrors.value = [];
                         validationWarnings.value = [];
@@ -376,9 +375,9 @@
                             divider: true
                         }));
                         // check the headers against the schema
-                        for(var column in headers.value ){
-                            var key = headers.value[column].key
-                            var schemaColumn = schema.value.find( col => col.titles === key )
+                        for(let column in headers.value ){
+                            let key = headers.value[column].key
+                            let schemaColumn = schema.value.find( col => col.titles === key )
                             if( ! schemaColumn ){
                                 validationWarnings.value.push("Column '" + key +
                                     "' not found in schema, data will be skipped")
@@ -390,29 +389,29 @@
                                 schemaColumn.present = true;
                             }
                         }
-                        for(var col in schema.value){
+                        for(let col in schema.value){
                             if(!schema.value[col].present){
-                                key = schema.value[col].titles;
+                                let key = schema.value[col].titles;
                                 validationWarnings.value.push("Column '" + key +
                                     "' missing from data file, data will be set to missing in BUFR encoding");
                             }
                         }
                         // now validate the data
-                        var count = 0;
+                        let count = 0;
                         for(const record of theData.value){
                             count++;
                             for( const key in record){
-                                var header = headers.value.find(header => header.key === key );
-                                var value = record[key];
+                                let header = headers.value.find(header => header.key === key );
+                                let value = record[key];
                                 record[key] = {
                                     value: value,
                                     status: "",
                                     msg: ""
                                 }
-                                var valid_min = false;
-                                var valid_max = false;
-                                var msg = "";
-                                var status = "success";
+                                let valid_min = false;
+                                let valid_max = false;
+                                let msg = "";
+                                let status = "success";
                                 if( header.inSchema ){
                                     if( header.dataType.minimum ){
                                         valid_min = header.dataType.minimum
@@ -433,7 +432,6 @@
                                         status = 'error';
                                         validationErrors.value.push(msg);
                                     }
-                                    // console.log(status + ": " + msg);
                                 }else{
                                     status = "warning";
                                     msg = "Field not in schema";
@@ -446,11 +444,11 @@
                                 record[key].status = status;
                                 record[key].msg = msg;
                             }
-                        };
+                        }
                         // get limits and kind from schema
                     };
                     step.value = 1;
-                };
+                }
             };
             const submit = async() => {
                 CsvToBUFR();
@@ -460,7 +458,8 @@
               const payload = {
                   inputs: {
                       data: rawCSV.value,
-                      channel: topicSelected.value.id,
+                      channel: datasetSelected.value.metadata.topic,
+                      metadata_id: datasetSelected.value.metadata.id,
                       notify: notificationsOnPending.value,
                       template: "aws-template"
                   }
@@ -501,7 +500,7 @@
                 const data = await response.json();
                 result.value = data;
                 result.value.files = [];
-                for( var item in result.value.data_items){
+                for( let item in result.value.data_items){
                   result.value.files.push( result.value.data_items[item].file_url);
                 }
               }
@@ -510,7 +509,7 @@
                 step.value = step.value === 0 ? 0 : step.value - 1;
             };
             const next = () => {
-                var proceed = false;
+                let proceed = false;
                 switch (step.value){
                   case 0:
                     if( status.value.fileLoaded){
@@ -532,12 +531,11 @@
                     }
                     break;
                   case 2:
-                    if( status.value.topicHierarchy ){
+                    if( status.value.datasetIdentifier ){
                       proceed = true;
                     }else{
                       showDialog.value = true;
-                      console.log(topicSelected.value)
-                      msg.value = "Please select a topic to publish on before proceeding";
+                      msg.value = "Please select a dataset to publish on before proceeding";
                     }
                     break;
                   case 3:
@@ -555,22 +553,15 @@
                 }
             };
 
-            // Define watches
-            watch( topicSelected, (val) => {
-              console.log(val);
-              if( val ){
-                status.value.topicHierarchy = true;
-              }else{
-                status.value.topicHierarchy = false;
-              }
+            // Watchers
+            watch( datasetSelected, (val) => {
+              status.value.datasetIdentifier = !!val;
             });
+  
             watch( incomingFile, (val) => {
-              if( val && val.length > 0){
-                status.value.fileLoaded = true;
-              }else{
-                status.value.fileLoaded = false;
-              }
-            } );
+              status.value.fileLoaded = !!val;
+            });
+  
             watch( validationErrors, (val) => {
               if( val && val.length > 0 ){
                 status.value.fileValidated = false;
@@ -578,7 +569,8 @@
                 status.value.fileValidated = true;
               }
             });
-            watch( token, (val) => {
+
+            watch( token, () => {
               if( token.value && token.value.length > 0 ){
                 status.value.password = true;
               }else{
@@ -588,7 +580,7 @@
 
             return {theData, headers, incomingFile, loadCSV, step, prev, next, scrollToRef,
                     validationWarnings, validationErrors, status, showToken, token, notificationsOnPending, step1Color, step2Color, step3Color, step4Color, step5Complete, step5Color,
-                    topicSelected, submit, msg, showDialog, result, resultTitle, numberNotifications};
+                    datasetSelected, submit, msg, showDialog, result, resultTitle, numberNotifications};
         },
     })
 </script>

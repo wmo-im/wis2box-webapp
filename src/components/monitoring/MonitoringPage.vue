@@ -4,14 +4,14 @@
             <v-card-title class="big-title">WIS2 Notifications Monitoring Dashboard</v-card-title>
 
             <v-card-item>
-                <!-- Drop down selection for the topic the user wants to monitor -->
-                <v-row>
+                <!-- Drop down selection for the dataset ID the user wants to monitor -->
+                <v-row class="mt-2">
                     <v-col cols="10">
-                        <TopicHierarchySelector v-model="selectedTopicTemp" class="mb-3"></TopicHierarchySelector>
+                        <DatasetIdentifierSelector v-model="selectedDatasetTemp" class="mb-3"></DatasetIdentifierSelector>
                     </v-col>
                 </v-row>
                 <!-- Remaining selections: datetime range, WSI, and limit -->
-                <v-row>
+                <v-row class="my-0">
                     <v-col>
                         <v-row>
                             <v-col cols="5">
@@ -52,7 +52,7 @@
         <v-col cols="12" class="max-dashboard-width">
             <!-- Dashboard visualising the notifications of the topic selected -->
             <!-- A key is needed to ensure this dashboard updates when the props are changed -->
-            <NotificationDashboard :topicHierarchy="selectedTopic.id" :startDate="selectedStartDate"
+            <NotificationDashboard :datasetID="selectedDataset.metadata.id" :startDate="selectedStartDate"
                 :endDate="selectedEndDate" :wsi="searchedWsi" :limit="selectedLimit" v-if="showDashboard"
                 :key="dashboardKey" class="my-4" />
         </v-col>
@@ -64,20 +64,20 @@ import { defineComponent, ref, computed } from 'vue';
 import { VCardTitle } from 'vuetify/lib/components/index.mjs';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
-import TopicHierarchySelector from './TopicHierarchySelector.vue';
-import NotificationDashboard from '@/components/NotificationDashboard.vue';
+import DatasetIdentifierSelector from '@/components/DatasetIdentifierSelector.vue';
+import NotificationDashboard from '@/components/monitoring/NotificationDashboard.vue';
 
 export default defineComponent({
     name: 'MonitoringPage',
     components: {
         VCardTitle,
         VueDatePicker,
-        TopicHierarchySelector,
+        DatasetIdentifierSelector,
         NotificationDashboard
     },
     setup() {
         // Static variables
-
+        const testMode = import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined;
         const now = new Date();
         const twentyFourHoursAgo = new Date(now.getTime() - 86400000);
 
@@ -89,8 +89,8 @@ export default defineComponent({
 
         // Topic selected by the user, used to get the topic hierarchy
         // from the topics array
-        const selectedTopicTemp = ref(null);
-        const selectedTopic = ref(null);
+        const selectedDatasetTemp = ref(null);
+        const selectedDataset = ref(null);
         // Date range for notifications, defaults to [24 hours from now, now]
         const selectedDateRangeTemp = ref([twentyFourHoursAgo, now]);
         const selectedStartDate = ref(twentyFourHoursAgo);
@@ -104,15 +104,15 @@ export default defineComponent({
         const selectedLimitTemp = ref(100);
         const selectedLimit = ref(100);
         // Boolean to show the notification dashboard
-        const showDashboard = ref(false);
         // Key to make sure dashboard always updates when the update button is pressed
+        const showDashboard = ref(false);
         const dashboardKey = ref(0);
 
         // Computed
 
         // Boolean for whether the monitor button is disabled or not
         const updateDisabled = computed(() => {
-            return !selectedTopicTemp.value || !selectedDateRangeTemp.value || (selectedDateRangeTemp.value.length !== 2)
+            return !selectedDatasetTemp.value || !selectedDateRangeTemp.value || (selectedDateRangeTemp.value.length !== 2)
         })
 
         // Methods
@@ -121,7 +121,7 @@ export default defineComponent({
         // user clicks on the monitor button
         const handleUpdate = () => {
             // Update props
-            selectedTopic.value = selectedTopicTemp.value;
+            selectedDataset.value = selectedDatasetTemp.value;
             selectedStartDate.value = new Date(selectedDateRangeTemp.value[0]);
             selectedEndDate.value = new Date(selectedDateRangeTemp.value[1]);
             searchedWsi.value = searchedWsiTemp.value;
@@ -130,14 +130,17 @@ export default defineComponent({
             dashboardKey.value++
             // Display dashboard
             showDashboard.value = true;
-            // Log
-            console.log('Sent start time:', selectedStartDate.value.toISOString())
-            console.log('Sent end time:', selectedEndDate.value.toISOString())
+            // Log in test mode
+            if (testMode) {
+                console.log('TEST_MODE is enabled')
+                console.log('Sent start time:', selectedStartDate.value.toISOString())
+                console.log('Sent end time:', selectedEndDate.value.toISOString())
+            }
         }
 
         return {
-            selectedTopicTemp,
-            selectedTopic,
+            selectedDatasetTemp,
+            selectedDataset,
             selectedDateRangeTemp,
             selectedStartDate,
             selectedEndDate,
