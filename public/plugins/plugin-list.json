@@ -40,6 +40,14 @@
       "defaultBuckets": ["wis2box-public"],
       "defaultFilePattern": "^WIGOS_(\\d-\\d+-\\d+-\\w+)_.*\\.bufr4$",
       "hint": "The regex pattern must contain the WIGOS station identifier"
+    },
+    {
+      "title": "CAP messages",
+      "id": "wis2box.data.cap_message.CAPMessageData",
+      "defaultFileExtension": "xml",
+      "defaultBuckets": ["wis2box-incoming"],
+      "defaultFilePattern": "^.*\\.xml$",
+      "hint": ""
     }
   ],
   "templates": [

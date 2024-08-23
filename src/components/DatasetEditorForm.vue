@@ -1003,6 +1003,8 @@ export default defineComponent({
                 console.error(error);
                 // Display error message to the user
                 message.value = 'Error loading discovery metadata list.';
+                // Empty items
+                items.value = []
             }
             // Now add the option to create a new dataset, regardless of whether
             // the list could be loaded or not
