@@ -4,7 +4,7 @@
             <!-- Form entry --><v-fade-transition appear>
                 <v-card>
                     <!-- Font size of title for tablets and desktops -->
-                    <v-card-title class="big-title">Submit FM 12–XIV Ext. SYNOP Bulletin</v-card-title>
+                    <v-card-title class="big-title">Submit <a href="https://library.wmo.int/idviewer/35713/33">FM 12–XIV Ext. SYNOP</a> Bulletin</v-card-title>
                     <v-card-item>
                         <v-container>
                             <v-form>
@@ -350,7 +350,7 @@ export default defineComponent({
             result.value = testData;
         }
 
-        // Simulated output response in test environment 
+        // Simulated output response in test environment
         // representing a partial success
         const testPartialSuccessResult = () => {
             const testData = {
@@ -400,7 +400,7 @@ export default defineComponent({
                 inputs: {
                     data: bulletin.value, // Raw FM 12 data
                     year: date.value.year, // Year of data
-                    month: date.value.month + 1, // Month of data, +1 as JS starts 
+                    month: date.value.month + 1, // Month of data, +1 as JS starts
                     // from 0 for months
                     channel: datasetSelected.value.metadata.topic, // Topic hierarchy
                     metadata_id: datasetSelected.value.metadata.id, // Dataset identifier
@@ -448,8 +448,8 @@ export default defineComponent({
             }
         }
 
-        // Method for when the user presses the submit button, 
-        // including a loading animation and obtaining the result 
+        // Method for when the user presses the submit button,
+        // including a loading animation and obtaining the result
         const submit = async () => {
             // Start loading animation
             loading.value = true;
