@@ -3,16 +3,16 @@
           <v-card-title class="big-title">Submit CSV Data</v-card-title>
             <v-dialog v-model="showDialog" width="auto">
               <v-card>
-                <v-card-text>
-                  See the <a href="https://docs.wis2box.wis.wmo.int/en/latest/user/data-ingest.html#wis2box-webapp">
-                  WIS2box documentation</a> for information on CSV formatted data
-                </v-card-text>
                 <v-card-text>{{msg}}</v-card-text>
                 <v-card-actions>
                   <v-btn color="primary" block @click="showDialog = false">Close</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
+            <v-card-text>
+              See the <a href="https://docs.wis2box.wis.wmo.int/en/latest/user/data-ingest.html#wis2box-webapp">
+              WIS2box documentation</a> for information on CSV formatted data
+            </v-card-text>
             <v-stepper show-actions v-model="step">
                 <v-stepper-header>
                     <v-stepper-item
@@ -561,11 +561,11 @@
             watch( datasetSelected, (val) => {
               status.value.datasetIdentifier = !!val;
             });
-  
+
             watch( incomingFile, (val) => {
               status.value.fileLoaded = !!val;
             });
-  
+
             watch( validationErrors, (val) => {
               if( val && val.length > 0 ){
                 status.value.fileValidated = false;
