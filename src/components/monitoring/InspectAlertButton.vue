@@ -1,11 +1,11 @@
 <template>
-  <v-btn color="#49C6E5" :block="block" append-icon="mdi-feature-search"
-    @click="downloadAndInspectXML">Inspect Alert</v-btn>
+  <v-btn color="#49C6E5" :block="block" append-icon="mdi-feature-search" @click="downloadAndFormatXML">Inspect
+    Alert</v-btn>
   <v-dialog v-model="dialog" max-width="1000px">
     <v-card>
       <v-card-title>{{ props.fileName }}</v-card-title>
       <v-container>
-        <div v-html="parsedXMLContent"/>
+        <div v-html="transformedHtml" />
       </v-container>
     </v-card>
   </v-dialog>
@@ -37,31 +37,38 @@ export default defineComponent({
   },
   setup(props) {
     const dialog = ref(false);
-    const parsedXMLContent = ref(null);
+    const transformedHtml = ref('');
 
-    const parseXML = (data) => {
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(data, 'application/xml');
-      const serializer = new XMLSerializer();
-      return serializer.serializeToString(xmlDoc);
-    };
+    const downloadAndFormatXML = async () => {
+      try {
+        // Fetch XML data
+        const xmlResponse = await fetch(props.fileUrl);
+        const xmlText = await xmlResponse.text();
+        const parser = new DOMParser();
+        const xmlData = parser.parseFromString(xmlText, 'application/xml');
 
-    const downloadAndInspectXML = async () => {
-      const response = await fetch(props.fileUrl);
-      if (!response.ok) {
-        console.error("HTTP error", response.status);
-        return;
+        // Fetch XSL stylesheet
+        const xslResponse = await fetch(`${import.meta.env.VITE_BASE_URL}/styles/cap-style.xsl`);
+        const xslText = await xslResponse.text();
+        const xslData = parser.parseFromString(xslText, 'application/xml');
+
+        // Transform XML using XSLTProcessor
+        const xsltProcessor = new XSLTProcessor();
+        xsltProcessor.importStylesheet(xslData);
+
+        const resultDocument = xsltProcessor.transformToFragment(xmlData, document);
+        transformedHtml.value = new XMLSerializer().serializeToString(resultDocument);
+      } catch (error) {
+        console.error('Error fetching or transforming XML:', error);
       }
-      const data = await response.text();
-      parsedXMLContent.value = parseXML(data);
       dialog.value = true;
     };
 
     return {
       props,
-      parsedXMLContent,
+      transformedHtml,
       dialog,
-      downloadAndInspectXML
+      downloadAndFormatXML
     };
   }
 });
