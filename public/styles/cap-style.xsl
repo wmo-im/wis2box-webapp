@@ -12,10 +12,10 @@
                 <meta name="description" content="Emergency alert in Common Alerting Protocol (CAP) format"/>
                 <meta name="keywords" content="alert, warning, emergency"/>
                 <meta name="revisit" content="1 days"/>
-                <link rel="stylesheet" type="text/css" href="/static/css/bulma.min.604205736eda.css"/>
-                <link rel="stylesheet" href="/static/css/maplibre-gl.bf5a38917e01.css"/>
-                <script type="text/javascript" src="/static/js/maplibre-gl.59dc07c01249.js"></script>
-                <script type="text/javascript" src="/static/js/turf.min.9b592d24b14c.js"></script>
+                <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min"/>
+                <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js" type="text/javascript"></script>
+                <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
+                <script src="https://unpkg.com/@turf/turf/turf.min.js" type="text/javascript"></script>
                 <style>
                 html, body {
                     height: 100%;
@@ -197,9 +197,6 @@
             </style>
             </head>
             <body class="container">
-                <div style="display: flex;justify-content: center;margin-bottom: 20px">
-                    <img style="height: 70px" src="/media/images/MicrosoftTeams-image_1.original.png" alt="Logo"/>
-                </div>
                 <!-- To customize the Web page, insert here the HTML code for a page header  -->
                 <!-- CAP Headline -->
                 <h2 class="title" style="margin: 20px 0">

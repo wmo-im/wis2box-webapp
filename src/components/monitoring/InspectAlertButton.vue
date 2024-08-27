@@ -3,8 +3,11 @@
     Alert</v-btn>
   <v-dialog v-model="dialog" max-width="1000px">
     <v-card>
-      <v-card-title>{{ props.fileName }}</v-card-title>
-      <v-container>
+      <v-toolbar :title="fileName" :color="errorMsg ? error : '#49C6E5'">
+        <v-btn icon="mdi-close" variant="text" size="small" @click="dialog = false" />
+      </v-toolbar>
+      <v-container class="scrollable-alert px-5">
+        <div v-if="errorMsg">{{ errorMsg }}</div>
         <div v-html="transformedHtml" />
       </v-container>
     </v-card>
@@ -13,7 +16,7 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { VCard, VCardTitle, VDialog } from 'vuetify/lib/components/index.mjs';
+import { VDialog, VCard, VToolbar } from 'vuetify/lib/components/index.mjs';
 
 export default defineComponent({
   name: 'InspectAlertButton',
@@ -33,11 +36,12 @@ export default defineComponent({
     }
   },
   components: {
-    VCard, VCardTitle, VDialog
+    VDialog, VCard, VToolbar
   },
   setup(props) {
     const dialog = ref(false);
     const transformedHtml = ref('');
+    const errorMsg = ref(null);
 
     const downloadAndFormatXML = async () => {
       try {
@@ -52,14 +56,16 @@ export default defineComponent({
         const xslText = await xslResponse.text();
         const xslData = parser.parseFromString(xslText, 'application/xml');
 
-        // Transform XML using XSLTProcessor
+        // Create XSLTProcessor using stylesheet
         const xsltProcessor = new XSLTProcessor();
         xsltProcessor.importStylesheet(xslData);
 
+        // Transform XML data using XSLTProcessor
         const resultDocument = xsltProcessor.transformToFragment(xmlData, document);
         transformedHtml.value = new XMLSerializer().serializeToString(resultDocument);
       } catch (error) {
         console.error('Error fetching or transforming XML:', error);
+        errorMsg.value = 'Error fetching or transforming XML, please check the console.';
       }
       dialog.value = true;
     };
@@ -68,8 +74,17 @@ export default defineComponent({
       props,
       transformedHtml,
       dialog,
+      errorMsg,
       downloadAndFormatXML
     };
   }
 });
 </script>
+
+<style scoped>
+.scrollable-alert {
+  overflow-y: auto;
+  max-height: 800px;
+  max-width: 1600px;
+}
+</style>
