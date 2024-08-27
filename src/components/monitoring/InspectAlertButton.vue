@@ -8,7 +8,7 @@
       </v-toolbar>
       <v-container class="scrollable-alert px-5">
         <div v-if="errorMsg">{{ errorMsg }}</div>
-        <div v-html="transformedHtml" />
+        <div id="result" v-html="transformedHtml" />
       </v-container>
     </v-card>
   </v-dialog>
@@ -17,6 +17,7 @@
 <script>
 import { defineComponent, ref } from 'vue';
 import { VDialog, VCard, VToolbar } from 'vuetify/lib/components/index.mjs';
+
 
 export default defineComponent({
   name: 'InspectAlertButton',
@@ -43,6 +44,44 @@ export default defineComponent({
     const transformedHtml = ref('');
     const errorMsg = ref(null);
 
+    const loadScript = (src) => {
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    };
+
+    const insertAndExecute = async (id, htmlResult) => {
+      const container = document.getElementById(id);
+      if (!container) {
+        console.error(`Element with id ${id} not found`);
+        return;
+      }
+      container.appendChild(htmlResult);
+      const scripts = container.getElementsByTagName("script");
+      const externalScripts = [];
+
+      // First load all external scripts
+      for (const script of scripts) {
+        if (script.src) {
+          externalScripts.push(loadScript(script.src));
+        }
+      }
+
+      // Wait for all external scripts to load
+      await Promise.all(externalScripts);
+
+      // Execute inline scripts
+      for (const script of scripts) {
+        if (!script.src) {
+          new Function(script.innerText || script.textContent)();
+        }
+      }
+    };
+
     const downloadAndFormatXML = async () => {
       try {
         // Fetch XML data
@@ -62,6 +101,9 @@ export default defineComponent({
 
         // Transform XML data using XSLTProcessor
         const resultDocument = xsltProcessor.transformToFragment(xmlData, document);
+
+        // Insert and execute scripts
+        await insertAndExecute('result', resultDocument);
         transformedHtml.value = new XMLSerializer().serializeToString(resultDocument);
       } catch (error) {
         console.error('Error fetching or transforming XML:', error);
