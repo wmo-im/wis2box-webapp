@@ -104,7 +104,7 @@ export default defineComponent({
                 let coords = feature.geometry?.coordinates;
 
                 // Check if coordinates are defined before proceeding
-                if (!coords) return;
+                if (!coords || coords.length !== 2) return;
 
                 // Swap coordinates to [lat, lon] for Leaflet
                 coords = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
@@ -137,7 +137,9 @@ export default defineComponent({
                 stationLayer.value.addLayer(marker);
                 bounds.extend(coords)
             })
-            map.value.fitBounds(bounds);
+            if (bounds.isValid()) {
+                map.value.fitBounds(bounds);
+            }
         };
 
         onMounted(() => {

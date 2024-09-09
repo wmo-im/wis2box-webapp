@@ -4,7 +4,8 @@
             <!-- Form entry --><v-fade-transition appear>
                 <v-card>
                     <!-- Font size of title for tablets and desktops -->
-                    <v-card-title class="big-title">Submit <a href="https://library.wmo.int/idviewer/35713/33">FM 12–XIV Ext. SYNOP</a> Bulletin</v-card-title>
+                    <v-card-title class="big-title">Submit FM 12–XIV Ext. SYNOP Bulletin</v-card-title>
+                    <v-card-text>See the WMO <a href="https://library.wmo.int/idviewer/35713/33">Manual on Codes, Volume I.1</a>, for a description of the FM 12-XIV Ext. SYNOP format</v-card-text>
                     <v-card-item>
                         <v-container>
                             <v-form>

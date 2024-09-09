@@ -101,12 +101,13 @@ export default defineComponent({
       return publishTimes;
     });
 
-    // Computed
-    const fileIsCAP = (file) => {
-      return file.type === 'application/octet-stream' && file.url.endsWith('.xml');
-    };
-
     // Methods
+
+    const fileIsCAP = (file) => {
+      return file.type === 'application/octet-stream' &&
+         file.url.endsWith('.xml') &&
+         file.url.includes('cap');
+    };
 
     // Method to get filename from the canonical href
     const getFileName = (url) => {
