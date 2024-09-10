@@ -189,11 +189,11 @@ export default defineComponent({
             const data = await response.json();
             // check for errors
             if (data.error) {
-                console.info("bufr2geojon returned the error:", data.error);
+                console.info("cap2geojson returned the error:", data.error);
                 result.value.error = data.error;
             }
-
-            result.value = extractInfo(data);
+            const alert = data.items[0]
+            result.value = extractInfo(alert);
         };
 
         const inspectFile = async () => {
