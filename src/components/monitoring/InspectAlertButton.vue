@@ -5,15 +5,15 @@
                 @click="inspectFile">View Alert</v-btn>
         </template>
         <v-card>
-            <v-toolbar :title="result.headline" color="#003DA5">
-                <v-btn icon="mdi-close" variant="text" size="small"
-                    @click="dialog = false" />
+            <v-toolbar :title="createTitle(result.headline)" color="#003DA5">
+                <v-btn icon="mdi-close" variant="text" size="small" @click="dialog = false" />
             </v-toolbar>
             <!-- Essential info -->
             <v-card-text align="center" class="pb-1">
                 <div class="summary-info">
                     <b>Status:</b> {{ result.status }} <b class="info-label">Scope:</b> {{ result.scope }}
-                    <b class="info-label">Sent:</b> {{ result.sent }} <b class="info-label">Sender:</b> {{ result.senderName }}
+                    <b class="info-label">Sent:</b> {{ result.sent }} <b class="info-label">Sender:</b> {{
+                    result.senderName }}
                 </div>
                 <v-divider width="90%"></v-divider>
             </v-card-text>
@@ -37,7 +37,7 @@
                     <!-- Left side of window display map -->
                     <v-col cols="6">
                         <v-card-item>
-                            <CAPMap :feature="result.feature"/>
+                            <CAPMap :feature="result.feature" />
                         </v-card-item>
                     </v-col>
                     <v-divider vertical inset></v-divider>
@@ -108,6 +108,16 @@ export default defineComponent({
         const testMode = import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined;
 
         // Methods
+        const createTitle = (headline) => {
+            if (!headline || headline === "") {
+                headline = "No headline provided";
+            }
+            if (headline.length > 50) {
+                return headline.substring(0, 100) + "...";
+            }
+            return 'Alert: ' + headline;
+        };
+
         const makeReadable = (key) => {
             if (key === 'msgType') {
                 return 'Message Type';
@@ -127,7 +137,6 @@ export default defineComponent({
 
             // Extract the rest of the properties apart from those above
             const properties = { ...data?.features[0]?.properties };
-            delete properties.headline;
             delete properties.status;
             delete properties.scope;
             delete properties.senderName;
@@ -157,14 +166,23 @@ export default defineComponent({
         };
 
         const loadData = async () => {
-            let payload = {
-                inputs: {
-                    data: props.data
-                }
-            };
+            // Determine whether we have data or need to load the data from a file
+            let payload;
+            if (props.fileUrl !== "") {
+                payload = {
+                    inputs: {
+                        data_url: props.fileUrl
+                    }
+                };
+            } else if (props.data !== "") {
+                payload = {
+                    inputs: {
+                        data: props.data
+                    }
+                };
+            }
 
             let response;
-
             if (!testMode) {
                 const apiURL = `${import.meta.env.VITE_API_URL}/processes/cap2geojson/execution`;
                 response = await fetch(apiURL, {
@@ -201,7 +219,7 @@ export default defineComponent({
             dialog.value = true;
         };
 
-        return { result, dialog, makeReadable, inspectFile };
+        return { result, dialog, createTitle, makeReadable, inspectFile };
     }
 });
 </script>
