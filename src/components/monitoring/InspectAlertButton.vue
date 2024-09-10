@@ -47,7 +47,8 @@
                             <div v-for="(value, key) in result.properties" :key="key">
                                 <v-list-item class="key-value-pair">
                                     <div class="key">{{ makeReadable(key) }}:</div>
-                                    <div>{{ value }}</div>
+                                    <div v-if="value">{{ value }}</div>
+                                    <div v-else>N/A</div>
                                 </v-list-item>
                             </div>
                         </v-list>
