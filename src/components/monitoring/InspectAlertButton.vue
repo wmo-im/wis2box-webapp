@@ -1,26 +1,24 @@
 <template>
-    <v-dialog v-model="dialog" width="auto">
+    <v-dialog v-model="dialog" class="max-dashboard-width">
         <template v-slot:activator="{ props }">
             <v-btn color="#49C6E5" :block="block" append-icon="mdi-feature-search" v-bind="props"
-                @click="inspectFile">Inspect</v-btn>
+                @click="inspectFile">View Alert</v-btn>
         </template>
-        <v-card class="inspect-content">
+        <v-card>
             <v-toolbar :title="result.headline" color="#003DA5">
                 <v-btn icon="mdi-close" variant="text" size="small"
                     @click="dialog = false" />
             </v-toolbar>
-            <v-row>
-                <v-col cols="12">
-                    <v-card-text>
-                        <!-- Essential info -->
-                        <div><b>Headline:</b> {{ result.headline }}</div>
-                        <div><b>Status:</b> {{ result.status }}</div>
-                        <div><b>Scope:</b> {{ result.scope }}</div>
-                        <div><b>Sent:</b> {{ result.sent }}</div>
-                    </v-card-text>
-                </v-col>
-            </v-row>
-            <v-container class="scrollable-list">
+            <!-- Essential info -->
+            <v-card-text align="center" class="pb-1">
+                <div class="summary-info">
+                    <b>Status:</b> {{ result.status }} <b class="info-label">Scope:</b> {{ result.scope }}
+                    <b class="info-label">Sent:</b> {{ result.sent }} <b class="info-label">Sender:</b> {{ result.senderName }}
+                </div>
+                <v-divider width="90%"></v-divider>
+            </v-card-text>
+
+            <v-container class="scrollable-list py-0">
                 <!-- display error in result.error exists -->
                 <v-row v-if="result.error">
                     <v-col cols="12">
@@ -35,18 +33,18 @@
                     </v-col>
                 </v-row>
                 <!-- Display result if it exists -->
-                <v-row v-if="result.properties.id">
+                <v-row v-if="result.properties.identifier">
                     <!-- Left side of window display map -->
-                    <v-col cols="5">
+                    <v-col cols="6">
                         <v-card-item>
-                            <!-- <LocatorMap :longitude="result.longitude" :latitude="result.latitude"/> -->
+                            <CAPMap :feature="result.feature"/>
                         </v-card-item>
                     </v-col>
                     <v-divider vertical inset></v-divider>
                     <!-- Right side of window display more info -->
-                    <v-col cols="7">
+                    <v-col cols="6">
                         <v-list line="zero">
-                            <div v-for="(value, key) in item" :key="key">
+                            <div v-for="(value, key) in result.properties" :key="key">
                                 <v-list-item class="key-value-pair">
                                     <div class="key">{{ makeReadable(key) }}:</div>
                                     <div>{{ value }}</div>
@@ -64,7 +62,7 @@
 // imports
 import { defineComponent, ref } from "vue";
 import { VCard, VCardTitle, VCardText, VCardItem, VBtn, VDialog, VContainer, VRow, VCol, VTextField } from "vuetify/lib/components/index.mjs";
-import LocatorMap from '@/components/LocatorMap.vue';
+import CAPMap from '@/components/monitoring/CAPMap.vue';
 // now component to export
 export default defineComponent({
     name: "InspectBufrButton",
@@ -91,22 +89,31 @@ export default defineComponent({
     },
     components: {
         VCard, VCardTitle, VCardItem,
-        VDialog, VContainer, VCardText, VTextField, VRow, VCol, VBtn
+        VDialog, VContainer, VCardText, VTextField, VRow, VCol, VBtn,
+        CAPMap
     },
     setup(props) {
         // Reactive variables
         const result = ref({
             headline: null,
             status: null,
-            sent: null,
             scope: null,
+            sent: null,
+            senderName: null,
             properties: {},
-            areas: []
+            feature: {}
         });
         const dialog = ref(false);
+        const testMode = import.meta.env.VITE_TEST_MODE === "true" || import.meta.env.VITE_API_URL == undefined;
 
         // Methods
         const makeReadable = (key) => {
+            if (key === 'msgType') {
+                return 'Message Type';
+            }
+            if (key === 'areaDesc') {
+                return 'Area Description';
+            }
             return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
         };
 
@@ -115,25 +122,36 @@ export default defineComponent({
             const headline = data?.features[0]?.properties?.headline;
             const status = data?.features[0]?.properties?.status;
             const scope = data?.features[0]?.properties?.scope;
-            const sent = data?.features[0]?.properties?.sent;
+            const senderName = data?.features[0]?.properties?.senderName;
 
             // Extract the rest of the properties apart from those above
             const properties = { ...data?.features[0]?.properties };
             delete properties.headline;
             delete properties.status;
             delete properties.scope;
+            delete properties.senderName;
+            delete properties.severity;
+
+            // Format 'sent', 'effective', 'onset', and 'expires' dates
+            for (const key of ['sent', 'effective', 'onset', 'expires']) {
+                if (properties[key]) {
+                    properties[key] = new Date(properties[key]).toLocaleString();
+                }
+            }
+            const sent = properties.sent;
             delete properties.sent;
 
-            // Extract the affected areas
-            const areas = data?.features[0]?.geometry?.coordinates;
+            // Also parse the entire features object
+            const feature = data?.features[0];
 
             return {
                 headline,
                 status,
                 scope,
                 sent,
+                senderName,
                 properties,
-                areas
+                feature
             };
         };
 
@@ -144,16 +162,22 @@ export default defineComponent({
                 }
             };
 
-            // Now call to cap to geojson to extract and transform
-            const apiURL = `${import.meta.env.VITE_API_URL}/processes/cap2geojson/execution`;
-            const response = await fetch(apiURL, {
-                method: "POST",
-                headers: {
-                    "encode": "json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-            });
+            let response;
+
+            if (!testMode) {
+                const apiURL = `${import.meta.env.VITE_API_URL}/processes/wis2box/execution`;
+                response = await fetch(apiURL, {
+                    method: "POST",
+                    headers: {
+                        "encode": "json",
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+            }
+            else {
+                response = await fetch("../tests/wis2box_data/alert.geojson");
+            }
 
             // check response status
             if (!response.ok) {
@@ -181,15 +205,13 @@ export default defineComponent({
 });
 </script>
 <style scoped>
-.pad-filename {
-    margin-top: 0.2rem;
+.summary-info {
+    font-size: 1.2rem;
+    margin-bottom: 1%;
 }
 
-.close-button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 1;
+.info-label {
+    margin-left: 4%;
 }
 
 .inspect-content {

@@ -1,207 +1,158 @@
 <template>
-    <div class="column is-two-fifths-widescreen is-full-touch">
-        <div class="cap-map-wrapper">
-            <div id="map" class="map">
-                <!-- Map here -->
-            </div>
-            <div class="map-legend">
-                <div>
-                    Alert Severity:
-                </div>
-                <div class="legend-items">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: rgb(215, 47, 42);"></div>
-                        <div class="legend-label">
-                            Extreme
-                        </div>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: rgb(254, 153, 0);"></div>
-                        <div class="legend-label">
-                            Severe
-                        </div>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: rgb(255, 255, 0);"></div>
-                        <div class="legend-label">
-                            Moderate
-                        </div>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: rgb(3, 255, 255);"></div>
-                        <div class="legend-label">
-                            Minor
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <v-card>
+        <div class="legend">
+            <strong>Severity:</strong>
+
+            <i class="fas fa-circle legend-circle" :style="{ color: getColour('Minor') }"></i>
+            <b v-if="severity === 'Minor'">Minor</b>
+            <span v-else>Minor</span>
+
+            <i class="fas fa-circle legend-circle" :style="{ color: getColour('Moderate') }"></i>
+            <b v-if="severity === 'Moderate'">Moderate</b>
+            <span v-else>Moderate</span>
+
+            <i class="fas fa-circle legend-circle" :style="{ color: getColour('Severe') }"></i>
+            <b v-if="severity === 'Severe'">Severe</b>
+            <span v-else>Severe</span>
+
+            <i class="fas fa-circle legend-circle" :style="{ color: getColour('Extreme') }"></i>
+            <b v-if="severity === 'Extreme'">Extreme</b>
+            <span v-else>Extreme</span>
         </div>
-    </div>
+        <v-card-item style="width: 100%; height: 100%; min-height: 600px" :id="id"></v-card-item>
+    </v-card>
 </template>
 
 <script>
-import { defineComponent, onMounted } from 'vue';
-import maplibregl from 'maplibre-gl';
-import * as turf from '@turf/turf';
+import { defineComponent, ref, computed, onMounted, watch } from 'vue';
+import { VCard } from 'vuetify/lib/components/index.mjs';
+
+// Leaflet imports
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import '@fortawesome/fontawesome-free/css/all.css';
+
 
 export default defineComponent({
-    name: 'CAPMap',
-    setup() {
-        onMounted(() => {
-            loadLayer();
-        });
-
-        // default base style
-        const defaultStyle = {
-            'version': 8,
-            'sources': {
-                'carto-dark': {
-                    'type': 'raster',
-                    'tiles': [
-                        "https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
-                        "https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
-                        "https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
-                        "https://d.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png"
-                    ]
-                },
-                'carto-light': {
-                    'type': 'raster',
-                    'tiles': [
-                        "https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
-                        "https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
-                        "https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png",
-                        "https://d.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png"
-                    ]
-                },
-                'wikimedia': {
-                    'type': 'raster',
-                    'tiles': [
-                        "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"
-                    ]
-                }
-            },
-            'layers': [{
-                'id': 'carto-light-layer',
-                'source': 'carto-light',
-                'type': 'raster',
-                'minzoom': 0,
-                'maxzoom': 22
-            }]
+    name: "CAPMap",
+    props: {
+        feature: {
+            type: Object,
+            required: true,
+            default: () => ({})
+        },
+        center: {
+            type: Object,
+            required: false,
+            default: () => ({ lat: 0, lng: 0 })
+        },
+        zoom: {
+            type: Number,
+            required: false,
+            default: 8
+        },
+        id: {
+            type: String,
+            required: false,
+            default: "map"
         }
+    },
+    components: {
+        VCard
+    },
+    setup(props) {
 
-        const capData = {
-            'type': 'FeatureCollection',
-            'features': []
-        };
+        // Reactive variables
+        const map = ref(null);
+        const areaLayer = ref(null);
 
-        let layerAddedToMap = false;
+        // Computed
 
-        // initialize map
-        const map = new maplibregl.Map({
-            container: "map",
-            style: defaultStyle,
-            center: [0, 0],
-            zoom: 1,
+        // Ensure all necessary data is available before updating the map
+        const readyToUpdate = computed(() => {
+            return map.value && areaLayer.value;
         });
 
-        // add zoom control
-        map.addControl(
-            new maplibregl.NavigationControl({
-                showCompass: false,
-            })
-        );
-
-        map.on("load", () => {
-            // add cap source
-            map.addSource('cap', {
-                'type': 'geojson',
-                'data': capData
-            });
-
-            // add cap layer
-            map.addLayer({
-                'id': 'cap-layer',
-                'type': 'fill',
-                'source': 'cap',
-                'paint': {
-                    'fill-color': [
-                        'match',
-                        ['get', 'severity'],
-                        'Extreme', '#d72f2a',
-                        'Severe', '#f89904',
-                        'Moderate', '#e4e616',
-                        'Minor', '#53ffff',
-                        '#3366ff'
-                    ],
-                    'fill-opacity': 0.7,
-                    'fill-outline-color': '#000000'
-                }
-            });
-            layerAddedToMap = true;
+        const severity = computed(() => {
+            return props.feature.properties.severity;
         });
 
-        // create cap layer
-        const addAreaPolygon = (capPolygonString, severity, featureId) => {
-            const parts = capPolygonString.split(" ");
-            const coordinates = parts.map((part) => {
-                const [lat, lng] = part.split(",");
-                return [parseFloat(lng), parseFloat(lat)];
-            });
+        // Methods
 
-            const feature = {
-                'type': 'Feature',
-                'properties': {
-                    'id': featureId,
-                    'severity': severity
-                },
-                'geometry': {
-                    'type': 'Polygon',
-                    'coordinates': [coordinates]
-                }
-            };
-
-            capData.features.push(feature);
-        }
-
-        const addAreaCircle = (capCircleString, severity, featureId) => {
-            const parts = capCircleString.split(" ");
-            const [lat, lng] = parts[0].split(",");
-            const center = [parseFloat(lng), parseFloat(lat)];
-            const radius = parseFloat(parts[1]);
-
-            const options = {
-                units: 'kilometers',
-                properties: { "severity": severity, "id": featureId }
-            };
-            const circle = turf.circle(center, radius, options);
-            capData.features.push(circle);
-        };
-
-        let timerId
-        const loadLayer = () => {
-            if (layerAddedToMap) {
-                console.log("Map Loaded...")
-                console.log("Adding CAP data to map...")
-                map.getSource('cap').setData(capData);
-
-                const bounds = turf.bbox(capData);
-                map.fitBounds(bounds, {
-                    padding: 100
-                });
-
-                if (timerId) {
-                    clearTimeout(timerId);
-                }
-            } else {
-                console.log("Waiting for map to load....")
-                timerId = setTimeout(loadLayer, 1000);
+        // Get colour based on the value of the severity property
+        const getColour = (severity) => {
+            switch (severity) {
+                case "Extreme":
+                    return "#FF0000";
+                case "Severe":
+                    return "#FFA500";
+                case "Moderate":
+                    return "#FFFF00";
+                case "Minor":
+                    return "#008000";
+                default:
+                    return "#000000";
             }
-        }
-
-        return {
-            map, loadLayer
         };
-    }
-});
 
+        // Fill map with markers when data changes
+        const addPolygons = () => {
+            if (!readyToUpdate.value) return;
+
+            // Clear the layer
+            areaLayer.value.clearLayers();
+
+            // Add the polygons
+            let geojson = L.geoJSON(props.feature, {
+                style: (feature) => {
+                    return {
+                        color: 'black',
+                        fillColor: getColour(feature.properties.severity),
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.6
+                    };
+                }
+            }).addTo(map.value);
+
+            // Fit the map to the bounds of the GeoJSON layer
+            map.value.fitBounds(geojson.getBounds());
+        };
+
+        onMounted(() => {
+            // Create the map, base layer and add it to the DOM
+            map.value = L.map(props.id, { zoomAnimation: false, fadeAnimation: true, markerZoomAnimation: true }).setView(props.center, props.zoom);
+            map.value.attributionControl.setPrefix('');
+            L.tileLayer(`${import.meta.env.VITE_BASEMAP_URL}`, { attribution: `${import.meta.env.VITE_BASEMAP_ATTRIBUTION}` }).addTo(map.value);
+            // Initialise the station layer and update with markers
+            areaLayer.value = L.layerGroup().addTo(map.value);
+
+            addPolygons();
+        })
+
+        watch(props.feature, () => { addPolygons() });
+
+        return { getColour, severity };
+    }
+})
 </script>
+
+<style scoped>
+.customIcon {
+    /* Ensures the text icon is centered both vertically and horizontally */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.legend {
+    padding: 6px 8px;
+    line-height: 24px;
+}
+
+.legend-circle {
+    margin-left: 3%;
+    margin-right: 1%;
+}
+</style>
