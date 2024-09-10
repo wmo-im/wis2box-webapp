@@ -166,7 +166,7 @@ export default defineComponent({
             let response;
 
             if (!testMode) {
-                const apiURL = `${import.meta.env.VITE_API_URL}/processes/wis2box/execution`;
+                const apiURL = `${import.meta.env.VITE_API_URL}/processes/cap2geojson/execution`;
                 response = await fetch(apiURL, {
                     method: "POST",
                     headers: {
