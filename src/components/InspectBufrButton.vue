@@ -137,7 +137,7 @@
           const data = await response.json();
           // check for errors
           if( data.error ){
-            console.info("bufr2geojon returned the error:", data.error);
+            console.info("bufr2geojson returned the error:", data.error);
             result.value.error = data.error;
           }
           // we should have a single subset per file but should add a check to make sure that is the case

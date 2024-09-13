@@ -23,7 +23,7 @@
                 {{ getFileName(file.url) }}
               </div>
             </v-col>
-            
+
             <v-divider vertical class="mr-5"/>
 
             <v-col cols="3">
@@ -33,6 +33,7 @@
             <v-col cols="3">
               <InspectBufrButton v-if="file.type === 'application/x-bufr'" :fileName="getFileName(file.url)"
                 :fileUrl="file.url" :block="true" />
+              <InspectAlertButton v-if="fileIsCAP(file)" :fileUrl="file.url" :fileName="getFileName(file.url)" :block="true" />
             </v-col>
           </v-row>
         </v-list>
@@ -47,6 +48,7 @@ import { defineComponent, ref, computed } from 'vue';
 import { VCard, VCardTitle } from 'vuetify/lib/components/index.mjs';
 import DownloadButton from '@/components/DownloadButton.vue';
 import InspectBufrButton from '@/components/InspectBufrButton.vue';
+import InspectAlertButton from '@/components/monitoring/InspectAlertButton.vue';
 
 export default defineComponent({
   name: 'PublishedData',
@@ -61,7 +63,8 @@ export default defineComponent({
     VCard,
     VCardTitle,
     DownloadButton,
-    InspectBufrButton
+    InspectBufrButton,
+    InspectAlertButton
   },
   setup(props) {
 
@@ -100,6 +103,12 @@ export default defineComponent({
 
     // Methods
 
+    const fileIsCAP = (file) => {
+      return file.type === 'application/octet-stream' &&
+         file.url.endsWith('.xml') &&
+         file.url.includes('cap');
+    };
+
     // Method to get filename from the canonical href
     const getFileName = (url) => {
       const urlParts = url.split('/');
@@ -121,7 +130,8 @@ export default defineComponent({
       filteredFiles,
       filteredPublishTimes,
       getFileName,
-      formatTime
+      formatTime,
+      fileIsCAP
     }
   }
 })
