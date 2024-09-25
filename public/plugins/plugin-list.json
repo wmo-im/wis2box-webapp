@@ -52,7 +52,8 @@
   ],
   "templates": [
     { "title": "AWS", "id": "aws-template" },
-    { "title": "WIS2-pilot-template-2021", "id": "CampbellAfrica-v1-template" }
+    { "title": "WIS2-pilot-template-2021", "id": "CampbellAfrica-v1-template" },
+    { "title": "DayCLI", "id": "daycli-template" }
   ],
   "buckets": [
     { "title": "Incoming", "id": "wis2box-incoming" },
