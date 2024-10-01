@@ -1,0 +1,45 @@
+{
+  "label": "climate/surface-based-observations/daily",
+  "title": "Daily values from land stations (DAYCLI) ($CENTRE_ID)",
+  "identifier": "urn:wmo:md:$CENTRE_ID:$DATA_POLICY.climate.surface.daily",
+  "topicHierarchy": "$CENTRE_ID/data/$DATA_POLICY/climate/surface-based-observations/daily",
+  "language": "en",
+  "resolution": "P1H",
+  "keywords": [
+    "climate",
+    "temperature",
+    "precipitation",
+    "snow depth",
+    "daycli"
+  ],
+  "themes": [
+    {
+      "concepts": [{ "id": "climate", "label": "climate" }],
+      "scheme": "http://codes.wmo.int/wis/topic-hierarchy/earth-system-discipline"
+    }
+  ],
+  "wis2box": {
+    "retention": "P30D",
+    "topic_hierarchy": "$CENTRE_ID.data.core.climate.surface-based-observations.daycli",
+    "data_mappings": {
+      "plugins": {
+        "csv": [
+          {
+            "plugin": "wis2box.data.csv2bufr.ObservationDataCSV2BUFR",
+            "template": "daycli-template",
+            "notify": true,
+            "buckets": ["wis2box-incoming"],
+            "file-pattern": "^.*\\.csv$"
+          }
+        ],
+        "bufr4": [
+          {
+            "plugin": "wis2box.data.bufr2geojson.ObservationDataBUFR2GeoJSON",
+            "buckets": ["wis2box-public"],
+            "file-pattern": "^WIGOS_(\\d-\\d+-\\d+-\\w+)_.*\\.bufr4$"
+          }
+        ]
+      }
+    }
+  }
+}
