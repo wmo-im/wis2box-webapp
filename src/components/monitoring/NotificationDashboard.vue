@@ -117,7 +117,7 @@ export default defineComponent({
                 "links": [
                     {
                         "rel": "canonical",
-                        "type": "application/x-bufr",
+                        "type": "application/bufr",
                         "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
                     },
                     {
@@ -142,7 +142,7 @@ export default defineComponent({
                 "links": [
                     {
                         "rel": "canonical",
-                        "type": "application/x-bufr",
+                        "type": "application/bufr",
                         "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
                     },
                     {
@@ -167,7 +167,7 @@ export default defineComponent({
                 "links": [
                     {
                         "rel": "canonical",
-                        "type": "application/x-bufr",
+                        "type": "application/bufr",
                         "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15020_20220331T000000.bufr4",
                     },
                     {
@@ -195,7 +195,7 @@ export default defineComponent({
                 "links": [
                     {
                         "rel": "canonical",
-                        "type": "application/x-bufr",
+                        "type": "application/bufr",
                         "href": "http://3.73.37.35/data/2022-03-31/wis/rou/rnimh/data/core/weather/surface-based-observations/synop/WIGOS_0-20000-0-15015_20220331T000000.bufr4",
                     },
                     {
