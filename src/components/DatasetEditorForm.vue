@@ -1221,7 +1221,7 @@ export default defineComponent({
             // Properties information
             formModel.identification.title = schema.properties.title;
             formModel.identification.description = schema.properties.description;
-            formModel.identification.language = schema.properties.language;
+            formModel.identification.language = {code: schema.properties.language};
             formModel.identification.keywords = schema.properties.keywords;
 
             // Themes - hardcoded for now
@@ -1782,7 +1782,7 @@ export default defineComponent({
             schemaModel.properties.identifier = form.identification.identifier;
             schemaModel.properties.title = form.identification.title;
             schemaModel.properties.description = form.identification.description;
-            schemaModel.properties.language = null;
+            schemaModel.properties.language = {code: null};
             schemaModel.properties.keywords = form.identification.keywords;
             // Themes
             const concepts = form.identification.concepts.map(item => ({ id: item, title: getTitleOf(item) }));
