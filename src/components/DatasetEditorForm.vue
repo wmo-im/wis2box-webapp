@@ -1387,7 +1387,7 @@ export default defineComponent({
             let id = model.value.identification.identifier;
 
             // Truncate policy to 4 letters
-            let truncatedPolicy = model.value.identification.wmoDataPolicy.substring(0, 4);
+            let truncatedPolicy = model.value.identification.wmoDataPolicy;
 
             // Replace ':core.' or ':recommended.' in the identifier
             model.value.identification.identifier = id.replace(/:core\.|:recommended\./g, `:${truncatedPolicy}.`);
