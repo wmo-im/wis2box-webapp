@@ -113,11 +113,17 @@
                                 </v-col>
                             </v-row>
                             <v-row dense>
-                                <v-col cols="12">
+                                <v-col cols="11">
                                     <v-text-field label="Identifier" type="string"
                                         v-model="model.identification.identifier"
-                                        :rules="[rules.required, rules.identifier]" variant="outlined" clearable
-                                        :disabled="!isNew"></v-text-field>
+                                        readonly variant="outlined">
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="1">    
+                                    <v-btn icon @click="copyIdentifier" 
+                                    aria-label="Copy Identifier">
+                                    <v-icon>mdi-content-copy</v-icon>
+                                    </v-btn>
                                 </v-col>
                             </v-row>
                         </v-col>
@@ -925,6 +931,19 @@ export default defineComponent({
 
         // Message dialog windows
         const openMessageDialog = ref(false);
+
+        const copyIdentifier = () => {
+            const identifier = model.value.identification.identifier; // 获取当前 identifier
+            navigator.clipboard.writeText(identifier).then(() => {
+                message.value = "Identifier copied to clipboard!"; // 成功提示
+                openMessageDialog.value = true; // 打开消息对话框
+            }).catch(err => {
+                console.error('Error copying text: ', err); // 错误处理
+                message.value = "Failed to copy identifier."; // 失败提示
+                openMessageDialog.value = true; // 打开消息对话框
+            });
+        };
+
         const openValidationDialog = ref(false);
         const openSuccessDialog = ref(false);
 
@@ -2228,7 +2247,8 @@ export default defineComponent({
             resetMessage,
             redirectUser,
             verifyFormIsFilled,
-            submitMetadata
+            submitMetadata,
+            copyIdentifier
         }
     }
 });
