@@ -31,7 +31,7 @@
       <v-card-item>
         <v-form>
           <v-text-field :rules="[rules.validWSI]" v-model="wsi" label="WIGOS Station Identifier"
-            hint="Enter WIGOS Station Identifier" persistent-hint />
+            hint="Enter WIGOS Station Identifier" persistent-hint @blur="trimWSI"/>
           <v-card-actions align="center">
             <v-btn @click="submit">Search</v-btn>
           </v-card-actions>
@@ -148,6 +148,9 @@ export default defineComponent({
   setup() {
     const wsi = ref("");
     // this needs to be moved to a class / pinia model.
+    const trimWSI = () => {
+      wsi.value = wsi.value.trim();
+    };
     const station = ref({
       id: null,  // WSI
       type: 'Feature',
@@ -400,7 +403,8 @@ export default defineComponent({
       showRedirect,
       submit,
       token,
-      selectedDataset
+      selectedDataset,
+      trimWSI
     };
   }
 });

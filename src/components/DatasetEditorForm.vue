@@ -113,17 +113,11 @@
                                 </v-col>
                             </v-row>
                             <v-row dense>
-                                <v-col cols="11">
+                                <v-col cols="12">
                                     <v-text-field label="Identifier" type="string"
                                         v-model="model.identification.identifier"
-                                        readonly variant="outlined">
-                                    </v-text-field>
-                                </v-col>
-                                <v-col cols="1">    
-                                    <v-btn icon @click="copyIdentifier" 
-                                    aria-label="Copy Identifier">
-                                    <v-icon>mdi-content-copy</v-icon>
-                                    </v-btn>
+                                        :rules="[rules.required, rules.identifier]" variant="outlined" clearable
+                                        :disabled="!isNew"></v-text-field>
                                 </v-col>
                             </v-row>
                         </v-col>
@@ -931,19 +925,6 @@ export default defineComponent({
 
         // Message dialog windows
         const openMessageDialog = ref(false);
-
-        const copyIdentifier = () => {
-            const identifier = model.value.identification.identifier; // 获取当前 identifier
-            navigator.clipboard.writeText(identifier).then(() => {
-                message.value = "Identifier copied to clipboard!"; // 成功提示
-                openMessageDialog.value = true; // 打开消息对话框
-            }).catch(err => {
-                console.error('Error copying text: ', err); // 错误处理
-                message.value = "Failed to copy identifier."; // 失败提示
-                openMessageDialog.value = true; // 打开消息对话框
-            });
-        };
-
         const openValidationDialog = ref(false);
         const openSuccessDialog = ref(false);
 
@@ -1240,7 +1221,7 @@ export default defineComponent({
             // Properties information
             formModel.identification.title = schema.properties.title;
             formModel.identification.description = schema.properties.description;
-            formModel.identification.language = {code: schema.properties.language};
+            formModel.identification.language = schema.properties.language;
             formModel.identification.keywords = schema.properties.keywords;
 
             // Themes - hardcoded for now
@@ -1801,7 +1782,7 @@ export default defineComponent({
             schemaModel.properties.identifier = form.identification.identifier;
             schemaModel.properties.title = form.identification.title;
             schemaModel.properties.description = form.identification.description;
-            schemaModel.properties.language = {code: null};
+            schemaModel.properties.language = null;
             schemaModel.properties.keywords = form.identification.keywords;
             // Themes
             const concepts = form.identification.concepts.map(item => ({ id: item, title: getTitleOf(item) }));
@@ -2247,8 +2228,7 @@ export default defineComponent({
             resetMessage,
             redirectUser,
             verifyFormIsFilled,
-            submitMetadata,
-            copyIdentifier
+            submitMetadata
         }
     }
 });
