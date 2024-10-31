@@ -933,14 +933,14 @@ export default defineComponent({
         const openMessageDialog = ref(false);
 
         const copyIdentifier = () => {
-            const identifier = model.value.identification.identifier; // 获取当前 identifier
+            const identifier = model.value.identification.identifier; // acquire identifier
             navigator.clipboard.writeText(identifier).then(() => {
-                message.value = "Identifier copied to clipboard!"; // 成功提示
-                openMessageDialog.value = true; // 打开消息对话框
+                message.value = "Identifier copied to clipboard!"; // success message
+                openMessageDialog.value = true; // open message dialog
             }).catch(err => {
-                console.error('Error copying text: ', err); // 错误处理
-                message.value = "Failed to copy identifier."; // 失败提示
-                openMessageDialog.value = true; // 打开消息对话框
+                console.error('Error copying text: ', err); // error handling
+                message.value = "Failed to copy identifier."; // fail message
+                openMessageDialog.value = true; // open message dialog
             });
         };
 
@@ -1240,7 +1240,7 @@ export default defineComponent({
             // Properties information
             formModel.identification.title = schema.properties.title;
             formModel.identification.description = schema.properties.description;
-            formModel.identification.language = {code: schema.properties.language};
+            formModel.identification.language = schema.properties.language;
             formModel.identification.keywords = schema.properties.keywords;
 
             // Themes - hardcoded for now
@@ -1801,7 +1801,7 @@ export default defineComponent({
             schemaModel.properties.identifier = form.identification.identifier;
             schemaModel.properties.title = form.identification.title;
             schemaModel.properties.description = form.identification.description;
-            schemaModel.properties.language = {code: null};
+            schemaModel.properties.language = null;
             schemaModel.properties.keywords = form.identification.keywords;
             // Themes
             const concepts = form.identification.concepts.map(item => ({ id: item, title: getTitleOf(item) }));
@@ -2272,3 +2272,4 @@ export default defineComponent({
     vertical-align: middle;
 }
 </style>
+
