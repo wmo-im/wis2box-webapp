@@ -113,11 +113,17 @@
                                 </v-col>
                             </v-row>
                             <v-row dense>
-                                <v-col cols="12">
+                                <v-col cols="11">
                                     <v-text-field label="Identifier" type="string"
                                         v-model="model.identification.identifier"
-                                        :rules="[rules.required, rules.identifier]" variant="outlined" clearable
-                                        :disabled="!isNew"></v-text-field>
+                                        readonly variant="outlined">
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="1">    
+                                    <v-btn icon @click="copyIdentifier" 
+                                    aria-label="Copy Identifier">
+                                    <v-icon>mdi-content-copy</v-icon>
+                                    </v-btn>
                                 </v-col>
                             </v-row>
                         </v-col>
@@ -925,6 +931,19 @@ export default defineComponent({
 
         // Message dialog windows
         const openMessageDialog = ref(false);
+
+        const copyIdentifier = () => {
+            const identifier = model.value.identification.identifier; // acquire identifier
+            navigator.clipboard.writeText(identifier).then(() => {
+                message.value = "Identifier copied to clipboard!"; // success message
+                openMessageDialog.value = true; // open message dialog
+            }).catch(err => {
+                console.error('Error copying text: ', err); // error handling
+                message.value = "Failed to copy identifier."; // fail message
+                openMessageDialog.value = true; // open message dialog
+            });
+        };
+
         const openValidationDialog = ref(false);
         const openSuccessDialog = ref(false);
 
@@ -2228,7 +2247,8 @@ export default defineComponent({
             resetMessage,
             redirectUser,
             verifyFormIsFilled,
-            submitMetadata
+            submitMetadata,
+            copyIdentifier
         }
     }
 });
