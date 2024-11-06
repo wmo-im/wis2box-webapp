@@ -1,0 +1,4 @@
+# our image does not use the network features of esbuild https://esbuild.github.io/api/#serve
+CVE-2024-24790
+CVE-2023-45288
+CVE-2024-34156
