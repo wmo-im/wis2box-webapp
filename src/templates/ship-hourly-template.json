@@ -2,7 +2,7 @@
   "label": "weather/surface-based-observations/ship-hourly",
   "title": "Hourly, or lower frequency, synoptic weather observations from ships ($CENTRE_ID)",
   "identifier": "urn:wmo:md:$CENTRE_ID:$DATA_POLICY.surface-based-observations.ship-hourly",
-  "topicHierarchy": "$CENTRE_ID/data/$DATA_POLICY/weather/surface-based-observations/ship-hourly",
+  "topicHierarchy": "$CENTRE_ID/data/$DATA_POLICY/weather/surface-based-observations/ship",
   "language": "en",
   "resolution": "P1H",
   "keywords": [
@@ -28,7 +28,7 @@
   ],
   "wis2box": {
     "retention": "P30D",
-    "topic_hierarchy": "$CENTRE_ID.data.core.weather.surface-based-observations.synop",
+    "topic_hierarchy": "$CENTRE_ID.data.core.weather.surface-based-observations.ship",
     "data_mappings": {
       "plugins": {
         "b": [
