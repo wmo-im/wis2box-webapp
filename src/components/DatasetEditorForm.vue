@@ -25,7 +25,7 @@
                             <v-row>
                                 <v-col cols="12">
                                     <v-combobox v-model="model.identification.centreID" :items="centreList"
-                                        label="Centre ID" :rules="[rules.centreID]" variant="outlined"></v-combobox>
+                                        label="Centre ID" :rules="[rules.centreID]" variant="outlined" @update:modelValue="convertToLowercase"></v-combobox>
                                 </v-col>
                             </v-row>
                             <v-select v-model="selectedTemplate" :items="templateFiles" item-title="label" return-object
@@ -957,6 +957,11 @@ export default defineComponent({
         const datasetIsBeingUpdated = computed(() => {
             return items.value.includes(model.value.identification.identifier) && !isNew.value;
         })
+
+        // transfer to lowercase in realtime
+        const convertToLowercase = (value) => {
+            model.value.identification.centreID = value.toLowerCase();
+        };
 
         // Has the user filled the dialog window?
         const initialDialogFilled = computed(() => {
@@ -2186,6 +2191,7 @@ export default defineComponent({
             templateFiles,
             datasetIsBeingUpdated,
             openRemoveConfirmationDialog,
+            convertToLowercase,
             initialDialogFilled,
             filteredCountryCodeList,
             selectedTemplate,
