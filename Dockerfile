@@ -3,11 +3,11 @@ FROM node:lts-alpine
 # Set the working directory inside the container
 WORKDIR /wis2box-webapp
 
-# copy both 'package.json' and 'package-lock.json' (if available)
-COPY package*.json ./
+# copy both 'package.json'
+COPY package.json ./
 
 # install project dependencies
-RUN npm install
+RUN npm install --force
 
 # copy project files and folders to the current working directory
 COPY . .
