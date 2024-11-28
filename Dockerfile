@@ -6,6 +6,7 @@ WORKDIR /wis2box-webapp
 # copy both 'package.json'
 COPY package.json ./
 
+ENV NODE_ENV=production
 # install project dependencies
 RUN npm install --force
 
