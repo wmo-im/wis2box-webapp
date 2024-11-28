@@ -32,7 +32,7 @@
     "vue-leaflet": "^0.1.0",
     "vue-router": "^4.0.0",
     "vue-tel-input": "^8.3.1",
-    "vue3-apexcharts": "^1.4.4",
+    "vue3-apexcharts": "^1.8.0",
     "vuetify": "3.7.0",
     "webfontloader": "^1.0.0"
   },
