@@ -15,7 +15,7 @@
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "@vuepic/vue-datepicker": "^5.4.0",
     "ajv-formats": "^2.1.1",
-    "apexcharts": "^3.54.1",
+    "apexcharts": "^4.0.0",
     "core-js": "^3.29.0",
     "d3": "^7.8.5",
     "geojson-validation": "^1.0.2",
@@ -31,7 +31,7 @@
     "vue-leaflet": "^0.1.0",
     "vue-router": "^4.0.0",
     "vue-tel-input": "^8.3.1",
-    "vue3-apexcharts": "^1.7.0",
+    "vue3-apexcharts": "^1.8.0",
     "vuetify": "3.7.0",
     "webfontloader": "^1.0.0"
   },
