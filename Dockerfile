@@ -9,6 +9,9 @@ COPY package.json ./
 # install project dependencies
 RUN npm install --omit=dev
 
+# get rid of the dev dependencies
+RUN npm uninstall eslint-plugin-vue eslint cross-spawn
+
 # copy project files and folders to the current working directory
 COPY . .
 
