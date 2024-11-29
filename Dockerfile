@@ -15,6 +15,9 @@ RUN npm uninstall eslint-plugin-vue eslint cross-spawn
 # copy project files and folders to the current working directory
 COPY . .
 
+# remove cross-spawn from node_modules
+RUN rm -rf node_modules/cross-spawn
+
 # expose port 4173
 EXPOSE 4173
 
