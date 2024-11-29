@@ -8,8 +8,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Build Docker image
-        run: docker build -t wis2box-webapp .
       - name: Start Docker Compose services
         working-directory: tests
         run: docker compose -f docker-compose.yml up -d --build
