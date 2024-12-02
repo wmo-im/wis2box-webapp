@@ -1207,7 +1207,7 @@ export default defineComponent({
             // Centre ID from wis2box section
             formModel.identification.centreID = schema.wis2box['centre_id'];
 
-            // Topic hierarcy from properties section, removing
+            // Topic hierarchy from properties section, removing
             // the 'origin/a/wis2' prefix
             let fullTopic = schema.properties['wmo:topicHierarchy'];
             formModel.identification.topicHierarchy = fullTopic.replace(/origin\/a\/wis2\//g, '');
@@ -1411,10 +1411,10 @@ export default defineComponent({
             let id = model.value.identification.identifier;
 
             // Truncate policy to 4 letters
-            let truncatedPolicy = model.value.identification.wmoDataPolicy.substring(0, 4);
+            let truncatedPolicy = model.value.identification.wmoDataPolicy;
 
-            // Replace ':core.' or ':reco.' in the identifier
-            model.value.identification.identifier = id.replace(/:core\.|:reco\./g, `:${truncatedPolicy}.`);
+            // Replace ':core.' or ':recommended.' in the identifier
+            model.value.identification.identifier = id.replace(/:core\.|:recommended\./g, `:${truncatedPolicy}.`);
         };
 
 
@@ -1422,11 +1422,11 @@ export default defineComponent({
         // replace the data policy in the topic hierarchy
         const replaceDataPolicyInTopicHierarchy = () => {
             let policy = model.value.identification.wmoDataPolicy;
-            let hierarcy = model.value.identification.topicHierarchy;
+            let hierarchy = model.value.identification.topicHierarchy;
 
             // Replace 'core' or 'recommended' in the topic hierachy
             // string with the policy
-            model.value.identification.topicHierarchy = hierarcy.replace(/core|recommended/g, policy);
+            model.value.identification.topicHierarchy = hierarchy.replace(/core|recommended/g, policy);
         };
 
         // Autofill form based on template
@@ -2118,7 +2118,7 @@ export default defineComponent({
 
         // Watched
 
-        // If the user changes the data policy, update the topic hierarcy accordingly
+        // If the user changes the data policy, update the topic hierarchy accordingly
         watch(() => model.value.identification.wmoDataPolicy, () => {
             if (!selectedTemplate.value) {
                 return;
