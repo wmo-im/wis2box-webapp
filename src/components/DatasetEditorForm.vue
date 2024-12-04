@@ -2141,14 +2141,6 @@ export default defineComponent({
         });
 
         // Watched
-        
-        watch(() => pluginName.value, async () => {
-            if (pluginName.value === 'wis2box.data.csv2bufr.ObservationDataCSV2BUFR') {
-                await loadTemplatesFromAPI();
-            } else {
-                templateList.value = [];
-            }
-        });
 
         // If the user changes the data policy, update the topic hierarcy accordingly
         watch(() => model.value.identification.wmoDataPolicy, () => {
