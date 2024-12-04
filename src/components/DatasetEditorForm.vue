@@ -1360,7 +1360,7 @@ export default defineComponent({
             }
         };
 
-        const loadTemplatesFromAPI = async () => {
+        const loadMappings = async () => {
             try {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/processes/mappings-info/execution`, {
                     method: 'POST',
@@ -2136,7 +2136,7 @@ export default defineComponent({
             loadDisciplines();
             loadTemplates();
             loadPluginLists();
-            loadTemplatesFromAPI();
+            loadMappings();
             loadCodes();
         });
 
