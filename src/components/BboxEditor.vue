@@ -17,6 +17,7 @@ export default defineComponent({
     },
     props: {
         boxBounds: {},
+        pointCoords: {}
     },
     setup(props) {
 
@@ -26,6 +27,7 @@ export default defineComponent({
         const rectangle = ref(null);
         const zoom = ref(1.5);
         const centre = ref([0, 0]);
+        const marker = ref(null);
 
         // Computed property for bounds
         const bounds = computed(() => {
@@ -34,6 +36,14 @@ export default defineComponent({
                     L.latLng(props.boxBounds[0], props.boxBounds[1]),
                     L.latLng(props.boxBounds[2], props.boxBounds[3])
                 );
+            }
+            return null;
+        });
+
+        // Computed property for point coordinates
+        const point = computed(() => {
+            if (props.pointCoords && !isNaN(props.pointCoords.lat) && !isNaN(props.pointCoords.lng)) {
+                return L.latLng(props.pointCoords.lat, props.pointCoords.lng);
             }
             return null;
         });
@@ -60,6 +70,23 @@ export default defineComponent({
             else if (rectangle.value) {
                 rectangle.value.remove();
                 rectangle.value = null;
+            }
+        });
+
+        // Watch for changes in point to update the marker
+        watch(point, (newPoint) => {
+            // If point added, add a marker to the map
+            if (newPoint) {
+                if (marker.value) {
+                    marker.value.remove();
+                }
+                marker.value = L.marker(newPoint, { icon: new L.Icon.Default() }).addTo(map.value);
+                map.value.setView(newPoint, 10); // Set zoom level to 10 to focus on the marker
+            }
+            // If point removed, remove the corresponding marker
+            else if (marker.value) {
+                marker.value.remove();
+                marker.value = null;
             }
         });
 

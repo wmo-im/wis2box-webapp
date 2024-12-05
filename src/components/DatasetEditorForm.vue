@@ -25,7 +25,8 @@
                             <v-row>
                                 <v-col cols="12">
                                     <v-combobox v-model="model.identification.centreID" :items="centreList"
-                                    label="Centre ID" :rules="[rules.centreID]" variant="outlined" @update:modelValue="convertToLowercase"></v-combobox>
+                                        label="Centre ID" :rules="[rules.centreID]" variant="outlined"
+                                        @update:modelValue="convertToLowercase"></v-combobox>
                                 </v-col>
                             </v-row>
                             <v-select v-model="selectedTemplate" :items="templateFiles" item-title="label" return-object
@@ -82,8 +83,9 @@
                     </v-card-text>
                     <v-container>
                         <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
-                            :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'" autocomplete="one-time-code"
-                            @click:append="showToken = !showToken" :rules="[rules.token]" variant="outlined">
+                            :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                            autocomplete="one-time-code" @click:append="showToken = !showToken" :rules="[rules.token]"
+                            variant="outlined">
                         </v-text-field>
                     </v-container>
                     <v-card-actions>
@@ -115,14 +117,12 @@
                             <v-row dense>
                                 <v-col cols="11">
                                     <v-text-field label="Identifier" type="string"
-                                        v-model="model.identification.identifier"
-                                        readonly variant="outlined">
+                                        v-model="model.identification.identifier" readonly variant="outlined">
                                     </v-text-field>
                                 </v-col>
-                                <v-col cols="1">    
-                                    <v-btn icon @click="copyIdentifier" 
-                                    aria-label="Copy Identifier">
-                                    <v-icon>mdi-content-copy</v-icon>
+                                <v-col cols="1">
+                                    <v-btn icon @click="copyIdentifier" aria-label="Copy Identifier">
+                                        <v-icon>mdi-content-copy</v-icon>
                                     </v-btn>
                                 </v-col>
                             </v-row>
@@ -215,8 +215,7 @@
                                 </v-col>
                                 <v-col cols="5">
                                     <v-select label="Unit" :items="durations" item-title="name" item-value="code"
-                                        v-model="model.extents.resolutionUnit"
-                                        variant="outlined" clearable></v-select>
+                                        v-model="model.extents.resolutionUnit" variant="outlined" clearable></v-select>
                                 </v-col>
                             </v-row>
                         </v-col>
@@ -226,6 +225,12 @@
                         <v-btn icon="mdi-comment-question" variant="text" size="small"
                             @click="openSpatialHelpDialog = true" />
                     </v-card-title>
+                    <v-row dense>
+                        <v-col cols="12">
+                            <v-select label="Geometry Type" :items="['Polygon', 'Point']" v-model="geometryType"
+                                variant="outlined" clearable></v-select>
+                        </v-col>
+                    </v-row>
                     <v-row dense>
                         <v-col cols="5">
                             <v-row>
@@ -239,45 +244,54 @@
                                 </v-col>
                             </v-row>
                             <v-row class="row-spacer" />
-                            <v-row class="coordinate-rows">
-                                <v-col cols="4" />
-                                <v-col cols="4">
-                                    <v-text-field label="North Latitude" type="number"
-                                        v-model.number="model.extents.northLatitude"
-                                        :rules="[rules.required, rules.latitude]" variant="outlined"
-                                        clearable></v-text-field>
-                                </v-col>
-                                <v-col cols="4" />
-                            </v-row>
-                            <v-row class="coordinate-rows">
+                            <v-row dense v-if="geometryType === 'Polygon'">
+                                <!-- Polygon Inputs -->
                                 <v-col cols="4">
                                     <v-text-field label="West Longitude" type="number"
                                         v-model.number="model.extents.westLongitude"
                                         :rules="[rules.required, rules.longitude]" variant="outlined"
                                         clearable></v-text-field>
                                 </v-col>
-                                <v-col cols="4" />
                                 <v-col cols="4">
                                     <v-text-field label="East Longitude" type="number"
                                         v-model.number="model.extents.eastLongitude"
                                         :rules="[rules.required, rules.longitude]" variant="outlined"
                                         clearable></v-text-field>
                                 </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col cols="4" />
+                                <v-col cols="4">
+                                    <v-text-field label="North Latitude" type="number"
+                                        v-model.number="model.extents.northLatitude"
+                                        :rules="[rules.required, rules.latitude]" variant="outlined"
+                                        clearable></v-text-field>
+                                </v-col>
                                 <v-col cols="4">
                                     <v-text-field label="South Latitude" type="number"
                                         v-model.number="model.extents.southLatitude"
                                         :rules="[rules.required, rules.latitude]" variant="outlined"
                                         clearable></v-text-field>
                                 </v-col>
-                                <v-col cols="4" />
+                            </v-row>
+                            <v-row dense v-if="geometryType === 'Point'">
+                                <!-- Point Inputs -->
+                                <v-col cols="6">
+                                    <v-text-field label="Latitude" type="number"
+                                        v-model.number="model.extents.pointLatitude"
+                                        :rules="[rules.required, rules.latitude]" variant="outlined"
+                                        clearable></v-text-field>
+                                </v-col>
+                                <v-col cols="6">
+                                    <v-text-field label="Longitude" type="number"
+                                        v-model.number="model.extents.pointLongitude"
+                                        :rules="[rules.required, rules.longitude]" variant="outlined"
+                                        clearable></v-text-field>
+                                </v-col>
                             </v-row>
                         </v-col>
                         <v-col cols="7">
                             <!-- Bounding box editor -->
-                            <bbox-editor :box-bounds="bounds" id="bbox-editor"></bbox-editor>
+                            <bbox-editor :box-bounds="bounds"
+                                :point-coords="{ lat: model.extents.pointLatitude, lng: model.extents.pointLongitude }"
+                                id="bbox-editor"></bbox-editor>
                         </v-col>
                     </v-row>
 
@@ -396,8 +410,9 @@
                 </v-card-title>
                 <v-card-text>
                     <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
-                        :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'" autocomplete="one-time-code"
-                        @click:append="showToken = !showToken" :rules="[rules.token]" variant="outlined">
+                        :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                        autocomplete="one-time-code" @click:append="showToken = !showToken" :rules="[rules.token]"
+                        variant="outlined">
                     </v-text-field>
                 </v-card-text>
             </v-card>
@@ -508,7 +523,8 @@
                         <br>
                         <p><b>End Date:</b> The date in UTC when the dataset ends.</p>
                         <br>
-                        <p><b>Temporal Resolution (optional):</b> The smallest increment of time that is represented in the
+                        <p><b>Temporal Resolution (optional):</b> The smallest increment of time that is represented in
+                            the
                             dataset.
                         </p>
                         <p>This is split into two parts, the <b>value</b> (e.g. 1) and the <b>unit</b> (e.g.
@@ -650,7 +666,8 @@
                         {{ message }}
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn block variant="flat" @click="resetMessage('validation')" :color="formValidated ? '#64BF40' : 'error'">
+                        <v-btn block variant="flat" @click="resetMessage('validation')"
+                            :color="formValidated ? '#64BF40' : 'error'">
                             OK
                         </v-btn>
                     </v-card-actions>
@@ -722,7 +739,8 @@
                                 <v-col cols="8">
                                     <!-- Disable this if editing an existing plugin -->
                                     <v-select label="Plugin Name" v-model="pluginName" :items="pluginList"
-                                        item-title="title" item-value="id" variant="outlined" :disabled="!pluginIsNew"></v-select>
+                                        item-title="title" item-value="id" variant="outlined"
+                                        :disabled="!pluginIsNew"></v-select>
                                 </v-col>
                                 <v-col cols="4">
                                     <v-text-field label="File Extension" v-model="pluginFileExtension"
@@ -795,7 +813,7 @@ export default defineComponent({
         }
 
         // Static variables
-
+        const geometryType = ref('Polygon');
         // Default value of the form, not an exhaustive list of all fields
         const defaults = {
             identification: {
@@ -1245,7 +1263,7 @@ export default defineComponent({
             // Properties information
             formModel.identification.title = schema.properties.title;
             formModel.identification.description = schema.properties.description;
-            formModel.identification.language = {code: schema.properties.language};
+            formModel.identification.language = { code: schema.properties.language };
             formModel.identification.keywords = schema.properties.keywords;
 
             // Themes - hardcoded for now
@@ -1360,7 +1378,7 @@ export default defineComponent({
             }
         };
 
-        const loadTemplatesFromAPI = async () => {
+        const loadMappings = async () => {
             try {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/processes/mappings-info/execution`, {
                     method: 'POST',
@@ -1805,23 +1823,33 @@ export default defineComponent({
             }
 
             // Geometry information
-            schemaModel.geometry = {
-                type: "Polygon",
-                coordinates: [
-                    [
-                        // Top left corner
-                        [form.extents.westLongitude, form.extents.northLatitude],
-                        // Top right corner
-                        [form.extents.eastLongitude, form.extents.northLatitude],
-                        // Bottom right corner
-                        [form.extents.eastLongitude, form.extents.southLatitude],
-                        // Bottom left corner
-                        [form.extents.westLongitude, form.extents.southLatitude],
-                        // Back top top left corner to close the polygon
-                        [form.extents.westLongitude, form.extents.northLatitude]
+            if (geometryType.value === 'Polygon') {
+                schemaModel.geometry = {
+                    type: "Polygon",
+                    coordinates: [
+                        [
+                            // 左上角
+                            [form.extents.westLongitude, form.extents.northLatitude],
+                            // 右上角
+                            [form.extents.eastLongitude, form.extents.northLatitude],
+                            // 右下角
+                            [form.extents.eastLongitude, form.extents.southLatitude],
+                            // 左下角
+                            [form.extents.westLongitude, form.extents.southLatitude],
+                            // 闭合多边形
+                            [form.extents.westLongitude, form.extents.northLatitude]
+                        ]
                     ]
-                ]
-            };
+                };
+            } else if (geometryType.value === 'Point') {
+                schemaModel.geometry = {
+                    type: "Point",
+                    coordinates: [
+                        form.extents.pointLongitude,
+                        form.extents.pointLatitude
+                    ]
+                };
+            }
 
             // Properties information
             schemaModel.properties = {};
@@ -1829,7 +1857,7 @@ export default defineComponent({
             schemaModel.properties.identifier = form.identification.identifier;
             schemaModel.properties.title = form.identification.title;
             schemaModel.properties.description = form.identification.description;
-            schemaModel.properties.language = {code: null};
+            schemaModel.properties.language = { code: null };
             schemaModel.properties.keywords = form.identification.keywords;
             // Themes
             const concepts = form.identification.concepts.map(item => ({ id: item, title: getTitleOf(item) }));
@@ -2136,19 +2164,11 @@ export default defineComponent({
             loadDisciplines();
             loadTemplates();
             loadPluginLists();
-            loadTemplatesFromAPI();
+            loadMappings();
             loadCodes();
         });
 
         // Watched
-        
-        watch(() => pluginName.value, async () => {
-            if (pluginName.value === 'wis2box.data.csv2bufr.ObservationDataCSV2BUFR') {
-                await loadTemplatesFromAPI();
-            } else {
-                templateList.value = [];
-            }
-        });
 
         // If the user changes the data policy, update the topic hierarcy accordingly
         watch(() => model.value.identification.wmoDataPolicy, () => {
@@ -2199,6 +2219,7 @@ export default defineComponent({
         });
 
         return {
+            geometryType,
             defaults,
             earthSystemDisciplines,
             durations,

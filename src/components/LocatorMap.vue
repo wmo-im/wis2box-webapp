@@ -1,5 +1,5 @@
 <template>
-  <v-card style="min-height: 400px" :id="id" ></v-card>
+  <v-card style="min-height: 400px" :id="id"></v-card>
 </template>
 
 <script>
@@ -16,7 +16,7 @@ export default defineComponent({
   props: {
     center: {
       type: Object,
-      default: () => ({lat: 0, lng: 0})
+      default: () => ({ lat: 0, lng: 0 })
     },
     zoom: {
       type: Number,
@@ -35,7 +35,7 @@ export default defineComponent({
       default: 0
     }
   },
-  data(){
+  data() {
     return {
     }
   },
@@ -44,7 +44,7 @@ export default defineComponent({
     VCardTitle,
     VCardText,
   },
-  setup( props, {emit} ) {
+  setup(props, { emit }) {
     const mapContainer = ref(null);
     const map = ref(null);
     const markerLayer = ref(null);
@@ -55,54 +55,54 @@ export default defineComponent({
     // 'hack' to fix leaflet marker issue
     var mapMarker = new L.Icon({
       iconUrl: import.meta.env.VITE_BASE_URL + '/assets/marker-icon.png',
-      shadowUrl:  import.meta.env.VITE_BASE_URL + '/assets/marker-shadow.png'
+      shadowUrl: import.meta.env.VITE_BASE_URL + '/assets/marker-shadow.png'
     });
 
     const addMarker = (feature, latlng) => {
-      return L.marker(latlng, {icon: mapMarker} )
+      return L.marker(latlng, { icon: mapMarker })
     };
 
-    const geom = computed( () => ({
+    const geom = computed(() => ({
       type: "Feature",
       geometry: {
         type: "Point",
         coordinates: [props.longitude, props.latitude]
       },
       properties: {}
-      }));
+    }));
 
-    onMounted( () =>{
-      map.value = L.map(props.id, {zoomAnimation:false, fadeAnimation:true, markerZoomAnimation:true}).setView( props.center, props.zoom );
+    onMounted(() => {
+      map.value = L.map(props.id, { zoomAnimation: false, fadeAnimation: true, markerZoomAnimation: true }).setView(props.center, props.zoom);
       map.value.attributionControl.setPrefix('');
-      L.tileLayer(`${import.meta.env.VITE_BASEMAP_URL}`, {attribution: `${import.meta.env.VITE_BASEMAP_ATTRIBUTION}`}).addTo(map.value);
+      L.tileLayer(`${import.meta.env.VITE_BASEMAP_URL}`, { attribution: `${import.meta.env.VITE_BASEMAP_ATTRIBUTION}` }).addTo(map.value);
       // check whether we have a location to show
-      if( geom.value.geometry ){
+      if (geom.value.geometry) {
         updateMarker();
       };
       emit('mapLoaded', map.value);
       // hack to fix leaflet resize issue 
-      setTimeout(function() { window.dispatchEvent(new Event('resize')) }, 400);
+      setTimeout(function () { window.dispatchEvent(new Event('resize')) }, 400);
     });
 
     const updateMarker = async () => {
-      if( markerLayer.value ){
+      if (markerLayer.value) {
         markerLayer.value.remove();
       }
       // now check whether the new marker is valid and plot
-      if( ! (isNaN(geom.value.geometry.coordinates[0]) || isNaN(geom.value.geometry.coordinates[1]))  ){
-        if( gjv.isFeature(geom.value) ){
-          markerLayer.value = L.geoJSON(geom.value, {pointToLayer: addMarker}).addTo(map.value);
+      if (!(isNaN(geom.value.geometry.coordinates[0]) || isNaN(geom.value.geometry.coordinates[1]))) {
+        if (gjv.isFeature(geom.value)) {
+          markerLayer.value = L.geoJSON(geom.value, { pointToLayer: addMarker }).addTo(map.value);
           map.value.fitBounds(markerLayer.value.getBounds());
           map.value.setZoom(10);
         }
       }
     };
 
-    watch( geom, () => {
+    watch(geom, () => {
       updateMarker();
     })
 
-    return {mapContainer};
+    return { mapContainer };
   }
 })
 </script>
