@@ -1352,12 +1352,35 @@ export default defineComponent({
                 const responseData = await response.json();
                 // Update the list of items
                 pluginList.value = responseData.plugins;
-                templateList.value = responseData.templates;
                 bucketList.value = responseData.buckets;
             } catch (error) {
                 console.error(error);
                 // Display error message to the user
                 message.value = 'Error loading plugin list.';
+            }
+        };
+
+        const loadMappings = async () => {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/processes/mappings-info/execution`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        inputs: {
+                            plugin: 'wis2box.data.csv2bufr.ObservationDataCSV2BUFR'
+                        }
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to load templates from API.');
+                }
+                const data = await response.json();
+                templateList.value = data.templates;
+            } catch (error) {
+                console.error(error);
+                message.value = 'Error loading templates from API.';
             }
         };
 
@@ -2113,6 +2136,7 @@ export default defineComponent({
             loadDisciplines();
             loadTemplates();
             loadPluginLists();
+            loadMappings();
             loadCodes();
         });
 
