@@ -26,12 +26,9 @@
           <v-col cols="5">
             <v-list lines="zero">
               <v-list-item><b>WIGOS Station Identifier:</b> {{result.wsi}}</v-list-item>
-              <v-list-item><b>Station name:</b> {{result.name}}</v-list-item>
               <v-list-item><b>Station latitude:</b> {{result.latitude}}</v-list-item>
               <v-list-item><b>Station longitude:</b> {{result.longitude}}</v-list-item>
-              <v-list-item><b>Station elevation:</b> {{result.elevation}} (m)</v-list-item>
-              <v-list-item><b>Barometer height above mean sea level:</b> {{result.barometerHeight}} (m)</v-list-item>
-              <v-list-item><b>Nominal report time:</b> {{result.resultTime}}</v-list-item>
+              <v-list-item><b>Nominal report time:</b> {{result.reportTime}}</v-list-item>
             </v-list>
             <v-card-item>
               <LocatorMap :longitude="result.longitude" :latitude="result.latitude"/>
@@ -138,14 +135,19 @@
           // check for errors
           if( data.error ){
             console.info("bufr2geojson returned the error:", data.error);
-            result.value.error = data.error;
+            // check if error starts with 404
+            if( data.error.startsWith("404") ){
+              result.value.error = "File no longer available for inspection";
+            }else{
+              result.value.error = data.error;
+            }
           }
           // we should have a single subset per file but should add a check to make sure that is the case
           // assume one file for now, add to ToDo.
           // Get location, elevation, WSI and station name from first object
           if( data.items ){
             result.value.wsi = data.items[0].properties.wigos_station_identifier;
-            result.value.name = data.items[0].properties.metadata.find( (item) => item.name === "station_or_site_name")?.description ?? "";
+            // result.value.name = data.items[0].properties.metadata.find( (item) => item.name === "station_or_site_name")?.description ?? "";
             result.value.elevation = parseFloat(data.items[0].geometry.coordinates[2]).toFixed(2);
             // if result.value.elevation is NaN, set to 'undefined'
             if (isNaN(result.value.elevation)) {
@@ -156,8 +158,8 @@
             // result back to a float
             result.value.longitude = parseFloat(parseFloat(data.items[0].geometry.coordinates[0]).toFixed(5));
             result.value.latitude = parseFloat(parseFloat(data.items[0].geometry.coordinates[1]).toFixed(5));
-            result.value.resultTime = data.items[0].properties.resultTime;
-            result.value.barometerHeight = parseFloat(data.items[0].properties.metadata.find( (item) => item.name === "height_of_barometer_above_mean_sea_level")?.value ?? "").toFixed(2);
+            result.value.reportTime = data.items[0].properties.reportTime;
+            // result.value.barometerHeight = parseFloat(data.items[0].properties.metadata.find( (item) => item.name === "height_of_barometer_above_mean_sea_level")?.value ?? "").toFixed(2);
             // if result.value.barometerHeight is NaN, set to undefined
             if (isNaN(result.value.barometerHeight)) {
               result.value.barometerHeight = 'undefined';
@@ -220,7 +222,7 @@
           wsi: null,
           name: null,
           elevation: null,
-          resultTime: null,
+          reportTime: null,
           items: [],
           headers: []
         }

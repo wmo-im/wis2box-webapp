@@ -254,7 +254,7 @@ export default defineComponent({
                     params = new URLSearchParams({
                         f: 'json', // Specify the response format as JSON
                         metadata_id: `${props.datasetID}%`, // Filter by dataset
-                        sortBy: '-datetime', // Sort by time in descending order
+                        sortby: '-datetime', // Sort by time in descending order
                         datetime: `${props.startDate.toISOString()}/${props.endDate.toISOString()}`, // Filter to date range specified by user
                         wigos_station_identifier: `${props.wsi}`, // Filter by WSI searched
                         limit: `${props.limit}`, // Limit number of notifications shown on dashboard
@@ -264,7 +264,7 @@ export default defineComponent({
                     params = new URLSearchParams({
                         f: 'json', // Specify the response format as JSON
                         metadata_id: `${props.datasetID}%`, // Filter by dataset
-                        sortBy: '-datetime', // Sort by time in descending order
+                        sortby: '-datetime', // Sort by time in descending order
                         datetime: `${props.startDate.toISOString()}/${props.endDate.toISOString()}`, // Filter to date range specified by user
                         limit: `${props.limit}`, // Limit number of notifications shown on dashboard
                     });
