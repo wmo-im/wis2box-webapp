@@ -135,7 +135,12 @@
           // check for errors
           if( data.error ){
             console.info("bufr2geojson returned the error:", data.error);
-            result.value.error = data.error;
+            // check if error starts with 404
+            if( data.error.startsWith("404") ){
+              result.value.error = "File no longer available for inspection";
+            }else{
+              result.value.error = data.error;
+            }
           }
           // we should have a single subset per file but should add a check to make sure that is the case
           // assume one file for now, add to ToDo.
