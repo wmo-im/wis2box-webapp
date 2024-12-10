@@ -25,7 +25,8 @@
                             <v-row>
                                 <v-col cols="12">
                                     <v-combobox v-model="model.identification.centreID" :items="centreList"
-                                    label="Centre ID" :rules="[rules.centreID]" variant="outlined" @update:modelValue="convertToLowercase"></v-combobox>
+                                        label="Centre ID" :rules="[rules.centreID]" variant="outlined"
+                                        @update:modelValue="convertToLowercase"></v-combobox>
                                 </v-col>
                             </v-row>
                             <v-select v-model="selectedTemplate" :items="templateFiles" item-title="label" return-object
@@ -82,8 +83,9 @@
                     </v-card-text>
                     <v-container>
                         <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
-                            :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'" autocomplete="one-time-code"
-                            @click:append="showToken = !showToken" :rules="[rules.token]" variant="outlined">
+                            :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                            autocomplete="one-time-code" @click:append="showToken = !showToken" :rules="[rules.token]"
+                            variant="outlined">
                         </v-text-field>
                     </v-container>
                     <v-card-actions>
@@ -115,14 +117,12 @@
                             <v-row dense>
                                 <v-col cols="11">
                                     <v-text-field label="Identifier" type="string"
-                                        v-model="model.identification.identifier"
-                                        readonly variant="outlined">
+                                        v-model="model.identification.identifier" readonly variant="outlined">
                                     </v-text-field>
                                 </v-col>
-                                <v-col cols="1">    
-                                    <v-btn icon @click="copyIdentifier" 
-                                    aria-label="Copy Identifier">
-                                    <v-icon>mdi-content-copy</v-icon>
+                                <v-col cols="1">
+                                    <v-btn icon @click="copyIdentifier" aria-label="Copy Identifier">
+                                        <v-icon>mdi-content-copy</v-icon>
                                     </v-btn>
                                 </v-col>
                             </v-row>
@@ -215,8 +215,7 @@
                                 </v-col>
                                 <v-col cols="5">
                                     <v-select label="Unit" :items="durations" item-title="name" item-value="code"
-                                        v-model="model.extents.resolutionUnit"
-                                        variant="outlined" clearable></v-select>
+                                        v-model="model.extents.resolutionUnit" variant="outlined" clearable></v-select>
                                 </v-col>
                             </v-row>
                         </v-col>
@@ -396,8 +395,9 @@
                 </v-card-title>
                 <v-card-text>
                     <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
-                        :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'" autocomplete="one-time-code"
-                        @click:append="showToken = !showToken" :rules="[rules.token]" variant="outlined">
+                        :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                        autocomplete="one-time-code" @click:append="showToken = !showToken" :rules="[rules.token]"
+                        variant="outlined">
                     </v-text-field>
                 </v-card-text>
             </v-card>
@@ -508,7 +508,8 @@
                         <br>
                         <p><b>End Date:</b> The date in UTC when the dataset ends.</p>
                         <br>
-                        <p><b>Temporal Resolution (optional):</b> The smallest increment of time that is represented in the
+                        <p><b>Temporal Resolution (optional):</b> The smallest increment of time that is represented in
+                            the
                             dataset.
                         </p>
                         <p>This is split into two parts, the <b>value</b> (e.g. 1) and the <b>unit</b> (e.g.
@@ -650,7 +651,8 @@
                         {{ message }}
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn block variant="flat" @click="resetMessage('validation')" :color="formValidated ? '#64BF40' : 'error'">
+                        <v-btn block variant="flat" @click="resetMessage('validation')"
+                            :color="formValidated ? '#64BF40' : 'error'">
                             OK
                         </v-btn>
                     </v-card-actions>
@@ -722,7 +724,8 @@
                                 <v-col cols="8">
                                     <!-- Disable this if editing an existing plugin -->
                                     <v-select label="Plugin Name" v-model="pluginName" :items="pluginList"
-                                        item-title="title" item-value="id" variant="outlined" :disabled="!pluginIsNew"></v-select>
+                                        item-title="title" item-value="id" variant="outlined"
+                                        :disabled="!pluginIsNew"></v-select>
                                 </v-col>
                                 <v-col cols="4">
                                     <v-text-field label="File Extension" v-model="pluginFileExtension"
@@ -1245,7 +1248,7 @@ export default defineComponent({
             // Properties information
             formModel.identification.title = schema.properties.title;
             formModel.identification.description = schema.properties.description;
-            formModel.identification.language = {code: schema.properties.language};
+            formModel.identification.language = { code: schema.properties.language };
             formModel.identification.keywords = schema.properties.keywords;
 
             // Themes - hardcoded for now
@@ -1409,15 +1412,15 @@ export default defineComponent({
 
         // Method to check that the identifier does not already exist
         const createAndCheckIdentifier = (identifier) => {
-            // Truncate data policy
-            let truncatedPolicy = model.value.identification.wmoDataPolicy.substring(0, 4);
+
+            let randomCode = random6ASCIICharacters();
 
             // Replace centre ID and data policy
             let id = identifier.replace(
                 '$CENTRE_ID', model.value.identification.centreID
             ).replace(
-                '$DATA_POLICY', truncatedPolicy
-            );
+                '$DATA_POLICY', randomCode
+            ).replace(/\..*$/, ''); 
 
             // If id already in items, inform the user that they will need to change the id in the form
             if (items.value.includes(id)) {
@@ -1433,23 +1436,23 @@ export default defineComponent({
         const replaceDataPolicyInIdentifier = () => {
             let id = model.value.identification.identifier;
 
-            // Truncate policy to 4 letters
-            let truncatedPolicy = model.value.identification.wmoDataPolicy.substring(0, 4);
+            let randomCode = random6ASCIICharacters();
 
             // Replace ':core.' or ':reco.' in the identifier
-            model.value.identification.identifier = id.replace(/:core\.|:reco\./g, `:${truncatedPolicy}.`);
+            model.value.identification.identifier = id.replace(/:(core|recommended)(\..*)?$/g, `:${randomCode}`);
         };
 
 
         // If the template is other and the data policy is changed,
         // replace the data policy in the topic hierarchy
         const replaceDataPolicyInTopicHierarchy = () => {
-            let policy = model.value.identification.wmoDataPolicy;
+            //let policy = model.value.identification.wmoDataPolicy;
+            let randomCode = random6ASCIICharacters();
             let hierarcy = model.value.identification.topicHierarchy;
 
             // Replace 'core' or 'recommended' in the topic hierachy
             // string with the policy
-            model.value.identification.topicHierarchy = hierarcy.replace(/core|recommended/g, policy);
+            model.value.identification.topicHierarchy = hierarcy.replace(/(core|recommended)(\..*)?$/g, randomCode);
         };
 
         // Autofill form based on template
@@ -1464,7 +1467,8 @@ export default defineComponent({
             // Use centre ID and WMO data policy to create topic hierarchy
             model.value.identification.topicHierarchy = template.topicHierarchy
                 .replace('$CENTRE_ID', model.value.identification.centreID)
-                .replace('$DATA_POLICY', model.value.identification.wmoDataPolicy);
+                .replace('$DATA_POLICY', randomCode)
+                .replace(/\..*$/, '');
             // Get resolution and resolution unit from template
             const match = template.resolution.match(/P(\d+)([DH])/i);
             if (match) {
@@ -1525,12 +1529,11 @@ export default defineComponent({
                 return;
             }
 
-            // Otherwise, create sensible defaults using centre ID and policy
-            let policy = model.value.identification.wmoDataPolicy;
-            let truncatedPolicy = policy.substring(0, 4);
+            // Otherwise, create sensible defaults using centre ID and randomcode
+            let randomCode = random6ASCIICharacters();
             let centreID = model.value.identification.centreID;
-            model.value.identification.identifier = 'urn:wmo:md:' + centreID + ':' + truncatedPolicy + '.';
-            model.value.identification.topicHierarchy = centreID + '/data/' + policy + '/';
+            model.value.identification.identifier = 'urn:wmo:md:' + centreID + ':' + randomCode;
+            model.value.identification.topicHierarchy = centreID + '/data/' + randomCode + '/';
         }
 
         // Update the rectangle in the map when the user changes the bounding box
@@ -1709,6 +1712,14 @@ export default defineComponent({
             }
         };
 
+        const random6ASCIICharacters = () => {
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            for (let i = 0; i < 6; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        };
 
         // Method to get the date from a datetime
         const getDateFrom = (datetime) => {
@@ -1829,7 +1840,7 @@ export default defineComponent({
             schemaModel.properties.identifier = form.identification.identifier;
             schemaModel.properties.title = form.identification.title;
             schemaModel.properties.description = form.identification.description;
-            schemaModel.properties.language = {code: null};
+            schemaModel.properties.language = { code: null };
             schemaModel.properties.keywords = form.identification.keywords;
             // Themes
             const concepts = form.identification.concepts.map(item => ({ id: item, title: getTitleOf(item) }));
