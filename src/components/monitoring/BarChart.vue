@@ -142,7 +142,7 @@ export default defineComponent({
         // This method counts the number of messages per minute 
         // and uses this to produce an [x,y] array that populates the ApexChart
         const chartSeries = computed(() => {
-            console.log("Creating chart data");
+            // console.log("Creating chart data");
             // Count messages per minute and uses this create the chart data
             const timestampCounts = {}
 
