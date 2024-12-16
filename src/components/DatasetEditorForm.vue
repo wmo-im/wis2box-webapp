@@ -116,7 +116,7 @@
                                 <v-col cols="11">
                                     <v-text-field label="Identifier" type="string"
                                         v-model="model.identification.identifier"
-                                        readonly variant="outlined">
+                                        :disabled="true"  variant="outlined">
                                     </v-text-field>
                                 </v-col>
                                 <v-col cols="1">    
@@ -789,6 +789,16 @@ export default defineComponent({
         VCombobox
     },
     setup() {
+
+        const random6ASCIICharacters = () => {
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            for (let i = 0; i < 6; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        };
+
         // Deep clone function to avoid reference issues between model and default model
         function deepClone(obj) {
             return JSON.parse(JSON.stringify(obj));
@@ -1409,15 +1419,14 @@ export default defineComponent({
 
         // Method to check that the identifier does not already exist
         const createAndCheckIdentifier = (identifier) => {
-            // Truncate data policy
-            let truncatedPolicy = model.value.identification.wmoDataPolicy.substring(0, 4);
+            let randomCode = random6ASCIICharacters();
 
             // Replace centre ID and data policy
             let id = identifier.replace(
                 '$CENTRE_ID', model.value.identification.centreID
             ).replace(
-                '$DATA_POLICY', truncatedPolicy
-            );
+                '$DATA_POLICY', randomCode
+            ).replace(/\..*$/, ''); 
 
             // If id already in items, inform the user that they will need to change the id in the form
             if (items.value.includes(id)) {
@@ -1433,23 +1442,22 @@ export default defineComponent({
         const replaceDataPolicyInIdentifier = () => {
             let id = model.value.identification.identifier;
 
-            // Truncate policy to 4 letters
-            let truncatedPolicy = model.value.identification.wmoDataPolicy.substring(0, 4);
+            let randomCode = random6ASCIICharacters();
 
             // Replace ':core.' or ':reco.' in the identifier
-            model.value.identification.identifier = id.replace(/:core\.|:reco\./g, `:${truncatedPolicy}.`);
+            model.value.identification.identifier = id.replace(/:(core|recommended)(\..*)?$/g, `:${randomCode}`);
         };
 
 
         // If the template is other and the data policy is changed,
         // replace the data policy in the topic hierarchy
         const replaceDataPolicyInTopicHierarchy = () => {
-            let policy = model.value.identification.wmoDataPolicy;
+            let randomCode = random6ASCIICharacters();
             let hierarcy = model.value.identification.topicHierarchy;
 
             // Replace 'core' or 'recommended' in the topic hierachy
             // string with the policy
-            model.value.identification.topicHierarchy = hierarcy.replace(/core|recommended/g, policy);
+            model.value.identification.topicHierarchy = hierarcy.replace(/(core|recommended)(\..*)?$/g, randomCode);
         };
 
         // Autofill form based on template
@@ -1464,7 +1472,8 @@ export default defineComponent({
             // Use centre ID and WMO data policy to create topic hierarchy
             model.value.identification.topicHierarchy = template.topicHierarchy
                 .replace('$CENTRE_ID', model.value.identification.centreID)
-                .replace('$DATA_POLICY', model.value.identification.wmoDataPolicy);
+                .replace('$DATA_POLICY', randomCode)
+                .replace(/\..*$/, '');
             // Get resolution and resolution unit from template
             const match = template.resolution.match(/P(\d+)([DH])/i);
             if (match) {
@@ -1525,11 +1534,10 @@ export default defineComponent({
                 return;
             }
 
-            // Otherwise, create sensible defaults using centre ID and policy
-            let policy = model.value.identification.wmoDataPolicy;
-            let truncatedPolicy = policy.substring(0, 4);
+            // Otherwise, create sensible defaults using centre ID and randomcode
+            let randomCode = random6ASCIICharacters();
             let centreID = model.value.identification.centreID;
-            model.value.identification.identifier = 'urn:wmo:md:' + centreID + ':' + truncatedPolicy + '.';
+            model.value.identification.identifier = 'urn:wmo:md:' + centreID + ':' + randomCode;
             model.value.identification.topicHierarchy = centreID + '/data/' + policy + '/';
         }
 
