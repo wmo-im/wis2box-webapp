@@ -113,6 +113,11 @@
                                 </v-col>
                             </v-row>
                             <v-row dense>
+                                <v-col cols="12">
+                                    <v-text-field label="Local ID" type="string" v-model="localID" @input="updateIdentifierFromLocalID" variant="outlined" clearable></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row dense>
                                 <v-col cols="11">
                                     <v-text-field label="Identifier" type="string"
                                         v-model="model.identification.identifier"
@@ -790,6 +795,22 @@ export default defineComponent({
     },
     setup() {
 
+        const localID = ref('');
+
+        const extractLocalID = (identifier) => {
+            if (!identifier) {
+                console.warn("Identifier is undefined or null");
+                return ""; // Fallback empty string
+            }
+            const parts = identifier.split(":");
+            return parts[parts.length - 1] || "";
+        };
+
+        const updateIdentifierFromLocalID = () => {
+            const baseIdentifier = model.value.identification.identifier.split(":").slice(0, -1).join(":");
+            model.value.identification.identifier = `${baseIdentifier}:${localID.value}`;
+            };
+
         const random6ASCIICharacters = () => {
             let result = '';
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -943,15 +964,27 @@ export default defineComponent({
         const openMessageDialog = ref(false);
 
         const copyIdentifier = () => {
-            const identifier = model.value.identification.identifier; // acquire identifier
-            navigator.clipboard.writeText(identifier).then(() => {
-                message.value = "Identifier copied to clipboard!"; // success message
-                openMessageDialog.value = true; // open message dialog
-            }).catch(err => {
-                console.error('Error copying text: ', err); // error handling
-                message.value = "Failed to copy identifier."; // fail message
-                openMessageDialog.value = true; // open message dialog
-            });
+        const identifier = model.value.identification.identifier;
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+        
+            navigator.clipboard.writeText(identifier)
+                .then(() => {
+                    message.value = "Identifier copied to clipboard!";
+                    openMessageDialog.value = true;
+                })
+                .catch(err => {
+                    console.error('Clipboard API error: ', err);
+                    fallbackCopyManual(identifier);
+                });
+        } else {
+            fallbackCopyManual(identifier);
+            }
+        };
+
+        const fallbackCopyManual = () => {
+            message.value = "Clipboard API not supported. Please copy the text manually.";
+            openMessageDialog.value = true;
         };
 
         const openValidationDialog = ref(false);
@@ -1452,12 +1485,12 @@ export default defineComponent({
         // If the template is other and the data policy is changed,
         // replace the data policy in the topic hierarchy
         const replaceDataPolicyInTopicHierarchy = () => {
-            let randomCode = random6ASCIICharacters();
+            let policy = model.value.identification.wmoDataPolicy;
             let hierarcy = model.value.identification.topicHierarchy;
 
             // Replace 'core' or 'recommended' in the topic hierachy
             // string with the policy
-            model.value.identification.topicHierarchy = hierarcy.replace(/(core|recommended)(\..*)?$/g, randomCode);
+            model.value.identification.topicHierarchy = hierarcy.replace(/core|recommended/g, policy);
         };
 
         // Autofill form based on template
@@ -1472,7 +1505,7 @@ export default defineComponent({
             // Use centre ID and WMO data policy to create topic hierarchy
             model.value.identification.topicHierarchy = template.topicHierarchy
                 .replace('$CENTRE_ID', model.value.identification.centreID)
-                .replace('$DATA_POLICY', randomCode)
+                .replace('$DATA_POLICY', model.value.identification.wmoDataPolicy)
                 .replace(/\..*$/, '');
             // Get resolution and resolution unit from template
             const match = template.resolution.match(/P(\d+)([DH])/i);
@@ -1535,7 +1568,8 @@ export default defineComponent({
             }
 
             // Otherwise, create sensible defaults using centre ID and randomcode
-            let randomCode = random6ASCIICharacters();
+            const randomCode = random6ASCIICharacters();
+            let policy = model.value.identification.wmoDataPolicy;
             let centreID = model.value.identification.centreID;
             model.value.identification.identifier = 'urn:wmo:md:' + centreID + ':' + randomCode;
             model.value.identification.topicHierarchy = centreID + '/data/' + policy + '/';
@@ -2286,7 +2320,11 @@ export default defineComponent({
             redirectUser,
             verifyFormIsFilled,
             submitMetadata,
-            copyIdentifier
+            copyIdentifier,
+            fallbackCopyManual,
+            updateIdentifierFromLocalID,
+            extractLocalID,
+            localID
         }
     }
 });
