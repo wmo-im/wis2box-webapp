@@ -113,10 +113,15 @@
                                 </v-col>
                             </v-row>
                             <v-row dense>
+                                <v-col cols="12">
+                                    <v-text-field label="Local ID" type="string" v-model="localID" @input="updateIdentifierFromLocalID" variant="outlined" clearable></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row dense>
                                 <v-col cols="11">
                                     <v-text-field label="Identifier" type="string"
                                         v-model="model.identification.identifier"
-                                        readonly variant="outlined">
+                                        :disabled="true"  variant="outlined">
                                     </v-text-field>
                                 </v-col>
                                 <v-col cols="1">    
@@ -789,6 +794,32 @@ export default defineComponent({
         VCombobox
     },
     setup() {
+
+        const localID = ref('');
+
+        const extractLocalID = (identifier) => {
+            if (!identifier) {
+                console.warn("Identifier is undefined or null");
+                return ""; // Fallback empty string
+            }
+            const parts = identifier.split(":");
+            return parts[parts.length - 1] || "";
+        };
+
+        const updateIdentifierFromLocalID = () => {
+            const baseIdentifier = model.value.identification.identifier.split(":").slice(0, -1).join(":");
+            model.value.identification.identifier = `${baseIdentifier}:${localID.value}`;
+            };
+
+        const random6ASCIICharacters = () => {
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            for (let i = 0; i < 6; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        };
+
         // Deep clone function to avoid reference issues between model and default model
         function deepClone(obj) {
             return JSON.parse(JSON.stringify(obj));
@@ -933,15 +964,45 @@ export default defineComponent({
         const openMessageDialog = ref(false);
 
         const copyIdentifier = () => {
-            const identifier = model.value.identification.identifier; // acquire identifier
-            navigator.clipboard.writeText(identifier).then(() => {
-                message.value = "Identifier copied to clipboard!"; // success message
-                openMessageDialog.value = true; // open message dialog
-            }).catch(err => {
-                console.error('Error copying text: ', err); // error handling
-                message.value = "Failed to copy identifier."; // fail message
-                openMessageDialog.value = true; // open message dialog
-            });
+            const identifier = model.value?.identification?.identifier;
+
+            if (!identifier) {
+                console.warn("Identifier is undefined. Cannot copy to clipboard.");
+                message.value = "No identifier to copy.";
+                openMessageDialog.value = true;
+                return;
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(identifier)
+                    .then(() => {
+                        message.value = "Identifier copied to clipboard!";
+                        openMessageDialog.value = true;
+                    })
+                    .catch(err => {
+                        console.error('Clipboard API error: ', err);
+                        fallbackCopyManual(identifier);
+                    });
+            } else {
+                fallbackCopyManual(identifier);
+            }
+        };
+
+        const fallbackCopyManual = (text) => {
+            if (text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+
+                message.value = "Text copied manually!";
+                openMessageDialog.value = true;
+            } else {
+                message.value = "No text available to copy.";
+                openMessageDialog.value = true;
+            }
         };
 
         const openValidationDialog = ref(false);
@@ -1409,15 +1470,14 @@ export default defineComponent({
 
         // Method to check that the identifier does not already exist
         const createAndCheckIdentifier = (identifier) => {
-            // Truncate data policy
-            let truncatedPolicy = model.value.identification.wmoDataPolicy.substring(0, 4);
+            let randomCode = random6ASCIICharacters();
 
             // Replace centre ID and data policy
             let id = identifier.replace(
                 '$CENTRE_ID', model.value.identification.centreID
             ).replace(
-                '$DATA_POLICY', truncatedPolicy
-            );
+                '$DATA_POLICY', randomCode
+            ).replace(/\..*$/, ''); 
 
             // If id already in items, inform the user that they will need to change the id in the form
             if (items.value.includes(id)) {
@@ -1433,11 +1493,10 @@ export default defineComponent({
         const replaceDataPolicyInIdentifier = () => {
             let id = model.value.identification.identifier;
 
-            // Truncate policy to 4 letters
-            let truncatedPolicy = model.value.identification.wmoDataPolicy.substring(0, 4);
+            let randomCode = random6ASCIICharacters();
 
             // Replace ':core.' or ':reco.' in the identifier
-            model.value.identification.identifier = id.replace(/:core\.|:reco\./g, `:${truncatedPolicy}.`);
+            model.value.identification.identifier = id.replace(/:(core|recommended)(\..*)?$/g, `:${randomCode}`);
         };
 
 
@@ -1464,7 +1523,8 @@ export default defineComponent({
             // Use centre ID and WMO data policy to create topic hierarchy
             model.value.identification.topicHierarchy = template.topicHierarchy
                 .replace('$CENTRE_ID', model.value.identification.centreID)
-                .replace('$DATA_POLICY', model.value.identification.wmoDataPolicy);
+                .replace('$DATA_POLICY', model.value.identification.wmoDataPolicy)
+                .replace(/\..*$/, '');
             // Get resolution and resolution unit from template
             const match = template.resolution.match(/P(\d+)([DH])/i);
             if (match) {
@@ -1525,11 +1585,11 @@ export default defineComponent({
                 return;
             }
 
-            // Otherwise, create sensible defaults using centre ID and policy
+            // Otherwise, create sensible defaults using centre ID and randomcode
+            const randomCode = random6ASCIICharacters();
             let policy = model.value.identification.wmoDataPolicy;
-            let truncatedPolicy = policy.substring(0, 4);
             let centreID = model.value.identification.centreID;
-            model.value.identification.identifier = 'urn:wmo:md:' + centreID + ':' + truncatedPolicy + '.';
+            model.value.identification.identifier = 'urn:wmo:md:' + centreID + ':' + randomCode;
             model.value.identification.topicHierarchy = centreID + '/data/' + policy + '/';
         }
 
@@ -2278,7 +2338,11 @@ export default defineComponent({
             redirectUser,
             verifyFormIsFilled,
             submitMetadata,
-            copyIdentifier
+            copyIdentifier,
+            fallbackCopyManual,
+            updateIdentifierFromLocalID,
+            extractLocalID,
+            localID
         }
     }
 });
