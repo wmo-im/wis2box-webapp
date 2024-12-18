@@ -964,27 +964,45 @@ export default defineComponent({
         const openMessageDialog = ref(false);
 
         const copyIdentifier = () => {
-        const identifier = model.value.identification.identifier;
+            const identifier = model.value?.identification?.identifier;
 
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-        
-            navigator.clipboard.writeText(identifier)
-                .then(() => {
-                    message.value = "Identifier copied to clipboard!";
-                    openMessageDialog.value = true;
-                })
-                .catch(err => {
-                    console.error('Clipboard API error: ', err);
-                    fallbackCopyManual(identifier);
-                });
-        } else {
-            fallbackCopyManual(identifier);
+            if (!identifier) {
+                console.warn("Identifier is undefined. Cannot copy to clipboard.");
+                message.value = "No identifier to copy.";
+                openMessageDialog.value = true;
+                return;
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(identifier)
+                    .then(() => {
+                        message.value = "Identifier copied to clipboard!";
+                        openMessageDialog.value = true;
+                    })
+                    .catch(err => {
+                        console.error('Clipboard API error: ', err);
+                        fallbackCopyManual(identifier);
+                    });
+            } else {
+                fallbackCopyManual(identifier);
             }
         };
 
-        const fallbackCopyManual = () => {
-            message.value = "Clipboard API not supported. Please copy the text manually.";
-            openMessageDialog.value = true;
+        const fallbackCopyManual = (text) => {
+            if (text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+
+                message.value = "Text copied manually!";
+                openMessageDialog.value = true;
+            } else {
+                message.value = "No text available to copy.";
+                openMessageDialog.value = true;
+            }
         };
 
         const openValidationDialog = ref(false);
