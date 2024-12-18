@@ -25,7 +25,8 @@
                             <v-row>
                                 <v-col cols="12">
                                     <v-combobox v-model="model.identification.centreID" :items="centreList"
-                                    label="Centre ID" :rules="[rules.centreID]" variant="outlined" @update:modelValue="convertToLowercase"></v-combobox>
+                                        label="Centre ID" :rules="[rules.centreID]" variant="outlined"
+                                        @update:modelValue="convertToLowercase"></v-combobox>
                                 </v-col>
                             </v-row>
                             <v-select v-model="selectedTemplate" :items="templateFiles" item-title="label" return-object
@@ -82,8 +83,9 @@
                     </v-card-text>
                     <v-container>
                         <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
-                            :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'" autocomplete="one-time-code"
-                            @click:append="showToken = !showToken" :rules="[rules.token]" variant="outlined">
+                            :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                            autocomplete="one-time-code" @click:append="showToken = !showToken" :rules="[rules.token]"
+                            variant="outlined">
                         </v-text-field>
                     </v-container>
                     <v-card-actions>
@@ -115,14 +117,12 @@
                             <v-row dense>
                                 <v-col cols="11">
                                     <v-text-field label="Identifier" type="string"
-                                        v-model="model.identification.identifier"
-                                        readonly variant="outlined">
+                                        v-model="model.identification.identifier" readonly variant="outlined">
                                     </v-text-field>
                                 </v-col>
-                                <v-col cols="1">    
-                                    <v-btn icon @click="copyIdentifier" 
-                                    aria-label="Copy Identifier">
-                                    <v-icon>mdi-content-copy</v-icon>
+                                <v-col cols="1">
+                                    <v-btn icon @click="copyIdentifier" aria-label="Copy Identifier">
+                                        <v-icon>mdi-content-copy</v-icon>
                                     </v-btn>
                                 </v-col>
                             </v-row>
@@ -215,8 +215,7 @@
                                 </v-col>
                                 <v-col cols="5">
                                     <v-select label="Unit" :items="durations" item-title="name" item-value="code"
-                                        v-model="model.extents.resolutionUnit"
-                                        variant="outlined" clearable></v-select>
+                                        v-model="model.extents.resolutionUnit" variant="outlined" clearable></v-select>
                                 </v-col>
                             </v-row>
                         </v-col>
@@ -277,7 +276,7 @@
                         </v-col>
                         <v-col cols="7">
                             <!-- Bounding box editor -->
-                            <bbox-editor :box-bounds="bounds" id="bbox-editor"></bbox-editor>
+                            <bbox-editor :box-bounds="bounds" :point-coords="pointCoords" id="bbox-editor" />
                         </v-col>
                     </v-row>
 
@@ -396,8 +395,9 @@
                 </v-card-title>
                 <v-card-text>
                     <v-text-field label="wis2box auth token for 'processes/wis2box'" v-model="token" rows="1"
-                        :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'" autocomplete="one-time-code"
-                        @click:append="showToken = !showToken" :rules="[rules.token]" variant="outlined">
+                        :append-icon="showToken ? 'mdi-eye' : 'mdi-eye-off'" :type="showToken ? 'text' : 'password'"
+                        autocomplete="one-time-code" @click:append="showToken = !showToken" :rules="[rules.token]"
+                        variant="outlined">
                     </v-text-field>
                 </v-card-text>
             </v-card>
@@ -508,7 +508,8 @@
                         <br>
                         <p><b>End Date:</b> The date in UTC when the dataset ends.</p>
                         <br>
-                        <p><b>Temporal Resolution (optional):</b> The smallest increment of time that is represented in the
+                        <p><b>Temporal Resolution (optional):</b> The smallest increment of time that is represented in
+                            the
                             dataset.
                         </p>
                         <p>This is split into two parts, the <b>value</b> (e.g. 1) and the <b>unit</b> (e.g.
@@ -650,7 +651,8 @@
                         {{ message }}
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn block variant="flat" @click="resetMessage('validation')" :color="formValidated ? '#64BF40' : 'error'">
+                        <v-btn block variant="flat" @click="resetMessage('validation')"
+                            :color="formValidated ? '#64BF40' : 'error'">
                             OK
                         </v-btn>
                     </v-card-actions>
@@ -722,7 +724,8 @@
                                 <v-col cols="8">
                                     <!-- Disable this if editing an existing plugin -->
                                     <v-select label="Plugin Name" v-model="pluginName" :items="pluginList"
-                                        item-title="title" item-value="id" variant="outlined" :disabled="!pluginIsNew"></v-select>
+                                        item-title="title" item-value="id" variant="outlined"
+                                        :disabled="!pluginIsNew"></v-select>
                                 </v-col>
                                 <v-col cols="4">
                                     <v-text-field label="File Extension" v-model="pluginFileExtension"
@@ -913,8 +916,32 @@ export default defineComponent({
         // when we overwrite the plugin info
         const previousPluginName = ref(null);
         const previousPluginFileExtension = ref(null);
+        const geometryType = ref("Polygon");
         // Metadata form to be filled
-        const model = ref({ 'identification': {}, 'extents': {}, 'host': {}, 'plugins': [] });
+        const model = ref({
+            identification: {},
+            extents: {
+                latitude: null,
+                longitude: null,
+                northLatitude: null,
+                southLatitude: null,
+                westLongitude: null,
+                eastLongitude: null,
+            },
+            host: {},
+            plugins: []
+        });
+        // Methods
+        const updateGeometryType = () => {
+            const { northLatitude, southLatitude, westLongitude, eastLongitude } = model.value.extents;
+            if (northLatitude === southLatitude && westLongitude === eastLongitude) {
+                geometryType.value = "Point";
+                model.value.extents.latitude = northLatitude;
+                model.value.extents.longitude = westLongitude;
+            } else {
+                geometryType.value = "Polygon";
+            }
+        };
         // Execution token to be entered by user
         const token = ref(null);
         // Variable to control whether token is seen or not
@@ -1233,19 +1260,21 @@ export default defineComponent({
                 }
             }
 
-            // Geometry information
-            if (schema.geometry?.coordinates && schema.geometry?.coordinates[0].length >= 4) {
+            if (schema.geometry?.type === "Point") {
+                formModel.extents.latitude = schema.geometry.coordinates[1];
+                formModel.extents.longitude = schema.geometry.coordinates[0];
+            } else if (schema.geometry?.type === "Polygon") {
                 const coordinates = schema.geometry.coordinates[0];
-                formModel.extents.westLongitude = coordinates[0][0];
                 formModel.extents.northLatitude = coordinates[0][1];
-                formModel.extents.eastLongitude = coordinates[2][0];
+                formModel.extents.eastLongitude = coordinates[1][0];
                 formModel.extents.southLatitude = coordinates[2][1];
+                formModel.extents.westLongitude = coordinates[3][0];
             }
 
             // Properties information
             formModel.identification.title = schema.properties.title;
             formModel.identification.description = schema.properties.description;
-            formModel.identification.language = {code: schema.properties.language};
+            formModel.identification.language = { code: schema.properties.language };
             formModel.identification.keywords = schema.properties.keywords;
 
             // Themes - hardcoded for now
@@ -1804,24 +1833,36 @@ export default defineComponent({
                 schemaModel.time.resolution = `P${form.extents.resolution}${form.extents.resolutionUnit}`;
             }
 
-            // Geometry information
-            schemaModel.geometry = {
-                type: "Polygon",
-                coordinates: [
-                    [
-                        // Top left corner
-                        [form.extents.westLongitude, form.extents.northLatitude],
-                        // Top right corner
-                        [form.extents.eastLongitude, form.extents.northLatitude],
-                        // Bottom right corner
-                        [form.extents.eastLongitude, form.extents.southLatitude],
-                        // Bottom left corner
-                        [form.extents.westLongitude, form.extents.southLatitude],
-                        // Back top top left corner to close the polygon
-                        [form.extents.westLongitude, form.extents.northLatitude]
-                    ]
-                ]
-            };
+            // Geometry information (Point or Polygon)
+            if (
+                form.extents.northLatitude === form.extents.southLatitude &&
+                form.extents.westLongitude === form.extents.eastLongitude
+            ) {
+                // If all lat/lon values are the same, it's a Point
+                schemaModel.geometry = {
+                    type: "Point",
+                    coordinates: [form.extents.westLongitude, form.extents.northLatitude],
+                };
+            } else {
+                // Otherwise, it's a Polygon
+                schemaModel.geometry = {
+                    type: "Polygon",
+                    coordinates: [
+                        [
+                            // Top left corner
+                            [form.extents.westLongitude, form.extents.northLatitude],
+                            // Top right corner
+                            [form.extents.eastLongitude, form.extents.northLatitude],
+                            // Bottom right corner
+                            [form.extents.eastLongitude, form.extents.southLatitude],
+                            // Bottom left corner
+                            [form.extents.westLongitude, form.extents.southLatitude],
+                            // Back top top left corner to close the polygon
+                            [form.extents.westLongitude, form.extents.northLatitude],
+                        ],
+                    ],
+                };
+            }
 
             // Properties information
             schemaModel.properties = {};
@@ -1829,7 +1870,7 @@ export default defineComponent({
             schemaModel.properties.identifier = form.identification.identifier;
             schemaModel.properties.title = form.identification.title;
             schemaModel.properties.description = form.identification.description;
-            schemaModel.properties.language = {code: null};
+            schemaModel.properties.language = { code: null };
             schemaModel.properties.keywords = form.identification.keywords;
             // Themes
             const concepts = form.identification.concepts.map(item => ({ id: item, title: getTitleOf(item) }));
@@ -2142,6 +2183,39 @@ export default defineComponent({
 
         // Watched
 
+        watch(
+            () => ({
+                northLatitude: model.value.extents.northLatitude,
+                southLatitude: model.value.extents.southLatitude,
+                westLongitude: model.value.extents.westLongitude,
+                eastLongitude: model.value.extents.eastLongitude,
+                latitude: model.value.extents.latitude,
+                longitude: model.value.extents.longitude,
+            }),
+            (extents) => {
+                if (
+                    extents.northLatitude === extents.southLatitude &&
+                    extents.westLongitude === extents.eastLongitude
+                ) {
+                    geometryType.value = "Point";
+                    model.value.extents.latitude = extents.northLatitude;
+                    model.value.extents.longitude = extents.westLongitude;
+                } else {
+                    geometryType.value = "Polygon";
+                }
+            },
+            { deep: true }
+        );
+
+        watch(
+            () => [
+                model.value.extents.northLatitude,
+                model.value.extents.southLatitude,
+                model.value.extents.westLongitude,
+                model.value.extents.eastLongitude
+            ],
+            updateGeometryType
+        );
         // If the user changes the data policy, update the topic hierarcy accordingly
         watch(() => model.value.identification.wmoDataPolicy, () => {
             if (!selectedTemplate.value) {
@@ -2191,6 +2265,8 @@ export default defineComponent({
         });
 
         return {
+            geometryType,
+            updateGeometryType,
             defaults,
             earthSystemDisciplines,
             durations,
