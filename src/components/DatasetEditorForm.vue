@@ -114,7 +114,7 @@
                             </v-row>
                             <v-row dense>
                                 <v-col cols="12">
-                                    <v-text-field label="Local ID" type="string" v-model="localID" @input="updateIdentifierFromLocalID" variant="outlined" clearable></v-text-field>
+                                    <v-text-field label="Local ID" type="string" v-model="localID" @input="updateIdentifierFromLocalID" variant="outlined" clearable :disabled="isEditing"></v-text-field>
                                 </v-col>
                             </v-row>
                             <v-row dense>
@@ -796,6 +796,7 @@ export default defineComponent({
     setup() {
 
         const localID = ref('');
+        const isEditing = computed(() => !isNew.value);
 
         const extractLocalID = (identifier) => {
             if (!identifier) {
@@ -2342,7 +2343,8 @@ export default defineComponent({
             fallbackCopyManual,
             updateIdentifierFromLocalID,
             extractLocalID,
-            localID
+            localID,
+            isEditing
         }
     }
 });
