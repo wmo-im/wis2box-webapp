@@ -113,10 +113,15 @@
                                 </v-col>
                             </v-row>
                             <v-row dense>
+                                <v-col cols="12">
+                                    <v-text-field label="Local ID" type="string" v-model="localID" @input="updateIdentifierFromLocalID" variant="outlined" clearable :disabled="isEditing"></v-text-field>
+                                </v-col>
+                            </v-row>
+                            <v-row dense>
                                 <v-col cols="11">
                                     <v-text-field label="Identifier" type="string"
                                         v-model="model.identification.identifier"
-                                        readonly variant="outlined">
+                                        :disabled="true"  variant="outlined">
                                     </v-text-field>
                                 </v-col>
                                 <v-col cols="1">    
@@ -457,15 +462,20 @@
                     </v-card-subtitle>
                     <v-card-text>
                         <p><b>Title:</b> A human-readable name of the dataset.</p>
-                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled.</i></p>
+                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled, please review and update the title where neccessary.</i></p>
                         <br>
                         <p><b>Description:</b> A free-text summary description of the dataset.</p>
                         <br>
-                        <p><b>Identifier:</b> The unique identifier for the dataset. It should start with
-                            <b>urn:wmo:md</b>
+                        <p><b>Local ID:</b> A short and unique identifier for the dataset within your organization.</p>
+                        <p><i>Note: Local ID is used to generate the WCMP2 identifier for your metadata record.
+                          Once the dataset is created, the identifier can no longer be updated. To use a
+                                different Local ID you will need to delete and re-create the dataset.
+                        </i></p>
+                        <br>
+                        <p><b>Identifier:</b> The unique identifier for your dataset in the WIS2 Global Discovery Catalogue, also known as the "metadata-id".
+                          It should start with <b>urn:wmo:md</b>.
+                          The dataset editor will automatically generate this identifier based on your centre-id and Local ID.
                         </p>
-                        <p><i>Note: once the dataset is created, the identifier can no longer be updated. To use a
-                                different Identifier you will need to delete and create the dataset.</i></p>
                         <br>
                         <p><b>Centre ID:</b> This is pre-filled and <i>cannot be edited</i>.</p>
                         <br>
@@ -789,6 +799,38 @@ export default defineComponent({
         VCombobox
     },
     setup() {
+
+        const localID = ref('');
+        const isEditing = computed(() => !isNew.value);
+
+        const extractLocalID = (identifier) => {
+            if (!identifier) {
+                console.warn("Identifier is undefined or null");
+                return ""; // Fallback empty string
+            }
+            const parts = identifier.split(":");
+            return parts[parts.length - 1] || "";
+        };
+
+        const updateIdentifierFromLocalID = () => {
+            const baseIdentifier = model.value.identification.identifier.split(":").slice(0, -1).join(":");
+            model.value.identification.identifier = `${baseIdentifier}:${localID.value}`;
+            if (items.value.includes(model.value.identification.identifier)) {
+                message.value = "Identifier already exists. Please choose a different Local ID.";
+                openMessageDialog.value = true;
+                return;
+            }
+        };
+
+        const random6ASCIICharacters = () => {
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            for (let i = 0; i < 6; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        };
+
         // Deep clone function to avoid reference issues between model and default model
         function deepClone(obj) {
             return JSON.parse(JSON.stringify(obj));
@@ -933,15 +975,45 @@ export default defineComponent({
         const openMessageDialog = ref(false);
 
         const copyIdentifier = () => {
-            const identifier = model.value.identification.identifier; // acquire identifier
-            navigator.clipboard.writeText(identifier).then(() => {
-                message.value = "Identifier copied to clipboard!"; // success message
-                openMessageDialog.value = true; // open message dialog
-            }).catch(err => {
-                console.error('Error copying text: ', err); // error handling
-                message.value = "Failed to copy identifier."; // fail message
-                openMessageDialog.value = true; // open message dialog
-            });
+            const identifier = model.value?.identification?.identifier;
+
+            if (!identifier) {
+                console.warn("Identifier is undefined. Cannot copy to clipboard.");
+                message.value = "No identifier to copy.";
+                openMessageDialog.value = true;
+                return;
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(identifier)
+                    .then(() => {
+                        message.value = "Identifier copied to clipboard!";
+                        openMessageDialog.value = true;
+                    })
+                    .catch(err => {
+                        console.error('Clipboard API error: ', err);
+                        fallbackCopyManual(identifier);
+                    });
+            } else {
+                fallbackCopyManual(identifier);
+            }
+        };
+
+        const fallbackCopyManual = (text) => {
+            if (text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+
+                message.value = "Text copied!";
+                openMessageDialog.value = true;
+            } else {
+                message.value = "No text available to copy.";
+                openMessageDialog.value = true;
+            }
         };
 
         const openValidationDialog = ref(false);
@@ -1162,6 +1234,7 @@ export default defineComponent({
                     const formModel = transformToForm(responseData);
                     // Update the form (model) with the loaded values
                     model.value = formModel;
+                    localID.value = extractLocalID(formModel.identification.identifier);
                     // Note: Set time delay to prevent watchers from firing too early
                     setTimeout(() => {
                         // Force bounding box map to update
@@ -1409,15 +1482,14 @@ export default defineComponent({
 
         // Method to check that the identifier does not already exist
         const createAndCheckIdentifier = (identifier) => {
-            // Truncate data policy
-            let truncatedPolicy = model.value.identification.wmoDataPolicy.substring(0, 4);
+            let randomCode = random6ASCIICharacters();
 
             // Replace centre ID and data policy
             let id = identifier.replace(
                 '$CENTRE_ID', model.value.identification.centreID
             ).replace(
-                '$DATA_POLICY', truncatedPolicy
-            );
+                '$DATA_POLICY', randomCode
+            ).replace(/\..*$/, ''); 
 
             // If id already in items, inform the user that they will need to change the id in the form
             if (items.value.includes(id)) {
@@ -1433,11 +1505,10 @@ export default defineComponent({
         const replaceDataPolicyInIdentifier = () => {
             let id = model.value.identification.identifier;
 
-            // Truncate policy to 4 letters
-            let truncatedPolicy = model.value.identification.wmoDataPolicy.substring(0, 4);
+            let randomCode = random6ASCIICharacters();
 
             // Replace ':core.' or ':reco.' in the identifier
-            model.value.identification.identifier = id.replace(/:core\.|:reco\./g, `:${truncatedPolicy}.`);
+            model.value.identification.identifier = id.replace(/:(core|recommended)(\..*)?$/g, `:${randomCode}`);
         };
 
 
@@ -1464,7 +1535,8 @@ export default defineComponent({
             // Use centre ID and WMO data policy to create topic hierarchy
             model.value.identification.topicHierarchy = template.topicHierarchy
                 .replace('$CENTRE_ID', model.value.identification.centreID)
-                .replace('$DATA_POLICY', model.value.identification.wmoDataPolicy);
+                .replace('$DATA_POLICY', model.value.identification.wmoDataPolicy)
+                .replace(/\..*$/, '');
             // Get resolution and resolution unit from template
             const match = template.resolution.match(/P(\d+)([DH])/i);
             if (match) {
@@ -1525,11 +1597,11 @@ export default defineComponent({
                 return;
             }
 
-            // Otherwise, create sensible defaults using centre ID and policy
+            // Otherwise, create sensible defaults using centre ID and randomcode
+            const randomCode = random6ASCIICharacters();
             let policy = model.value.identification.wmoDataPolicy;
-            let truncatedPolicy = policy.substring(0, 4);
             let centreID = model.value.identification.centreID;
-            model.value.identification.identifier = 'urn:wmo:md:' + centreID + ':' + truncatedPolicy + '.';
+            model.value.identification.identifier = 'urn:wmo:md:' + centreID + ':' + randomCode;
             model.value.identification.topicHierarchy = centreID + '/data/' + policy + '/';
         }
 
@@ -1976,6 +2048,12 @@ export default defineComponent({
         };
 
         const verifyFormIsFilled = async () => {
+            const identifierError = rules.identifier(model.value.identification.identifier);
+            if (identifierError !== true) {
+                message.value = identifierError;
+                openMessageDialog.value = true;
+                return;
+            }
             const checks = [
                 { condition: !formValidated.value, message: "The form must be validated" },
                 { condition: !formUpdated.value, message: "You must update the existing data" },
@@ -2278,7 +2356,12 @@ export default defineComponent({
             redirectUser,
             verifyFormIsFilled,
             submitMetadata,
-            copyIdentifier
+            copyIdentifier,
+            fallbackCopyManual,
+            updateIdentifierFromLocalID,
+            extractLocalID,
+            localID,
+            isEditing
         }
     }
 });
