@@ -472,6 +472,9 @@
                         <p><i>Note: once the dataset is created, the identifier can no longer be updated. To use a
                                 different Identifier you will need to delete and create the dataset.</i></p>
                         <br>
+                        <p><b>Local ID:</b> A short and unique identifier for the dataset within your organization.</p>
+                        <p><i>Note: Local ID is used to generate the full Identifier. If it conflicts with an existing Identifier, you must choose a different Local ID.</i></p>
+                        <br>
                         <p><b>Centre ID:</b> This is pre-filled and <i>cannot be edited</i>.</p>
                         <br>
                         <p><b>WMO Data Policy:</b> Classification code of core or recommended based on the WMO
@@ -810,7 +813,12 @@ export default defineComponent({
         const updateIdentifierFromLocalID = () => {
             const baseIdentifier = model.value.identification.identifier.split(":").slice(0, -1).join(":");
             model.value.identification.identifier = `${baseIdentifier}:${localID.value}`;
-            };
+            if (items.value.includes(model.value.identification.identifier)) {
+                message.value = "Identifier already exists. Please choose a different Local ID.";
+                openMessageDialog.value = true;
+                return;
+            }
+        };
 
         const random6ASCIICharacters = () => {
             let result = '';
@@ -2037,6 +2045,12 @@ export default defineComponent({
         };
 
         const verifyFormIsFilled = async () => {
+            const identifierError = rules.identifier(model.value.identification.identifier);
+            if (identifierError !== true) {
+                message.value = identifierError;
+                openMessageDialog.value = true;
+                return;
+            }
             const checks = [
                 { condition: !formValidated.value, message: "The form must be validated" },
                 { condition: !formUpdated.value, message: "You must update the existing data" },
