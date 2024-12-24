@@ -1234,6 +1234,7 @@ export default defineComponent({
                     const formModel = transformToForm(responseData);
                     // Update the form (model) with the loaded values
                     model.value = formModel;
+                    localID.value = extractLocalID(formModel.identification.identifier);
                     // Note: Set time delay to prevent watchers from firing too early
                     setTimeout(() => {
                         // Force bounding box map to update
