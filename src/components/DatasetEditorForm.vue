@@ -462,18 +462,20 @@
                     </v-card-subtitle>
                     <v-card-text>
                         <p><b>Title:</b> A human-readable name of the dataset.</p>
-                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled.</i></p>
+                        <p><i>Note: Unless 'other' was selected initially, this field is pre-filled, please review and update the title where neccessary.</i></p>
                         <br>
                         <p><b>Description:</b> A free-text summary description of the dataset.</p>
                         <br>
-                        <p><b>Identifier:</b> The unique identifier for the dataset. It should start with
-                            <b>urn:wmo:md</b>
-                        </p>
-                        <p><i>Note: once the dataset is created, the identifier can no longer be updated. To use a
-                                different Identifier you will need to delete and create the dataset.</i></p>
-                        <br>
                         <p><b>Local ID:</b> A short and unique identifier for the dataset within your organization.</p>
-                        <p><i>Note: Local ID is used to generate the full Identifier. If it conflicts with an existing Identifier, you must choose a different Local ID.</i></p>
+                        <p><i>Note: Local ID is used to generate the WCMP2 identifier for your metadata record.
+                          Once the dataset is created, the identifier can no longer be updated. To use a
+                                different Local ID you will need to delete and re-create the dataset.
+                        </i></p>
+                        <br>
+                        <p><b>Identifier:</b> The unique identifier for your dataset in the WIS2 Global Discovery Catalogue, also known as the "metadata-id".
+                          It should start with <b>urn:wmo:md</b>.
+                          The dataset editor will automatically generate this identifier based on your centre-id and Local ID.
+                        </p>
                         <br>
                         <p><b>Centre ID:</b> This is pre-filled and <i>cannot be edited</i>.</p>
                         <br>
@@ -1006,7 +1008,7 @@ export default defineComponent({
                 document.execCommand('copy');
                 document.body.removeChild(textarea);
 
-                message.value = "Text copied manually!";
+                message.value = "Text copied!";
                 openMessageDialog.value = true;
             } else {
                 message.value = "No text available to copy.";
