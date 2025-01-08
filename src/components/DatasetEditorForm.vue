@@ -113,8 +113,8 @@
                                 </v-col>
                             </v-row>
                             <v-row dense>
-                                <v-col cols="12">
-                                    <v-text-field label="Local ID" type="string" v-model="localID" @input="updateIdentifierFromLocalID" variant="outlined" clearable :disabled="isEditing"></v-text-field>
+                                <v-col cols="6">
+                                    <v-text-field label="Local ID" type="string" v-model="localID" @input="updateIdentifierFromLocalID" variant="outlined" @update:modelValue="convertToLowercaseLocalID" clearable :disabled="isEditing"></v-text-field>
                                 </v-col>
                             </v-row>
                             <v-row dense>
@@ -1033,6 +1033,11 @@ export default defineComponent({
         // transfer to lowercase in realtime
         const convertToLowercase = (value) => {
             model.value.identification.centreID = value.toLowerCase();
+        };
+
+
+        const convertToLowercaseLocalID = (value) => {
+            localID.value = value.toLowerCase();
         };
 
         // Has the user filled the dialog window?
@@ -2361,7 +2366,8 @@ export default defineComponent({
             updateIdentifierFromLocalID,
             extractLocalID,
             localID,
-            isEditing
+            isEditing,
+            convertToLowercaseLocalID
         }
     }
 });
