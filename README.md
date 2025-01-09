@@ -192,9 +192,9 @@ git push --tags
 # publish release on GitHub (https://github.com/wmo-im/wis2box-webapp/releases/new)
 ```
 
-## Bugs and Issues
+## Issues
 
-All bugs, enhancements and issues are managed on [GitHub](https://github.com/wmo-im/wis2box-webapp/issues).
+Please direct all issues to the [main wis2box issue tracker](https://github.com/wmo-im/wis2box/issues)
 
 ## Contact
 
