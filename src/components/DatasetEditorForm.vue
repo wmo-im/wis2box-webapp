@@ -113,10 +113,20 @@
                                 </v-col>
                             </v-row>
                             <v-row dense>
-                                <v-col cols="6">
+                                <v-col cols="12">
                                     <v-text-field label="Local ID" type="string" v-model="localID" @input="updateIdentifierFromLocalID" variant="outlined" @update:modelValue="convertToLowercaseLocalID" clearable :disabled="isEditing"></v-text-field>
                                 </v-col>
                             </v-row>
+                        </v-col>
+
+                        <v-col cols="6">
+                            <v-textarea label="Description"
+                                placeholder="Please enter a detailed description of the dataset" type="string"
+                                v-model="model.identification.description" :rules="[rules.required]" variant="outlined"
+                                clearable></v-textarea>
+                        </v-col>
+
+                        <v-col cols="12">
                             <v-row dense>
                                 <v-col cols="11">
                                     <v-text-field label="Identifier" type="string"
@@ -131,13 +141,6 @@
                                     </v-btn>
                                 </v-col>
                             </v-row>
-                        </v-col>
-
-                        <v-col cols="6">
-                            <v-textarea label="Description"
-                                placeholder="Please enter a detailed description of the dataset" type="string"
-                                v-model="model.identification.description" :rules="[rules.required]" variant="outlined"
-                                clearable></v-textarea>
                         </v-col>
                     </v-row>
                     <v-row>
@@ -155,7 +158,7 @@
                         <!-- Unless the user selects 'other' for the datatype 
                         label, the topic hierarchy should remain disabled as 
                         it is autofilled -->
-                        <v-col cols="6">
+                        <v-col cols="8">
                             <v-text-field label="Topic Hierarchy" type="string"
                                 v-model="model.identification.topicHierarchy" :rules="[rules.required]"
                                 variant="outlined" :disabled="selectedTemplate?.label !== 'other'"></v-text-field>
@@ -824,7 +827,7 @@ export default defineComponent({
 
         const random6ASCIICharacters = () => {
             let result = '';
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
             for (let i = 0; i < 6; i++) {
                 result += characters.charAt(Math.floor(Math.random() * characters.length));
             }
@@ -1037,8 +1040,15 @@ export default defineComponent({
 
 
         const convertToLowercaseLocalID = (value) => {
-            localID.value = value.toLowerCase();
-        };
+            if (!value) {
+                localID.value = '';
+                return;
+            }
+            localID.value = value
+                .trim()
+                .toLowerCase()
+                .replace(/\s+/g, '-');
+            };
 
         // Has the user filled the dialog window?
         const initialDialogFilled = computed(() => {
@@ -1533,6 +1543,7 @@ export default defineComponent({
             // Metadata Editor parts
             model.value.identification.title = template.title.replace('$CENTRE_ID', model.value.identification.centreID);
             model.value.identification.identifier = createAndCheckIdentifier(template.identifier);
+            localID.value = extractLocalID(model.value.identification.identifier);
             // Converts the theme structure into a list of the theme labels
             model.value.identification.concepts = template.themes.flatMap(theme => theme.concepts.map(concept => concept.label));
             model.value.identification.conceptScheme = template.themes.map(theme => theme.scheme)[0];
@@ -1607,6 +1618,7 @@ export default defineComponent({
             let policy = model.value.identification.wmoDataPolicy;
             let centreID = model.value.identification.centreID;
             model.value.identification.identifier = 'urn:wmo:md:' + centreID + ':' + randomCode;
+            localID.value = extractLocalID(model.value.identification.identifier);
             model.value.identification.topicHierarchy = centreID + '/data/' + policy + '/';
         }
 
