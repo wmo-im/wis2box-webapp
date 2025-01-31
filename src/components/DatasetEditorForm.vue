@@ -1515,27 +1515,15 @@ export default defineComponent({
             return id;
         };
 
-        // Update the identifier to include 'core' or 'reco'
-        // each time the data policy is updated
-        const replaceDataPolicyInIdentifier = () => {
-            let id = model.value.identification.identifier;
 
-            let randomCode = random6ASCIICharacters();
-
-            // Replace ':core.' or ':reco.' in the identifier
-            model.value.identification.identifier = id.replace(/:(core|recommended)(\..*)?$/g, `:${randomCode}`);
-        };
-
-
-        // If the template is other and the data policy is changed,
         // replace the data policy in the topic hierarchy
         const replaceDataPolicyInTopicHierarchy = () => {
             let policy = model.value.identification.wmoDataPolicy;
-            let hierarcy = model.value.identification.topicHierarchy;
+            let hierarchy = model.value.identification.topicHierarchy;
 
             // Replace 'core' or 'recommended' in the topic hierachy
             // string with the policy
-            model.value.identification.topicHierarchy = hierarcy.replace(/core|recommended/g, policy);
+            model.value.identification.topicHierarchy = hierarchy.replace(/core|recommended/g, policy);
         };
 
         // Autofill form based on template
@@ -2237,18 +2225,9 @@ export default defineComponent({
 
         // Watched
 
-        // If the user changes the data policy, update the topic hierarcy accordingly
+        // If the user changes the data policy, update the topic hierarchy accordingly
         watch(() => model.value.identification.wmoDataPolicy, () => {
-            if (!selectedTemplate.value) {
-                return;
-            }
-            if (selectedTemplate.value?.label !== 'other') {
-                applyTemplate(selectedTemplate.value);
-            }
-            else {
-                replaceDataPolicyInIdentifier();
-                replaceDataPolicyInTopicHierarchy();
-            }
+            replaceDataPolicyInTopicHierarchy();
         });
 
         // For each plugin name, auto populate the plugin fields
