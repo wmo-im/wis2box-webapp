@@ -1456,6 +1456,10 @@ export default defineComponent({
                 let fullTopic = schema.properties['wmo:topicHierarchy'];
                 formModel.identification.topicHierarchy = fullTopic.replace(/origin\/a\/wis2\//g, '');
             }
+            else {
+                formModel.identification.topicHierarchy = null;
+                isNonRealTime.value = true;
+            }
 
             // Time period information
             if (schema.time?.interval) {
@@ -1537,10 +1541,8 @@ export default defineComponent({
 
             // Links information, excluding link with rel='items' and href starting with 'mqtt'
             if (schema.links) {
-                formModel.links = schema.links.filter(link => link.rel !== "items" && !link.href.startsWith("mqtt"));
+                formModel.links = schema.links.filter(link => link.rel !== "data");
             }
-            console.log('formModel:');
-            console.log(formModel);
             return formModel;
         }
 
@@ -2118,7 +2120,7 @@ export default defineComponent({
                 "centre_id": form.identification.centreID,
                 "topic_hierarchy": null
             };
-            // ltopic_hierarchy and data_mappings are only added if the data is non-real-time
+            // topic_hierarchy and data_mappings are only added if the data is non-real-time
             if(isNonRealTime.value === false) {
                 schemaModel.wis2box["topic_hierarchy"] = formatWIS2TopicHierarchy(form.identification.topicHierarchy);
                 schemaModel.wis2box["data_mappings"] = untidyPluginsForSchema(form.plugins);
@@ -2216,6 +2218,10 @@ export default defineComponent({
                 schemaModel.properties["wmo:topicHierarchy"] = formatWMOTopicHierarchy(form.identification.topicHierarchy);
             }
             schemaModel.properties.id = form.identification.identifier;
+            // add rel="data" to links
+            form.links.forEach(link => {
+                link.rel = "data";
+            });
             schemaModel.links = form.links;
 
             return schemaModel;
