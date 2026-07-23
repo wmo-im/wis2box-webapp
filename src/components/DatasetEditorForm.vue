@@ -1006,6 +1006,7 @@
 import BboxEditor from "@/components/BboxEditor.vue";
 
 import { defineComponent, ref, computed, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { VCard, VForm, VBtn, VChipGroup, VChip, VCombobox } from 'vuetify/lib/components/index.mjs';
 import Papa from 'papaparse';
 
@@ -1025,6 +1026,7 @@ export default defineComponent({
         VCombobox
     },
     setup() {
+        const route = useRoute();
 
         const localID = ref('');
         const isEditing = computed(() => !isNew.value);
@@ -2803,8 +2805,18 @@ export default defineComponent({
         };
 
         // Mounted
-        onMounted(() => {
-            loadList();
+        onMounted(async () => {
+            await loadList();
+
+            const routeIdentifier = Array.isArray(route.query.identifier)
+                ? route.query.identifier[0]
+                : route.query.identifier;
+
+            if (typeof routeIdentifier === 'string' && routeIdentifier.length > 0 && items.value.includes(routeIdentifier)) {
+                identifier.value = routeIdentifier;
+                await loadMetadata();
+            }
+
             loadOfficialCentres();
             loadDisciplines();
             loadTopics();
