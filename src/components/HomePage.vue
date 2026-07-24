@@ -38,7 +38,7 @@
                                     :loading="isLoadingKpi && selectedDatasetForKpi?.id === dataset.id"
                                     @click="showMetadataKpi(dataset)"
                                 >
-                                    Show metadata KPI
+                                    Metadata quality assessment
                                 </v-btn>
                                 <v-btn size="small" color="#003DA5" variant="flat" @click="goToDatasetEditor(dataset)">
                                     Update dataset
@@ -55,10 +55,12 @@
 
         <v-dialog v-model="showKpiDialog">
             <v-card>
-                <v-card-title>Metadata KPI</v-card-title>
+                <v-card-title>Metadata quality assessment</v-card-title>
                 <v-card-text>
                     <div>
-                        Metadata ID: <strong>{{ selectedDatasetForKpi?.id }}</strong>
+                        Metadata ID: <strong>{{ selectedDatasetForKpi?.id }}</strong><br/>
+                        Title: {{ selectedDatasetForKpi?.title || 'N/A' }}<br/>
+                        Description: {{ selectedDatasetForKpi?.description || 'N/A' }}
                     </div>
                     <v-progress-circular
                         v-if="isLoadingKpi"
@@ -73,7 +75,7 @@
                     <div v-else-if="kpiResult" class="mt-3">
                         <v-card variant="tonal" class="mb-3">
                             <v-card-text>
-                                <div><strong>Grade:</strong> {{ kpiResult.summary?.grade ?? 'N/A' }}</div>
+                                <div><strong>KPI Grade:</strong> {{ kpiResult.summary?.grade ?? 'N/A' }}</div>
                                 <div>
                                     <strong>Score:</strong>
                                     {{ kpiResult.summary?.score ?? 'N/A' }} / {{ kpiResult.summary?.total ?? 'N/A' }}
@@ -192,7 +194,7 @@ const formatPercentage = (value) => {
     }
 
     const parsed = Number(value);
-    return Number.isNaN(parsed) ? 'N/A' : `${parsed.toFixed(3)}%`;
+    return Number.isNaN(parsed) ? 'N/A' : `${parsed.toFixed(1)}%`;
 };
 
 const formatComments = (comments) => {
