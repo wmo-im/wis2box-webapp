@@ -1,6 +1,6 @@
 {
   "label": "weather/surface-based-observations/temp",
-  "title": "Upper-level temperature/humidity/wind reports from fixed-land stations (TEMP) ($CENTRE_ID)",
+  "title": "Upper-level temperature/humidity/wind reports from fixed-land stations",
   "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.temp",
   "topicHierarchy": "origin/a/wis2/$CENTRE_ID/data/$DATA_POLICY/weather/surface-based-observations/temp",
   "language": "en",
