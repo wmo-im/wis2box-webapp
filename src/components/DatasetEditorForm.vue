@@ -433,6 +433,11 @@
                             <p v-if="(typeof isHostPhoneValid !== 'undefined') && !isHostPhoneValid"
                                 class="hint-text hint-invalid">Phone number is not valid</p>
                         </v-col>
+                        <v-col cols="4">
+                            <v-select label="Contact Instructions" v-model="model.host.contactInstructions"
+                                :items="contactInstructionsOptions" :rules="[rules.required]"
+                                variant="outlined"></v-select>
+                        </v-col>
                     </v-row>
                     <v-col cols="12">
                         <v-row>
@@ -723,6 +728,8 @@
                         <p><b>Phone Number (optional):</b> The phone number of the contact, written in
                             international
                             format (+).</p>
+                        <br>
+                        <p><b>Preferred Contact Method:</b> The preferred way for users to contact the provider.</p>
                     </v-card-text>
                 </v-card>
             </v-dialog>
@@ -1087,7 +1094,9 @@ export default defineComponent({
                 dateStarted: new Date().toISOString(),
                 dateEnded: null
             },
-            host: {},
+            host: {
+                contactInstructions: 'email'
+            },
             plugins: [],
             links: [],
             settings: {
@@ -1110,6 +1119,8 @@ export default defineComponent({
             { rel: 'archives', description: 'Online data archive (rel="archives")' },
             { rel: 'service-desc', description: 'API or Web Service (rel="service-desc")' }
         ];
+
+        const contactInstructionsOptions = ['email', 'phone'];
 
         // WCMP2 schema version
         const schemaVersion = "http://wis.wmo.int/spec/wcmp/2/conf/core";
@@ -1229,7 +1240,7 @@ export default defineComponent({
         const previousLinkURL = ref(null);
         const previousLinkRel = ref(null);
         // Metadata form to be filled
-        const model = ref({ 'identification': {}, 'settings': { 'cache': true }, 'extents': {}, 'host': {}, 'plugins': [], 'links': [] , 'license_link': defaults.license_link });
+        const model = ref({ 'identification': {}, 'settings': { 'cache': true }, 'extents': {}, 'host': { 'contactInstructions': 'email' }, 'plugins': [], 'links': [] , 'license_link': defaults.license_link });
         // Execution token to be entered by user
         const token = ref(null);
         // Variable to control whether token is seen or not
@@ -1765,7 +1776,7 @@ export default defineComponent({
                     postalCode: contact.addresses ? contact.addresses[0].postalCode : undefined,
                     country: contact.addresses ? contact.addresses[0].country : undefined,
                     hoursOfService: contact.hoursOfService,
-                    contactInstructions: contact.contactInstructions,
+                    contactInstructions: contact.contactInstructions || 'email',
                     url: contact.links ? contact.links[0].href : undefined
                 };
             }
@@ -1774,6 +1785,9 @@ export default defineComponent({
                     formModel.host = structureHostDetails(contact);
                 }
             });
+            if (!formModel.host.contactInstructions) {
+                formModel.host.contactInstructions = 'email';
+            }
 
             // Additional settings information
             if (schema.properties["wmo:dataPolicy"]) {
@@ -2484,7 +2498,7 @@ export default defineComponent({
                     type: "text/html"
                 }],
                 hoursOfService: form.host.hoursOfService,
-                contactInstructions: form.host.contactInstructions,
+                contactInstructions: form.host.contactInstructions || 'email',
                 roles: ["host"]
             };
 
@@ -2946,6 +2960,7 @@ export default defineComponent({
             license_options,
             durations,
             linkTypeList,
+            contactInstructionsOptions,
             pluginList,
             templateList,
             bucketList,
