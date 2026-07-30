@@ -1,6 +1,6 @@
 {
   "label": "weather/advisories-warnings",
-  "title": "CAP Alerts published by $CENTRE_ID",
+  "title": "CAP Alerts",
   "identifier": "urn:wmo:md:$CENTRE_ID:weather.cap",
   "topicHierarchy": "origin/a/wis2/$CENTRE_ID/data/$DATA_POLICY/weather/advisories-warnings",
   "language": "en",
