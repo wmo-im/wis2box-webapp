@@ -1,6 +1,6 @@
 {
   "label": "weather/surface-based-observations/synop",
-  "title": "Hourly synoptic observations from fixed-land stations (SYNOP) ($CENTRE_ID)",
+  "title": "Hourly synoptic observations from fixed-land stations",
   "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.synop",
   "topicHierarchy": "origin/a/wis2/$CENTRE_ID/data/$DATA_POLICY/weather/surface-based-observations/synop",
   "language": "en",
