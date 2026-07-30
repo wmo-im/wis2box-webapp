@@ -1,6 +1,6 @@
 {
   "label": "ocean/surface-based-observations/drifting-buoys",
-  "title": "Drifting buoy observations ($CENTRE_ID)",
+  "title": "Drifting buoy observations",
   "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.drifting-buoys",
   "topicHierarchy": "origin/a/wis2/$CENTRE_ID/data/$DATA_POLICY/ocean/surface-based-observations/drifting-buoys",
   "language": "en",

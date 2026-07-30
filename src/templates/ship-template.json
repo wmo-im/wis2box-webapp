@@ -1,6 +1,6 @@
 {
   "label": "weather/surface-based-observations/ship",
-  "title": "Surface weather observations from ships ($CENTRE_ID)",
+  "title": "Surface weather observations from ships",
   "identifier": "urn:wmo:md:$CENTRE_ID:surface-based-observations.ship",
   "topicHierarchy": "origin/a/wis2/$CENTRE_ID/data/$DATA_POLICY/weather/surface-based-observations/ship",
   "language": "en",
