@@ -1016,8 +1016,10 @@ import { defineComponent, ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { VCard, VForm, VBtn, VChipGroup, VChip, VCombobox } from 'vuetify/lib/components/index.mjs';
 import Papa from 'papaparse';
+import packageJson from '../../package.json';
 
 const oapi = import.meta.env.VITE_API_URL;
+const generatedBy = `${packageJson.name} ${packageJson.version}`;
 
 export default defineComponent({
     name: "DatasetEditorForm",
@@ -2403,6 +2405,7 @@ export default defineComponent({
             schemaModel.id = form.identification.identifier;
             schemaModel.conformsTo = [schemaVersion];
             schemaModel.type = "Feature";
+            schemaModel.generated_by = generatedBy;
 
             // wis2box information
             // Note: This is an extension to the WCMP2 schema
