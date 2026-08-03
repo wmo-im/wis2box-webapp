@@ -6,7 +6,7 @@
             {{ datasetErrorMessage }}
         </v-alert>
         <v-alert v-if="isLoadingDatasetKpis" type="info" density="compact" class="mt-2 mb-2">
-                loading metadata KPI results...
+                loading datasets...
         </v-alert>
         <template v-else>
             <v-select
@@ -92,7 +92,7 @@
                         <v-table density="compact">
                             <thead>
                                 <tr>
-                                    <th>Test</th>
+                                    <th>Title</th>
                                     <th>Score</th>
                                     <th>Percentage</th>
                                     <th>Comments</th>
@@ -103,7 +103,7 @@
                                     <td>{{ test.title || test.id }}</td>
                                     <td>{{ test.score ?? 'N/A' }} / {{ test.total ?? 'N/A' }}</td>
                                     <td>{{ formatPercentage(test.percentage) }}</td>
-                                    <td>{{ formatComments(test.comments) }}</td>
+                                    <td class="kpi-comments-cell">{{ formatComments(test.comments) }}</td>
                                 </tr>
                             </tbody>
                         </v-table>
@@ -140,8 +140,6 @@ const loadedCentreIds = ref({});
 const router = useRouter();
 
 const oapiBaseUrl = `${import.meta.env.VITE_API_URL}`.replace(/\/$/, '');
-const apiUrl = `${oapiBaseUrl}/collections/discovery-metadata/items?f=json`;
-const kpiProcessId = 'pywcmp-wis2-wcmp2-kpi';
 
 const sortDatasetsById = (items) => {
     return items.slice().sort((a, b) => (a.id || '').localeCompare(b.id || '', undefined, { sensitivity: 'base' }));
@@ -199,8 +197,10 @@ const fetchDatasets = async () => {
     isLoadingDatasets.value = true;
     datasetErrorMessage.value = null;
 
+    const datasetUrl = `${oapiBaseUrl}/collections/discovery-metadata/items?f=json`;
+
     try {
-        const response = await fetch(apiUrl);
+        const response = await fetch(datasetUrl);
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -245,10 +245,10 @@ const formatPercentage = (value) => {
 
 const formatComments = (comments) => {
     if (!Array.isArray(comments) || comments.length === 0) {
-        return 'None';
+        return '';
     }
 
-    return comments.join('; ');
+    return comments.join('\n');
 };
 
 const getDatasetKpiGrade = (datasetId) => {
@@ -275,7 +275,7 @@ const getDatasetKpiGradeClass = (datasetId) => {
 };
 
 const fetchDatasetMetadata = async (datasetId) => {
-    const itemUrl = `${oapiBaseUrl}/collections/discovery-metadata/items/${encodeURIComponent(datasetId)}?f=json`;
+    const itemUrl = `${oapiBaseUrl}/../data/metadata/${encodeURIComponent(datasetId)}.json?f=json`;
     const response = await fetch(itemUrl, {
         headers: {
             accept: 'application/json'
@@ -290,7 +290,7 @@ const fetchDatasetMetadata = async (datasetId) => {
 };
 
 const executeKpiProcess = async (record) => {
-    const executionUrl = `${oapiBaseUrl}/processes/${kpiProcessId}/execution`;
+    const executionUrl = `${oapiBaseUrl}/processes/pywcmp-wis2-wcmp2-kpi/execution`;
     const response = await fetch(executionUrl, {
         method: 'POST',
         headers: {
@@ -459,5 +459,9 @@ watch(selectedCentreId, async (centreId) => {
 
 .kpi-grade-na {
     background-color: #6b7280;
+}
+
+.kpi-comments-cell {
+    white-space: pre-line;
 }
 </style>
