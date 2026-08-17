@@ -1,6 +1,6 @@
 <template>
     <v-card variant="outlined" color="#757575">
-        <v-card-item style="width: 100%; height: 100%; min-height: 300px" :id="id"></v-card-item>
+        <v-card-item style="width: 100%; height: 100%; min-height: 405px" :id="id"></v-card-item>
     </v-card>
 </template>
 
@@ -16,27 +16,53 @@ export default defineComponent({
         VCard
     },
     props: {
-        boxBounds: {},
+        boxBounds: {
+            type: Array,
+            default: null
+        },
+        boxBoundsList: {
+            type: Array,
+            default: () => []
+        },
+        selectedBoxIndex: {
+            type: Number,
+            default: 0
+        }
     },
-    setup(props) {
+    setup(props, { attrs }) {
 
         // Reactive variables
         const map = ref(null);
-        const id = ref('map');
-        const rectangle = ref(null);
+        const fallbackId = `bbox-map-${Math.random().toString(36).slice(2, 8)}`;
+        const id = ref(attrs.id || fallbackId);
+        const rectangles = ref([]);
         const zoom = ref(1.5);
         const centre = ref([0, 0]);
 
-        // Computed property for bounds
-        const bounds = computed(() => {
-            if (props.boxBounds) {
-                return L.latLngBounds(
-                    L.latLng(props.boxBounds[0], props.boxBounds[1]),
-                    L.latLng(props.boxBounds[2], props.boxBounds[3])
-                );
+        const isFiniteBoxBounds = (bounds) => {
+            if (!Array.isArray(bounds) || bounds.length !== 4) {
+                return false;
             }
-            return null;
+            return bounds.every((value) => Number.isFinite(Number(value)));
+        };
+
+        // Computed property for one or many bounds
+        const boundsList = computed(() => {
+            if (Array.isArray(props.boxBoundsList) && props.boxBoundsList.length > 0) {
+                return props.boxBoundsList
+                    .map((bounds, sourceIndex) => ({ bounds, sourceIndex }))
+                    .filter((item) => isFiniteBoxBounds(item.bounds));
+            }
+            if (isFiniteBoxBounds(props.boxBounds)) {
+                return [{ bounds: props.boxBounds, sourceIndex: 0 }];
+            }
+            return [];
         });
+
+        const clearRectangles = () => {
+            rectangles.value.forEach((rectangle) => rectangle.remove());
+            rectangles.value = [];
+        };
 
         onMounted(() => {
             // Add 1 second delay to load map or Vue will call mounted before DOM is available
@@ -47,21 +73,33 @@ export default defineComponent({
             }, 1)
         });
 
-        watch(bounds, (newBounds) => {
-            // If bounds added, add a rectangle to the map
-            if (newBounds) {
-                if (rectangle.value) {
-                    rectangle.value.remove();
-                }
-                rectangle.value = L.rectangle(newBounds, { color: "#003DA5", weight: 1 }).addTo(map.value);
-                map.value.fitBounds(newBounds);
+        watch([boundsList, map, () => props.selectedBoxIndex], ([newBoundsList, currentMap]) => {
+            if (!currentMap) {
+                return;
             }
-            // If bounds removed, remove the corresponding rectangle
-            else if (rectangle.value) {
-                rectangle.value.remove();
-                rectangle.value = null;
+
+            clearRectangles();
+
+            if (newBoundsList.length > 0) {
+                newBoundsList.forEach((boxData) => {
+                    const boxBounds = boxData.bounds;
+                    const isSelected = boxData.sourceIndex === props.selectedBoxIndex;
+                    const bounds = L.latLngBounds(
+                        L.latLng(boxBounds[0], boxBounds[1]),
+                        L.latLng(boxBounds[2], boxBounds[3])
+                    );
+                    const rectangle = L.rectangle(bounds, {
+                        color: isSelected ? "#003DA5" : "#1FB5DB",
+                        weight: 2,
+                        fillOpacity: 0.15
+                    }).addTo(currentMap);
+                    rectangles.value.push(rectangle);
+                });
+
+                const featureGroup = L.featureGroup(rectangles.value);
+                currentMap.fitBounds(featureGroup.getBounds(), { padding: [10, 10] });
             }
-        });
+        }, { immediate: true });
 
         return {
             map,
