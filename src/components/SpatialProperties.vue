@@ -29,13 +29,13 @@
                 <v-row dense>
                     <v-col cols="12">
                         <v-autocomplete
-                            label="Use automatic bounding box (optional)"
+                            label="Use pre-defined bounding box (optional)"
                             item-title="name"
                             item-value="alpha-3"
                             :items="filteredCountryCodeList"
                             :model-value="selectedCountryCodes[selectedBoundingBoxIndex]"
                             @update:modelValue="applyAutoBbox"
-                            hint="Your country may not have an automatic bounding box"
+                            hint="Not available for all countries"
                             persistent-hint
                             variant="outlined"
                         ></v-autocomplete>
@@ -109,7 +109,7 @@
                 <v-row v-if="hasIncompleteBoundingBoxes" dense>
                     <v-col cols="12">
                         <p class="hint-text hint-invalid mb-0">
-                            Complete all four coordinates for each bounding box, or remove incomplete ones.
+                            Provide four coordinates for each bounding box.
                         </p>
                     </v-col>
                 </v-row>
@@ -120,6 +120,8 @@
             <bbox-editor
                 :box-bounds-list="combinedBoundsForMap"
                 :selected-box-index="selectedBoundingBoxIndex"
+                :interactive="true"
+                @update:selectedBoxBounds="updateSelectedBoxFromMap"
                 id="bbox-editor-multipolygon"
             ></bbox-editor>
         </v-col>
@@ -232,6 +234,17 @@ export default defineComponent({
             emitBoundingBoxes(nextBoxes);
         };
 
+        const updateSelectedBoxFromMap = (bounds) => {
+            const nextBoxes = cloneBoundingBoxes();
+            nextBoxes[selectedBoundingBoxIndex.value] = {
+                northLatitude: toNumberOrNull(bounds?.northLatitude),
+                southLatitude: toNumberOrNull(bounds?.southLatitude),
+                eastLongitude: toNumberOrNull(bounds?.eastLongitude),
+                westLongitude: toNumberOrNull(bounds?.westLongitude)
+            };
+            emitBoundingBoxes(nextBoxes);
+        };
+
         const addBoundingBox = () => {
             const nextBoxes = cloneBoundingBoxes();
             nextBoxes.push(createEmptyBoundingBox());
@@ -297,6 +310,7 @@ export default defineComponent({
             hasIncompleteBoundingBoxes,
             combinedBoundsForMap,
             updateSelectedBoxField,
+            updateSelectedBoxFromMap,
             addBoundingBox,
             removeSelectedBoundingBox,
             applyAutoBbox

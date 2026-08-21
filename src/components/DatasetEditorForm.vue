@@ -644,15 +644,17 @@
                         <p><b>Manually:</b> By the entering the northmost, eastmost, southmost, and westmost
                             coordinates
                             of
-                            the dataset.</p>
+                            the dataset. 
+                            You can use the "edit layers"-icon on the map to adjust
+                            your bounding box interactively.</p>
                         <br>
-                        <p><i><b>Warning: The automatic bounding box created may be incorrect for the country,
+                        <p><i><b>Warning: pre-defined bounding box for specific country may be incorrect,
                                     so please
                                     verify it before proceeding!</b></i></p>
-                        <p><i><b>Note: for spatial extents crossing the antimeridian (e.g. in the Pacific), multiple bounding boxes should be defined to ensure the correct spatial extent is captured.
+                        <p><i>Note: for spatial extents crossing the antimeridian (e.g. in the Pacific), multiple bounding boxes should be defined to ensure the correct spatial extent is captured.
 
 
-                        </b></i></p>
+                        </i></p>
                         <br>
                     </v-card-text>
                 </v-card>
