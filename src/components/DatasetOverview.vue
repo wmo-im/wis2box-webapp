@@ -93,11 +93,6 @@
                                     </div>
                                     <v-list-item-subtitle v-if="dataset.title">Title: {{ dataset.title }}</v-list-item-subtitle>
                                     <v-list-item-subtitle v-if="dataset.description">Description: {{ dataset.description }}</v-list-item-subtitle>
-                                    <div class="mt-3 d-flex flex-wrap ga-2">
-                                        <v-btn size="small" color="error" variant="outlined" @click="sendDeleteNotification(dataset)">
-                                            send delete notification
-                                        </v-btn>
-                                    </div>
                                 </v-card>
                             </v-list-item>
                         </v-list>
@@ -474,11 +469,6 @@ const loadOtherDatasetsForCentre = async (centreId) => {
     } finally {
         isLoadingOtherDatasets.value = false;
     }
-};
-
-const sendDeleteNotification = (dataset) => {
-    // Placeholder action until delete-notification API workflow is defined.
-    console.info(`Send delete notification requested for ${dataset.id}`);
 };
 
 const buildGdcItemUrl = (baseUrl, datasetId) => {
